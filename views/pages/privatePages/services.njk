@@ -1,0 +1,22 @@
+<!-- Plantilla hija: views/pages/privatePages/dashboard.njk -->
+{% extends "layouts/privateLayout.njk" %}
+
+{% block title %}Dashboard{% endblock %} <!-- Bloque de título -->
+
+{% block content %}
+  <h1>{{ title }}</h1>
+  <p>Serviciosprivado.</p>
+
+  {% if username %}
+    <h1 class="user-info">Bienvenido, {{ username }}</h1>
+  {% else %}
+    <h1 class="user-info">Bienvenido, invitado.</h1>
+  {% endif %}
+
+  <div class="cards-container">
+    <section>
+        {% include "components/common/Card/index.njk" %}
+    </section>
+
+  </div>
+{% endblock %}

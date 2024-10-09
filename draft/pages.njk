@@ -1,0 +1,28 @@
+{% extends "layouts/publicLayout.njk" %}
+
+{% block content %}
+  
+  <div class='home-container1'>
+      
+      <!-- Sección de Hero y Características -->
+      {% include "partials/heroAndFeatures.njk" %}
+
+      <!-- Sección de Prácticas y Razones para Elegirnos -->
+      {% include "partials/practicesAndWhyChooseUs.njk" %}
+
+      <!-- Sección de Conoce a Nuestros Médicos -->
+      {% include "partials/meetOurDoctors.njk" %}
+
+  
+
+      <!-- Sección de Agendar Cita -->
+      {% include "partials/scheduleAppointment.njk" %}
+
+      <!-- Sección de Características -->
+      {% include "partials/featuresSection.njk" %}
+
+      <!-- Sección de Últimas Noticias -->
+      {% include "partials/latestNews.njk" %}
+
+  </div>
+{% endblock %}

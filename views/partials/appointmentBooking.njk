@@ -1,0 +1,19 @@
+{# layout.njk or your main template #}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Aplicación</title>
+    <!-- Otros elementos head -->
+</head>
+<body>
+    <div class="main-content">
+        {# Otras secciones de la página #}
+        
+        {% include "meetOurDoctors.njk" %}
+        {% include "bookAppointment.njk" %}  {# Aquí se incluye el partial #}
+        
+        {# Otras secciones de la página #}
+    </div>
+</body>
+</html>

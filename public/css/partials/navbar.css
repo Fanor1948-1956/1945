@@ -1,0 +1,62 @@
+.header {
+  position: fixed;
+  padding: 0.1px;
+  width: 100%;
+  background-color: #001f3f; /* Azul marino */
+  position: fixed;
+  z-index: 1500;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #001f3f; /* Azul marino */
+  padding: 5px;
+}
+.submenuNav {
+  border-radius: 5px;
+  display: none; /* Ocultar submenús por defecto */
+  position: absolute; /* Asegura que se muestre sobre el contenido */
+  padding: 0;
+  background-color: #010107; /* Fondo para el submenú */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra para dar profundidad */
+  z-index: 1000; /* Asegura que el submenú esté por encima de otros elementos */
+}
+
+.navbar__links li:hover .submenuNav {
+  display: block; /* Mostrar submenú al pasar el mouse */
+  list-style-type: none;
+}
+.navbar__links {
+  display: flex;
+  list-style-type: none;
+  margin: 0;
+}
+
+.navbar__links li {
+  margin: 0;
+}
+
+.navbar__links li a {
+  color: white;
+  text-decoration: none;
+  padding: 14px 20px;
+  display: block;
+}
+
+.navbar__links li a:hover {
+  background-color: #555;
+  border-radius: 5px;
+}
+
+/* Estilos responsivos para móvil */
+@media (max-width: 768px) {
+  .navbar__links {
+    display: none; /* Esconde los links de navegación en móvil */
+  }
+
+  .container {
+    margin-left: 0;
+  }
+}

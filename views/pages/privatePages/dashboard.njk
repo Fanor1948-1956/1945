@@ -1,0 +1,30 @@
+<!-- Plantilla hija: views/pages/privatePages/dashboard.njk -->
+{% extends "layouts/privateLayout.njk" %}
+
+{% block title %}Dashboard{% endblock %} <!-- Bloque de título -->
+
+{% block content %}
+  <h1>{{ title }}</h1>
+  <p>Bienvenido al dashboard privado.</p>
+
+<div>
+  <h1>Bienvenido, {{ name }} {{ surnames }}</h1>
+  <p>Tus roles son:</p>
+  <ul>
+    {% for role in userRoles %}
+      <li>{{ role }}</li>
+    {% endfor %}
+  </ul>
+</div>
+
+<h2>    {{isAuthenticated}}</h2>
+  <div class="cards-container">
+   
+    <section>
+        {% include "components/common/Card/index.njk" %}
+    </section>
+
+  </div>
+   
+
+{% endblock %}

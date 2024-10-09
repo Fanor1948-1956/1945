@@ -1,0 +1,99 @@
+/* Estilos del sidebar */
+.sidebar {
+  position: fixed;
+  left: -250px;
+  top: 0;
+  width: 250px;
+  height: 100%;
+  border-radius: 5px;
+  background-color: #001f3f; /* Azul marino */
+  transition: 0.3s;
+}
+
+.logo {
+  border: 1px solid #ffffff;
+  margin: 10px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  color: #ffffff;
+  align-items: center;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  padding: 10px;
+  text-align: left;
+  position: relative; /* Necesario para el submenú */
+}
+
+.sidebar ul li a i {
+  margin-right: 10px; /* Espacio entre el icono y el texto */
+}
+
+.sidebar ul li a {
+  color: white;
+  padding: 10px;
+  text-decoration: none;
+  display: flex; /* Cambiado a flex para alinear el icono y el texto */
+  align-items: center; /* Centra verticalmente el contenido */
+}
+
+.sidebar ul li a:hover {
+  background-color: #0c0320;
+}
+
+/* Mostrar sidebar cuando está activo */
+.sidebar.active {
+  left: 0;
+}
+
+/* Estilos del submenú */
+.submenu {
+  display: none; /* Ocultar submenús por defecto */
+  position: relative; /* Cambiar a relative para evitar problemas de visualización */
+  left: 0; /* Alinear el submenú a la izquierda del padre */
+  background-color: #0c032e; /* Color de fondo del submenú */
+  z-index: 1000; /* Asegura que el submenú esté por encima de otros elementos */
+}
+
+/* Mostrar el submenú al pasar el mouse (en escritorio) */
+@media (min-width: 769px) {
+  .sidebar ul li:hover .submenu {
+    display: block; /* Mostrar el submenú al pasar el mouse */
+  }
+}
+/* Estilos del sidebar */
+.sidebar ul li.active > a {
+  background-color: #555555; /* Cambia este color al que desees para el fondo activo */
+}
+
+/* Otras reglas previas permanecen igual */
+
+/* Media queries para móviles */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 250px; /* Sidebar de 250px en móviles */
+    left: -250px; /* Oculto inicialmente en móviles */
+    transition: left 0.5s ease; /* Suavizar la aparición/desaparición */
+    z-index: 1000;
+  }
+
+  .sidebar.active ~ .container {
+    margin-left: 0px; /* En escritorio, deja espacio para el sidebar */
+  }
+
+  /* Ocultar submenús por defecto */
+  .submenu {
+    display: none; /* Aseguramos que el submenú esté oculto por defecto */
+  }
+
+  /* Mostrar submenús al hacer clic en el padre */
+  .submenu.active {
+    display: block; /* Mostrar submenú cuando tenga clase 'active' */
+  }
+}

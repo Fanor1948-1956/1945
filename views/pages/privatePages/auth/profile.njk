@@ -1,0 +1,114 @@
+{% extends "pages/privatePages/auth/settings.njk" %}
+
+{% block content %}
+    <div class="profile-container">
+        <h1>Perfil del Usuario</h1>
+        
+        <div class="profile-details">
+            <h2>Información Personal</h2>
+            <form id="profileForm" method="POST" action="/profile/update">
+                <label for="name">Nombre:</label>
+                <input type="text" name="name" value="{{ user.name }}" required disabled id="nameInput" class="transparent-input">
+                
+                <label for="surnames">Apellido:</label>
+                <input type="text" name="surnames" value="{{ user.surnames }}" required disabled id="surnamesInput" class="transparent-input">
+                
+                <label for="email">Email:</label>
+                <input type="email" name="email" value="{{ user.email }}" required disabled id="emailInput" class="transparent-input">
+                
+                <label for="gender">Género:</label>
+                <select name="gender" disabled id="genderSelect" class="transparent-input">
+                    <option value="masculino" {% if user.gender == 'masculino' %}selected{% endif %}>Masculino</option>
+                    <option value="femenino" {% if user.gender == 'femenino' %}selected{% endif %}>Femenino</option>
+                    <option value="otro" {% if user.gender == 'otro' %}selected{% endif %}>Otro</option>
+                </select>
+
+                <label for="createdAt">Fecha de Registro:</label>
+                <input type="text" name="createdAt" value="{{ user.createdAt | date }}" disabled id="createdAtInput" class="transparent-input"> <!-- Asegúrate de que el filtro 'date' esté configurado -->
+                
+                <div class="profile-actions">
+                    <button type="button" class="button" id="editButton">Modificar</button>
+                    <button type="button" class="button" style="display:none;" id="cancelButton">Cancelar</button>
+                    <button type="submit" class="button" style="display:none;" id="updateButton">Actualizar Perfil</button>
+                </div>
+            </form>
+        </div>
+
+        
+    </div>
+
+    <style>
+        .transparent-input {
+            background-color: transparent;
+            border: none;
+            border-bottom: 1px solid #ccc; /* Línea inferior visible */
+            color: #000; /* Color del texto */
+            width: 100%;
+            padding: 5px;
+            transition: border-bottom-color 0.3s ease; /* Animación suave para el cambio de color */
+        }
+
+        .transparent-input:disabled {
+            opacity: 0.5; /* Reducir la opacidad cuando está deshabilitado */
+        }
+
+        .transparent-input:enabled {
+            opacity: 1; /* Restaurar opacidad cuando está habilitado */
+        }
+
+        .button {
+            margin-top: 10px; /* Espacio entre botones */
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #f0f0f0; /* Color al pasar el ratón por encima */
+            color: #000; /* Color al pasar el
+        }
+    </style>
+
+    <script>
+        const editButton = document.getElementById('editButton');
+        const updateButton = document.getElementById('updateButton');
+        const cancelButton = document.getElementById('cancelButton');
+        const nameInput = document.getElementById('nameInput');
+        const surnamesInput = document.getElementById('surnamesInput');
+        const emailInput = document.getElementById('emailInput');
+        const genderSelect = document.getElementById('genderSelect');
+        const createdAtInput = document.getElementById('createdAtInput');
+
+        editButton.addEventListener('click', () => {
+            nameInput.disabled = false;
+            surnamesInput.disabled = false;
+            emailInput.disabled = false;
+            genderSelect.disabled = false;
+            createdAtInput.disabled = true; // No permitir editar la fecha de registro
+            
+            // Mostrar los botones de actualizar y cancelar
+            updateButton.style.display = 'inline-block';
+            cancelButton.style.display = 'inline-block';
+            editButton.style.display = 'none'; // Ocultar el botón de editar
+        });
+
+        cancelButton.addEventListener('click', () => {
+            // Reiniciar los campos a su estado original
+            nameInput.value = "{{ user.name }}";
+            surnamesInput.value = "{{ user.surnames }}";
+            emailInput.value = "{{ user.email }}";
+            genderSelect.value = "{{ user.gender }}";
+            createdAtInput.value = "{{ user.createdAt | date }}"; // Asegúrate de que el filtro 'date' esté configurado
+
+            // Deshabilitar los campos
+            nameInput.disabled = true;
+            surnamesInput.disabled = true;
+            emailInput.disabled = true;
+            genderSelect.disabled = true;
+            createdAtInput.disabled = true;
+
+            // Ocultar botones de actualizar y cancelar
+            updateButton.style.display = 'none';
+            cancelButton.style.display = 'none';
+            editButton.style.display = 'inline-block'; // Mostrar nuevamente el botón de editar
+        });
+    </script>
+{% endblock %}

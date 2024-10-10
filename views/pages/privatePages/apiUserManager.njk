@@ -1,0 +1,40 @@
+
+    
+    <h1>Usuarios fetcsht</h1>
+
+    <div id="userTableContainer"></div>
+
+    <script type="module">
+        import { fetchUsers } from './js/apiUserManager.js'; // Asegúrate de la ruta correcta
+
+        function renderUserTable(users) {
+            let tableHtml = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Teléfono</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            users.forEach(user => {
+                tableHtml += `
+                    <tr>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>${user.phone}</td>
+                    </tr>
+                `;
+            });
+
+            tableHtml += '</tbody></table>';
+            document.getElementById('userTableContainer').innerHTML = tableHtml;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchUsers(renderUserTable); // Llama a la función para obtener y renderizar usuarios
+        });
+    </script>

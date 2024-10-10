@@ -3,9 +3,12 @@
 
 <!-- Botón para agregar un nuevo usuario -->
 <button id="addUserButton">Agregar Usuario</button>
- <section>
-        {% include "pages/privatePages/users/adminUsers.njk" %}
-    </section>
+<section>
+    {% include "pages/privatePages/users/adminUsers.njk" %}
+</section>
+<section>
+
+
 <section>
     <div id="userTableContainer"></div>
 </section>
@@ -21,14 +24,10 @@
     </div>
 </div>
 
-
-
 <script>
 $(document).ready(function() {
     // Obtener usuarios cuando se carga la página
     fetchUsers();
-
-
 
     // Evento para editar un usuario
     $(document).on('click', '.edit-button', function(e) {
@@ -39,14 +38,11 @@ $(document).ready(function() {
 
     // Obtener y renderizar la tabla de usuarios
     function fetchUsers() {
-        $.ajax({
-            url: '/users/getUsers',
-            type: 'GET',
-            success: renderUserTable,
-            error: function(xhr) {
+        apiFetch('/users/getUsers', 'GET')
+            .then(renderUserTable)
+            .catch(function(xhr) {
                 console.error('Error al obtener los usuarios:', xhr);
-            }
-        });
+            });
     }
 
     // Función para renderizar la tabla de usuarios
@@ -100,20 +96,17 @@ $(document).ready(function() {
 
     // Función para obtener información del usuario
     function getUserInfo(userId) {
-        $.ajax({
-            url: `/users/showInfo/${userId}`,
-            type: 'GET',
-            success: function({ user, allRoles, isPasswordHashed }) {
+        apiFetch(`/users/showInfo/${userId}`, 'GET')
+            .then(({ user, allRoles, isPasswordHashed }) => {
                 renderEditForm(user, allRoles, userId, isPasswordHashed);
                 $('#editUserModal').fadeIn(); // Abrir el modal de edición
-            },
-            error: function() {
+            })
+            .catch(() => {
                 showSnackbar('Error al obtener el formulario de edición', false);
-            }
-        });
+            });
     }
 
-// renderizar el formulario de edición
+    // Renderizar el formulario de edición
     function renderEditForm(user, allRoles, userId, isPasswordHashed) {
         const rolesHtml = allRoles.map(role => `
             <label>
@@ -146,7 +139,7 @@ $(document).ready(function() {
         `);
     }
 
-// envío del formulario de edición
+    // Envío del formulario de edición
     $(document).on('submit', '#userUpdateForm', function(e) {
         e.preventDefault();
         const userId = $(this).data('user-id');
@@ -161,43 +154,34 @@ $(document).ready(function() {
             }).get()
         };
 
-        $.ajax({
-            url: `/users/update/${userId}`,
-            type: 'PUT',
-            contentType: 'application/json',
-            data: JSON.stringify(userData),
-            success: function(response) {
+        apiFetch(`/users/update/${userId}`, 'PUT', userData)
+            .then(response => {
                 showSnackbar(response.message, true);
                 fetchUsers(); // Refrescar la lista de usuarios
                 setTimeout(() => {
                     $('#editUserModal').fadeOut(); // Cerrar después de 2 segundos
                 }, 2000);
-            },
-            error: function(xhr) {
+            })
+            .catch(xhr => {
                 const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al actualizar el usuario';
                 showSnackbar(errorMessage, false);
-            }
-        });
+            });
     });
 
 });
 
-// eliminar un usuario
+// Eliminar un usuario
 function deleteUser(userId) {
     if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
-        $.ajax({
-            url: `/users/delete/${userId}`,
-            type: 'DELETE',
-            success: function(response) {
+        apiFetch(`/users/delete/${userId}`, 'DELETE')
+            .then(response => {
                 showSnackbar(response.message, true);
                 fetchUsers(); // Refrescar la lista de usuarios
-            },
-            error: function(xhr) {
+            })
+            .catch(xhr => {
                 const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al eliminar el usuario';
                 showSnackbar(errorMessage, false);
-            }
-        });
+            });
     }
 }
-
 </script>

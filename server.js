@@ -31,7 +31,7 @@ const env = nunjucks.configure('views', {
   express: app,
   watch: true, // Opcional, permite ver los cambios en tiempo real
 });
-
+app.set('view engine', 'njk'); // Establecer Nunjucks como motor de vista
 // Configurar middleware de sesión
 app.use(
   session({
@@ -65,6 +65,7 @@ app.use(express.static('public'));
 // Middleware para manejar JSON y formularios
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

@@ -55,15 +55,21 @@ exports.createUser = async (req, res) => {
   }
 };
 
+// Obtener usuarios y renderizar la tabla o devolver JSON según sea necesario
 exports.getUsers = async (req, res) => {
   try {
-    const users = await User.find().populate('roles'); // Obteniendo todos los usuarios y sus roles
+    const users = await User.find().populate('roles'); // Obtener todos los usuarios y sus roles
 
+    // Detectar el tipo de solicitud
     if (req.xhr) {
       // Si es una petición AJAX
-      return res.status(200).json(users); // Devolver los usuarios en JSON
+      return res.status(200).json(users); // Devolver los usuarios en JSON para AJAX
+    } else if (req.accepts('application/json')) {
+      // Si la solicitud acepta JSON (pero no es AJAX)
+      return res.status(200).json(users); // Devolver los usuarios en formato JSON
     } else {
-      res.render('pages/privatePages/users/list', { users }); // Renderizar página normalmente si no es AJAX
+      // Renderizar plantilla normalmente si no es AJAX ni acepta JSON
+      return res.render('pages/privatePages/users/list.njk', { users });
     }
   } catch (error) {
     console.error('Error al obtener los usuarios:', error);

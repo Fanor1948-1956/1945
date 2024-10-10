@@ -3,108 +3,17 @@
 {% block content %}
     <h1>Lista de Usuarios</h1>
 
-    <!-- Formulario para crear un nuevo usuario -->
-    <section>
-        <div class="form-container">
-            <h2>Agregar Nuevo Usuario</h2>
-            <form id="userCreateForm">
-                <div class="input-group">
-                    <label for="name">Nombre:</label>
-                    <input type="text" id="name" name="name" required />
-                </div>
-                
-                <div class="input-group">
-                    <label for="surnames">Apellidos:</label>
-                    <input type="text" id="surnames" name="surnames" required />
-                </div>
-                
-                <div class="input-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required />
-                </div>
-
-                <div class="input-group">
-                    <label for="password">Contraseña:</label>
-                    <input type="password" id="password" name="password" required />
-                </div>
-
-                <div class="input-group">
-                    <label for="gender">Género:</label>
-                    <select name="gender" id="gender" required>
-                        <option value="">Seleccionar género</option>
-                        <option value="masculino">Masculino</option>
-                        <option value="femenino">Femenino</option>
-                        <option value="otro">Otro</option>
-                    </select>
-                </div>
-
-                <fieldset>
-                    <select name="roles" id="roles" class="select2" multiple required>
-                        {% for role in allRoles %}
-                        <option value="{{ role._id }}">{{ role.name }}</option>
-                        {% endfor %}
-                    </select>
-                </fieldset>
-
-                <button class="send" type="button" id="addUserButton">Agregar Usuario</button>
-            </form>
-        </div>
-    </section>
+   
 
     <hr />
 
-    <!-- Incluir el componente de la tabla de usuarios -->
-    <section>
-        {% include "components/userTable.njk" %}
+
+  
+
+        <section>
+        {% include "pages/privatePages/users/list.njk" %}
     </section>
 
-    <div id="snackbar" class="snackbar"></div>
+ 
 
-    <script>
-        $(document).ready(function() {
-            $('.select2').select2({
-                placeholder: "Seleccionar roles",
-                allowClear: true
-            });
-
-            $('#addUserButton').click(function() {
-                const userData = {
-                    name: $('#name').val(),
-                    surnames: $('#surnames').val(),
-                    email: $('#email').val(),
-                    password: $('#password').val(),
-                    gender: $('#gender').val(),
-                    roles: $('#roles').val() // Seleccionar roles
-                };
-
-                $.ajax({
-                    url: '/users/createUser',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(userData),
-                    success: function(response) {
-                        showSnackbar(response.message, true);
-                        // Aquí puedes recargar la tabla de usuarios o hacer otra acción
-                        location.reload(); // Recargar la página para actualizar la lista de usuarios
-                    },
-                    error: function(xhr) {
-                        const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al crear el usuario';
-                        showSnackbar(errorMessage, false);
-                    }
-                });
-            });
-        });
-
-        function showSnackbar(message, isSuccess) {
-            const snackbar = document.getElementById("snackbar");
-            snackbar.innerHTML = message;
-            snackbar.style.backgroundColor = isSuccess ? "#4CAF50" : "#f44336"; // Verde para éxito, rojo para error
-            snackbar.className = "show"; // Agregar clase 'show' para mostrar el snackbar
-
-            // Ocultar el snackbar después de 3 segundos
-            setTimeout(function() {
-                snackbar.className = snackbar.className.replace("show", ""); // Remover clase 'show'
-            }, 3000);
-        }
-    </script>
 {% endblock %}

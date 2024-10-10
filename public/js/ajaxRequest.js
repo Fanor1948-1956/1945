@@ -1,6 +1,5 @@
 // ajaxRequest.js
 
-// Función AJAX reutilizable
 function ajaxRequest(url, method = 'GET', data = null) {
   return new Promise((resolve, reject) => {
     $.ajax({

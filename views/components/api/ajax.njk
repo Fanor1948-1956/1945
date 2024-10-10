@@ -84,11 +84,18 @@ $(document).ready(function() {
         tableHtml += '</tbody></table>';
         $('#userTableContainer').html(tableHtml);
 
-        // Manejar los eventos de eliminación de usuario
+      
         $('.delete-button').click(function() {
-            const userId = $(this).data('user-id');
-            deleteUser(userId);
-        });
+    const userId = $(this).data('user-id');
+    
+    // Preguntar al usuario si realmente quiere eliminar
+    const confirmDelete = confirm('¿Estás seguro de que deseas eliminar este usuario?');
+    
+    if (confirmDelete) {
+        deleteUser(userId); // Llamar a la función para eliminar
+    }
+});
+
     }
 
     // Función para obtener información del usuario
@@ -169,16 +176,18 @@ $(document).ready(function() {
 
 // Eliminar un usuario
 function deleteUser(userId) {
-    if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
-        ajaxRequest(`/users/${userId}`, 'DELETE')
-            .then(response => {
-                showSnackbar(response.message, true);
-                fetchUsers(); // Refrescar la lista de usuarios
-            })
-            .catch(xhr => {
-                const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al eliminar el usuario';
-                showSnackbar(errorMessage, false);
-            });
-    }
+    $.ajax({
+        url: `/users/${userId}`,
+        type: 'DELETE',
+        success: function(response) {
+            showSnackbar(response.message, true); // Mostrar mensaje de éxito con el snackbar
+            fetchUsers(); // Volver a cargar la tabla de usuarios
+        },
+        error: function(xhr) {
+            const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al eliminar el usuario';
+            showSnackbar(errorMessage, false); // Mostrar mensaje de error con el snackbar
+        }
+    });
 }
+
 </script>

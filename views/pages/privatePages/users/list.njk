@@ -1,21 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Usuarios</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-        }
-    </style>
-</head>
-<body>
+
     <h1>Lista de Usuarios</h1>
     <div id="userTableContainer">
         <table>
@@ -31,7 +14,7 @@
                     <tr>
                         <td>{{ user.name }}</td>
                         <td>{{ user.email }}</td>
-                        <td>{{ user.phone }}</td>
+                        <td>{{ user.surnames }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -51,7 +34,7 @@
                         <tr>
                             <th>Nombre</th>
                             <th>Correo</th>
-                            <th>Teléfono</th>
+                                        <td>{{ user.surnames }}</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -62,7 +45,7 @@
                     <tr>
                         <td>${user.name}</td>
                         <td>${user.email}</td>
-                        <td>${user.phone}</td>
+                                          <td>{{ user.surnames }}</td>
                     </tr>
                 `;
             });
@@ -71,5 +54,3 @@
             document.getElementById('userTableContainer').innerHTML = tableHtml;
         }
     </script>
-</body>
-</html>

@@ -1,3 +1,5 @@
+// apiFetch.js
+
 // Función para hacer peticiones a la API
 export function apiFetch(url, method = 'GET', data = null) {
   const options = {

@@ -1,19 +1,17 @@
 {% extends "layouts/privateLayout.njk" %}
 
 {% block content %}
-    <h1>Lista de Usuarios</h1>
 
-   
+
+        <section>
+        {% include "components/api/ajax.njk" %}
+    </section>
 
     <hr />
 
 
+
   
-
-        <section>
-        {% include "pages/privatePages/users/list.njk" %}
-    </section>
-
  
 
 {% endblock %}

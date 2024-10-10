@@ -1,0 +1,270 @@
+
+
+<h1>Lista de Usuarios</h1>
+<hr />
+
+<!-- Botón para registrar un nuevo usuario -->
+<button id="registerNewUserButton">Registrar Nuevo Usuario</button>
+
+<!-- Tabla de usuarios -->
+<table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Roles</th> <!-- Nueva columna para roles -->
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody id="userTableBody">
+        <!-- Aquí se llenarán los usuarios mediante AJAX -->
+    </tbody>
+</table>
+
+<!-- Modal para editar usuario -->
+<div id="editUserModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Modificar Usuario</h2>
+        <div id="modalFormContainer"></div> <!-- Contenedor para el formulario -->
+    </div>
+</div>
+
+<!-- Modal para registrar nuevo usuario -->
+<div id="registerUserModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Registrar Nuevo Usuario</h2>
+        <form id="registerUserForm">
+            <label for="regName">Nombre:</label>
+            <input type="text" id="regName" name="name" required>
+            <label for="regEmail">Email:</label>
+            <input type="email" id="regEmail" name="email" required>
+            <label for="regPassword">Contraseña:</label>
+            <input type="password" id="regPassword" name="password" required>
+            <fieldset>
+                <legend>Roles:</legend>
+                <div id="rolesContainer"></div> <!-- Contenedor para roles -->
+            </fieldset>
+            <button type="submit">Registrar Usuario</button>
+        </form>
+    </div>
+</div>
+
+<!-- Snackbar para mensajes -->
+<div id="snackbar" class="snackbar"></div>
+
+<script>
+$(document).ready(function() {
+    // Obtener usuarios cuando se carga la página
+    fetchUsers();
+
+    // Evento para abrir el modal de registro
+    $('#registerNewUserButton').on('click', function() {
+        fetchRoles(); // Cargar roles para el formulario de registro
+        $('#registerUserModal').fadeIn(); // Abrir el modal de registro
+    });
+
+    // Función para obtener y renderizar la tabla de usuarios
+    function fetchUsers() {
+        $.ajax({
+            url: '/users/getUsers',
+            type: 'GET',
+            success: renderUserTable,
+            error: function(xhr) {
+                console.error('Error al obtener los usuarios:', xhr);
+            }
+        });
+    }
+
+    // Función para renderizar la tabla de usuarios
+    function renderUserTable(users) {
+        let tableHtml = '';
+
+        users.forEach(user => {
+            const roles = user.roles.map(role => role.name).join(', '); // Obtener nombres de roles
+            tableHtml += `
+                <tr>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${roles}</td> <!-- Mostrar roles en la tabla -->
+                    <td>
+                        <button class="edit-button" data-user-id="${user._id}">Modificar</button>
+                        <button class="delete-button" data-user-id="${user._id}">Eliminar</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        $('#userTableBody').html(tableHtml);
+    }
+
+    // Evento para editar un usuario
+    $(document).on('click', '.edit-button', function() {
+        const userId = $(this).data('user-id');
+        getUserInfo(userId); // Obtener datos del usuario
+    });
+
+    // Evento para eliminar un usuario
+    $(document).on('click', '.delete-button', function() {
+        const userId = $(this).data('user-id');
+        deleteUser(userId);
+    });
+
+    // Obtener información del usuario
+    function getUserInfo(userId) {
+        $.ajax({
+            url: `/users/showInfo/${userId}`,
+            type: 'GET',
+            success: function({ user, allRoles, isPasswordHashed }) {
+                renderEditForm(user, allRoles, userId, isPasswordHashed);
+                $('#editUserModal').fadeIn(); // Abrir el modal de edición
+            },
+            error: function() {
+                showSnackbar('Error al obtener el formulario de edición', false);
+            }
+        });
+    }
+
+    // Renderizar el formulario de edición
+    function renderEditForm(user, allRoles, userId, isPasswordHashed) {
+        const rolesHtml = allRoles.map(role => `
+            <label>
+                <input type="checkbox" name="roles" value="${role._id}" 
+                    ${user.roles.some(userRole => userRole.name === role.name) ? 'checked' : ''}>
+                ${role.name}
+            </label>
+        `).join('');
+
+        $('#modalFormContainer').html(`
+            <form id="userUpdateForm" data-user-id="${userId}">
+                <label for="name">Nombre:</label>
+                <input type="text" id="name" name="name" value="${user.name}" required ${isPasswordHashed ? 'disabled' : ''}>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="${user.email}" required ${isPasswordHashed ? 'disabled' : ''}>
+                <fieldset>
+                    <legend>Roles:</legend>
+                    ${rolesHtml}
+                </fieldset>
+                <button type="submit">Actualizar Usuario</button>
+            </form>
+        `);
+    }
+
+    // Envío del formulario de edición
+    $(document).on('submit', '#userUpdateForm', function(e) {
+        e.preventDefault();
+        const userId = $(this).data('user-id');
+
+        const userData = {
+            name: $('#name').val(),
+            email: $('#email').val(),
+            roles: $('input[name="roles"]:checked').map(function() {
+                return this.value;
+            }).get()
+        };
+
+        $.ajax({
+            url: `/users/update/${userId}`,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(userData),
+            success: function(response) {
+                showSnackbar(response.message, true);
+                fetchUsers(); // Refrescar la lista de usuarios
+                $('#editUserModal').fadeOut(); // Cerrar modal
+            },
+            error: function(xhr) {
+                const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al actualizar el usuario';
+                showSnackbar(errorMessage, false);
+            }
+        });
+    });
+
+    // Función para eliminar un usuario
+    function deleteUser(userId) {
+        if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
+            $.ajax({
+                url: `/users/delete/${userId}`,
+                type: 'DELETE',
+                success: function(response) {
+                    showSnackbar(response.message, true);
+                    fetchUsers(); // Refrescar la lista de usuarios
+                },
+                error: function(xhr) {
+                    const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al eliminar el usuario';
+                    showSnackbar(errorMessage, false);
+                }
+            });
+        }
+    }
+
+    // Función para cargar roles en el formulario de registro
+    function fetchRoles() {
+        $.ajax({
+            url: '/roles/getRoles', // Asegúrate de que esta ruta sea correcta
+            type: 'GET',
+            success: function(roles) {
+                renderRoles(roles);
+            },
+            error: function(xhr) {
+                console.error('Error al obtener los roles:', xhr);
+            }
+        });
+    }
+
+    // Renderizar los roles en el formulario de registro
+    function renderRoles(roles) {
+        const rolesHtml = roles.map(role => `
+            <label>
+                <input type="checkbox" name="roles" value="${role._id}">
+                ${role.name}
+            </label>
+        `).join('');
+
+        $('#rolesContainer').html(rolesHtml); // Añadir roles al contenedor
+    }
+
+    // Envío del formulario de registro
+    $(document).on('submit', '#registerUserForm', function(e) {
+        e.preventDefault();
+
+        const newUser = {
+            name: $('#regName').val(),
+            email: $('#regEmail').val(),
+            password: $('#regPassword').val(),
+            roles: $('input[name="roles"]:checked').map(function() {
+                return this.value;
+            }).get()
+        };
+
+        $.ajax({
+            url: '/users/register', // Asegúrate de que esta ruta sea correcta
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(newUser),
+            success: function(response) {
+                showSnackbar(response.message, true);
+                fetchUsers(); // Refrescar la lista de usuarios
+                $('#registerUserModal').fadeOut(); // Cerrar modal
+            },
+            error: function(xhr) {
+                const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al registrar el usuario';
+                showSnackbar(errorMessage, false);
+            }
+        });
+    });
+});
+
+// Función para mostrar mensajes en el snackbar
+function showSnackbar(message, isSuccess) {
+    const snackbar = $('#snackbar');
+    snackbar.text(message);
+    snackbar.css('background-color', isSuccess ? 'green' : 'red');
+    snackbar.fadeIn();
+
+    setTimeout(() => {
+        snackbar.fadeOut();
+    }, 3000);
+}
+</script>

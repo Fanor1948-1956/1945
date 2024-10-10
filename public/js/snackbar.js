@@ -1,12 +1,13 @@
 // snackbar.js
-function showSnackbar(message, isSuccess) {
-  const snackbar = document.getElementById('snackbar');
-  snackbar.innerHTML = message;
-  snackbar.style.backgroundColor = isSuccess ? '#4CAF50' : '#f44336'; // Verde para éxito, rojo para error
-  snackbar.className = 'show'; // Agregar clase 'show' para mostrar el snackbar
 
-  // Ocultar el snackbar después de 3 segundos
-  setTimeout(function () {
-    snackbar.className = snackbar.className.replace('show', ''); // Remover clase 'show'
-  }, 3000);
+// Función para mostrar notificaciones (snackbar)
+function showSnackbar(message, success) {
+  const snackbar = $('#snackbar');
+  snackbar.html(message);
+  snackbar.css('background-color', success ? '#4CAF50' : '#f44336');
+  snackbar.addClass('show');
+  setTimeout(() => snackbar.removeClass('show'), 3000);
 }
+
+// Exportar la función para uso global
+window.showSnackbar = showSnackbar;

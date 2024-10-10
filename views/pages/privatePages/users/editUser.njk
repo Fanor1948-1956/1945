@@ -1,17 +1,3 @@
-<h1>Lista de Usuarios</h1>
-<hr />
-
-<!-- Botón para agregar un nuevo usuario -->
-<button id="addUserButton">Agregar Usuario</button>
- <section>
-        {% include "pages/privatePages/users/adminUsers.njk" %}
-    </section>
-<section>
-    <div id="userTableContainer"></div>
-</section>
-
-<div id="snackbar" class="snackbar"></div>
-
 <!-- Modal para editar usuarios -->
 <div id="editUserModal" class="modal">
     <div class="modal-content">
@@ -21,15 +7,8 @@
     </div>
 </div>
 
-
-
 <script>
 $(document).ready(function() {
-    // Obtener usuarios cuando se carga la página
-    fetchUsers();
-
-
-
     // Evento para editar un usuario
     $(document).on('click', '.edit-button', function(e) {
         e.preventDefault();
@@ -37,68 +16,7 @@ $(document).ready(function() {
         getUserInfo(userId); // Obtener datos del usuario
     });
 
-    // Obtener y renderizar la tabla de usuarios
-    function fetchUsers() {
-        $.ajax({
-            url: '/users/getUsers',
-            type: 'GET',
-            success: renderUserTable,
-            error: function(xhr) {
-                console.error('Error al obtener los usuarios:', xhr);
-            }
-        });
-    }
-
-    // Función para renderizar la tabla de usuarios
-    function renderUserTable(users) {
-        let tableHtml = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Apellidos</th>
-                        <th>Email</th>
-                        <th>Género</th>
-                        <th>Roles</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-
-        users.forEach(user => {
-            let rolesHtml = '<ul>';
-            user.roles.forEach(role => {
-                rolesHtml += `<li>${role.name}</li>`;
-            });
-            rolesHtml += '</ul>';
-
-            tableHtml += `
-                <tr>
-                    <td>${user.name}</td>
-                    <td>${user.surnames}</td>
-                    <td>${user.email}</td>
-                    <td>${user.gender}</td>
-                    <td>${rolesHtml}</td>
-                    <td>
-                        <button class="edit-button" data-user-id="${user._id}">Editar</button>
-                        <button class="delete-button" data-user-id="${user._id}">Eliminar</button>
-                    </td>
-                </tr>
-            `;
-        });
-
-        tableHtml += '</tbody></table>';
-        $('#userTableContainer').html(tableHtml);
-
-        // Manejar los eventos de eliminación de usuario
-        $('.delete-button').click(function() {
-            const userId = $(this).data('user-id');
-            deleteUser(userId);
-        });
-    }
-
-    // Función para obtener información del usuario
+    // Obtener información del usuario
     function getUserInfo(userId) {
         $.ajax({
             url: `/users/showInfo/${userId}`,
@@ -113,7 +31,7 @@ $(document).ready(function() {
         });
     }
 
-// renderizar el formulario de edición
+    // Renderizar el formulario de edición
     function renderEditForm(user, allRoles, userId, isPasswordHashed) {
         const rolesHtml = allRoles.map(role => `
             <label>
@@ -146,7 +64,7 @@ $(document).ready(function() {
         `);
     }
 
-// envío del formulario de edición
+    // Envío del formulario de edición
     $(document).on('submit', '#userUpdateForm', function(e) {
         e.preventDefault();
         const userId = $(this).data('user-id');
@@ -179,25 +97,5 @@ $(document).ready(function() {
             }
         });
     });
-
 });
-
-// eliminar un usuario
-function deleteUser(userId) {
-    if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
-        $.ajax({
-            url: `/users/delete/${userId}`,
-            type: 'DELETE',
-            success: function(response) {
-                showSnackbar(response.message, true);
-                fetchUsers(); // Refrescar la lista de usuarios
-            },
-            error: function(xhr) {
-                const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al eliminar el usuario';
-                showSnackbar(errorMessage, false);
-            }
-        });
-    }
-}
-
 </script>

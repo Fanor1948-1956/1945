@@ -1,9 +1,91 @@
 {% extends "layouts/privateLayout.njk" %}
 
 {% block content %}
-    <h1>Lista de Usuarios</h1>
 
-    <!-- Formulario para crear un nuevo usuario -->
+
+    <h1>Bienvenido</h1>
+    <!-- Botones para abrir el modal -->
+    <button id="registerButton">Registrar</button>
+    <button id="loginButton">Iniciar Sesión</button>
+
+    <!-- Modal para el formulario de registro -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Registrar Usuario</h2>
+            <form id="registerForm">
+                <label for="regName">Nombre:</label>
+                <input type="text" id="regName" name="name" required>
+                <label for="regEmail">Email:</label>
+                <input type="email" id="regEmail" name="email" required>
+                <label for="regPassword">Contraseña:</label>
+                <input type="password" id="regPassword" name="password" required>
+                <button type="submit">Registrar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para el formulario de inicio de sesión -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Iniciar Sesión</h2>
+            <form id="loginForm">
+                <label for="loginEmail">Email:</label>
+                <input type="email" id="loginEmail" name="email" required>
+                <label for="loginPassword">Contraseña:</label>
+                <input type="password" id="loginPassword" name="password" required>
+                <button type="submit">Iniciar Sesión</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Abrir el formulario de registro
+            $('#registerButton').on('click', function() {
+                Modal.open('#registerModal');
+            });
+
+            // Abrir el formulario de inicio de sesión
+            $('#loginButton').on('click', function() {
+                Modal.open('#loginModal');
+            });
+
+            // Manejar el envío del formulario de registro
+            $('#registerForm').on('submit', function(e) {
+                e.preventDefault();
+                const userData = {
+                    name: $('#regName').val(),
+                    email: $('#regEmail').val(),
+                    password: $('#regPassword').val()
+                };
+                
+                console.log('Datos de registro:', userData); // Aquí puedes enviar estos datos a tu servidor
+                Modal.close('#registerModal'); // Cerrar el modal después de enviar el formulario
+            });
+
+            // Manejar el envío del formulario de inicio de sesión
+            $('#loginForm').on('submit', function(e) {
+                e.preventDefault();
+                const loginData = {
+                    email: $('#loginEmail').val(),
+                    password: $('#loginPassword').val()
+                };
+
+                console.log('Datos de inicio de sesión:', loginData); // Aquí también puedes enviar estos datos a tu servidor
+                Modal.close('#loginModal'); // Cerrar el modal después de enviar el formulario
+            });
+
+            // Evento para cerrar el modal
+            $('.close-button, .modal').on('click', function(e) {
+                if (e.target === this) {
+                    Modal.close(this); // Cerrar el modal
+                }
+            });
+        });
+    </script>
+
    
       
 {% endblock %}

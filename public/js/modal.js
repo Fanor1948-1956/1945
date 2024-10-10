@@ -1,44 +1,31 @@
-// public/js/modal.js
+// modal.js
+
 $(document).ready(function () {
-  // Función para abrir el modal
-  function openModal(modalId, formUrl) {
-    $.ajax({
-      url: formUrl,
-      type: 'GET',
-      success: function (response) {
-        $(`#${modalId} .modal-content`).html(response); // Cargar el contenido en el modal
-        $(`#${modalId}`).fadeIn(); // Mostrar el modal
-      },
-      error: function (xhr) {
-        showSnackbar('Error al obtener el formulario', false);
-      },
-    });
+  // Función para abrir cualquier modal
+  function openModal(modalSelector) {
+    $(modalSelector).fadeIn();
   }
 
-  // Función para cerrar el modal
-  function closeModal(modalId) {
-    $(`#${modalId}`).fadeOut(); // Ocultar el modal
+  // Función para cerrar cualquier modal
+  function closeModal(modalSelector) {
+    $(modalSelector).fadeOut();
   }
 
-  // Eventos para abrir y cerrar el modal
-  $(document).on('click', '.edit-button', function (e) {
-    e.preventDefault();
-    const userId = $(this).attr('href').split('/').pop(); // Obtener el ID del usuario
-    openModal('editUserModal', `/users/${userId}/edit`); // Abrir el modal con el contenido del formulario
+  // Evento para cerrar el modal (clic en el botón de cerrar o fuera del modal)
+  $(document).on('click', '.close-button', function (e) {
+    const modal = $(this).closest('.modal'); // Encuentra el modal asociado
+    closeModal(modal);
   });
 
-  // Cerrar el modal al hacer clic en la "X"
-  $(document).on('click', '.close-button', function () {
-    closeModal('editUserModal');
-  });
-
-  // Cerrar el modal al hacer clic fuera del contenido
-  $(window).click(function (event) {
-    const modal = $('#editUserModal');
-    if (event.target == modal[0]) {
-      closeModal('editUserModal');
+  $(document).on('click', '.modal', function (e) {
+    if ($(e.target).hasClass('modal')) {
+      closeModal(e.target);
     }
   });
 
-  window.closeModal = closeModal; // Exponer la función para cerrarlo
+  // Exportar las funciones para usarlas en otros lugares
+  window.Modal = {
+    open: openModal,
+    close: closeModal,
+  };
 });

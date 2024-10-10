@@ -9,18 +9,23 @@
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
 }
+
 th,
 td {
-  border: 1px solid white;
-  padding: 10px;
+  border: 1px solid #ddd;
+  padding: 8px;
   text-align: left;
 }
 
 th {
-  background-color: #0056b3; /* Azul medio para encabezados */
+  background-color: #f2f2f2;
 }
+
+tr:hover {
+  background-color: #f1f1f1;
+}
+
 /* Estilos responsivos para tablas en móvil */
 @media (max-width: 768px) {
   th,

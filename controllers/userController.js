@@ -71,41 +71,76 @@ exports.getUsers = async (req, res) => {
   }
 };
 
-// Función para mostrar el formulario de edición de un usuario
 exports.showUserInfo = async (req, res) => {
   const userId = req.params.id; // Obtener ID del usuario desde la URL
   try {
     const user = await User.findById(userId).populate('roles');
+    const allRoles = await roleModel.find(); // Obtener todos los roles disponibles
+
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    res.json(user); // Para este caso, simplemente devolveremos el usuario
+    // Verificar si la contraseña está hasheada
+    const isPasswordHashed = user.password.startsWith('$2b$'); // Asumiendo que la contraseña hasheada comienza con '$2b$'
+
+    // Devolver el usuario, los roles disponibles y si la contraseña está hasheada
+    res.json({ user, allRoles, isPasswordHashed });
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener el usuario' });
   }
 };
-
+// Controlador para actualizar un usuario
 exports.updateUser = async (req, res) => {
   const userId = req.params.id;
-  const userData = req.body;
+  const { name, surnames, email, gender, roles } = req.body;
 
   try {
-    const updatedUser = await User.findByIdAndUpdate(userId, userData, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!updatedUser) {
+    // Obtener el usuario por ID
+    const user = await User.findById(userId);
+    if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    res.json({ message: 'Usuario actualizado con éxito', user: updatedUser });
+    // Verificar si la contraseña está hasheada
+    const isPasswordHashed =
+      user.password !== undefined &&
+      user.password !== null &&
+      user.password !== '';
+
+    if (isPasswordHashed) {
+      // Si la contraseña está hasheada, solo se permite editar roles
+      if (roles) {
+        user.roles = roles; // Actualiza los roles
+      } else {
+        return res
+          .status(400)
+          .json({ message: 'Se requiere al menos un rol para actualizar' });
+      }
+    } else {
+      // Si la contraseña NO está hasheada, se permiten todos los campos
+      if (name) user.name = name;
+      if (surnames) user.surnames = surnames;
+      if (email) user.email = email;
+      if (gender) user.gender = gender;
+
+      // Actualiza los roles
+      if (roles) {
+        user.roles = roles; // Actualiza los roles
+      } else {
+        return res
+          .status(400)
+          .json({ message: 'Se requiere al menos un rol para actualizar' });
+      }
+    }
+
+    // Guarda los cambios en la base de datos
+    await user.save();
+
+    return res.status(200).json({ message: 'Usuario actualizado con éxito' });
   } catch (error) {
-    res.status(400).json({
-      message: 'Error al actualizar el usuario',
-      error: error.message,
-    });
+    console.error(error);
+    return res.status(500).json({ message: 'Error al actualizar el usuario' });
   }
 };
 

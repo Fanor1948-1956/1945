@@ -1,56 +1,43 @@
-
-    <h1>Lista de Usuarios</h1>
-    <div id="userTableContainer">
-        <table>
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Correo</th>
-                    <th>Teléfono</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                    <tr>
-                        <td>{{ user.name }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>{{ user.surnames }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <script type="module">
-        import { fetchUsers } from './js/apiUserManager.js';
-
-        document.addEventListener('DOMContentLoaded', function () {
-            fetchUsers(renderUserTable);
-        });
-
-        function renderUserTable(users) {
-            let tableHtml = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Correo</th>
-                                        <td>{{ user.surnames }}</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
-            users.forEach(user => {
-                tableHtml += `
-                    <tr>
-                        <td>${user.name}</td>
-                        <td>${user.email}</td>
-                                          <td>{{ user.surnames }}</td>
-                    </tr>
-                `;
-            });
-
-            tableHtml += '</tbody></table>';
-            document.getElementById('userTableContainer').innerHTML = tableHtml;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Usuario Docss</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
         }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lista de Usuarios</h1>
+
+    <!-- Botón para agregar un nuevo usuario -->
+    <button id="addUserButton">Agregar Usuario</button>
+
+    <!-- Contenedor de la tabla de usuarios -->
+    <div id="userTableContainer"></div>
+
+    <script type="module">
+        import { fetchUsers, renderUserTable, addUser } from '../../../public/js/fetchUsers.js';
+
+        // Configurar eventos
+        document.addEventListener('DOMContentLoaded', function () {
+            // Cargar usuarios cuando la página se carga
+            fetchUsers(renderUserTable);
+
+            // Evento para agregar un usuario cuando se hace clic en el botón
+            document.getElementById('addUserButton').addEventListener('click', async () => {
+                const user = await addUser();
+                fetchUsers(renderUserTable); // Refrescar la lista de usuarios después de agregar
+            });
+        });
     </script>
+</body>
+</html>

@@ -1,11 +1,9 @@
-<h1>Lista de Usuarios</h1>
+
 <hr />
 
 <!-- Botón para agregar un nuevo usuario -->
 <button id="addUserButton">Agregar Usuario</button>
-<section>
-    {% include "pages/privatePages/users/adminUsers.njk" %}
-</section>
+
 <section>
     <div id="userTableContainer"></div>
 </section>
@@ -20,83 +18,75 @@
         <div id="modalFormContainer"></div> <!-- Contenedor para el formulario -->
     </div>
 </div>
+<!-- Modal para confirmar eliminación de usuarios -->
+<div id="deleteUserModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Confirmar Eliminación</h2>
+        <p>¿Estás seguro de que deseas eliminar este usuario?</p>
+        <button id="confirmDeleteButton">Confirmar</button>
+        <button id="cancelDeleteButton">Cancelar</button>
+    </div>
+</div>
 
 <script>
 $(document).ready(function() {
+    let userToDelete = null; // Variable para almacenar el usuario que se desea eliminar
+
     // Obtener usuarios cuando se carga la página
     fetchUsers();
 
-    // Evento para editar un usuario
-    $(document).on('click', '.edit-button', function(e) {
-        e.preventDefault();
-        const userId = $(this).data('user-id');
-        getUserInfo(userId); // Obtener datos del usuario
-    });
+    // Eventos para manejar acciones de usuario
+    handleUserActions();
 
-    // Obtener y renderizar la tabla de usuarios
+    // Función para manejar las acciones de usuario
+    function handleUserActions() {
+        // Evento para editar un usuario
+        $(document).on('click', '.edit-button', function(e) {
+            e.preventDefault();
+            const userId = $(this).data('user-id');
+            getUserInfo(userId); // Obtener datos del usuario
+        });
+
+        // Evento para eliminar un usuario
+        $(document).on('click', '.delete-button', function() {
+            const userId = $(this).data('user-id');
+            const userRow = $(this).closest('tr'); // Obtener la fila del usuario
+            userToDelete = { id: userId, row: userRow }; // Almacenar información del usuario a eliminar
+            Modal.open('#deleteUserModal'); // Abrir el modal de confirmación
+        });
+
+        // Manejar el evento de confirmación de eliminación
+        $('#confirmDeleteButton').click(function() {
+            if (userToDelete) {
+                deleteUser(userToDelete.id, userToDelete.row);
+                Modal.close('#deleteUserModal'); // Cerrar el modal después de confirmar
+                userToDelete = null; // Reiniciar la variable
+            }
+        });
+
+        // Manejar el evento de cancelación de eliminación
+        $('#cancelDeleteButton').click(function() {
+            Modal.close('#deleteUserModal'); // Cerrar el modal sin eliminar
+            userToDelete = null; // Reiniciar la variable
+        });
+    }
+
+    // Función para obtener usuarios desde el servidor y renderizar la tabla
     function fetchUsers() {
         apiFetch('/users/getUsers', 'GET')
-            .then(renderUserTable)
+            .then(renderUserTable) // Llama a la función renderUserTable
             .catch(function(xhr) {
                 console.error('Error al obtener los usuarios:', xhr);
             });
-    }
-
-    // Función para renderizar la tabla de usuarios
-    function renderUserTable(users) {
-        let tableHtml = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Apellidos</th>
-                        <th>Email</th>
-                        <th>Género</th>
-                        <th>Roles</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-
-        users.forEach(user => {
-            let rolesHtml = '<ul>';
-            user.roles.forEach(role => {
-                rolesHtml += `<li>${role.name}</li>`;
-            });
-            rolesHtml += '</ul>';
-
-            tableHtml += `
-                <tr>
-                    <td>${user.name}</td>
-                    <td>${user.surnames}</td>
-                    <td>${user.email}</td>
-                    <td>${user.gender}</td>
-                    <td>${rolesHtml}</td>
-                    <td>
-                        <button class="edit-button" data-user-id="${user._id}">Editar</button>
-                        <button class="delete-button" data-user-id="${user._id}">Eliminar</button>
-                    </td>
-                </tr>
-            `;
-        });
-
-        tableHtml += '</tbody></table>';
-        $('#userTableContainer').html(tableHtml);
-
-        // Manejar los eventos de eliminación de usuario
-        $('.delete-button').click(function() {
-            const userId = $(this).data('user-id');
-            deleteUser(userId);
-        });
     }
 
     // Función para obtener información del usuario
     function getUserInfo(userId) {
         apiFetch(`/users/showInfo/${userId}`, 'GET')
             .then(({ user, allRoles, isPasswordHashed }) => {
-                renderEditForm(user, allRoles, userId, isPasswordHashed);
-                $('#editUserModal').fadeIn(); // Abrir el modal de edición
+                renderEditForm(user, allRoles, userId, isPasswordHashed); // Renderizar formulario de edición
+                Modal.open('#editUserModal'); // Abrir el modal de edición
             })
             .catch(() => {
                 showSnackbar('Error al obtener el formulario de edición', false);
@@ -156,7 +146,7 @@ $(document).ready(function() {
                 showSnackbar(response.message, true);
                 fetchUsers(); // Refrescar la lista de usuarios
                 setTimeout(() => {
-                    $('#editUserModal').fadeOut(); // Cerrar después de 2 segundos
+                    Modal.close('#editUserModal'); // Cerrar después de 2 segundos
                 }, 2000);
             })
             .catch(xhr => {
@@ -165,20 +155,22 @@ $(document).ready(function() {
             });
     });
 
-});
-
-// Eliminar un usuario
-function deleteUser(userId) {
-    if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
-        apiFetch(`/users/delete/${userId}`, 'DELETE')
+    // Función para eliminar un usuario
+    function deleteUser(userId, userRow) {
+        apiFetch(`/users/${userId}`, 'DELETE')
             .then(response => {
-                showSnackbar(response.message, true);
-                fetchUsers(); // Refrescar la lista de usuarios
+                if (response.message) {
+                    showSnackbar(response.message, true); // Mostrar mensaje de éxito
+                }
+                userRow.remove(); // Eliminar la fila de la tabla directamente
             })
             .catch(xhr => {
-                const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al eliminar el usuario';
-                showSnackbar(errorMessage, false);
+                const errorMessage = xhr.responseJSON && xhr.responseJSON.message 
+                    ? xhr.responseJSON.message 
+                    : 'Error al eliminar el usuario'; // Mensaje predeterminado si no hay respuesta
+                showSnackbar(errorMessage, false); // Mostrar mensaje de error
             });
     }
-}
+});
+
 </script>

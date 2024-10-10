@@ -26,14 +26,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Función para abrir/cerrar submenús en móviles
+  // Función para abrir/cerrar submenús
   submenuLinks.forEach((link) => {
     link.addEventListener('click', (event) => {
       const submenu = link.nextElementSibling; // Seleccionar el submenú siguiente al link
       const parentLi = link.parentElement; // Seleccionar el elemento padre li
 
+      // Si el enlace tiene submenú, alterna su visibilidad
       if (submenu) {
         event.preventDefault(); // Prevenir la acción predeterminada del enlace
+        submenu.classList.toggle('active'); // Alternar la clase 'active' del submenú
+
+        // Alternar la clase 'active' en el li padre para cambiar el color de fondo
+        parentLi.classList.toggle('active');
 
         // Cerrar otros submenús abiertos
         submenuLinks.forEach((otherLink) => {
@@ -49,18 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
             otherParentLi.classList.remove('active'); // Remover clase active del padre
           }
         });
-
-        // Alternar la clase 'active' del submenú actual
-        submenu.classList.toggle('active');
-
-        // Alternar la clase 'active' en el li padre para cambiar el color de fondo
-        parentLi.classList.toggle('active');
-
-        // Si el submenú se abre, cierra el sidebar
-        if (submenu.classList.contains('active')) {
-          sidebar.classList.remove('active');
-          container.classList.remove('shifted');
-        }
       } else {
         // Si el enlace no tiene submenú, redirige a la ruta
         window.location.href = link.href; // Navegar a la ruta correspondiente
@@ -68,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Función para cerrar el sidebar cuando se cambia el tamaño de la ventana
+  // Cerrar el sidebar cuando se cambia el tamaño de la ventana
   window.addEventListener('resize', () => {
     if (window.innerWidth > 768 && sidebar.classList.contains('active')) {
       sidebar.classList.remove('active');

@@ -22,55 +22,46 @@ const privateRoutes = [
     items: async () => [],
     subRoutes: [
       {
-        path: '/admin',
+        path: '/users/admin',
         title: 'Administradores',
+        view: 'pages/privatePages/users/adminUsers.njk',
         roles: ['Administrador', 'Jefe Médico', 'Paciente'],
         items: async () => [],
       },
       {
-        path: '/chiefMedical',
+        path: '/users/chiefMedical',
         title: 'Jefes Médicos',
+        view: 'pages/privatePages/users/chiefMedicalUsers.njk',
         roles: ['Administrador', 'Jefe Médico', 'Patient'],
-        items: async () => {
-          const chiefMedicalRole = await roleModel.findOne({
-            name: 'Jefe Médico',
-          });
-          return await User.find({ roles: chiefMedicalRole._id }).populate(
-            'roles'
-          );
-        },
+        items: async () => [],
       },
       {
-        path: '/doctor',
+        path: '/users/doctor',
         title: 'Médicos',
-        roles: ['Jefe Médico'],
-        items: async () => {
-          const doctorRole = await roleModel.findOne({ name: 'Doctor' });
-          return await User.find({ roles: doctorRole._id }).populate('roles');
-        },
+        roles: ['Administrador', 'Jefe Médico', 'Paciente'],
+        view: 'pages/privatePages/users/docUsers.njk',
+        items: async () => [],
       },
       {
-        path: '/patient',
+        path: '/users/patient',
         title: 'Pacientes',
-        roles: ['Doctor'],
-        items: async () => {
-          const patientRole = await roleModel.findOne({ name: 'Paciente' });
-          return await User.find({ roles: patientRole._id }).populate('roles');
-        },
+        view: 'pages/privatePages/users/patientUsers.njk',
+        roles: ['Administrador', 'Jefe Médico', 'Patient'],
+        items: async () => [],
       },
     ],
   },
   {
     path: '/schedule',
     title: 'Horarios de Atención',
-    view: 'pages/privatePages/permissions.njk',
+
     roles: ['Doctor', 'Jefe Médico'],
     items: async () => await permissionModel.find(),
   },
   {
     path: '/disponibility',
     title: 'Disponibilidad',
-    view: 'pages/privatePages/permissions.njk',
+
     roles: ['Doctor'],
     items: async () => await permissionModel.find(),
   },
@@ -84,14 +75,14 @@ const privateRoutes = [
   {
     path: '/services',
     title: 'Servicio',
-    view: 'pages/privatePages/permissions.njk',
+
     roles: ['Jefe Médico'],
     items: async () => await permissionModel.find(),
   },
   {
     path: '/appointment',
     title: 'Citas Médicas',
-    view: 'pages/privatePages/permissions.njk',
+
     roles: ['Paciente', 'Doctor'],
     items: async () => await permissionModel.find(),
   },
@@ -105,7 +96,7 @@ const privateRoutes = [
   {
     path: '/historyClinic',
     title: 'Historia Clinico',
-    view: 'pages/privatePages/permissions.njk',
+
     roles: ['Paciente'],
     items: async () => await permissionModel.find(),
   },
@@ -177,11 +168,10 @@ const registerPrivateRoutes = (app) => {
       }
     });
 
+    // Manejar subrutas
     if (route.subRoutes && route.subRoutes.length > 0) {
       route.subRoutes.forEach((subRoute) => {
-        const fullSubRoutePath = `${subRoute.path}`;
-
-        app.use(fullSubRoutePath, (req, res, next) => {
+        app.use(subRoute.path, (req, res, next) => {
           const userRoles = getUserRoles(req);
           if (!hasAccess(userRoles, subRoute)) {
             return res.status(403).send('Acceso denegado');
@@ -189,24 +179,20 @@ const registerPrivateRoutes = (app) => {
           next();
         });
 
-        app.get(fullSubRoutePath, async (req, res) => {
+        app.get(subRoute.path, async (req, res) => {
           try {
             const subItems = await subRoute.items();
-            const allRoles = await roleModel.find();
-            const allUsers = await User.find().populate('roles');
-            res.render(route.view, {
-              title: `${route.title}+ ${subRoute.title}`,
+            res.render(subRoute.view, {
+              title: subRoute.title,
               items: subItems,
               userRoles: getUserRoles(req),
-              allRoles,
-              allUsers,
-              privateRoutes,
               isAuthenticated: req.session.authenticated,
               username: req.session.name,
+              privateRoutes, // Asegúrate de pasar las rutas privadas aquí
             });
           } catch (error) {
             console.error(
-              `Error al cargar los datos para ${fullSubRoutePath}:`,
+              `Error al cargar los datos para ${subRoute.path}:`,
               error
             );
             res.status(500).send('Error al cargar los datos');

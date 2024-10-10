@@ -19,3 +19,4 @@ function ajaxRequest(url, method = 'GET', data = null) {
 
 // Exportar la función para uso global
 window.ajaxRequest = ajaxRequest;
+// apiFetch.js

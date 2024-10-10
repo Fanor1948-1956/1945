@@ -23,21 +23,21 @@
             </li>
         {% endfor %}
         {# Enlaces de rutas privadas #}
-        {% if isAuthenticated %}
+  {% if isAuthenticated %}
             {% for route in privateRoutes %}
                 {% if route.roles is not defined or route.roles|length == 0 or (userRoles | intersect(route.roles)|length > 0) %}
                     <li>
                         <a href="{{ route.path }}">
-                            <i class="fas fa-hospital-alt"></i> <!-- Icono de hospital -->
+                            <i class="fas fa-hospital-alt"></i>
                             {{ route.title }}
                         </a>
                         {% if route.subRoutes %}
-                            <ul class="submenu"> <!-- Asegúrate de que el submenú tenga la clase 'submenu' -->
+                            <ul class="submenu">
                                 {% for subRoute in route.subRoutes %}
                                     {% if subRoute.roles is not defined or subRoute.roles|length == 0 or (userRoles | intersect(subRoute.roles)|length > 0) %}
                                         <li>
                                             <a href="{{ subRoute.path }}">
-                                                <i class="fas fa-notes-medical"></i> <!-- Icono de nota médica -->
+                                                <i class="fas fa-notes-medical"></i>
                                                 {{ subRoute.title }}
                                             </a>
                                         </li>

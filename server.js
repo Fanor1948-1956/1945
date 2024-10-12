@@ -91,7 +91,7 @@ app.use('/services', verifyToken, serviceRoutes);
 app.use('/profile', verifyToken, profileRoutes);
 app.use('/auth', authRoutes); // Rutas de autenticación
 
-app.use('/api/specialties', specialtyRoutes);
+app.use('/api/specialties', verifyToken, specialtyRoutes);
 
 // Iniciar el servidor
 app.listen(port, () => {

@@ -1,40 +1,25 @@
-
-    
-    <h1>Usuarios fetcsht</h1>
-
+{% block content %}
+    <h1>Lista de Usuarios</h1>
     <div id="userTableContainer"></div>
 
     <script type="module">
-        import { fetchUsers } from './js/apiUserManager.js'; // Asegúrate de la ruta correcta
+        import { fetchAndRenderData } from './js/apiUserManager.js';
+        import { renderTable } from './js/renderTable.js'; // Asegúrate de la ruta correcta
 
-        function renderUserTable(users) {
-            let tableHtml = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Correo</th>
-                            <th>Teléfono</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
-            users.forEach(user => {
-                tableHtml += `
-                    <tr>
-                        <td>${user.name}</td>
-                        <td>${user.email}</td>
-                        <td>${user.phone}</td>
-                    </tr>
-                `;
-            });
-
-            tableHtml += '</tbody></table>';
-            document.getElementById('userTableContainer').innerHTML = tableHtml;
-        }
+        // Configuración de las columnas para usuarios
+        const userHeaders = {
+            name: 'Nombre',
+            email: 'Correo',
+            phone: 'Teléfono',
+            roles:'roles'
+        };
 
         document.addEventListener('DOMContentLoaded', function () {
-            fetchUsers(renderUserTable); // Llama a la función para obtener y renderizar usuarios
+            fetchAndRenderData(
+                'https://8000-fanoro1956-1945-50am2qruf9y.ws-us116.gitpod.io/users/getUsers',
+                (data) => renderTable(data, userHeaders, 'userTableContainer'),
+                userHeaders
+            );
         });
     </script>
+{% endblock %}

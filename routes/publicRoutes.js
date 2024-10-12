@@ -152,6 +152,29 @@ const publicRoutes = [
     items: async () => [], // Datos adicionales si es necesario
   },
   {
+    title: 'Contacto', // Sin path ni view
+    view: 'pages/publicPages/contact.njk',
+    subRoutes: [
+      {
+        path: '/settings',
+        title: 'Configuraciones',
+        view: 'pages/publicPages/settings.njk',
+        items: async () => [
+          {
+            title: 'Configuración 1',
+            description: 'Descripción de configuración 1',
+            view: 'pages/publicPages/settings.njk',
+          },
+          {
+            title: 'Configuración 2',
+            description: 'Descripción de configuración 2',
+            view: 'pages/publicPages/settings.njk',
+          },
+        ],
+      },
+    ],
+  },
+  {
     path: '/contact',
     id: generateIdFromPath('/contact'), // Generar id
     title: 'Contacto',
@@ -184,8 +207,6 @@ const publicRoutes = [
     items: async () => [], // Datos adicionales si es necesario
   },
 ];
-
-// Resto de tu código permanece igual
 const registerPublicRoutes = (app) => {
   publicRoutes.forEach((route) => {
     // Registrar la ruta principal solo si tiene un path
@@ -211,6 +232,32 @@ const registerPublicRoutes = (app) => {
         } catch (error) {
           console.error(`Error al cargar los datos para ${route.path}:`, error);
           res.status(500).send('Error al cargar los datos');
+        }
+      });
+    }
+
+    // Registrar subrutas si existen
+    if (route.subRoutes) {
+      route.subRoutes.forEach((subRoute) => {
+        if (subRoute.path) {
+          app.get(subRoute.path, async (req, res) => {
+            try {
+              const items = (await subRoute.items) ? subRoute.items() : []; // Obtener los items de la subruta
+              res.render(subRoute.view, {
+                title: subRoute.title,
+                items: items,
+                publicRoutes, // Rutas públicas
+                isAuthenticated: req.session.authenticated,
+                username: req.session.name,
+              });
+            } catch (error) {
+              console.error(
+                `Error al cargar los datos para ${subRoute.path}:`,
+                error
+              );
+              res.status(500).send('Error al cargar los datos');
+            }
+          });
         }
       });
     }

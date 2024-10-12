@@ -1,4 +1,3 @@
-
 <header class="header">
     <nav class="navbar">
         <button class="hamburger" id="hamburgerBtn">☰</button>
@@ -12,7 +11,8 @@
                             <ul class="submenuNav {% if route.subRoutes|length > 2 %}horizontal{% endif %}"> <!-- Clase para el submenú -->
                                 {% for section in route.subRoutes %}
                                     <li class="submenu__item">
-                                        <a href="{{ route.path }}#{{ section.id }}" class="submenuLink">{{ section.title }}</a> {# Enlace a la sección específica #}
+                                        {# Verifica si la subruta tiene un path y lo usa; de lo contrario, usa el id # #}
+                                        <a href="{{ section.path or (route.path ~ '#' ~ section.id) }}" class="submenuLink">{{ section.title }}</a>
                                     </li>
                                 {% endfor %}
                             </ul>
@@ -24,7 +24,7 @@
             {% if isAuthenticated %}
                 {% for route in privateRoutes %}
                     <li class="navbar__item">
-                        <a href="{{ route.path }}" class="navbar__link {% if route.subRoutes %}has-submenu{% endif %}">{{ route.title }}</a>
+                        <a href="{{ route.path }}" class=" {% if route.subRoutes %}has-submenu{% endif %}">{{ route.title }}</a>
                         {% if route.subRoutes %}
                             <div class="submenuContainer"> <!-- Contenedor para el submenú -->
                                 <ul class="submenuNav {% if route.subRoutes|length > 2 %}horizontal{% endif %}"> <!-- Clase para el submenú -->

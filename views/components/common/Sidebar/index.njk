@@ -8,11 +8,16 @@
                     {% if route.subRoutes %}
                       
                             <ul class="submenu"> <!-- Clase para el submenú -->
-                                {% for subRoute in route.subRoutes %}
-                                    <li>
-                                        <a href="{{ route.path }}#{{ subRoute.id }}" class="submenuLink">{{ subRoute.title }}</a> {# Enlace a la sección específica #}
-                                    </li>
-                                {% endfor %}
+                              {% for subRoute in route.subRoutes %}
+                        <li class="submenu__item">
+                            {# Verificar si subRoute.path está definido, si no usar el id #}
+                            {% if subRoute.path %}
+                                <a href="{{ subRoute.path }}" class="submenuLink">{{ subRoute.title }}</a> {# Enlace a otra ruta #}
+                            {% else %}
+                                <a href="{{ route.path }}#{{ subRoute.id }}" class="submenuLink">{{ subRoute.title }}</a> {# Enlace a la sección específica #}
+                            {% endif %}
+                        </li>
+                    {% endfor %}
                             </ul>
               
                     {% endif %}

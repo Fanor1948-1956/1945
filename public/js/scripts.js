@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         });
       } else {
-        // Si el enlace es un hash (por ejemplo, #section-id)
+        // Si el parentHref es un hash (por ejemplo, #subRoute.id)
         if (parentHref.startsWith('#')) {
           event.preventDefault(); // Previene la navegación predeterminada
 
@@ -158,7 +158,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
           }
         } else {
-          // Si el enlace es a una página diferente, navega normalmente
+          // Si el parentHref es un enlace a una página diferente
+          sidebar.classList.remove('active'); // Cierra el sidebar
+          container.classList.remove('shifted'); // Cierra el contenedor
+
+          // Navega normalmente
           window.location.href = parentHref;
         }
       }

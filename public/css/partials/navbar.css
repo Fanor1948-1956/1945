@@ -39,6 +39,7 @@
 
 .navbar__links li:hover .submenuNav {
   flex-direction: column;
+  list-style-type: none;
 }
 
 .navbar__links li:hover .submenuNav.horizontal {

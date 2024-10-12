@@ -9,6 +9,14 @@
 </section>
 
 <div id="snackbar" class="snackbar"></div>
+<!-- Modal para crear un nuevo usuario -->
+<div id="createUserModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Crear Nuevo Usuario</h2>
+        <div id="createUserFormContainer"></div>
+    </div>
+</div>
 
 <!-- Modal para editar usuarios -->
 <div id="editUserModal" class="modal">
@@ -43,7 +51,11 @@ $(document).ready(function() {
 
     // Obtener usuarios cuando se carga la página
     fetchUsers();
-
+   // Manejar evento para abrir el modal de crear usuario
+    $('#addUserButton').click(function() {
+        renderCreateUserForm(); // Renderizar formulario de creación
+        Modal.open('#createUserModal'); // Abrir el modal de creación
+    });
     // Evento para editar un usuario
     $(document).on('click', '.edit-button', function(e) {
         e.preventDefault();
@@ -170,6 +182,54 @@ $(document).ready(function() {
             </form>
         `);
     }
+ // Renderizar el formulario de creación de usuario
+    function renderCreateUserForm() {
+        $('#createUserFormContainer').html(`
+            <form id="userCreateForm">
+                <label for="name">Nombre:</label>
+                <input type="text" id="createName" name="name" required>
+                <label for="surnames">Apellidos:</label>
+                <input type="text" id="createSurnames" name="surnames" required>
+                <label for="email">Email:</label>
+                <input type="email" id="createEmail" name="email" required>
+                <label for="gender">Género:</label>
+                <select id="createGender" name="gender" required>
+                    <option value="masculino">Masculino</option>
+                    <option value="femenino">Femenino</option>
+                    <option value="otro">Otro</option>
+                </select>
+                <fieldset>
+                    <legend>Roles:</legend>
+                    <!-- Aquí puedes agregar roles si es necesario -->
+                </fieldset>
+                <button type="submit">Crear Usuario</button>
+            </form>
+        `);
+    }
+     // Envío del formulario de creación
+    $(document).on('submit', '#userCreateForm', function(e) {
+        e.preventDefault();
+
+        const newUserData = {
+            name: $('#createName').val(),
+            surnames: $('#createSurnames').val(),
+            email: $('#createEmail').val(),
+            gender: $('#createGender').val(),
+            roles: [] // Puedes agregar lógica para manejar roles si es necesario
+        };
+
+        apiFetch('/users/create', 'POST', newUserData)
+            .then(response => {
+                showSnackbar(response.message, true);
+                fetchUsers(); // Refrescar la lista de usuarios
+                Modal.close('#createUserModal'); // Cerrar el modal de creación
+            })
+            .catch(xhr => {
+                const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al crear el usuario';
+                showSnackbar(errorMessage, false);
+            });
+    });
+
 
     // Envío del formulario de edición
 $(document).on('submit', '#userUpdateForm', function(e) {

@@ -5,7 +5,7 @@ import { apiFetch } from './apiFetch.js'; // Asegúrate de la ruta correcta
 export async function fetchUsers(renderUserTable) {
   try {
     const users = await apiFetch(
-      'https://4000-fanoro1956-1945-50am2qruf9y.ws-us116.gitpod.io/users/getUsers'
+      'https://8000-fanoro1956-1945-50am2qruf9y.ws-us116.gitpod.io/users/getUsers'
     );
     console.log('users', users);
     renderUserTable(users);

@@ -1,48 +1,26 @@
-<!-- views/pages/index.njk -->
+
 {% extends "layouts/privateLayout.njk" %}
-
 {% block content %}
+    <h1>Lista de Permisos</h1>
+    <div id="permissionTableContainer"></div>
 
+    <script type="module">
+        import { fetchAndRenderData } from './js/apiUserManager.js';
+        import { renderTable } from './js/renderTable.js'; // Asegúrate de la ruta correcta
 
+        // Configuración de las columnas para permissos
+        const permissionHeaders = {
+            name: 'Nombre',
+            description: 'Descripción',
+            category: 'Categoría'
+        };
 
-    <div class="form-container">
-        <h2>Agregar Nuevo Permiso</h2>
-        <form action="/permissions/create-permission" method="POST">
-            <label for="name">NombrePermission:</label>
-            <input type="text" id="name" name="name" required />
-
-            <label for="description">Descripción:</label>
-            <input type="text" id="description" name="description" />
-
-            <button class="send" type="submit">Agregar Permiso</button>
-        </form>
-    </div>
-
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for permission in items %}
-                <tr>
-                    <td>{{ permission.name }}</td>
-                    <td>{{ permission.description }}</td>
-                    <td>
-                        <form action="/permissions/{{ permission._id }}?_method=DELETE" method="POST">
-                            <button type="submit">Eliminar</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-
-
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchAndRenderData(
+                'https://8000-fanoro1956-1945-50am2qruf9y.ws-us116.gitpod.io/permissions/api',
+                (data) => renderTable(data, permissionHeaders, 'permissionTableContainer'),
+                permissionHeaders
+            );
+        });
+    </script>
 {% endblock %}

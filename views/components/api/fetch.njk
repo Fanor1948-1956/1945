@@ -182,54 +182,76 @@ $(document).ready(function() {
             </form>
         `);
     }
- // Renderizar el formulario de creación de usuario
-    function renderCreateUserForm() {
-        $('#createUserFormContainer').html(`
-            <form id="userCreateForm">
-                <label for="name">Nombre:</label>
-                <input type="text" id="createName" name="name" required>
-                <label for="surnames">Apellidos:</label>
-                <input type="text" id="createSurnames" name="surnames" required>
-                <label for="email">Email:</label>
-                <input type="email" id="createEmail" name="email" required>
-                <label for="gender">Género:</label>
-                <select id="createGender" name="gender" required>
-                    <option value="masculino">Masculino</option>
-                    <option value="femenino">Femenino</option>
-                    <option value="otro">Otro</option>
-                </select>
-                <fieldset>
-                    <legend>Roles:</legend>
-                    <!-- Aquí puedes agregar roles si es necesario -->
-                </fieldset>
-                <button type="submit">Crear Usuario</button>
-            </form>
-        `);
-    }
-     // Envío del formulario de creación
-    $(document).on('submit', '#userCreateForm', function(e) {
-        e.preventDefault();
+      function renderCreateUserForm() {
+        // Obtener los roles disponibles
+        apiFetch('/roles/api', 'GET')
+            .then(roles => {
+                          console.log('Roles disponibles para crear usuario:', roles); 
+                const rolesHtml = roles.map(role => `
+                    <label>
+                        <input type="checkbox" name="roles" value="${role._id}">
+                        ${role.name}
+                    </label>
+                `).join('');
 
-        const newUserData = {
-            name: $('#createName').val(),
-            surnames: $('#createSurnames').val(),
-            email: $('#createEmail').val(),
-            gender: $('#createGender').val(),
-            roles: [] // Puedes agregar lógica para manejar roles si es necesario
-        };
-
-        apiFetch('/users/create', 'POST', newUserData)
-            .then(response => {
-                showSnackbar(response.message, true);
-                fetchUsers(); // Refrescar la lista de usuarios
-                Modal.close('#createUserModal'); // Cerrar el modal de creación
+                $('#createUserFormContainer').html(`
+                    <form id="userCreateForm">
+                        <label for="name">Nombre:</label>
+                        <input type="text" id="name" name="name" required>
+                        <label for="surnames">Apellidos:</label>
+                        <input type="text" id="surnames" name="surnames" required>
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                                <label for="password">Contraseña:</label>
+                        <input type="password" id="password" name="password" required>
+                        <label for="gender">Género:</label>
+                        <select id="gender" name="gender" required>
+                            <option value="masculino">Masculino</option>
+                            <option value="femenino">Femenino</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                        <fieldset>
+                            <legend>Roles:</legend>
+                            ${rolesHtml}
+                        </fieldset>
+                        <button type="submit">Crear Usuario</button>
+                    </form>
+                `);
             })
             .catch(xhr => {
-                const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al crear el usuario';
+                const errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : 'Error al obtener los roles';
                 showSnackbar(errorMessage, false);
             });
-    });
+    }
+$(document).on('submit', '#userCreateForm', function(e) {
+    e.preventDefault();
 
+    const roles = $('input[name="roles"]:checked').map(function() {
+        return this.value;
+    }).get();
+
+    console.log('Roles seleccionados para el nuevo usuario:', roles);  // <-- Ver los roles seleccionados
+
+    const newUserData = {
+        name: $('#name').val(),
+        surnames: $('#surnames').val(),
+        email: $('#email').val(),
+        password: $('#password').val(),
+        gender: $('#gender').val(),
+        roles: roles
+    };
+
+    apiFetch('/users/create-user', 'POST', newUserData)
+        .then(response => {
+            showSnackbar(response.message, true);
+            fetchUsers(); // Refrescar la lista de usuarios
+            Modal.close('#createUserModal'); // Cerrar el modal de creación
+        })
+        .catch(xhr => {
+            const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al crear el usuario';
+            showSnackbar(errorMessage, false);
+        });
+});
 
     // Envío del formulario de edición
 $(document).on('submit', '#userUpdateForm', function(e) {

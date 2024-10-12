@@ -12,10 +12,17 @@ exports.createUser = async (req, res) => {
     roles,
     ...additionalProperties
   } = req.body;
+
+  console.log('Datos recibidos en la petición:', req.body); // <-- Verifica qué datos está recibiendo el backend
+
   const rolesArray = roles || [];
 
   try {
+    // Verifica si rolesArray contiene algo
+    console.log('Roles recibidos:', rolesArray); // <-- Ver los roles antes de la búsqueda
+
     const rolesFound = await roleModel.find({ _id: { $in: rolesArray } });
+
     if (rolesFound.length === 0) {
       return res
         .status(400)

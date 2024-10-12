@@ -1,4 +1,4 @@
-export function renderTable(data, columnHeaders, containerId) {
+export function renderTable(data, columnHeaders, containerId, onAction) {
   // Comprobar si hay datos para mostrar
   if (!data || data.length === 0) {
     document.getElementById(containerId).innerHTML =
@@ -20,7 +20,6 @@ export function renderTable(data, columnHeaders, containerId) {
 
   // Agregar la columna de acciones
   tableHtml += `<th>Acciones</th>`;
-
   tableHtml += '</tr></thead><tbody>';
 
   // Crear las filas de la tabla
@@ -36,7 +35,7 @@ export function renderTable(data, columnHeaders, containerId) {
       // Manejo de arrays
       if (Array.isArray(value)) {
         const listItems = value
-          .map((val, idx) => `<li>${val.name || val}</li>`)
+          .map((val) => `<li>${val.name || val}</li>`)
           .join('');
         tableHtml += `<td><ul>${listItems}</ul></td>`;
       }
@@ -50,18 +49,18 @@ export function renderTable(data, columnHeaders, containerId) {
           .join('<br>');
         tableHtml += `<td>${objectHtml}</td>`;
       }
-      // Mostrar valor simple o vacio si no existe
+      // Mostrar valor simple o vacío si no existe
       else {
         tableHtml += `<td>${value !== undefined ? value : ''}</td>`;
       }
     });
 
-    // Añadir la columna de acciones
+    // Añadir la columna de acciones con botones
     tableHtml += `
             <td>
-                <button class="details-button" data-id="${item._id}">Ver Detalles</button>
-                <button class="edit-button" data-id="${item._id}">Editar</button>
-                <button class="deactivate-button" data-id="${item._id}">Desactivar</button>
+                <button class="details-button" data-id="${item._id}" onclick="onAction('details', '${item._id}')">Ver Detalles</button>
+                <button class="edit-button" data-id="${item._id}" onclick="onAction('edit', '${item._id}')">Editar</button>
+                <button class="deactivate-button" data-id="${item._id}" onclick="onAction('deactivate', '${item._id}')">Desactivar</button>
             </td>
         `;
 

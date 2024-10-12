@@ -16,12 +16,32 @@ const Permission = require('../models/permissionModel');
 
 // Create a new permission
 exports.createPermission = async (req, res) => {
+  const { name, description } = req.body;
+
+  // Validar que los campos requeridos están presentes
+  if (!name || !description) {
+    return res.status(400).json({
+      message: 'Faltan campos requeridos: nombre y descripción.',
+    });
+  }
+
   try {
-    const permission = new Permission(req.body);
-    await permission.save();
-    res.status(201).json(permission);
+    // Crear un nuevo permiso
+    const newPermission = new Permission({ name, description });
+    await newPermission.save();
+
+    // Responder con el nuevo permiso y un mensaje
+    res.status(201).json({
+      message: 'Permiso creado correctamente',
+      permission: newPermission,
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error('Error al crear el permiso:', error);
+
+    // Responder con un mensaje de error específico
+    res.status(500).json({
+      message: 'Error al crear el permiso. Inténtelo de nuevo más tarde.',
+    });
   }
 };
 
@@ -50,18 +70,39 @@ exports.getPermissionById = async (req, res) => {
 
 // Update permission
 exports.updatePermission = async (req, res) => {
+  const { id } = req.params; // Obtener el ID del permiso desde los parámetros de la ruta
+  const { name, description } = req.body; // Obtener los datos del cuerpo de la solicitud
+
+  // Validar que los campos requeridos están presentes
+  if (!name || !description) {
+    return res.status(400).json({
+      message: 'Faltan campos requeridos: nombre y descripción.',
+    });
+  }
+
   try {
-    const permission = await Permission.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
+    // Buscar y actualizar el permiso
+    const updatedPermission = await Permission.findByIdAndUpdate(
+      id,
+      { name, description },
+      { new: true }
     );
-    if (!permission) {
-      return res.status(404).json({ message: 'Permission not found' });
+
+    // Si no se encuentra el permiso
+    if (!updatedPermission) {
+      return res.status(404).json({ message: 'Permiso no encontrado.' });
     }
-    res.status(200).json(permission);
+
+    // Responder con el permiso actualizado
+    res.status(200).json({
+      message: 'Permiso actualizado correctamente',
+      permission: updatedPermission,
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error('Error al actualizar el permiso:', error);
+    res.status(500).json({
+      message: 'Error al actualizar el permiso. Inténtelo de nuevo más tarde.',
+    });
   }
 };
 

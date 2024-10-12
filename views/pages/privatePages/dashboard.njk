@@ -21,7 +21,25 @@
   <div class="cards-container">
    
     <section>
-        {% include "components/common/Card/index.njk" %}
+
+
+
+  <h1>Bienvenido, {{ username }}</h1>
+
+  <h2>Opciones del Dashboard</h2>
+  <ul>
+    {% for item in items %}
+      <li>
+        <a href="{{ item.link }}">{{ item.title }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <h3>Información del Perfil</h3>
+  <p>Email: {{ profile.email }}</p>
+  <p>Roles: {{ userRoles | join(', ') }}</p>
+
+
     </section>
 
 

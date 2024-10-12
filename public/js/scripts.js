@@ -1,21 +1,108 @@
+// document.addEventListener('DOMContentLoaded', () => {
+//   const hamburgerBtn = document.getElementById('hamburgerBtn');
+//   const sidebar = document.getElementById('sidebar');
+//   const container = document.querySelector('.container');
+//   const submenuLinks = document.querySelectorAll('.sidebar ul li > a');
+
+//   // Abre/cierra el sidebar al hacer clic en el botón hamburguesa
+//   hamburgerBtn.addEventListener('click', () => {
+//     sidebar.classList.toggle('active');
+//     container.classList.toggle('shifted');
+//   });
+
+//   // Cierra el sidebar al hacer clic fuera de él
+//   document.addEventListener('click', (event) => {
+//     const isClickInsideSidebar = sidebar.contains(event.target);
+//     const isClickOnHamburger = hamburgerBtn.contains(event.target);
+
+//     if (
+//       !isClickInsideSidebar &&
+//       !isClickOnHamburger &&
+//       sidebar.classList.contains('active')
+//     ) {
+//       sidebar.classList.remove('active');
+//       container.classList.remove('shifted');
+//     }
+//   });
+
+//   submenuLinks.forEach((link) => {
+//     link.addEventListener('click', (event) => {
+//       const submenu = link.nextElementSibling;
+//       const parentLi = link.parentElement;
+//       const parentHref = link.getAttribute('href');
+
+//       if (submenu) {
+//         // Si el enlace tiene un submenú
+//         event.preventDefault(); // Evita la navegación predeterminada
+
+//         submenu.classList.toggle('active'); // Alterna la visibilidad del submenú
+//         parentLi.classList.toggle('active'); // Cambia la clase active del li padre
+
+//         // Cierra otros submenús abiertos
+//         submenuLinks.forEach((otherLink) => {
+//           const otherSubmenu = otherLink.nextElementSibling;
+//           const otherParentLi = otherLink.parentElement;
+
+//           if (
+//             otherSubmenu &&
+//             otherSubmenu !== submenu &&
+//             otherSubmenu.classList.contains('active')
+//           ) {
+//             otherSubmenu.classList.remove('active'); // Cierra el otro submenú
+//             otherParentLi.classList.remove('active'); // Remueve la clase active del padre
+//           }
+//         });
+//       } else {
+//         // Si el enlace es un hash (por ejemplo, #section-id)
+//         if (parentHref.startsWith('#')) {
+//           event.preventDefault(); // Previene la navegación predeterminada
+
+//           const targetElement = document.querySelector(parentHref);
+//           if (targetElement) {
+//             // Cierra el sidebar y hace scroll hacia la sección
+//             sidebar.classList.remove('active');
+//             container.classList.remove('shifted');
+
+//             // Desplazamiento suave hacia la sección indicada
+//             targetElement.scrollIntoView({
+//               behavior: 'smooth',
+//               block: 'start',
+//             });
+//           }
+//         } else {
+//           // Si el enlace es a una página diferente, navega normalmente
+//           window.location.href = parentHref;
+//         }
+//       }
+//     });
+//   });
+
+//   // Cierra el sidebar al redimensionar la ventana
+//   window.addEventListener('resize', () => {
+//     if (window.innerWidth > 768 && sidebar.classList.contains('active')) {
+//       sidebar.classList.remove('active');
+//       container.classList.remove('shifted');
+//     }
+//   });
+// });
+
 document.addEventListener('DOMContentLoaded', () => {
   const hamburgerBtn = document.getElementById('hamburgerBtn');
   const sidebar = document.getElementById('sidebar');
   const container = document.querySelector('.container');
   const submenuLinks = document.querySelectorAll('.sidebar ul li > a');
 
-  // Función para abrir/cerrar el sidebar al hacer clic en el botón hamburguesa
+  // Abre/cierra el sidebar al hacer clic en el botón hamburguesa
   hamburgerBtn.addEventListener('click', () => {
     sidebar.classList.toggle('active');
     container.classList.toggle('shifted');
   });
 
-  // Función para cerrar el sidebar al hacer clic fuera de él
+  // Cierra el sidebar al hacer clic fuera de él
   document.addEventListener('click', (event) => {
     const isClickInsideSidebar = sidebar.contains(event.target);
     const isClickOnHamburger = hamburgerBtn.contains(event.target);
 
-    // Si el clic es fuera del sidebar y no es en el botón hamburguesa, cierra el sidebar
     if (
       !isClickInsideSidebar &&
       !isClickOnHamburger &&
@@ -26,21 +113,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Función para abrir/cerrar submenús
   submenuLinks.forEach((link) => {
     link.addEventListener('click', (event) => {
-      const submenu = link.nextElementSibling; // Seleccionar el submenú siguiente al link
-      const parentLi = link.parentElement; // Seleccionar el elemento padre li
+      const submenu = link.nextElementSibling;
+      const parentLi = link.parentElement;
+      const parentHref = link.getAttribute('href');
 
-      // Si el enlace tiene submenú, alterna su visibilidad
       if (submenu) {
-        event.preventDefault(); // Prevenir la acción predeterminada del enlace
-        submenu.classList.toggle('active'); // Alternar la clase 'active' del submenú
+        // Si el enlace tiene un submenú
+        event.preventDefault(); // Evita la navegación predeterminada
 
-        // Alternar la clase 'active' en el li padre para cambiar el color de fondo
-        parentLi.classList.toggle('active');
+        submenu.classList.toggle('active'); // Alterna la visibilidad del submenú
+        parentLi.classList.toggle('active'); // Cambia la clase active del li padre
 
-        // Cerrar otros submenús abiertos
+        // Cierra otros submenús abiertos
         submenuLinks.forEach((otherLink) => {
           const otherSubmenu = otherLink.nextElementSibling;
           const otherParentLi = otherLink.parentElement;
@@ -50,18 +136,36 @@ document.addEventListener('DOMContentLoaded', () => {
             otherSubmenu !== submenu &&
             otherSubmenu.classList.contains('active')
           ) {
-            otherSubmenu.classList.remove('active'); // Cerrar el otro submenú
-            otherParentLi.classList.remove('active'); // Remover clase active del padre
+            otherSubmenu.classList.remove('active'); // Cierra el otro submenú
+            otherParentLi.classList.remove('active'); // Remueve la clase active del padre
           }
         });
       } else {
-        // Si el enlace no tiene submenú, redirige a la ruta
-        window.location.href = link.href; // Navegar a la ruta correspondiente
+        // Si el enlace es un hash (por ejemplo, #section-id)
+        if (parentHref.startsWith('#')) {
+          event.preventDefault(); // Previene la navegación predeterminada
+
+          const targetElement = document.querySelector(parentHref);
+          if (targetElement) {
+            // Cierra el sidebar y hace scroll hacia la sección
+            sidebar.classList.remove('active');
+            container.classList.remove('shifted');
+
+            // Desplazamiento suave hacia la sección indicada
+            targetElement.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+            });
+          }
+        } else {
+          // Si el enlace es a una página diferente, navega normalmente
+          window.location.href = parentHref;
+        }
       }
     });
   });
 
-  // Cerrar el sidebar cuando se cambia el tamaño de la ventana
+  // Cierra el sidebar al redimensionar la ventana
   window.addEventListener('resize', () => {
     if (window.innerWidth > 768 && sidebar.classList.contains('active')) {
       sidebar.classList.remove('active');

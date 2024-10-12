@@ -3,29 +3,26 @@
     <ul>
         {# Enlaces de rutas públicas #}
         {% for route in publicRoutes %}
-            <li>
-                <a href="{{ route.path }}">
-                    <i class="fas fa-hospital-alt"></i> <!-- Icono de hospital -->
-                    {{ route.title }}
-                </a>
-                {% if route.subRoutes %}
-                    <ul class="submenu"> <!-- Asegúrate de que el submenú tenga la clase 'submenu' -->
-                        {% for subRoute in route.subRoutes %}
-                            <li>
-                                <a href="{{ subRoute.path }}">
-                                    <i class="fas fa-notes-medical"></i> <!-- Icono de nota médica -->
-                                    {{ subRoute.title }}
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </li>
-        {% endfor %}
+                <li>
+                  <a href="{{ route.path }}" class=" {% if route.subRoutes %}has-submenu{% endif %}">{{ route.title }}</a>
+                    {% if route.subRoutes %}
+                      
+                            <ul class="submenu"> <!-- Clase para el submenú -->
+                                {% for subRoute in route.subRoutes %}
+                                    <li>
+                                        <a href="{{ route.path }}#{{ subRoute.id }}" class="submenuLink">{{ subRoute.title }}</a> {# Enlace a la sección específica #}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+              
+                    {% endif %}
+                </li>
+            {% endfor %}
+
         {# Enlaces de rutas privadas #}
-  {% if isAuthenticated %}
+        {% if isAuthenticated %}
             {% for route in privateRoutes %}
-                {% if route.roles is not defined or route.roles|length == 0 or (userRoles | intersect(route.roles)|length > 0) %}
+                {% if hasAccess(userRoles, route) %}
                     <li>
                         <a href="{{ route.path }}">
                             <i class="fas fa-hospital-alt"></i>
@@ -34,12 +31,24 @@
                         {% if route.subRoutes %}
                             <ul class="submenu">
                                 {% for subRoute in route.subRoutes %}
-                                    {% if subRoute.roles is not defined or subRoute.roles|length == 0 or (userRoles | intersect(subRoute.roles)|length > 0) %}
+                                    {% if hasAccess(userRoles, subRoute) %}
                                         <li>
                                             <a href="{{ subRoute.path }}">
                                                 <i class="fas fa-notes-medical"></i>
                                                 {{ subRoute.title }}
                                             </a>
+                                            {% if subRoute.subRoutes %}  {# Verifica si hay subrutas para este submenú #}
+                                                <ul class="submenu">
+                                                    {% for subSubRoute in subRoute.subRoutes %}
+                                                        <li>
+                                                            <a href="{{ subSubRoute.path }}">
+                                                                <i class="fas fa-notes-medical"></i>
+                                                                {{ subSubRoute.title }}
+                                                            </a>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
                                         </li>
                                     {% endif %}
                                 {% endfor %}

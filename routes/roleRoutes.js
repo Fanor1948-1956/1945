@@ -6,7 +6,7 @@ const Permission = require('../models/permissionModel'); // Importa el modelo de
 
 
 // Ruta para ver todos los roles en formato JSON
-router.get('/api/all-roles', roleController.getAllRoles);
+router.get('/api', roleController.getAllRoles);
 
 // Ruta para renderizar la vista de roles
 router.get('/all-roles', async (req, res) => {

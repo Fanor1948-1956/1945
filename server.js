@@ -20,7 +20,7 @@ const specialtyRoutes = require('./routes/specialtyRoutes');
 // Importar la función
 
 const app = express();
-const port = 4000;
+const port = 8000;
 
 // Conectar a la base de datos
 connectDB();

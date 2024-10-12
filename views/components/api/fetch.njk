@@ -1,4 +1,4 @@
-
+<h1>Lista de Usuarios</h1>
 <hr />
 
 <!-- Botón para agregar un nuevo usuario -->
@@ -28,64 +28,109 @@
         <button id="cancelDeleteButton">Cancelar</button>
     </div>
 </div>
+<!-- Modal para informar que es necesario reiniciar la sesión -->
+<div id="sessionRestartModal" class="modal">
+    <div class="modal-content">
+        <h2>Es necesario reiniciar la sesión</h2>
+        <p>Para aplicar los cambios en roles y permisos, es necesario que cierres sesión y vuelvas a ingresar.</p>
+    </div>
+</div>
 
 <script>
 $(document).ready(function() {
-    let userToDelete = null; // Variable para almacenar el usuario que se desea eliminar
+    // Variable para almacenar el usuario que se desea eliminar
+    let userToDelete = null;
 
     // Obtener usuarios cuando se carga la página
     fetchUsers();
 
-    // Eventos para manejar acciones de usuario
-    handleUserActions();
+    // Evento para editar un usuario
+    $(document).on('click', '.edit-button', function(e) {
+        e.preventDefault();
+        const userId = $(this).data('user-id');
+        getUserInfo(userId); // Obtener datos del usuario
+    });
 
-    // Función para manejar las acciones de usuario
-    function handleUserActions() {
-        // Evento para editar un usuario
-        $(document).on('click', '.edit-button', function(e) {
-            e.preventDefault();
-            const userId = $(this).data('user-id');
-            getUserInfo(userId); // Obtener datos del usuario
-        });
+    // Evento para eliminar un usuario
+    $(document).on('click', '.delete-button', function() {
+        const userId = $(this).data('user-id');
+        const userRow = $(this).closest('tr'); // Obtener la fila del usuario
+        userToDelete = { id: userId, row: userRow }; // Almacenar información del usuario a eliminar
+        Modal.open('#deleteUserModal'); // Abrir el modal de confirmación
+    });
 
-        // Evento para eliminar un usuario
-        $(document).on('click', '.delete-button', function() {
-            const userId = $(this).data('user-id');
-            const userRow = $(this).closest('tr'); // Obtener la fila del usuario
-            userToDelete = { id: userId, row: userRow }; // Almacenar información del usuario a eliminar
-            Modal.open('#deleteUserModal'); // Abrir el modal de confirmación
-        });
-
-        // Manejar el evento de confirmación de eliminación
-        $('#confirmDeleteButton').click(function() {
-            if (userToDelete) {
-                deleteUser(userToDelete.id, userToDelete.row);
-                Modal.close('#deleteUserModal'); // Cerrar el modal después de confirmar
-                userToDelete = null; // Reiniciar la variable
-            }
-        });
-
-        // Manejar el evento de cancelación de eliminación
-        $('#cancelDeleteButton').click(function() {
-            Modal.close('#deleteUserModal'); // Cerrar el modal sin eliminar
+    // Manejar el evento de confirmación de eliminación
+    $('#confirmDeleteButton').click(function() {
+        if (userToDelete) {
+            deleteUser(userToDelete.id, userToDelete.row);
+            Modal.close('#deleteUserModal'); // Cerrar el modal después de confirmar
             userToDelete = null; // Reiniciar la variable
-        });
-    }
+        }
+    });
 
-    // Función para obtener usuarios desde el servidor y renderizar la tabla
+    // Manejar el evento de cancelación de eliminación
+    $('#cancelDeleteButton').click(function() {
+        Modal.close('#deleteUserModal'); // Cerrar el modal sin eliminar
+        userToDelete = null; // Reiniciar la variable
+    });
+
+    // Obtener y renderizar la tabla de usuarios
     function fetchUsers() {
         apiFetch('/users/getUsers', 'GET')
-            .then(renderUserTable) // Llama a la función renderUserTable
+            .then(renderUserTable)
             .catch(function(xhr) {
                 console.error('Error al obtener los usuarios:', xhr);
             });
+    }
+
+    // Función para renderizar la tabla de usuarios
+    function renderUserTable(users) {
+        let tableHtml = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellidos</th>
+                        <th>Email</th>
+                        <th>Género</th>
+                        <th>Roles</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        users.forEach(user => {
+            let rolesHtml = '<ul>';
+            user.roles.forEach(role => {
+                rolesHtml += `<li>${role.name}</li>`;
+            });
+            rolesHtml += '</ul>';
+
+            tableHtml += `
+                <tr>
+                    <td>${user.name}</td>
+                    <td>${user.surnames}</td>
+                    <td>${user.email}</td>
+                    <td>${user.gender}</td>
+                    <td>${rolesHtml}</td>
+                    <td>
+                        <button class="edit-button" data-user-id="${user._id}">Editar</button>
+                        <button class="delete-button" data-user-id="${user._id}">Eliminar</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tableHtml += '</tbody></table>';
+        $('#userTableContainer').html(tableHtml);
     }
 
     // Función para obtener información del usuario
     function getUserInfo(userId) {
         apiFetch(`/users/showInfo/${userId}`, 'GET')
             .then(({ user, allRoles, isPasswordHashed }) => {
-                renderEditForm(user, allRoles, userId, isPasswordHashed); // Renderizar formulario de edición
+                renderEditForm(user, allRoles, userId, isPasswordHashed);
                 Modal.open('#editUserModal'); // Abrir el modal de edición
             })
             .catch(() => {
@@ -127,50 +172,68 @@ $(document).ready(function() {
     }
 
     // Envío del formulario de edición
-    $(document).on('submit', '#userUpdateForm', function(e) {
-        e.preventDefault();
-        const userId = $(this).data('user-id');
+$(document).on('submit', '#userUpdateForm', function(e) {
+    e.preventDefault();
+    const userId = $(this).data('user-id');
 
-        const userData = {
-            name: $('#name').val(),
-            surnames: $('#surnames').val(),
-            email: $('#email').val(),
-            gender: $('#gender').val(),
-            roles: $('input[name="roles"]:checked').map(function() {
-                return this.value;
-            }).get()
-        };
+    const userData = {
+        name: $('#name').val(),
+        surnames: $('#surnames').val(),
+        email: $('#email').val(),
+        gender: $('#gender').val(),
+        roles: $('input[name="roles"]:checked').map(function() {
+            return this.value;
+        }).get()
+    };
 
-        apiFetch(`/users/update/${userId}`, 'PUT', userData)
-            .then(response => {
-                showSnackbar(response.message, true);
-                fetchUsers(); // Refrescar la lista de usuarios
-                setTimeout(() => {
-                    Modal.close('#editUserModal'); // Cerrar después de 2 segundos
-                }, 2000);
-            })
-            .catch(xhr => {
-                const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al actualizar el usuario';
-                showSnackbar(errorMessage, false);
-            });
-    });
+    // Actualizar datos del usuario
+    apiFetch(`/users/update/${userId}`, 'PUT', userData)
+        .then(response => {
+            // Mostrar el snackbar con mensaje de éxito
+            showSnackbar(response.message, true);
 
-    // Función para eliminar un usuario
-    function deleteUser(userId, userRow) {
-        apiFetch(`/users/${userId}`, 'DELETE')
-            .then(response => {
-                if (response.message) {
-                    showSnackbar(response.message, true); // Mostrar mensaje de éxito
-                }
-                userRow.remove(); // Eliminar la fila de la tabla directamente
-            })
-            .catch(xhr => {
-                const errorMessage = xhr.responseJSON && xhr.responseJSON.message 
-                    ? xhr.responseJSON.message 
-                    : 'Error al eliminar el usuario'; // Mensaje predeterminado si no hay respuesta
-                showSnackbar(errorMessage, false); // Mostrar mensaje de error
-            });
-    }
+            // Refrescar la lista de usuarios
+            fetchUsers();
+
+            // Cerrar el modal de edición después de mostrar el snackbar
+            setTimeout(() => {
+                Modal.close('#editUserModal'); // Cerrar el modal de edición
+
+                // Mostrar el modal informativo sobre el reinicio de sesión
+                Modal.open('#sessionRestartModal');
+            }, 2000); // Cierra el modal de edición después de 2 segundos
+
+            // Cerrar el modal informativo y redirigir a la página de logout después de unos segundos
+            setTimeout(() => {
+                Modal.close('#sessionRestartModal'); // Cerrar el modal de sesión
+                window.location.href = '/auth/logout'; // Redirigir a logout
+            }, 5000); // Esperar 5 segundos para que el usuario vea el mensaje
+        })
+        .catch(xhr => {
+            const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al actualizar el usuario';
+            showSnackbar(errorMessage, false); // Mostrar mensaje de error
+        });
 });
+});
+
+// Función para eliminar un usuario
+function deleteUser(userId, userRow) {
+    apiFetch(`/users/${userId}`, 'DELETE')
+        .then(response => {
+            // Comprobar si hay un mensaje en la respuesta del servidor
+            if (response.message) {
+                showSnackbar(response.message, true); // Mostrar mensaje de éxito
+            }
+            userRow.remove(); // Eliminar la fila de la tabla directamente
+        })
+        .catch(xhr => {
+            // Manejo de errores
+            const errorMessage = xhr.responseJSON && xhr.responseJSON.message 
+                ? xhr.responseJSON.message 
+                : 'Error al eliminar el usuario'; // Mensaje predeterminado si no hay respuesta
+            showSnackbar(errorMessage, false); // Mostrar mensaje de error
+        });
+}
+
 
 </script>

@@ -1,0 +1,105 @@
+{% extends "layouts/privateLayout.njk" %}
+
+{% block content %}
+<h1>Lista de Roles</h1>
+<hr />
+
+<section>
+    <div id="roleTableContainer"></div> <!-- Contenedor donde se renderizará la tabla de roles -->
+</section>
+
+<!-- Snackbar para mostrar mensajes -->
+<div id="snackbar" class="snackbar"></div>
+
+<!-- Modal para ver detalles de un rol -->
+<div id="viewRoleModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Detalles del Rol</h2>
+        <div id="viewRoleFormContainer"></div>
+    </div>
+</div>
+
+<script type="module">
+    import { renderTable } from './js/components/common/table.js'; // Ajusta el path según la estructura de tu proyecto
+
+    $(document).ready(function() {
+        let currentPage = 1; // Página actual
+        const itemsPerPage = 5; // Número de elementos por página
+
+        // Obtener roles cuando se carga la página
+        fetchRoles();
+
+        function fetchRoles() {
+            apiFetch('/roles/api', 'GET')
+                .then(response => {
+                    console.log('Respuesta de la API:', response); // Imprime la respuesta de la API
+                    const roles = response.roles;
+                    renderTableWithPagination(roles); // Renderizar tabla con paginación
+                })
+                .catch(function(xhr) {
+                    console.error('Error al obtener los roles:', xhr);
+                    showSnackbar('Error al cargar los roles', false);
+                });
+        }
+
+        // Función para renderizar la tabla con paginación
+        function renderTableWithPagination(data) {
+            const headers = ['Nombre del Rol', 'Alias', 'Descripción', 'Permisos'];
+
+            // Renderizar la tabla
+            const tableHtml = renderTable(headers, data, currentPage, itemsPerPage, onPageChange);
+            $('#roleTableContainer').html(tableHtml); // Esto ahora incluye la tabla y la paginación
+        }
+
+        // Función que se ejecuta cuando cambia la página
+        function onPageChange(page) {
+            currentPage = page; // Actualizar la página actual
+            fetchRoles(); // Volver a cargar los roles con la nueva página
+        }
+
+        // Manejar clic en el botón de ver detalles
+        $(document).on('click', '.details-button', function() {
+            const roleId = $(this).data('id'); // Obtener el ID del rol a ver
+            loadRoleDetails(roleId); // Cargar los detalles del rol
+            Modal.open('#viewRoleModal'); // Abrir el modal de detalles
+        });
+
+        // Cargar los detalles del rol
+        function loadRoleDetails(roleId) {
+            console.log(`Cargando detalles para el rol ID: ${roleId}`); // Verifica el ID
+            apiFetch(`/roles/detail-role/${roleId}`, 'GET') // Obtener los detalles del rol
+                .then(response => {
+                    console.log('Detalles del rol recibidos:', response); // Imprime la respuesta completa
+
+                    // Extraer el rol de la respuesta
+                    const role = response.role;
+
+                    // Generar el HTML para los permisos
+                    const permissionsHtml = role.permissions.map(permission => `
+                        <li>${permission.name}</li>
+                    `).join('');
+
+                    // Generar el HTML del modal de visualización
+                    $('#viewRoleFormContainer').html(`
+                        <div>
+                            <p><strong>Nombre del Rol:</strong> ${role.name}</p>
+                            <p><strong>Alias:</strong> ${role.alias}</p>
+                            <p><strong>Descripción:</strong> ${role.description || 'N/A'}</p>
+                            <p><strong>Permisos:</strong></p>
+                            <ul>${permissionsHtml}</ul>
+                        </div>
+                    `);
+
+                    // Abrir el modal después de cargar los detalles
+                    Modal.open('#viewRoleModal');
+                })
+                .catch(xhr => {
+                    console.error('Error al cargar los detalles del rol:', xhr);
+                    showSnackbar('Error al cargar los detalles del rol', false);
+                });
+        }
+    });
+</script>
+
+{% endblock %}

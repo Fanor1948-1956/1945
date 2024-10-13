@@ -1,3 +1,4 @@
+const permissionModel = require('../models/permissionModel');
 const Role = require('../models/roleModel');
 
 // Create a new role
@@ -34,11 +35,27 @@ exports.getAllRoles = async (req, res) => {
     });
   }
 };
+exports.showRoleInfo = async (req, res) => {
+  const roleId = req.params.id;
+  try {
+    const role = await Role.findById(roleId).populate('permissions');
+    const allPermission = await permissionModel.find();
 
+    if (!user) {
+      return res.status(404).json({ message: 'Rol  no encontrado' });
+    }
+
+    res.json({ role, allPermission });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener el Rol' });
+  }
+};
+// Get role by ID
 // Get role by ID
 exports.getRoleById = async (req, res) => {
   try {
-    const role = await Role.findById(req.params.id).populate('permissions');
+    const roleId = req.params.roleId; // Asegúrate de que el parámetro es correcto
+    const role = await Role.findById(roleId).populate('permissions');
     if (!role) {
       return res.status(404).json({
         success: false,

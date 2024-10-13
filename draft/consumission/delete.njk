@@ -11,7 +11,16 @@
 
 <!-- Snackbar para mostrar mensajes -->
 <div id="snackbar" class="snackbar"></div>
-
+<!-- Modal de confirmación para eliminar rol -->
+<div id="confirmDeleteModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Confirmar Eliminación</h2>
+        <p>¿Estás seguro de que deseas eliminar este rol?</p>
+        <button id="confirmDeleteButton">Eliminar</button>
+        <button id="cancelDeleteButton">Cancelar</button>
+    </div>
+</div>
 
 <script type="module">
 import { renderTable } from './js/components/common/table.js'; // Ajusta la ruta según sea necesario
@@ -29,8 +38,6 @@ $(document).ready(function() {
     // Obtener roles cuando se carga la página
     fetchRoles();
 
-
-
     function fetchRoles() {
         apiFetch('/roles/api', 'GET')
             .then(response => {
@@ -44,9 +51,46 @@ $(document).ready(function() {
                 showSnackbar('Error al cargar los roles', false);
             });
     }
+   // Manejar clic en botones de acción (ver, editar, desactivar y eliminar)
+    $(document).on('click', '.delete-button', function() {
+        roleToDelete = $(this).data('id'); // Guardar el ID del rol a eliminar
+        Modal.open('#confirmDeleteModal'); // Abrir el modal de confirmación
+    });
+  
+    // Confirmar eliminación
+    $('#confirmDeleteButton').click(function() {
+        deleteItem(roleToDelete); // Llamar a la función de eliminar
+        Modal.close('#confirmDeleteModal'); // Cerrar el modal de confirmación
+    });
 
-    
-        // Función para renderizar roles y paginación
+    // Cancelar eliminación
+    $('#cancelDeleteButton').click(function() {
+        Modal.close('#confirmDeleteModal'); // Cerrar el modal de confirmación
+    });
+
+    // Función para eliminar un rol
+    function deleteItem(roleId) {
+        apiFetch(`/roles/delete-role/${roleId}`, 'DELETE')
+            .then(response => {
+                if (response.success) {
+                    showSnackbar(response.message, true); // Mostrar mensaje de éxito
+                    fetchRoles(); // Refrescar la lista de roles
+                } else {
+                    // Manejar el caso donde la respuesta no indica éxito
+                    showSnackbar('Error al eliminar el rol', false);
+                }
+            })
+            .catch(xhr => {
+                const errorMessage = xhr.responseJSON && xhr.responseJSON.message 
+                    ? xhr.responseJSON.message 
+                    : 'Error al eliminar el rol'; // Mensaje predeterminado si no hay respuesta
+                showSnackbar(errorMessage, false); // Mostrar mensaje de error
+            });
+    }
+
+
+
+      // Función para renderizar roles y paginación
     function renderRoles() {
         const tableData = allRoles.map(role => ({
             _id: role._id, // Asegúrate de que el ID esté aquí
@@ -76,8 +120,9 @@ $(document).ready(function() {
         const newPage = parseInt($(this).data('page'));
         handlePageChange(newPage);
     });
-
-
+  // Hacer la función onAction accesible globalmente
+    window.onAction = onAction; // Esto la hace accesible globalmente
+  
 });
 </script>
 

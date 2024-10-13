@@ -23,8 +23,19 @@
     </div>
 </div>
 
-<script>
+<script type="module">
+import { renderTable } from './js/components/common/table.js'; // Ajusta la ruta según sea necesario
+import { renderPagination } from './js/components/common/pagination.js'; // Ajusta la ruta según sea necesario
+
 $(document).ready(function() {
+    let currentPage = 1; // Página actual
+    const rolesPerPage = 5; // Número de roles por página
+    let allRoles = []; // Almacenar todos los roles
+    let roleToDelete = null; // Almacenar el ID del rol a eliminar
+
+    // Definición de encabezados
+    const headers = ['Nombre del Rol', 'Alias', 'Descripción', 'Permisos'];
+
     // Obtener roles cuando se carga la página
     fetchRoles();
 
@@ -37,49 +48,15 @@ $(document).ready(function() {
     function fetchRoles() {
         apiFetch('/roles/api', 'GET')
             .then(response => {
-                console.log('Respuesta de la API:', response); // Imprime la respuesta de la API
-                renderRoleTable(response.roles); // Asegúrate de pasar el arreglo de roles
+                console.log('Respuesta de la API:', response);
+                allRoles = response.roles; // Almacenar todos los roles
+                console.log('Roles cargados:', allRoles); // Imprimir roles en consola
+                renderRoles(); // Renderizar la tabla con la paginación
             })
             .catch(function(xhr) {
                 console.error('Error al obtener los roles:', xhr);
                 showSnackbar('Error al cargar los roles', false);
             });
-    }
-
-    // Función para renderizar la tabla de roles
-    function renderRoleTable(roles) {
-        let tableHtml = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nombre del Rol</th>
-                        <th>Alias</th>
-                        <th>Descripción</th>
-                        <th>Permisos</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-
-        roles.forEach(role => {
-            let permissionsHtml = '<ul>';
-            role.permissions.forEach(permission => {
-                permissionsHtml += `<li>${permission.name}</li>`; // Agregar cada permiso a la lista
-            });
-            permissionsHtml += '</ul>';
-
-            tableHtml += `
-                <tr>
-                    <td>${role.name}</td>
-                    <td>${role.alias}</td> <!-- Agregar alias -->
-                    <td>${role.description || 'N/A'}</td> <!-- Agregar descripción -->
-                    <td>${permissionsHtml}</td>
-                </tr>
-            `;
-        });
-
-        tableHtml += '</tbody></table>';
-        $('#roleTableContainer').html(tableHtml); // Renderizar la tabla en el contenedor
     }
 
     // Renderizar el formulario de creación de rol
@@ -97,13 +74,13 @@ $(document).ready(function() {
                     <form id="roleCreateForm">
                         <label for="name">Nombre del Rol:</label>
                         <input type="text" id="name" name="name" required>
-                        
+
                         <label for="alias">Alias:</label>
                         <input type="text" id="alias" name="alias" required>
 
                         <label for="description">Descripción:</label>
                         <textarea id="description" name="description"></textarea>
-                        
+
                         <fieldset>
                             <legend>Permisos:</legend>
                             ${permissionsHtml}
@@ -144,6 +121,38 @@ $(document).ready(function() {
                 showSnackbar(errorMessage, false);
             });
     });
+        // Función para renderizar roles y paginación
+    function renderRoles() {
+        const tableData = allRoles.map(role => ({
+            _id: role._id, // Asegúrate de que el ID esté aquí
+            name: role.name,
+            alias: role.alias,
+            description: role.description || 'N/A',
+            permissions: role.permissions ? role.permissions.map(p => p.name).join(', ') : 'N/A'
+        }));
+
+        // Renderizar la tabla
+        const tableHtml = renderTable(headers, tableData, currentPage, rolesPerPage);
+        $('#roleTableContainer').html(tableHtml);
+
+        // Renderizar la paginación
+        const paginationHtml = renderPagination(currentPage, allRoles.length, rolesPerPage, handlePageChange);
+        $('#roleTableContainer').append(paginationHtml); // Agregar la paginación después de la tabla
+    }
+
+    // Manejar el cambio de página
+    function handlePageChange(newPage) {
+        currentPage = newPage; // Actualizar la página actual
+        renderRoles(); // Renderizar roles y paginación nuevamente
+    }
+
+    // Manejar clic en botones de paginación
+    $(document).on('click', '.page-button', function() {
+        const newPage = parseInt($(this).data('page'));
+        handlePageChange(newPage);
+    });
+
+
 });
 </script>
 

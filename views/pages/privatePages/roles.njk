@@ -4,8 +4,6 @@
 <h1>Lista de Roles</h1>
 <hr />
 
-<!-- Botón para registrar un nuevo rol -->
-<button id="addRoleButton">Registrar Rol</button>
 
 <section>
     <div id="roleTableContainer"></div> <!-- Contenedor donde se renderizará la tabla de roles -->
@@ -14,25 +12,6 @@
 <!-- Snackbar para mostrar mensajes -->
 <div id="snackbar" class="snackbar"></div>
 
-<!-- Modal para registrar un nuevo rol -->
-<div id="createRoleModal" class="modal">
-    <div class="modal-content">
-        <span class="close-button">&times;</span>
-        <h2>Registrar Nuevo Rol</h2>
-        <div id="createRoleFormContainer"></div>
-    </div>
-</div>
-
-<!-- Modal de confirmación para eliminar rol -->
-<div id="confirmDeleteModal" class="modal">
-    <div class="modal-content">
-        <span class="close-button">&times;</span>
-        <h2>Confirmar Eliminación</h2>
-        <p>¿Estás seguro de que deseas eliminar este rol?</p>
-        <button id="confirmDeleteButton">Eliminar</button>
-        <button id="cancelDeleteButton">Cancelar</button>
-    </div>
-</div>
 
 <script type="module">
 import { renderTable } from './js/components/common/table.js'; // Ajusta la ruta según sea necesario
@@ -40,21 +19,17 @@ import { renderPagination } from './js/components/common/pagination.js'; // Ajus
 
 $(document).ready(function() {
     let currentPage = 1; // Página actual
-    const rolesPerPage = 10; // Número de roles por página
+    const rolesPerPage = 5; // Número de roles por página
     let allRoles = []; // Almacenar todos los roles
     let roleToDelete = null; // Almacenar el ID del rol a eliminar
 
     // Definición de encabezados
-    const headers = ['Nombre del Rol', 'Alias', 'Descripción', 'Permisos', 'Acciones'];
+    const headers = ['Nombre del Rol', 'Alias', 'Descripción', 'Permisos'];
 
     // Obtener roles cuando se carga la página
     fetchRoles();
 
-    // Manejar evento para abrir el modal de registrar rol
-    $('#addRoleButton').click(function() {
-        renderCreateRoleForm(); // Renderizar formulario de creación
-        Modal.open('#createRoleModal'); // Abrir el modal de creación
-    });
+
 
     function fetchRoles() {
         apiFetch('/roles/api', 'GET')
@@ -70,7 +45,8 @@ $(document).ready(function() {
             });
     }
 
-    // Función para renderizar roles y paginación
+    
+        // Función para renderizar roles y paginación
     function renderRoles() {
         const tableData = allRoles.map(role => ({
             _id: role._id, // Asegúrate de que el ID esté aquí
@@ -101,108 +77,7 @@ $(document).ready(function() {
         handlePageChange(newPage);
     });
 
-    // Renderizar el formulario de creación de rol
-    function renderCreateRoleForm() {
-        apiFetch('/permissions/api', 'GET')
-            .then(permissions => {
-                const permissionsHtml = permissions.map(permission => `
-                    <label>
-                        <input type="checkbox" name="permissions" value="${permission._id}">
-                        ${permission.name}
-                    </label>
-                `).join('');
 
-                $('#createRoleFormContainer').html(`
-                    <form id="roleCreateForm">
-                        <label for="name">Nombre del Rol:</label>
-                        <input type="text" id="name" name="name" required>
-
-                        <label for="alias">Alias:</label>
-                        <input type="text" id="alias" name="alias" required>
-
-                        <label for="description">Descripción:</label>
-                        <textarea id="description" name="description"></textarea>
-
-                        <fieldset>
-                            <legend>Permisos:</legend>
-                            ${permissionsHtml}
-                        </fieldset>
-                        <button type="submit">Crear Rol</button>
-                    </form>
-                `);
-            })
-            .catch(xhr => {
-                const errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : 'Error al obtener los permisos';
-                showSnackbar(errorMessage, false);
-            });
-    }
-
-    // Envío del formulario de creación
-    $(document).on('submit', '#roleCreateForm', function(e) {
-        e.preventDefault();
-
-        const permissions = $('input[name="permissions"]:checked').map(function() {
-            return this.value;
-        }).get();
-
-        const newRoleData = {
-            name: $('#name').val(),
-            alias: $('#alias').val(),
-            description: $('#description').val(),
-            permissions: permissions
-        };
-
-        apiFetch('/roles/create-role', 'POST', newRoleData)
-            .then(response => {
-                showSnackbar(response.message, true);
-                fetchRoles(); // Refrescar la lista de roles
-                Modal.close('#createRoleModal'); // Cerrar el modal de creación
-            })
-            .catch(xhr => {
-                const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al crear el rol';
-                showSnackbar(errorMessage, false);
-            });
-    });
-
-    // Manejar clic en botones de acción (ver, editar, desactivar y eliminar)
-    $(document).on('click', '.delete-button', function() {
-        roleToDelete = $(this).data('id'); // Guardar el ID del rol a eliminar
-        Modal.open('#confirmDeleteModal'); // Abrir el modal de confirmación
-    });
-
-    // Confirmar eliminación
-    $('#confirmDeleteButton').click(function() {
-        deleteItem(roleToDelete); // Llamar a la función de eliminar
-        Modal.close('#confirmDeleteModal'); // Cerrar el modal de confirmación
-    });
-
-    // Cancelar eliminación
-    $('#cancelDeleteButton').click(function() {
-        Modal.close('#confirmDeleteModal'); // Cerrar el modal de confirmación
-    });
-
-    // Función para eliminar un rol
-    function deleteItem(roleId) {
-        apiFetch(`/roles/delete-role/${roleId}`, 'DELETE')
-            .then(response => {
-                if (response.success) {
-                    showSnackbar(response.message, true); // Mostrar mensaje de éxito
-                    fetchRoles(); // Refrescar la lista de roles
-                } else {
-                    // Manejar el caso donde la respuesta no indica éxito
-                    showSnackbar('Error al eliminar el rol', false);
-                }
-            })
-            .catch(xhr => {
-                const errorMessage = xhr.responseJSON && xhr.responseJSON.message 
-                    ? xhr.responseJSON.message 
-                    : 'Error al eliminar el rol'; // Mensaje predeterminado si no hay respuesta
-                showSnackbar(errorMessage, false); // Mostrar mensaje de error
-            });
-    }
-
-    // Hacer la función onAction accesible globalmente
-    window.onAction = onAction; // Esto la hace accesible globalmente
 });
 </script>
 

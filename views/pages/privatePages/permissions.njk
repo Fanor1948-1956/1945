@@ -1,89 +1,76 @@
 {% extends "layouts/privateLayout.njk" %}
+
 {% block content %}
-    <h1>Lista de Permisos</h1>
-
-    <button id="addPermissionBtn">Agregar Permiso</button>
-    
-    <div id="permissionTableContainer"></div>
+<h1>Lista de Permisos</h1>
+<button id="addPermissionBtn">Agregar Permiso</button>
+<div id="permissionTableContainer"></div>
 <div id="snackbar" class="snackbar"></div>
-    <!-- Modal para agregar permisos -->
-    <div class="modal" id="addPermissionModal" style="display:none;">
-        <div class="modal-content">
-            <span class="close-button">&times;</span> <!-- Botón para cerrar el modal -->
-            <h2>Agregar Permiso</h2>
-            <label for="permissionName">Nombre:</label>
-            <input type="text" id="permissionName" required>
-            
-            <label for="permissionDescription">Descripción:</label>
-            <input type="text" id="permissionDescription" required>
-            
-            <button id="savePermissionBtn">Guardar</button>
-        </div>
-    </div>
 
-    <!-- Snackbar para mostrar mensajes -->
-    <div id="snackbar"></div>
-
-    <script type="module">
-        import { fetchAndRenderData } from './js/apiUserManager.js';
-        import { renderTable } from './js/renderTable.js'; // Asegúrate de la ruta correcta
-        import { registerData } from './js/apiUserManager.js'; // Importa tu función para registrar datos
-        import './js/modal.js'; // Importar el script del modal
-        import './js/snackbar.js'; // Importar el snackbar
-
-        // Configuración de las columnas para permisos
-        const permissionHeaders = {
-            name: 'Nombre',
-            description: 'Descripción',
-            isActive: 'Estado',
-        };
-
-        // Evento para el botón de agregar permiso
-        document.getElementById('addPermissionBtn').addEventListener('click', function() {
-            Modal.open('#addPermissionModal'); // Usar la función del modal
-        });
+<!-- Modal para agregar permisos -->
+<div class="modal" id="addPermissionModal" style="display:none;">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Agregar Permiso</h2>
+        <label for="permissionName">Nombre:</label>
+        <input type="text" id="permissionName" required>
         
-        // Evento para el botón de guardar permiso
-       // Evento para el botón de guardar permiso
-// Evento para el botón de guardar permiso
-document.getElementById('savePermissionBtn').addEventListener('click', async () => {
+        <label for="permissionDescription">Descripción:</label>
+        <input type="text" id="permissionDescription" required>
+        
+        <button id="savePermissionBtn">Guardar</button>
+    </div>
+</div>
+
+<script type="module">
+    import { fetchPermissions, createPermission } from './js/services/permissionService.js'; // Ajusta la ruta según tu estructura
+    import { getState } from './js/reducers/state.js';
+    import { renderTable } from './js/renderTable.js'; // Ajusta la ruta según tu estructura
+
+    const permissionHeaders = {
+        name: 'Nombre',
+        description: 'Descripción',
+        isActive: 'Estado',
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadPermissions();
+        setupEventListeners();
+    });
+
+    const loadPermissions = async () => {
+        await fetchPermissions();
+        const { permissions } = getState(); // Obtener permisos del estado
+        renderTable(permissions, permissionHeaders, 'permissionTableContainer'); // Renderizar permisos
+    };
+
+    const setupEventListeners = () => {
+        document.getElementById('addPermissionBtn').addEventListener('click', () => {
+            Modal.open('#addPermissionModal'); // Abre el modal para agregar permiso
+        });
+
+        document.getElementById('savePermissionBtn').addEventListener('click', savePermission);
+    };
+
+ const savePermission = async () => {
     const name = document.getElementById('permissionName').value.trim();
     const description = document.getElementById('permissionDescription').value.trim();
 
-    // Validar que los campos no estén vacíos
     if (!name || !description) {
         showSnackbar('Por favor, complete todos los campos.', false);
-        return; // No continuar si los campos están vacíos
+        return;
     }
 
     const data = { name, description };
+    const message = await createPermission(data); // Llama al servicio para crear permiso
 
-    const response = await registerData('https://8000-fanoro1956-1945-50am2qruf9y.ws-us116.gitpod.io/permissions/create-permission', data);
-    
-    if (response) {
-        console.log('Permiso agregado:', response);
-        Modal.close('#addPermissionModal'); // Cerrar el modal después de guardar
-        fetchAndRenderData(
-            'https://8000-fanoro1956-1945-50am2qruf9y.ws-us116.gitpod.io/permissions/api',
-            (data) => renderTable(data, permissionHeaders, 'permissionTableContainer'),
-            permissionHeaders
-        ); // Actualiza la tabla después de agregar un nuevo permiso
-        
-        // Mostrar Snackbar usando el mensaje del servidor
-        showSnackbar(response.message, true); // Asegúrate de que `response.message` esté definido
+    if (message) {
+        Modal.close('#addPermissionModal'); // Cierra el modal
+        loadPermissions(); // Recargar la tabla
+        showSnackbar(message, true); // Mostrar mensaje del servidor
     } else {
-        // Si hay un error en la respuesta
-        showSnackbar('Error al agregar el permiso', false);
+        showSnackbar('Error al agregar el permiso.', false); // Mostrar mensaje de error
     }
-});
+};
 
-        // Cargar y renderizar los permisos en la tabla
-        document.addEventListener('DOMContentLoaded', function () {
-            fetchAndRenderData(
-                'https://8000-fanoro1956-1945-50am2qruf9y.ws-us116.gitpod.io/permissions/api',
-                (data) => renderTable(data, permissionHeaders, 'permissionTableContainer'),
-                permissionHeaders
-            );
-        });
-    </script>
+</script>
 {% endblock %}

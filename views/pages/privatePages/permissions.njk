@@ -1,89 +1,127 @@
 {% extends "layouts/privateLayout.njk" %}
-{% block content %}
-    <h1>Lista de Permisos</h1>
 
-    <button id="addPermissionBtn">Agregar Permiso</button>
-    
-    <div id="permissionTableContainer"></div>
+{% block content %}
+<h1>Lista de Permisos</h1>
+<button id="addPermissionBtn">Agregar Permiso</button>
+<div id="permissionTableContainer"></div>
 <div id="snackbar" class="snackbar"></div>
-    <!-- Modal para agregar permisos -->
-    <div class="modal" id="addPermissionModal" style="display:none;">
-        <div class="modal-content">
-            <span class="close-button">&times;</span> <!-- Botón para cerrar el modal -->
-            <h2>Agregar Permiso</h2>
+
+<!-- Modal para agregar/editar permisos -->
+<div class="modal" id="addPermissionModal" style="display:none;">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2 id="modalTitle">Agregar Permiso</h2>
+        <form id="permissionForm">
             <label for="permissionName">Nombre:</label>
-            <input type="text" id="permissionName" required>
+            <input type="text" id="permissionName" name="name" required>
             
             <label for="permissionDescription">Descripción:</label>
-            <input type="text" id="permissionDescription" required>
+            <input type="text" id="permissionDescription" name="description" required>
             
-            <button id="savePermissionBtn">Guardar</button>
-        </div>
+            <button type="button" id="saveGenericBtn">Guardar</button>
+        </form>
     </div>
+</div>
 
-    <!-- Snackbar para mostrar mensajes -->
-    <div id="snackbar"></div>
+<script type="module">
+    import { fetchAndRenderData, registerData, updateData, fetchData } from './js/apiUserManager.js';
+    import { renderTable } from './js/renderTable.js';
+    import { loadEndpoints } from './js/endpoints/loadEndpoints.js';
+    import { openGenericForm, closeGenericForm } from './js/forms/genericForm.js';
+    import './js/snackbar.js';
 
-    <script type="module">
-        import { fetchAndRenderData } from './js/apiUserManager.js';
-        import { renderTable } from './js/renderTable.js'; // Asegúrate de la ruta correcta
-        import { registerData } from './js/apiUserManager.js'; // Importa tu función para registrar datos
-        import './js/modal.js'; // Importar el script del modal
-        import './js/snackbar.js'; // Importar el snackbar
+    const permissionHeaders = {
+        name: 'Nombre',
+        description: 'Descripción',
+        isActive: 'Estado',
+    };
 
-        // Configuración de las columnas para permisos
-        const permissionHeaders = {
-            name: 'Nombre',
-            description: 'Descripción',
-            isActive: 'Estado',
-        };
+    const fields = [
+        { id: 'permissionName', name: 'name', label: 'Nombre' },
+        { id: 'permissionDescription', name: 'description', label: 'Descripción' }
+    ];
 
-        // Evento para el botón de agregar permiso
-        document.getElementById('addPermissionBtn').addEventListener('click', function() {
-            Modal.open('#addPermissionModal'); // Usar la función del modal
-        });
-        
-        // Evento para el botón de guardar permiso
-       // Evento para el botón de guardar permiso
-// Evento para el botón de guardar permiso
-document.getElementById('savePermissionBtn').addEventListener('click', async () => {
-    const name = document.getElementById('permissionName').value.trim();
-    const description = document.getElementById('permissionDescription').value.trim();
+    document.addEventListener('DOMContentLoaded', () => {
+        loadPermissions();
+        setupEventListeners();
+    });
 
-    // Validar que los campos no estén vacíos
-    if (!name || !description) {
-        showSnackbar('Por favor, complete todos los campos.', false);
-        return; // No continuar si los campos están vacíos
-    }
-
-    const data = { name, description };
-
-    const response = await registerData('https://8000-fanoro1956-1945-50am2qruf9y.ws-us116.gitpod.io/permissions/create-permission', data);
-    
-    if (response) {
-        console.log('Permiso agregado:', response);
-        Modal.close('#addPermissionModal'); // Cerrar el modal después de guardar
-        fetchAndRenderData(
-            'https://8000-fanoro1956-1945-50am2qruf9y.ws-us116.gitpod.io/permissions/api',
-            (data) => renderTable(data, permissionHeaders, 'permissionTableContainer'),
+    const loadPermissions = async () => {
+        const endpoint = loadEndpoints('permissions', 'list'); // Obtener el endpoint para listar permisos
+        await fetchAndRenderData(
+            endpoint,
+            (data) => renderTable(data, permissionHeaders, 'permissionTableContainer', onAction),
             permissionHeaders
-        ); // Actualiza la tabla después de agregar un nuevo permiso
-        
-        // Mostrar Snackbar usando el mensaje del servidor
-        showSnackbar(response.message, true); // Asegúrate de que `response.message` esté definido
-    } else {
-        // Si hay un error en la respuesta
-        showSnackbar('Error al agregar el permiso', false);
-    }
-});
+        );
+    };
 
-        // Cargar y renderizar los permisos en la tabla
-        document.addEventListener('DOMContentLoaded', function () {
-            fetchAndRenderData(
-                'https://8000-fanoro1956-1945-50am2qruf9y.ws-us116.gitpod.io/permissions/api',
-                (data) => renderTable(data, permissionHeaders, 'permissionTableContainer'),
-                permissionHeaders
-            );
+    const setupEventListeners = () => {
+        document.getElementById('addPermissionBtn').addEventListener('click', () => {
+            document.getElementById('modalTitle').innerText = 'Agregar Permiso'; // Cambiar el título del modal
+            openGenericForm('#addPermissionModal', fields, savePermission);
         });
-    </script>
+
+        document.querySelector('.close-button').addEventListener('click', () => {
+            closeGenericForm('#addPermissionModal');
+        });
+    };
+
+ const onAction = async (action, id) => {
+    try {
+        if (action === 'edit') {
+            const endpoint = loadEndpoints('permissions', 'details', id);
+            const permissionData = await fetchData(endpoint);
+
+            if (permissionData) {
+                // Cambiar el título y abrir el formulario, pasando los datos
+                document.getElementById('modalTitle').innerText = 'Editar Permiso';
+                openGenericForm('#addPermissionModal', fields, (updatedData) => updatePermission(id, updatedData), permissionData);
+            } else {
+                console.error("No se pudo recuperar el permiso.");
+            }
+        }
+        // Otras acciones...
+    } catch (error) {
+        console.error(error);
+        showSnackbar(error.message || 'Error al procesar la acción.', false);
+    }
+};
+
+ // Verifica que la descripción se recupere correctamente
+
+    const savePermission = async (data) => {
+        const endpoint = loadEndpoints('permissions', 'create');
+        const response = await registerData(endpoint, data);
+
+        if (response) {
+            console.log('Permiso agregado:', response);
+            loadPermissions(); // Recargar la tabla
+            closeGenericForm('#addPermissionModal'); // Cerrar el modal solo después de guardar exitosamente
+            showSnackbar(response.message || 'Permiso agregado correctamente.', true); // Mostrar Snackbar
+            return true;
+        } else {
+            showSnackbar('Error al agregar el permiso.', false); // Mostrar error
+            return false;
+        }
+    };
+
+    const updatePermission = async (id, data) => {
+        const endpoint = loadEndpoints('permissions', 'update', id); // Asegúrate de pasar el id
+        const response = await updateData(endpoint, data);
+
+        if (response) {
+            console.log('Permiso actualizado:', response);
+            loadPermissions(); // Recargar la tabla
+            closeGenericForm('#addPermissionModal'); // Cerrar el modal solo después de actualizar exitosamente
+            showSnackbar(response.message || 'Permiso actualizado correctamente.', true); // Mostrar Snackbar
+            return true;
+        } else {
+            showSnackbar('Error al actualizar el permiso.', false); // Mostrar error
+            return false;
+        }
+    };
+
+    // Hacer que onAction sea global
+    window.onAction = onAction; // Esto lo hace accesible globalmente
+</script>
 {% endblock %}

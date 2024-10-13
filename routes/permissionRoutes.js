@@ -24,10 +24,16 @@ const permissionController = require('../controllers/permissionController');
 // Define routes
 router.post('/create-permission', permissionController.createPermission);
 router.get('/api', permissionController.getAllPermissions);
-router.get('/:id', permissionController.getPermissionById);
-router.put('/:id', permissionController.updatePermission);
-router.patch('/:id/deactivate', permissionController.deactivatePermission);
-router.patch('/:id/activate', permissionController.activatePermission);
-router.delete('/:id', permissionController.deletePermission);
+router.get('/details-permission/:id', permissionController.getPermissionById);
+router.put('/update-permission/:id', permissionController.updatePermission);
+router.patch(
+  '/:id/deactivate-permission',
+  permissionController.deactivatePermission
+);
+router.patch(
+  '/:id/activate-permission',
+  permissionController.activatePermission
+);
+router.delete('/delete-permission/:id', permissionController.deletePermission);
 
 module.exports = router;

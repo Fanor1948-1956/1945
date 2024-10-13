@@ -1,5 +1,15 @@
-// apiUserManager.js
 import { apiFetch } from './apiFetch.js'; // Asegúrate de la ruta correcta
+
+// Función para obtener datos de un permiso específico
+export async function fetchData(url) {
+  try {
+    const response = await apiFetch(url);
+    return response; // Devuelve la respuesta si es necesaria
+  } catch (error) {
+    console.error('Error al obtener los datos:', error);
+    return null; // Devuelve null en caso de error
+  }
+}
 
 // Función genérica para registrar datos
 export async function registerData(url, data) {
@@ -18,7 +28,7 @@ export async function updateData(url, data) {
   try {
     const response = await apiFetch(url, 'PUT', data);
     console.log('Datos actualizados:', response);
-    return response; // Devuelve la respuesta si es necesario
+    return response; // Devuelve la respuesta si es necesaria
   } catch (error) {
     console.error('Error al actualizar datos:', error);
     return null; // Devuelve null en caso de error

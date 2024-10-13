@@ -1,14 +1,13 @@
 import { validateForm } from './validateForm.js';
 import { closeGenericForm } from './genericForm.js';
 import { showSnackbar } from '../components/common/Snackbar.js';
-
-export function handleForm(modalId, fields, callback, endpoint) {
+export function handleForm(modalId, fields, callback) {
   const modal = document.querySelector(modalId);
 
   // Limpiar los campos del formulario antes de abrir
   fields.forEach((field) => {
     const input = modal.querySelector(`#${field.id}`);
-    input.value = '';
+    input.value = ''; // Asegúrate de que el campo se limpie
   });
 
   modal.style.display = 'block'; // Mostrar el modal
@@ -31,14 +30,21 @@ export function handleForm(modalId, fields, callback, endpoint) {
       data[field.name] = input.value.trim();
     });
 
-    // Ejecutar el callback con los datos del formulario y el endpoint
-    const response = await callback(data, endpoint);
+    // Ejecutar el callback con los datos del formulario
+    const response = await callback(data);
 
-    if (response) {
+    // Agregar logs para depurar
+    console.log('Respuesta del callback:', response); // Agrega un log para ver la respuesta
+
+    if (response && response.success) {
+      // Verifica si la respuesta es válida
       closeGenericForm(modalId);
-      showSnackbar('Operación realizada con éxito', true);
+      showSnackbar(response.message || 'Operación realizada con éxito.', true); // Mensaje de éxito
     } else {
-      showSnackbar('Error en la operación', false);
+      showSnackbar(
+        response ? response.message : 'Error en la operación',
+        false
+      ); // Mensaje de error
     }
   };
 }

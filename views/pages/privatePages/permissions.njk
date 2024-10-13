@@ -24,11 +24,12 @@
 </div>
 
 <script type="module">
-    import { fetchAndRenderData, registerData, updateData, fetchData } from './js/apiUserManager.js';
+    import { fetchAndRenderData, fetchData } from './js/apiUserManager.js';
     import { renderTable } from './js/renderTable.js';
     import { loadEndpoints } from './js/endpoints/loadEndpoints.js';
     import { openGenericForm, closeGenericForm } from './js/forms/genericForm.js';
-    import './js/snackbar.js';
+    import { saveResource, updateResource } from './js/api/resourceHandler.js'; // Importar el manejador de recursos
+  
 
     const permissionHeaders = {
         name: 'Nombre',
@@ -47,7 +48,7 @@
     });
 
     const loadPermissions = async () => {
-        const endpoint = loadEndpoints('permissions', 'list'); // Obtener el endpoint para listar permisos
+        const endpoint = loadEndpoints('permissions', 'list');
         await fetchAndRenderData(
             endpoint,
             (data) => renderTable(data, permissionHeaders, 'permissionTableContainer', onAction),
@@ -57,7 +58,7 @@
 
     const setupEventListeners = () => {
         document.getElementById('addPermissionBtn').addEventListener('click', () => {
-            document.getElementById('modalTitle').innerText = 'Agregar Permiso'; // Cambiar el título del modal
+            document.getElementById('modalTitle').innerText = 'Agregar Permiso';
             openGenericForm('#addPermissionModal', fields, savePermission);
         });
 
@@ -66,60 +67,57 @@
         });
     };
 
- const onAction = async (action, id) => {
-    try {
-        if (action === 'edit') {
-            const endpoint = loadEndpoints('permissions', 'details', id);
-            const permissionData = await fetchData(endpoint);
+    const onAction = async (action, id) => {
+        try {
+            if (action === 'edit') {
+                const endpoint = loadEndpoints('permissions', 'details', id);
+                const permissionData = await fetchData(endpoint);
 
-            if (permissionData) {
-                // Cambiar el título y abrir el formulario, pasando los datos
-                document.getElementById('modalTitle').innerText = 'Editar Permiso';
-                openGenericForm('#addPermissionModal', fields, (updatedData) => updatePermission(id, updatedData), permissionData);
-            } else {
-                console.error("No se pudo recuperar el permiso.");
+                if (permissionData) {
+                    document.getElementById('modalTitle').innerText = 'Editar Permiso';
+                    openGenericForm('#addPermissionModal', fields, (updatedData) => updatePermissionHandler(id, updatedData), permissionData);
+                } else {
+                    console.error("No se pudo recuperar el permiso.");
+                }
             }
+            // Otras acciones...
+        } catch (error) {
+            console.error(error);
+            showSnackbar(error.message || 'Error al procesar la acción.', false);
         }
-        // Otras acciones...
-    } catch (error) {
-        console.error(error);
-        showSnackbar(error.message || 'Error al procesar la acción.', false);
+    };
+const savePermission = async (data) => {
+    const result = await saveResource('permissions', data); // Usar la función generalizada
+
+    console.log("Resultado de la operación:", result); // Para depuración
+
+    if (result && result.success) {
+        loadPermissions(); // Recargar la tabla
+        closeGenericForm('#addPermissionModal'); // Cerrar el modal solo después de guardar exitosamente
+        showSnackbar(result.message || 'Permiso agregado correctamente.', true); // Mostrar Snackbar
+    } else {
+        showSnackbar(result ? result.message : 'Error al agregar el permiso.', false); // Mostrar error
     }
+
+    return result; // Devuelve el resultado para que handleForm lo maneje
 };
 
- // Verifica que la descripción se recupere correctamente
+const updatePermissionHandler = async (id, data) => {
+    const result = await updateResource('permissions', id, data); // Usar la función generalizada
 
-    const savePermission = async (data) => {
-        const endpoint = loadEndpoints('permissions', 'create');
-        const response = await registerData(endpoint, data);
+    console.log("Resultado de la operación de actualización:", result); // Para depuración
 
-        if (response) {
-            console.log('Permiso agregado:', response);
-            loadPermissions(); // Recargar la tabla
-            closeGenericForm('#addPermissionModal'); // Cerrar el modal solo después de guardar exitosamente
-            showSnackbar(response.message || 'Permiso agregado correctamente.', true); // Mostrar Snackbar
-            return true;
-        } else {
-            showSnackbar('Error al agregar el permiso.', false); // Mostrar error
-            return false;
-        }
-    };
+    if (result && result.success) {
+        loadPermissions(); // Recargar la tabla
+        closeGenericForm('#addPermissionModal'); // Cerrar el modal solo después de actualizar exitosamente
+        showSnackbar(result.message || 'Permiso actualizado correctamente.', true); // Mostrar Snackbar
+    } else {
+        showSnackbar(result ? result.message : 'Error al actualizar el permiso.', false); // Mostrar error
+    }
 
-    const updatePermission = async (id, data) => {
-        const endpoint = loadEndpoints('permissions', 'update', id); // Asegúrate de pasar el id
-        const response = await updateData(endpoint, data);
+    return result; // Devuelve el resultado para que handleForm lo maneje
+};
 
-        if (response) {
-            console.log('Permiso actualizado:', response);
-            loadPermissions(); // Recargar la tabla
-            closeGenericForm('#addPermissionModal'); // Cerrar el modal solo después de actualizar exitosamente
-            showSnackbar(response.message || 'Permiso actualizado correctamente.', true); // Mostrar Snackbar
-            return true;
-        } else {
-            showSnackbar('Error al actualizar el permiso.', false); // Mostrar error
-            return false;
-        }
-    };
 
     // Hacer que onAction sea global
     window.onAction = onAction; // Esto lo hace accesible globalmente

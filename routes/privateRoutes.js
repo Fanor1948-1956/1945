@@ -3,74 +3,156 @@ const roleModel = require('../models/roleModel');
 const { User, Patient } = require('../models/userModel');
 
 // Definir las rutas privadas
+// app.use('/dashboard', verifyToken, async (req, res) => {
+//   const user = await User.findById(req.user._id).populate('roles');
+//   const userRoles = user.roles.map((role) => role.name);
+
+//   // Obtener los permisos del usuario
+//   const userPermissions = await Permission.find({ roles: { $in: userRoles } });
+//   const userPermissionsNames = userPermissions.map((permission) => permission.name);
+
+//   // Obtener las rutas privadas
+//   const privateRoutes = await Promise.all(
+//     privateRoutes.map(async (route) => {
+//       // Verificar si el usuario tiene permisos para esta ruta
+//       const routePermissions = route.permissions || [];
+//       const hasPermissions = routePermissions.some((permission) =>
+//         userPermissionsNames.includes(permission)
+//       );
+
+//       if (hasPermissions) {
+//         const items = await route.items(userRoles
+//           );
+//         return {
+//           path: route.path,
+//           title: route.title,
+//           view: route.view,
+//           items: items,
+//           subRoutes: route.subRoutes,
+//         };
+
+//         }
+//       }
+//       return null;
+
 const privateRoutes = [
   {
     path: '/dashboard',
     title: 'Dashboard privado',
     view: 'pages/privatePages/dashboard.njk',
-    roles: ['Administrador', 'Doctor', 'Paciente', 'Jefe Médico', 'Paciente'],
-    items: async () => [
-      { title: 'Tarjeta 1', description: 'Descripción de la tarjeta 1' },
-      { title: 'Tarjeta 2', description: 'Descripción de la tarjeta 2' },
-    ],
+    items: async (userRoles) => {
+      let items = [];
+
+      if (userRoles.includes('Doctor')) {
+        items.push({ title: 'Gestión de Usuarios', link: '/users' });
+        items.push({ title: 'Mis Especialidades', link: '/speciality' });
+        items.push({ title: 'Mis Horarios de Atención', link: '/schedule' });
+        items.push({ title: 'Mis Dispinibilidad', link: '/availability' });
+        items.push({ title: 'Mis Citas', link: '/appointment' });
+      }
+
+      if (userRoles.includes('Paciente')) {
+        items.push({ title: 'Mis Citas', link: '/appointment' });
+        items.push({ title: 'Historia Clínica', link: '/historyClinic' });
+      }
+
+      if (userRoles.includes('Administrador')) {
+        items.push({ title: 'Gestión de Usuarios', link: '/users' });
+        items.push({ title: 'Roles y Permisos', link: '/roles' });
+      }
+
+      items.push({ title: 'Configuración', link: '/dashboard/configuracion' });
+
+      return items;
+    },
+    // subRoutes: [
+    //   {
+    //     path: '/dashboard/configuracion',
+    //     title: 'Configuración de Perfil',
+    //     view: 'pages/privatePages/configuracion.njk',
+    //     items: async () => [
+    //       {
+    //         title: 'Datos Básicos',
+    //         link: '/dashboard/configuracion/datos-basicos',
+    //       },
+    //       {
+    //         title: 'Datos Específicos',
+    //         link: '/dashboard/configuracion/datos-especificos',
+    //       },
+    //       { title: 'Privacidad', link: '/dashboard/configuracion/privacidad' },
+    //     ],
+    //     subRoutes: [
+    //       {
+    //         path: '/dashboard/configuracion/datos-basicos',
+    //         title: 'Datos Básicos',
+    //         view: 'pages/privatePages/datosBasicos.njk',
+    //         items: async () => [],
+    //       },
+    //       {
+    //         path: '/dashboard/configuracion/datos-especificos',
+    //         title: 'Datos Específicos',
+    //         view: 'pages/privatePages/datosEspecificos.njk',
+    //         items: async () => [],
+    //       },
+    //       {
+    //         path: '/dashboard/configuracion/privacidad',
+    //         title: 'Privacidad',
+    //         view: 'pages/privatePages/privacidad.njk',
+    //         items: async () => [],
+    //       },
+    //     ],
+    //   },
+    // ],
   },
+
   {
     path: '/users',
     title: 'Lista de',
     view: 'pages/privatePages/users.njk',
-    roles: ['Administrador', 'Jefe Médico', 'Paciente'],
+
     items: async () => [],
     subRoutes: [
       {
-        path: '/admin',
+        path: '/users/admin',
         title: 'Administradores',
-        roles: ['Administrador', 'Jefe Médico', 'Paciente'],
+        view: 'pages/privatePages/users/adminUsers.njk',
+        roles: ['Administrador'],
         items: async () => [],
       },
       {
-        path: '/chiefMedical',
+        path: '/users/chiefMedical',
         title: 'Jefes Médicos',
-        roles: ['Administrador', 'Jefe Médico', 'Patient'],
-        items: async () => {
-          const chiefMedicalRole = await roleModel.findOne({
-            name: 'Jefe Médico',
-          });
-          return await User.find({ roles: chiefMedicalRole._id }).populate(
-            'roles'
-          );
-        },
+        view: 'pages/privatePages/users/chiefMedicalUsers.njk',
+        roles: ['Administrador'],
+        items: async () => [],
       },
       {
-        path: '/doctor',
+        path: '/users/doctor',
         title: 'Médicos',
         roles: ['Jefe Médico'],
-        items: async () => {
-          const doctorRole = await roleModel.findOne({ name: 'Doctor' });
-          return await User.find({ roles: doctorRole._id }).populate('roles');
-        },
+        view: 'pages/privatePages/users/docUsers.njk',
+        items: async () => [],
       },
       {
-        path: '/patient',
+        path: '/users/patient',
         title: 'Pacientes',
+        view: 'pages/privatePages/users/patientUsers.njk',
         roles: ['Doctor'],
-        items: async () => {
-          const patientRole = await roleModel.findOne({ name: 'Paciente' });
-          return await User.find({ roles: patientRole._id }).populate('roles');
-        },
+        items: async () => [],
       },
     ],
   },
   {
     path: '/schedule',
     title: 'Horarios de Atención',
-    view: 'pages/privatePages/permissions.njk',
+
     roles: ['Doctor', 'Jefe Médico'],
     items: async () => await permissionModel.find(),
   },
   {
     path: '/disponibility',
     title: 'Disponibilidad',
-    view: 'pages/privatePages/permissions.njk',
+
     roles: ['Doctor'],
     items: async () => await permissionModel.find(),
   },
@@ -78,20 +160,20 @@ const privateRoutes = [
     path: '/speciality',
     title: 'Especialidad',
     view: 'pages/privatePages/specialities.njk',
-    roles: ['Doctor', 'Administrador', 'Jefe Médico', 'Paciente'],
+    roles: ['Doctor', 'Jefe Médico', 'Paciente'],
     items: async () => await permissionModel.find(),
   },
   {
     path: '/services',
     title: 'Servicio',
-    view: 'pages/privatePages/permissions.njk',
+
     roles: ['Jefe Médico'],
     items: async () => await permissionModel.find(),
   },
   {
     path: '/appointment',
     title: 'Citas Médicas',
-    view: 'pages/privatePages/permissions.njk',
+
     roles: ['Paciente', 'Doctor'],
     items: async () => await permissionModel.find(),
   },
@@ -105,7 +187,7 @@ const privateRoutes = [
   {
     path: '/historyClinic',
     title: 'Historia Clinico',
-    view: 'pages/privatePages/permissions.njk',
+
     roles: ['Paciente'],
     items: async () => await permissionModel.find(),
   },
@@ -148,6 +230,8 @@ const registerPrivateRoutes = (app) => {
       }
 
       const userRoles = getUserRoles(req);
+      route.userRoles = userRoles; // Asignar roles a la ruta
+
       if (!hasAccess(userRoles, route)) {
         return res.status(403).send('Acceso denegado');
       }
@@ -157,19 +241,26 @@ const registerPrivateRoutes = (app) => {
 
     app.get(route.path, async (req, res) => {
       try {
-        const items = await route.items();
+        const userRoles = getUserRoles(req);
+        const items = await route.items(userRoles);
+
         const allRoles = await roleModel.find();
         const allUsers = await User.find().populate('roles');
+
+        // Datos del perfil del usuario
+        const userProfile = await User.findById(req.session.userId);
 
         res.render(route.view, {
           title: route.title,
           items: items,
-          userRoles: getUserRoles(req),
+          userRoles: userRoles, // Pasar los roles del usuario a la vista
           allRoles,
           allUsers,
           privateRoutes,
           isAuthenticated: req.session.authenticated,
           username: req.session.name,
+          profile: userProfile,
+          hasAccess, // Asegúrate de pasar hasAccess aquí
         });
       } catch (error) {
         console.error(`Error al cargar los datos para ${route.path}:`, error);
@@ -177,11 +268,10 @@ const registerPrivateRoutes = (app) => {
       }
     });
 
+    // Manejo de subrutas
     if (route.subRoutes && route.subRoutes.length > 0) {
       route.subRoutes.forEach((subRoute) => {
-        const fullSubRoutePath = `${subRoute.path}`;
-
-        app.use(fullSubRoutePath, (req, res, next) => {
+        app.use(subRoute.path, (req, res, next) => {
           const userRoles = getUserRoles(req);
           if (!hasAccess(userRoles, subRoute)) {
             return res.status(403).send('Acceso denegado');
@@ -189,24 +279,21 @@ const registerPrivateRoutes = (app) => {
           next();
         });
 
-        app.get(fullSubRoutePath, async (req, res) => {
+        app.get(subRoute.path, async (req, res) => {
           try {
             const subItems = await subRoute.items();
-            const allRoles = await roleModel.find();
-            const allUsers = await User.find().populate('roles');
-            res.render(route.view, {
-              title: `${route.title}+ ${subRoute.title}`,
+            res.render(subRoute.view, {
+              title: subRoute.title,
               items: subItems,
-              userRoles: getUserRoles(req),
-              allRoles,
-              allUsers,
-              privateRoutes,
+              userRoles: getUserRoles(req), // Pasar los roles del usuario a la vista
               isAuthenticated: req.session.authenticated,
               username: req.session.name,
+              privateRoutes,
+              hasAccess, // Asegúrate de pasar hasAccess aquí
             });
           } catch (error) {
             console.error(
-              `Error al cargar los datos para ${fullSubRoutePath}:`,
+              `Error al cargar los datos para ${subRoute.path}:`,
               error
             );
             res.status(500).send('Error al cargar los datos');

@@ -20,7 +20,7 @@ const specialtyRoutes = require('./routes/specialtyRoutes');
 // Importar la función
 
 const app = express();
-const port = 4000;
+const port = 8000;
 
 // Conectar a la base de datos
 connectDB();
@@ -31,7 +31,7 @@ const env = nunjucks.configure('views', {
   express: app,
   watch: true, // Opcional, permite ver los cambios en tiempo real
 });
-
+app.set('view engine', 'njk'); // Establecer Nunjucks como motor de vista
 // Configurar middleware de sesión
 app.use(
   session({
@@ -65,6 +65,7 @@ app.use(express.static('public'));
 // Middleware para manejar JSON y formularios
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -90,7 +91,7 @@ app.use('/services', verifyToken, serviceRoutes);
 app.use('/profile', verifyToken, profileRoutes);
 app.use('/auth', authRoutes); // Rutas de autenticación
 
-app.use('/api/specialties', specialtyRoutes);
+app.use('/api/specialties', verifyToken, specialtyRoutes);
 
 // Iniciar el servidor
 app.listen(port, () => {

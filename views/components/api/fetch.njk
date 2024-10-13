@@ -1,0 +1,321 @@
+<h1>Lista de Usuarios</h1>
+<hr />
+
+<!-- Botón para agregar un nuevo usuario -->
+<button id="addUserButton">Agregar Usuario</button>
+
+<section>
+    <div id="userTableContainer"></div>
+</section>
+
+<div id="snackbar" class="snackbar"></div>
+<!-- Modal para crear un nuevo usuario -->
+<div id="createUserModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Crear Nuevo Usuario</h2>
+        <div id="createUserFormContainer"></div>
+    </div>
+</div>
+
+<!-- Modal para editar usuarios -->
+<div id="editUserModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Editar Usuario</h2>
+        <div id="modalFormContainer"></div> <!-- Contenedor para el formulario -->
+    </div>
+</div>
+<!-- Modal para confirmar eliminación de usuarios -->
+<div id="deleteUserModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Confirmar Eliminación</h2>
+        <p>¿Estás seguro de que deseas eliminar este usuario?</p>
+        <button id="confirmDeleteButton">Confirmar</button>
+        <button id="cancelDeleteButton">Cancelar</button>
+    </div>
+</div>
+<!-- Modal para informar que es necesario reiniciar la sesión -->
+<div id="sessionRestartModal" class="modal">
+    <div class="modal-content">
+        <h2>Es necesario reiniciar la sesión</h2>
+        <p>Para aplicar los cambios en roles y permisos, es necesario que cierres sesión y vuelvas a ingresar.</p>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Variable para almacenar el usuario que se desea eliminar
+    let userToDelete = null;
+
+    // Obtener usuarios cuando se carga la página
+    fetchUsers();
+   // Manejar evento para abrir el modal de crear usuario
+    $('#addUserButton').click(function() {
+        renderCreateUserForm(); // Renderizar formulario de creación
+        Modal.open('#createUserModal'); // Abrir el modal de creación
+    });
+    // Evento para editar un usuario
+    $(document).on('click', '.edit-button', function(e) {
+        e.preventDefault();
+        const userId = $(this).data('user-id');
+        getUserInfo(userId); // Obtener datos del usuario
+    });
+
+    // Evento para eliminar un usuario
+    $(document).on('click', '.delete-button', function() {
+        const userId = $(this).data('user-id');
+        const userRow = $(this).closest('tr'); // Obtener la fila del usuario
+        userToDelete = { id: userId, row: userRow }; // Almacenar información del usuario a eliminar
+        Modal.open('#deleteUserModal'); // Abrir el modal de confirmación
+    });
+
+    // Manejar el evento de confirmación de eliminación
+    $('#confirmDeleteButton').click(function() {
+        if (userToDelete) {
+            deleteUser(userToDelete.id, userToDelete.row);
+            Modal.close('#deleteUserModal'); // Cerrar el modal después de confirmar
+            userToDelete = null; // Reiniciar la variable
+        }
+    });
+
+    // Manejar el evento de cancelación de eliminación
+    $('#cancelDeleteButton').click(function() {
+        Modal.close('#deleteUserModal'); // Cerrar el modal sin eliminar
+        userToDelete = null; // Reiniciar la variable
+    });
+
+    // Obtener y renderizar la tabla de usuarios
+    function fetchUsers() {
+        apiFetch('/users/getUsers', 'GET')
+            .then(renderUserTable)
+            .catch(function(xhr) {
+                console.error('Error al obtener los usuarios:', xhr);
+            });
+    }
+
+    // Función para renderizar la tabla de usuarios
+    function renderUserTable(users) {
+        let tableHtml = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellidos</th>
+                        <th>Email</th>
+                        <th>Género</th>
+                        <th>Roles</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        users.forEach(user => {
+            let rolesHtml = '<ul>';
+            user.roles.forEach(role => {
+                rolesHtml += `<li>${role.name}</li>`;
+            });
+            rolesHtml += '</ul>';
+
+            tableHtml += `
+                <tr>
+                    <td>${user.name}</td>
+                    <td>${user.surnames}</td>
+                    <td>${user.email}</td>
+                    <td>${user.gender}</td>
+                    <td>${rolesHtml}</td>
+                    <td>
+                        <button class="edit-button" data-user-id="${user._id}">Editar</button>
+                        <button class="delete-button" data-user-id="${user._id}">Eliminar</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tableHtml += '</tbody></table>';
+        $('#userTableContainer').html(tableHtml);
+    }
+
+    // Función para obtener información del usuario
+    function getUserInfo(userId) {
+        apiFetch(`/users/showInfo/${userId}`, 'GET')
+            .then(({ user, allRoles, isPasswordHashed }) => {
+                renderEditForm(user, allRoles, userId, isPasswordHashed);
+                Modal.open('#editUserModal'); // Abrir el modal de edición
+            })
+            .catch(() => {
+                showSnackbar('Error al obtener el formulario de edición', false);
+            });
+    }
+
+    // Renderizar el formulario de edición
+    function renderEditForm(user, allRoles, userId, isPasswordHashed) {
+        const rolesHtml = allRoles.map(role => `
+            <label>
+                <input type="checkbox" name="roles" value="${role._id}" 
+                    ${user.roles.some(userRole => userRole.name === role.name) ? 'checked' : ''}>
+                ${role.name}
+            </label>
+        `).join('');
+
+        $('#modalFormContainer').html(`
+            <form id="userUpdateForm" data-user-id="${userId}">
+                <label for="name">Nombre:</label>
+                <input type="text" id="name" name="name" value="${user.name}" required ${isPasswordHashed ? 'disabled' : ''}>
+                <label for="surnames">Apellidos:</label>
+                <input type="text" id="surnames" name="surnames" value="${user.surnames}" required ${isPasswordHashed ? 'disabled' : ''}>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="${user.email}" required ${isPasswordHashed ? 'disabled' : ''}>
+                <label for="gender">Género:</label>
+                <select id="gender" name="gender" required ${isPasswordHashed ? 'disabled' : ''}>
+                    <option value="masculino" ${user.gender === 'masculino' ? 'selected' : ''}>Masculino</option>
+                    <option value="femenino" ${user.gender === 'femenino' ? 'selected' : ''}>Femenino</option>
+                    <option value="otro" ${user.gender === 'otro' ? 'selected' : ''}>Otro</option>
+                </select>
+                <fieldset>
+                    <legend>Roles:</legend>
+                    ${rolesHtml}
+                </fieldset>
+                <button type="submit">Actualizar Usuario</button>
+            </form>
+        `);
+    }
+      function renderCreateUserForm() {
+        // Obtener los roles disponibles
+        apiFetch('/roles/api', 'GET')
+            .then(roles => {
+                          console.log('Roles disponibles para crear usuario:', roles); 
+                const rolesHtml = roles.map(role => `
+                    <label>
+                        <input type="checkbox" name="roles" value="${role._id}">
+                        ${role.name}
+                    </label>
+                `).join('');
+
+                $('#createUserFormContainer').html(`
+                    <form id="userCreateForm">
+                        <label for="name">Nombre:</label>
+                        <input type="text" id="name" name="name" required>
+                        <label for="surnames">Apellidos:</label>
+                        <input type="text" id="surnames" name="surnames" required>
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                                <label for="password">Contraseña:</label>
+                        <input type="password" id="password" name="password" required>
+                        <label for="gender">Género:</label>
+                        <select id="gender" name="gender" required>
+                            <option value="masculino">Masculino</option>
+                            <option value="femenino">Femenino</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                        <fieldset>
+                            <legend>Roles:</legend>
+                            ${rolesHtml}
+                        </fieldset>
+                        <button type="submit">Crear Usuario</button>
+                    </form>
+                `);
+            })
+            .catch(xhr => {
+                const errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : 'Error al obtener los roles';
+                showSnackbar(errorMessage, false);
+            });
+    }
+$(document).on('submit', '#userCreateForm', function(e) {
+    e.preventDefault();
+
+    const roles = $('input[name="roles"]:checked').map(function() {
+        return this.value;
+    }).get();
+
+    console.log('Roles seleccionados para el nuevo usuario:', roles);  // <-- Ver los roles seleccionados
+
+    const newUserData = {
+        name: $('#name').val(),
+        surnames: $('#surnames').val(),
+        email: $('#email').val(),
+        password: $('#password').val(),
+        gender: $('#gender').val(),
+        roles: roles
+    };
+
+    apiFetch('/users/create-user', 'POST', newUserData)
+        .then(response => {
+            showSnackbar(response.message, true);
+            fetchUsers(); // Refrescar la lista de usuarios
+            Modal.close('#createUserModal'); // Cerrar el modal de creación
+        })
+        .catch(xhr => {
+            const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al crear el usuario';
+            showSnackbar(errorMessage, false);
+        });
+});
+
+    // Envío del formulario de edición
+$(document).on('submit', '#userUpdateForm', function(e) {
+    e.preventDefault();
+    const userId = $(this).data('user-id');
+
+    const userData = {
+        name: $('#name').val(),
+        surnames: $('#surnames').val(),
+        email: $('#email').val(),
+        gender: $('#gender').val(),
+        roles: $('input[name="roles"]:checked').map(function() {
+            return this.value;
+        }).get()
+    };
+
+    // Actualizar datos del usuario
+    apiFetch(`/users/update/${userId}`, 'PUT', userData)
+        .then(response => {
+            // Mostrar el snackbar con mensaje de éxito
+            showSnackbar(response.message, true);
+
+            // Refrescar la lista de usuarios
+            fetchUsers();
+
+            // Cerrar el modal de edición después de mostrar el snackbar
+            setTimeout(() => {
+                Modal.close('#editUserModal'); // Cerrar el modal de edición
+
+                // Mostrar el modal informativo sobre el reinicio de sesión
+                Modal.open('#sessionRestartModal');
+            }, 2000); // Cierra el modal de edición después de 2 segundos
+
+            // Cerrar el modal informativo y redirigir a la página de logout después de unos segundos
+            setTimeout(() => {
+                Modal.close('#sessionRestartModal'); // Cerrar el modal de sesión
+                window.location.href = '/auth/logout'; // Redirigir a logout
+            }, 5000); // Esperar 5 segundos para que el usuario vea el mensaje
+        })
+        .catch(xhr => {
+            const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al actualizar el usuario';
+            showSnackbar(errorMessage, false); // Mostrar mensaje de error
+        });
+});
+});
+
+// Función para eliminar un usuario
+function deleteUser(userId, userRow) {
+    apiFetch(`/users/${userId}`, 'DELETE')
+        .then(response => {
+            // Comprobar si hay un mensaje en la respuesta del servidor
+            if (response.message) {
+                showSnackbar(response.message, true); // Mostrar mensaje de éxito
+            }
+            userRow.remove(); // Eliminar la fila de la tabla directamente
+        })
+        .catch(xhr => {
+            // Manejo de errores
+            const errorMessage = xhr.responseJSON && xhr.responseJSON.message 
+                ? xhr.responseJSON.message 
+                : 'Error al eliminar el usuario'; // Mensaje predeterminado si no hay respuesta
+            showSnackbar(errorMessage, false); // Mostrar mensaje de error
+        });
+}
+
+
+</script>

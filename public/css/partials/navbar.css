@@ -2,7 +2,7 @@
   position: fixed;
   padding: 0.1px;
   width: 100%;
-  background-color: #001f3f; /* Azul marino */
+  background-color: #001f3f;
   position: fixed;
   z-index: 1500;
 }
@@ -11,23 +11,62 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #001f3f; /* Azul marino */
-  padding: 5px;
+  background-color: #001f3f;
+  padding: 15px 5px;
 }
+
+.submenuContainer {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.5s ease;
+}
+
+.navbar__links li:hover .submenuContainer {
+  visibility: visible;
+  opacity: 1;
+}
+
 .submenuNav {
   border-radius: 5px;
-  display: none; /* Ocultar submenús por defecto */
-  position: absolute; /* Asegura que se muestre sobre el contenido */
+  display: flex;
+  white-space: nowrap;
+  position: absolute;
   padding: 0;
-  background-color: #010107; /* Fondo para el submenú */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra para dar profundidad */
-  z-index: 1000; /* Asegura que el submenú esté por encima de otros elementos */
+  background-color: #010107;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
 }
 
 .navbar__links li:hover .submenuNav {
-  display: block; /* Mostrar submenú al pasar el mouse */
+  flex-direction: column;
   list-style-type: none;
 }
+
+.navbar__links li:hover .submenuNav.horizontal {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  list-style-type: none;
+}
+
+.submenuNav li {
+  margin: 0 10px;
+  padding: 0;
+}
+.submenu__item {
+}
+.submenuNav li a {
+  padding: 10px 15px;
+  color: white;
+  text-decoration: none;
+}
+
+.submenuNav li a:hover {
+  background-color: #555;
+  border-radius: 5px;
+}
+
 .navbar__links {
   display: flex;
   list-style-type: none;
@@ -50,13 +89,29 @@
   border-radius: 5px;
 }
 
-/* Estilos responsivos para móvil */
 @media (max-width: 768px) {
   .navbar__links {
-    display: none; /* Esconde los links de navegación en móvil */
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background-color: #001f3f;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    z-index: 1500;
   }
 
-  .container {
-    margin-left: 0;
+  .navbar__links.active {
+    display: flex;
+  }
+
+  .submenuNav {
+    display: none;
+    flex-direction: column;
+    padding-left: 20px;
+  }
+
+  .submenuNav.active {
+    display: flex;
   }
 }

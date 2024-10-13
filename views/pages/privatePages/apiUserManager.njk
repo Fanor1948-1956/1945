@@ -1,0 +1,25 @@
+{% block content %}
+    <h1>Lista de Usuarios</h1>
+    <div id="userTableContainer"></div>
+
+    <script type="module">
+        import { fetchAndRenderData } from './js/apiUserManager.js';
+        import { renderTable } from './js/renderTable.js'; // Asegúrate de la ruta correcta
+
+        // Configuración de las columnas para usuarios
+        const userHeaders = {
+            name: 'Nombre',
+            email: 'Correo',
+            phone: 'Teléfono',
+            roles:'roles'
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchAndRenderData(
+                'https://8000-fanoro1956-1945-50am2qruf9y.ws-us116.gitpod.io/users/getUsers',
+                (data) => renderTable(data, userHeaders, 'userTableContainer'),
+                userHeaders
+            );
+        });
+    </script>
+{% endblock %}

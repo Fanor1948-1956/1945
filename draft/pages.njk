@@ -26,3 +26,168 @@
 
   </div>
 {% endblock %}
+
+
+
+<header class="header">
+    <nav class="navbar">
+        <button class="hamburger" id="hamburgerBtn">☰</button>
+        <ul class="navbar__links" id="navbarLinks">
+            {# Enlaces de rutas públicas #}
+            {% for route in publicRoutes %}
+                <li class="navbar__item">
+                    <a href="{{ route.path }}" class="navbar__link {% if route.subRoutes %}has-submenu{% endif %}">{{ route.title }}</a>
+                    {% if route.subRoutes %}
+                        <div class="submenuContainer"> <!-- Contenedor para el submenú -->
+                            <ul class="submenuNav {% if route.subRoutes|length > 2 %}horizontal{% endif %}"> <!-- Clase para el submenú -->
+                                {% for section in route.subRoutes %}
+                                    <li class="submenu__item">
+                                        <a href="{{ route.path }}#{{ section.id }}" class="submenuLink">{{ section.title }}</a> {# Enlace a la sección específica #}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </li>
+            {% endfor %}
+            {# Enlaces de rutas privadas (solo si el usuario está autenticado) #}
+            {% if isAuthenticated %}
+                {% for route in privateRoutes %}
+                    <li class="navbar__item">
+                        <a href="{{ route.path }}" class="navbar__link {% if route.subRoutes %}has-submenu{% endif %}">{{ route.title }}</a>
+                        {% if route.subRoutes %}
+                            <div class="submenuContainer"> <!-- Contenedor para el submenú -->
+                                <ul class="submenuNav {% if route.subRoutes|length > 2 %}horizontal{% endif %}"> <!-- Clase para el submenú -->
+                                    {% for subRoute in route.subRoutes %}
+                                        <li class="submenu__item">
+                                            <a href="{{ subRoute.path }}">{{ subRoute.title }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+    </nav>
+</header>
+.header {
+  position: fixed;
+  padding: 0.1px;
+  width: 100%;
+  background-color: #001f3f; /* Azul marino */
+  position: fixed;
+  z-index: 1500;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #001f3f; /* Azul marino */
+  padding: 15px 5px;
+}
+.submenuContainer {
+  visibility: hidden; /* Ocultar contenedor por defecto */
+  opacity: 0; /* Hacerlo invisible */
+  transition: visibility 0s, opacity 0.5s ease; /* Transición suave */
+}
+
+/* Mostrar contenedor al pasar el mouse sobre el elemento padre */
+.navbar__links li:hover .submenuContainer {
+  visibility: visible; /* Mostrar contenedor al pasar el mouse */
+  opacity: 1; /* Hacerlo visible */
+}
+/* Submenú */
+.submenuNav {
+  border-radius: 5px;
+  display: flex; /* Usar flexbox para que los elementos estén en fila */
+
+  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+
+  position: absolute; /* Asegura que se muestre sobre el contenido */
+  padding: 0;
+  background-color: #010107; /* Fondo para el submenú */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra para dar profundidad */
+  z-index: 1000; /* Asegura que el submenú esté por encima de otros elementos */
+}
+
+/* Estilo del submenú cuando hay más de dos elementos */
+.navbar__links li:hover .submenuNav {
+  flex-direction: column; /* Por defecto será columna */
+}
+
+/* Cuando hay más de 2 elementos, se muestran en fila */
+.navbar__links li:hover .submenuNav.horizontal {
+  flex-direction: row; /* Cambia a fila si hay más de dos elementos */
+  align-items: center; /* Alinear los elementos del submenú en el centro */
+  justify-content: center; /* Centra los elementos del submenú en el centro */
+  gap: 10px; /* Espacio entre los elementos del submenú */
+  list-style-type: none;
+}
+
+/* Espaciado entre los elementos del submenú */
+.submenuNav li {
+  margin: 0 10px; /* Espacio entre los elementos del submenú */
+  padding: 0; /* Elimina el padding del enlace del submenú */
+}
+
+.submenuNav li a {
+  padding: 10px 15px; /* Espaciado alrededor del texto del submenú */
+  color: white; /* Color del texto del submenú */
+  text-decoration: none; /* Sin subrayado en los enlaces del submenú */
+}
+
+.submenuNav li a:hover {
+  background-color: #555; /* Cambia el fondo al pasar el mouse sobre el enlace del submenú */
+  border-radius: 5px; /* Bordes redondeados para los enlaces del submenú */
+}
+.navbar__links {
+  display: flex;
+  list-style-type: none;
+  margin: 0;
+}
+
+.navbar__links li {
+  margin: 0;
+}
+
+.navbar__links li a {
+  color: white;
+  text-decoration: none;
+  padding: 14px 20px;
+  display: block;
+}
+
+.navbar__links li a:hover {
+  background-color: #555;
+  border-radius: 5px;
+}
+/* Estilos del menú colapsable */
+@media (max-width: 768px) {
+  .navbar__links {
+    display: none; /* Esconde los links de navegación en móvil */
+    flex-direction: column; /* Coloca los elementos en columna */
+    width: 100%; /* Ancho completo para el menú colapsable */
+    background-color: #001f3f; /* Fondo del menú colapsable */
+    position: absolute; /* Asegura que se superponga al contenido */
+    top: 60px; /* Ajusta según el alto de la cabecera */
+    left: 0;
+    z-index: 1500; /* Asegura que el menú esté por encima */
+  }
+
+  .navbar__links.active {
+    display: flex; /* Muestra el menú al activar */
+  }
+
+  .submenuNav {
+    display: none; /* Esconde los submenús por defecto */
+    flex-direction: column; /* Asegura que los submenús se muestren en columna */
+    padding-left: 20px; /* Espacio a la izquierda para submenús */
+  }
+
+  .submenuNav.active {
+    display: flex; /* Muestra el submenú al activar */
+  }
+}

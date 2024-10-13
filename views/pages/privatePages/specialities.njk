@@ -1,101 +1,26 @@
+
 {% extends "layouts/privateLayout.njk" %}
-
 {% block content %}
-  <div class="container">
-    <h1>Gestión de Especialidades</h1>
-    
-    <!-- Contenedor del Formulario para Crear Especialidad -->
-    <div class="form-container">
-      <h2>Crear Nueva Especialidad</h2>
-      <form id="createSpecialtyForm">
-        <table>
-          <tr>
-            <td>
-              <label for="name">Nombre:</label>
-            </td>
-            <td>
-              <input type="text" id="name" name="name" required>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <label for="description">Descripción:</label>
-            </td>
-            <td>
-              <textarea id="description" name="description" required></textarea>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2">
-              <button type="submit">Crear Especialidad</button>
-            </td>
-          </tr>
-        </table>
-      </form>
-    </div>
+    <h1>Lista de Especialidades</h1>
+    <div id="specialtyTableContainer"></div>
 
-    <!-- Listado de Especialidades -->
-    <div class="specialty-list">
-      <h2>Lista de Especialidades</h2>
-      <div id="specialtiesContainer"></div>
-    </div>
-  </div>
+    <script type="module">
+        import { fetchAndRenderData } from './js/apiUserManager.js';
+        import { renderTable } from './js/renderTable.js'; // Asegúrate de la ruta correcta
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script>
-    $(document).ready(function() {
-      loadSpecialties(); // Cargar especialidades al inicio
-
-      // Enviar formulario para crear una nueva especialidad
-      $('#createSpecialtyForm').submit(function(event) {
-        event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
-
-        const formData = {
-          name: $('#name').val(),
-          description: $('#description').val()
+        // Configuración de las columnas para especialidades
+        const specialtyHeaders = {
+            name: 'Nombre',
+            description: 'Descripción',
+            category: 'Categoría'
         };
 
-        $.ajax({
-          url: '/api/specialties',
-          method: 'POST',
-          contentType: 'application/json',
-          data: JSON.stringify(formData),
-          success: function(data) {
-            alert('Especialidad creada exitosamente');
-            $('#createSpecialtyForm')[0].reset(); // Reiniciar el formulario
-            loadSpecialties(); // Recargar la lista de especialidades
-          },
-          error: function(error) {
-            console.error('Error al crear especialidad', error);
-            alert('Error al crear especialidad');
-          }
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchAndRenderData(
+                'https://8000-fanoro1956-1945-4egy30l5tp8.ws-us116.gitpod.io/api/specialties',
+                (data) => renderTable(data, specialtyHeaders, 'specialtyTableContainer'),
+                specialtyHeaders
+            );
         });
-      });
-    });
-
-    // Función para cargar especialidades
-    function loadSpecialties() {
-      $.ajax({
-        url: '/api/specialties',
-        method: 'GET',
-        success: function(data) {
-          const container = $('#specialtiesContainer');
-          container.empty(); // Limpiar el contenedor
-
-          data.forEach(specialty => {
-            const specialtyDiv = `
-              <div class="specialty">
-                <h3>${specialty.name}</h3>
-                <p>${specialty.description}</p>
-              </div>
-            `;
-            container.append(specialtyDiv);
-          });
-        },
-        error: function(error) {
-          console.error('Error al cargar las especialidades', error);
-        }
-      });
-    }
-  </script>
+    </script>
 {% endblock %}

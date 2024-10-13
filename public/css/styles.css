@@ -5,26 +5,26 @@ body {
   padding: 0;
 }
 
-#snackbar {
-  visibility: hidden;
-  min-width: 250px;
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  border-radius: 2px;
-  padding: 16px;
-  position: fixed;
-  z-index: 1;
-  left: 50%;
-  bottom: 30px;
-  font-size: 17px;
-  transition: visibility 0s, opacity 0.5s linear;
-  opacity: 0;
+.snackbar {
+  visibility: hidden; /* Escondido por defecto */
+  min-width: 250px; /* Ancho mínimo */
+  margin-left: -125px; /* Centrado */
+  background-color: #333; /* Color de fondo */
+  color: #fff; /* Color del texto */
+  text-align: center; /* Centrar texto */
+  border-radius: 2px; /* Bordes redondeados */
+  padding: 16px; /* Espaciado */
+  position: fixed; /* Fijo */
+  z-index: 1; /* Por encima de otros elementos */
+  left: 50%; /* Centro horizontal */
+  bottom: 30px; /* Posición en la parte inferior */
+  font-size: 17px; /* Tamaño de fuente */
+  transition: visibility 0s, opacity 0.5s linear; /* Transiciones */
 }
 
-#snackbar.show {
-  visibility: visible;
-  opacity: 1;
+.snackbar.show {
+  visibility: visible; /* Mostrar */
+  opacity: 1; /* Opacidad */
 }
 
 /* Estilo del contenido principal */
@@ -128,7 +128,7 @@ legend {
   display: block;
 }
 .container {
-  padding: 10px;
+  padding: 50px 20px 0 20px;
   transition: margin-left 0.3s;
 }
 

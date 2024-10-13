@@ -1,49 +1,3 @@
-// const Role = require('../models/roleModel');
-// const Permission = require('../models/permissionModel');
-
-// // Controlador para obtener roles en formato JSON
-// exports.getAllRoles = async (req, res) => {
-//   try {
-//     const roles = await Role.find().populate('permissions'); // Obtén roles con sus permisos
-//     res.json(roles); // Devuelve los roles como JSON
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: 'Error obteniendo roles' });
-//   }
-// };
-
-// // Controlador para renderizar la página de roles con roles y permisos
-// exports.getRoles = async (req, res) => {
-//   try {
-//     const roles = await Role.find().populate('permissions'); // Obtener roles con permisos
-//     const permissions = await Permission.find(); // Obtener todos los permisos
-
-//     // Renderiza la página de roles con los datos obtenidos
-//     res.render('pages/privatePages/roles.njk', {
-//       title: 'Lista de Roles',
-//       roles, // Enviar roles a la vista
-//       permissions, // Enviar permisos a la vista
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send('Error al obtener roles');
-//   }
-// };
-
-// // Controlador para crear un nuevo rol
-// exports.createRole = async (req, res) => {
-//   const { name, alias, description, permissions } = req.body; // Obtener los datos del cuerpo de la solicitud
-//   try {
-//     const newRole = new Role({ name, alias, description, permissions }); // Crear un nuevo rol
-//     await newRole.save(); // Guardar el nuevo rol en la base de datos
-//     res.redirect('/roles'); // Redirigir a la página de todos los roles
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).send('Error creando el rol');
-//   }
-// };
-
-// controllers/roleController.js
 const Role = require('../models/roleModel');
 
 // Create a new role
@@ -51,9 +5,16 @@ exports.createRole = async (req, res) => {
   try {
     const role = new Role(req.body);
     await role.save();
-    res.status(201).json(role);
+    res.status(201).json({
+      success: true,
+      message: 'Role created successfully',
+      role,
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Error creating role',
+    });
   }
 };
 
@@ -61,9 +22,16 @@ exports.createRole = async (req, res) => {
 exports.getAllRoles = async (req, res) => {
   try {
     const roles = await Role.find().populate('permissions');
-    res.status(200).json(roles);
+    res.status(200).json({
+      success: true,
+      message: 'Roles retrieved successfully',
+      roles,
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error retrieving roles',
+    });
   }
 };
 
@@ -72,11 +40,21 @@ exports.getRoleById = async (req, res) => {
   try {
     const role = await Role.findById(req.params.id).populate('permissions');
     if (!role) {
-      return res.status(404).json({ message: 'Role not found' });
+      return res.status(404).json({
+        success: false,
+        message: 'Role not found',
+      });
     }
-    res.status(200).json(role);
+    res.status(200).json({
+      success: true,
+      message: 'Role retrieved successfully',
+      role,
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error retrieving role',
+    });
   }
 };
 
@@ -88,11 +66,21 @@ exports.updateRole = async (req, res) => {
       runValidators: true,
     });
     if (!role) {
-      return res.status(404).json({ message: 'Role not found' });
+      return res.status(404).json({
+        success: false,
+        message: 'Role not found',
+      });
     }
-    res.status(200).json(role);
+    res.status(200).json({
+      success: true,
+      message: 'Role updated successfully',
+      role,
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Error updating role',
+    });
   }
 };
 
@@ -105,11 +93,21 @@ exports.deactivateRole = async (req, res) => {
       { new: true }
     );
     if (!role) {
-      return res.status(404).json({ message: 'Role not found' });
+      return res.status(404).json({
+        success: false,
+        message: 'Role not found',
+      });
     }
-    res.status(200).json(role);
+    res.status(200).json({
+      success: true,
+      message: 'Role deactivated successfully',
+      role,
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Error deactivating role',
+    });
   }
 };
 
@@ -122,23 +120,36 @@ exports.activateRole = async (req, res) => {
       { new: true }
     );
     if (!role) {
-      return res.status(404).json({ message: 'Role not found' });
+      return res.status(404).json({
+        success: false,
+        message: 'Role not found',
+      });
     }
-    res.status(200).json(role);
+    res.status(200).json({
+      success: true,
+      message: 'Role activated successfully',
+      role,
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Error activating role',
+    });
   }
 };
 
-// Delete role
 exports.deleteRole = async (req, res) => {
   try {
-    const role = await Role.findByIdAndDelete(req.params.id);
-    if (!role) {
-      return res.status(404).json({ message: 'Role not found' });
+    const roleId = req.params.id; // Obtén el ID del rol de los parámetros
+    const deletedRole = await Role.findByIdAndDelete(roleId); // Elimina el rol por ID
+
+    if (!deletedRole) {
+      return res.status(404).json({ message: 'Rol no encontrado' }); // Manejar rol no encontrado
     }
-    res.status(204).json(); // No content
+
+    res.json({ success: true, message: 'Rol eliminado exitosamente' }); // Mensaje de éxito
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error al eliminar el rol:', error);
+    res.status(500).json({ message: 'Error al eliminar el rol' }); // Mensaje de error genérico
   }
 };

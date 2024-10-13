@@ -1,6 +1,3 @@
-import { validateForm } from './validateForm.js';
-import { closeGenericForm } from './genericForm.js';
-import { showSnackbar } from '../components/common/Snackbar.js';
 export function handleForm(modalId, fields, callback) {
   const modal = document.querySelector(modalId);
 
@@ -29,6 +26,14 @@ export function handleForm(modalId, fields, callback) {
       const input = modal.querySelector(`#${field.id}`);
       data[field.name] = input.value.trim();
     });
+
+    // Obtener permisos seleccionados
+    const selectedOptions =
+      modal.querySelector('#rolePermissions').selectedOptions;
+    const permissions = Array.from(selectedOptions).map(
+      (option) => option.value
+    );
+    data.permissions = permissions;
 
     // Ejecutar el callback con los datos del formulario
     const response = await callback(data);

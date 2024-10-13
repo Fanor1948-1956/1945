@@ -1,0 +1,69 @@
+{% extends "layouts/privateLayout.njk" %}
+
+{% block content %}
+<h1>Lista de Roles</h1>
+<hr />
+
+<section>
+    <div id="roleTableContainer"></div> <!-- Contenedor donde se renderizará la tabla de roles -->
+</section>
+
+<!-- Snackbar para mostrar mensajes -->
+<div id="snackbar" class="snackbar"></div>
+
+<script>
+$(document).ready(function() {
+    // Obtener roles cuando se carga la página
+    fetchRoles();
+
+    function fetchRoles() {
+        apiFetch('/roles/api', 'GET')
+            .then(response => {
+                console.log('Respuesta de la API:', response); // Imprime la respuesta de la API
+                renderRoleTable(response.roles); // Asegúrate de pasar el arreglo de roles
+            })
+            .catch(function(xhr) {
+                console.error('Error al obtener los roles:', xhr);
+                showSnackbar('Error al cargar los roles', false);
+            });
+    }
+
+    // Función para renderizar la tabla de roles
+    function renderRoleTable(roles) {
+        let tableHtml = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre del Rol</th>
+                        <th>Alias</th>
+                        <th>Descripción</th>
+                        <th>Permisos</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        roles.forEach(role => {
+            let permissionsHtml = '<ul>';
+            role.permissions.forEach(permission => {
+                permissionsHtml += `<li>${permission.name}</li>`; // Agregar cada permiso a la lista
+            });
+            permissionsHtml += '</ul>';
+
+            tableHtml += `
+                <tr>
+                    <td>${role.name}</td>
+                    <td>${role.alias}</td> <!-- Agregar alias -->
+                    <td>${role.description || 'N/A'}</td> <!-- Agregar descripción, usar 'N/A' si no está disponible -->
+                    <td>${permissionsHtml}</td>
+                </tr>
+            `;
+        });
+
+        tableHtml += '</tbody></table>';
+        $('#roleTableContainer').html(tableHtml); // Renderizar la tabla en el contenedor
+    }
+});
+</script>
+
+{% endblock %}

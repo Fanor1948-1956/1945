@@ -1,0 +1,150 @@
+{% extends "layouts/privateLayout.njk" %}
+
+{% block content %}
+<h1>Lista de Roles</h1>
+<hr />
+
+<!-- Botón para registrar un nuevo rol -->
+<button id="addRoleButton">Registrar Rol</button>
+
+<section>
+    <div id="roleTableContainer"></div> <!-- Contenedor donde se renderizará la tabla de roles -->
+</section>
+
+<!-- Snackbar para mostrar mensajes -->
+<div id="snackbar" class="snackbar"></div>
+
+<!-- Modal para registrar un nuevo rol -->
+<div id="createRoleModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Registrar Nuevo Rol</h2>
+        <div id="createRoleFormContainer"></div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Obtener roles cuando se carga la página
+    fetchRoles();
+
+    // Manejar evento para abrir el modal de registrar rol
+    $('#addRoleButton').click(function() {
+        renderCreateRoleForm(); // Renderizar formulario de creación
+        Modal.open('#createRoleModal'); // Abrir el modal de creación
+    });
+
+    function fetchRoles() {
+        apiFetch('/roles/api', 'GET')
+            .then(response => {
+                console.log('Respuesta de la API:', response); // Imprime la respuesta de la API
+                renderRoleTable(response.roles); // Asegúrate de pasar el arreglo de roles
+            })
+            .catch(function(xhr) {
+                console.error('Error al obtener los roles:', xhr);
+                showSnackbar('Error al cargar los roles', false);
+            });
+    }
+
+    // Función para renderizar la tabla de roles
+    function renderRoleTable(roles) {
+        let tableHtml = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre del Rol</th>
+                        <th>Alias</th>
+                        <th>Descripción</th>
+                        <th>Permisos</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        roles.forEach(role => {
+            let permissionsHtml = '<ul>';
+            role.permissions.forEach(permission => {
+                permissionsHtml += `<li>${permission.name}</li>`; // Agregar cada permiso a la lista
+            });
+            permissionsHtml += '</ul>';
+
+            tableHtml += `
+                <tr>
+                    <td>${role.name}</td>
+                    <td>${role.alias}</td> <!-- Agregar alias -->
+                    <td>${role.description || 'N/A'}</td> <!-- Agregar descripción -->
+                    <td>${permissionsHtml}</td>
+                </tr>
+            `;
+        });
+
+        tableHtml += '</tbody></table>';
+        $('#roleTableContainer').html(tableHtml); // Renderizar la tabla en el contenedor
+    }
+
+    // Renderizar el formulario de creación de rol
+    function renderCreateRoleForm() {
+        apiFetch('/permissions/api', 'GET')
+            .then(permissions => {
+                const permissionsHtml = permissions.map(permission => `
+                    <label>
+                        <input type="checkbox" name="permissions" value="${permission._id}">
+                        ${permission.name}
+                    </label>
+                `).join('');
+
+                $('#createRoleFormContainer').html(`
+                    <form id="roleCreateForm">
+                        <label for="name">Nombre del Rol:</label>
+                        <input type="text" id="name" name="name" required>
+                        
+                        <label for="alias">Alias:</label>
+                        <input type="text" id="alias" name="alias" required>
+
+                        <label for="description">Descripción:</label>
+                        <textarea id="description" name="description"></textarea>
+                        
+                        <fieldset>
+                            <legend>Permisos:</legend>
+                            ${permissionsHtml}
+                        </fieldset>
+                        <button type="submit">Crear Rol</button>
+                    </form>
+                `);
+            })
+            .catch(xhr => {
+                const errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : 'Error al obtener los permisos';
+                showSnackbar(errorMessage, false);
+            });
+    }
+
+    // Envío del formulario de creación
+    $(document).on('submit', '#roleCreateForm', function(e) {
+        e.preventDefault();
+
+        const permissions = $('input[name="permissions"]:checked').map(function() {
+            return this.value;
+        }).get();
+
+        const newRoleData = {
+            name: $('#name').val(),
+            alias: $('#alias').val(),
+            description: $('#description').val(),
+            permissions: permissions
+        };
+
+        apiFetch('/roles/create-role', 'POST', newRoleData)
+            .then(response => {
+                showSnackbar(response.message, true);
+                fetchRoles(); // Refrescar la lista de roles
+                Modal.close('#createRoleModal'); // Cerrar el modal de creación
+            })
+            .catch(xhr => {
+                const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al crear el rol';
+                showSnackbar(errorMessage, false);
+            });
+    });
+});
+</script>
+
+{% endblock %}

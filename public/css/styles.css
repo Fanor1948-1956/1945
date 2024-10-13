@@ -136,6 +136,52 @@ legend {
   margin-left: 250px; /* En escritorio, deja espacio para el sidebar */
 }
 
+/* Estilos para el contenedor de paginación */
+.pagination {
+  display: flex; /* Usar flexbox para distribuir los botones */
+  justify-content: center; /* Centrar los botones de paginación */
+  margin-top: 20px; /* Espacio superior para separar de la tabla */
+  margin-bottom: 40px; /* Espacio inferior para separación adicional */
+}
+
+/* Estilos para los botones de paginación */
+.page-button {
+  background-color: #010e1d; /* Color de fondo del botón */
+  color: white; /* Color del texto */
+  border: none; /* Sin borde */
+  padding: 10px 15px; /* Espaciado interno */
+  cursor: pointer; /* Cambiar el cursor al pasar por encima */
+  border-radius: 5px; /* Bordes redondeados */
+  margin: 0 5px; /* Espaciado entre botones */
+}
+
+.page-button:hover {
+  background-color: #000000; /* Color al pasar el mouse */
+}
+
+.page-button.active {
+  background-color: #100346; /* Color para la página activa */
+  pointer-events: none; /* Deshabilitar clics en la página activa */
+}
+.details-button,
+.edit-button,
+.deactivate-button {
+  background-color: #0074a8; /* Color de fondo */
+  color: white; /* Color de texto */
+  border: none; /* Sin borde */
+  padding: 8px 12px; /* Espaciado */
+  border-radius: 4px; /* Bordes redondeados */
+  cursor: pointer; /* Cambiar cursor al pasar */
+  margin: 0 5px; /* Espaciado entre botones */
+  transition: background-color 0.3s; /* Transición para hover */
+}
+
+.details-button:hover,
+.edit-button:hover,
+.deactivate-button:hover {
+  background-color: #005b80; /* Color al pasar el mouse */
+}
+
 /* Estilos responsivos para móvil */
 @media (max-width: 768px) {
   .hamburger {

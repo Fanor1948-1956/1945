@@ -1,0 +1,48 @@
+
+<h1>Lista de Roles</h1>
+<button id="addRoleBtn">Agregar Rol</button>
+<div id="roleTableContainer"></div>
+<div id="snackbar" class="snackbar"></div>
+
+<!-- Modal para agregar/editar roles -->
+<div class="modal" id="addRoleModal" style="display:none;">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2 id="modalTitle">Agregar Rol</h2> <!-- Título que se cambia dinámicamente -->
+        <form id="roleForm">
+            <label for="roleName">Nombre:</label>
+            <input type="text" id="roleName" name="name" required>
+            
+            <label for="roleAlias">Alias:</label>
+            <input type="text" id="roleAlias" name="alias" required>
+
+            <label for="roleDescription">Descripción:</label>
+            <input type="text" id="roleDescription" name="description">
+
+            <button type="button" id="editPermissionsBtn">Asignar Permisos</button>
+            <span id="permissionsCount" class="permissions-count">(0 permisos asignados)</span>
+            <div id="selectedPermissionsContainer"></div>
+
+            <button type="button" id="saveRoleBtn">Guardar</button> <!-- Este botón se usa para ambos casos -->
+        </form>
+    </div>
+</div>
+
+
+<!-- Modal para asignar permisos -->
+<div class="modal" id="permissionsModal" style="display:none;">
+    <div class="modal-content">
+        <span class="close-button" id="closePermissionsModal">&times;</span>
+        <h2>Seleccionar Permisos</h2>
+        <div id="permissionsContainer">
+            <!-- Aquí se llenarán los permisos como checkboxes -->
+        </div>
+        <button type="button" id="savePermissionsBtn">Guardar Permisos</button>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeRoles } from './js/logic/roles/createRole.js';
+    initializeRoles();
+</script>
+

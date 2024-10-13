@@ -11,3 +11,12 @@ export const addPermission = (newPermission) => {
   const currentState = getState();
   setState({ permissions: [...currentState.permissions, newPermission] });
 };
+
+// Actualizar un permiso existente
+export const updatePermission = (updatedPermission) => {
+  const currentState = getState();
+  const updatedPermissions = currentState.permissions.map((permission) =>
+    permission._id === updatedPermission._id ? updatedPermission : permission
+  );
+  setState({ permissions: updatedPermissions });
+};

@@ -1,8 +1,13 @@
 // permissionService.js
-import { registerData, fetchAndRenderData } from '../api/apiUserManager.js';
+import {
+  registerData,
+  updateData,
+  fetchAndRenderData,
+} from '../api/apiUserManager.js';
 import {
   loadPermissions,
   addPermission,
+  updatePermission,
 } from '../reducers/permissionReducer.js';
 import { permissionEndpoints } from '../config/apiEndpoints.js';
 
@@ -17,7 +22,6 @@ export const fetchPermissions = async () => {
 };
 
 // Crear un nuevo permiso
-
 export const createPermission = async (newPermission) => {
   try {
     const response = await registerData(
@@ -31,5 +35,22 @@ export const createPermission = async (newPermission) => {
   } catch (error) {
     console.error('Error creando permiso:', error);
     return 'Error al crear el permiso.'; // Mensaje de error por defecto
+  }
+};
+
+// Actualizar un permiso existente
+export const updatePermissionService = async (updatedPermission) => {
+  try {
+    const response = await updateData(
+      `${permissionEndpoints.update}/${updatedPermission._id}`, // Asume que el endpoint de actualización requiere el ID
+      updatedPermission
+    );
+    if (response) {
+      updatePermission(response); // Agrega el permiso actualizado al estado
+      return response.message; // Devuelve el mensaje del servidor
+    }
+  } catch (error) {
+    console.error('Error actualizando permiso:', error);
+    return 'Error al actualizar el permiso.'; // Mensaje de error por defecto
   }
 };

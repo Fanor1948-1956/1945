@@ -20,9 +20,8 @@
         <button id="savePermissionBtn">Guardar</button>
     </div>
 </div>
-
 <script type="module">
-    import { fetchPermissions, createPermission } from './js/services/permissionService.js'; // Ajusta la ruta según tu estructura
+    import { fetchPermissions, createPermission, updatePermissionService } from './js/services/permissionService.js'; // Ajusta la ruta según tu estructura
     import { getState } from './js/reducers/state.js';
     import { renderTable } from './js/renderTable.js'; // Ajusta la ruta según tu estructura
 
@@ -32,6 +31,8 @@
         isActive: 'Estado',
     };
 
+    let currentEditingPermissionId = null; // Variable para almacenar el ID del permiso en edición
+
     document.addEventListener('DOMContentLoaded', () => {
         loadPermissions();
         setupEventListeners();
@@ -40,37 +41,74 @@
     const loadPermissions = async () => {
         await fetchPermissions();
         const { permissions } = getState(); // Obtener permisos del estado
-        renderTable(permissions, permissionHeaders, 'permissionTableContainer'); // Renderizar permisos
+        renderTable(permissions, permissionHeaders, 'permissionTableContainer', onAction); // Renderizar permisos
     };
 
     const setupEventListeners = () => {
         document.getElementById('addPermissionBtn').addEventListener('click', () => {
+            currentEditingPermissionId = null; // Reinicia la variable cuando se abre el modal
+            document.getElementById('permissionName').value = ''; // Limpia el campo de nombre
+            document.getElementById('permissionDescription').value = ''; // Limpia el campo de descripción
             Modal.open('#addPermissionModal'); // Abre el modal para agregar permiso
         });
 
         document.getElementById('savePermissionBtn').addEventListener('click', savePermission);
     };
 
- const savePermission = async () => {
-    const name = document.getElementById('permissionName').value.trim();
-    const description = document.getElementById('permissionDescription').value.trim();
+    const onAction = (action, id) => {
+        const permissions = getState().permissions;
+        const selectedPermission = permissions.find(permission => permission._id === id);
 
-    if (!name || !description) {
-        showSnackbar('Por favor, complete todos los campos.', false);
-        return;
-    }
+        if (action === 'edit') {
+            // Abre el modal y llena los campos con los datos del permiso
+            document.getElementById('permissionName').value = selectedPermission.name;
+            document.getElementById('permissionDescription').value = selectedPermission.description;
+            currentEditingPermissionId = id; // Guarda el ID del permiso que se está editando
+            Modal.open('#addPermissionModal');
+        } else if (action === 'deactivate') {
+            // Aquí puedes llamar a una función para desactivar el permiso
+            deactivatePermission(id); // Asegúrate de implementar esta función
+        }
+    };
 
-    const data = { name, description };
-    const message = await createPermission(data); // Llama al servicio para crear permiso
+    const savePermission = async () => {
+        const name = document.getElementById('permissionName').value.trim();
+        const description = document.getElementById('permissionDescription').value.trim();
 
-    if (message) {
-        Modal.close('#addPermissionModal'); // Cierra el modal
-        loadPermissions(); // Recargar la tabla
-        showSnackbar(message, true); // Mostrar mensaje del servidor
-    } else {
-        showSnackbar('Error al agregar el permiso.', false); // Mostrar mensaje de error
-    }
-};
+        if (!name || !description) {
+            showSnackbar('Por favor, complete todos los campos.', false);
+            return;
+        }
+
+        const data = { name, description };
+        if (currentEditingPermissionId) {
+            // Si estamos editando un permiso
+            data._id = currentEditingPermissionId; // Agrega el ID al objeto
+            const message = await updatePermissionService(data); // Llama al servicio para actualizar permiso
+            if (message) {
+                currentEditingPermissionId = null; // Reinicia la variable
+                Modal.close('#addPermissionModal');
+                loadPermissions();
+                showSnackbar(message, true); // Mostrar mensaje del servidor
+            } else {
+                showSnackbar('Error al actualizar el permiso.', false); // Mostrar mensaje de error
+            }
+        } else {
+            // Si estamos creando un nuevo permiso
+            const message = await createPermission(data);
+            if (message) {
+                Modal.close('#addPermissionModal');
+                loadPermissions();
+                showSnackbar(message, true); // Mostrar mensaje del servidor
+            } else {
+                showSnackbar('Error al agregar el permiso.', false); // Mostrar mensaje de error
+            }
+        }
+    };
+
+    // Exponer onAction globalmente
+    window.onAction = onAction; 
 
 </script>
+
 {% endblock %}

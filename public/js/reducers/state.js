@@ -1,12 +1,13 @@
 // state.js
 let state = {
-  permissions: [],
+  permissions: [], // Lista de permisos
+  roles: [], // Lista de roles
 };
 
-const setState = (newState) => {
+// Obtener el estado actual
+export const getState = () => state;
+
+// Actualizar el estado
+export const setState = (newState) => {
   state = { ...state, ...newState };
 };
-
-const getState = () => state;
-
-export { setState, getState };

@@ -4,6 +4,7 @@ import { setState, getState } from './state.js';
 // Cargar permisos en el estado
 export const loadPermissions = (permissions) => {
   setState({ permissions });
+  console.log('Estado después de cargar ermsdasdasdasds:', getState()); // Verifica el estado
 };
 
 // Agregar un nuevo permiso

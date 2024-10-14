@@ -1,0 +1,44 @@
+{% extends "layouts/privateLayout.njk" %}
+
+{% block content %}
+<h1>Lista de Roles</h1>
+<div id="roleTableContainer"></div>
+<div id="snackbar" class="snackbar"></div>
+
+<script type="module">
+    import { fetchRoles } from './js/services/roleService.js'; // Ajusta la ruta según tu estructura
+    import { getState } from './js/reducers/state.js';
+    import { renderTable } from './js/renderTable.js'; // Ajusta la ruta según tu estructura
+
+    const roleHeaders = {
+        name: 'Nombre',
+        alias: 'Alias',
+        description: 'Descripción',
+        permissions: 'Permisos',
+        isActive: 'Estado',
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadRoles();
+    });
+
+const loadRoles = async () => {
+    await fetchRoles();
+    const { roles: rolesResponse } = getState(); // Obtener roles del estado
+    console.log('rolesResponse', rolesResponse);
+    
+    // Extraer el array de roles
+    const roles = rolesResponse.roles; // Asegúrate de que esto sea un array
+
+    // Verifica que roles sea un array antes de renderizar
+    if (Array.isArray(roles)) {
+        renderTable(roles, roleHeaders, 'roleTableContainer'); // Renderizar roles
+    } else {
+        console.error('Los roles no son un array:', roles);
+        showSnackbar('Error: Los roles no se cargaron correctamente.', false);
+    }
+};
+
+</script>
+
+{% endblock %}

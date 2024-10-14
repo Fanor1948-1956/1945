@@ -1,0 +1,211 @@
+{% extends "layouts/privateLayout.njk" %}
+
+{% block content %}
+<h1>Lista de Roles</h1>
+<button id="addRoleBtn">Agregar Rol</button>
+<div id="roleTableContainer"></div>
+<div id="snackbar" class="snackbar"></div>
+
+<!-- Modal para agregar/editar roles -->
+<div class="modal" id="addRoleModal" style="display:none;">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2 id="modalTitle">Agregar Rol</h2>
+        <form id="roleForm">
+            <label for="roleName">Nombre:</label>
+            <input type="text" id="roleName" name="name" required>
+            
+            <label for="roleAlias">Alias:</label>
+            <input type="text" id="roleAlias" name="alias" required>
+
+            <label for="roleDescription">Descripción:</label>
+            <input type="text" id="roleDescription" name="description">
+
+            <label for="rolePermissions">Permisos:</label>
+            <div id="rolePermissionsContainer"></div> <!-- Aquí irán los checkboxes de permisos -->
+
+            <button type="button" id="saveRoleBtn">Guardar</button>
+        </form>
+    </div>
+</div>
+
+<script type="module">
+    import { fetchRoles, createRole, updateRoleService } from './js/services/roleService.js';
+    import { fetchPermissions } from './js/services/permissionService.js';
+    import { getState } from './js/reducers/state.js';
+    import { renderTable } from './js/renderTable.js';
+
+    const roleHeaders = {
+        name: 'Nombre',
+        alias: 'Alias',
+        description: 'Descripción',
+        permissions: 'Permisos',
+        isActive: 'Estado',
+    };
+
+    let currentEditingRoleId = null; // Variable para almacenar el ID del rol en edición
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadRoles();
+        setupEventListeners();
+    });
+
+    const loadRoles = async () => {
+        await fetchRoles();
+        const { roles } = getState();
+        renderTable(roles, roleHeaders, 'roleTableContainer', onAction);
+    };
+
+
+
+    const setupEventListeners = () => {
+        document.getElementById('addRoleBtn').addEventListener('click', () => {
+            currentEditingRoleId = null; // Reinicia la variable al abrir el modal
+            clearRoleForm();
+            loadPermissions(); // Cargar permisos antes de abrir el modal
+            document.getElementById('modalTitle').textContent = 'Agregar Rol'; 
+            Modal.open('#addRoleModal'); // Abre el modal para agregar rol
+        });
+
+        document.getElementById('saveRoleBtn').addEventListener('click', saveRole);
+    };
+
+    const clearRoleForm = () => {
+        document.getElementById('roleName').value = ''; 
+        document.getElementById('roleAlias').value = ''; 
+        document.getElementById('roleDescription').value = '';
+        clearPermissionsSelection(); // Limpiar selección de permisos
+    };
+
+    const clearPermissionsSelection = () => {
+        const checkboxes = document.querySelectorAll('#rolePermissionsContainer input[type="checkbox"]');
+        checkboxes.forEach(checkbox => checkbox.checked = false);
+    };
+
+   const onAction = async (action, id) => {
+    const roles = getState().roles;
+    const selectedRole = roles.find(role => role._id === id);
+    
+    console.log('Roles cargados:', roles);
+    console.log('Rol seleccionado para editar:', selectedRole);
+
+    if (action === 'edit') {
+        // Cargar datos del rol para editar
+        document.getElementById('roleName').value = selectedRole.name;
+        document.getElementById('roleAlias').value = selectedRole.alias;
+        document.getElementById('roleDescription').value = selectedRole.description;
+        currentEditingRoleId = id; // Guarda el ID del rol que se está editando
+        
+        console.log('Editando rol ID:', id);
+
+        // Cargar permisos desde la base de datos (todos los permisos disponibles)
+        await loadPermissions();
+
+        // Marcar los permisos seleccionados previamente
+        console.log('Permisos asignados al rol:', selectedRole.permissions);
+        markSelectedPermissions(selectedRole.permissions);
+
+        // Cambiar el título del modal y abrir el modal de edición
+        document.getElementById('modalTitle').textContent = 'Editar Rol';
+        Modal.open('#addRoleModal');
+    }
+};
+
+// Cargar permisos disponibles desde la base de datos
+const loadPermissions = async () => {
+    await fetchPermissions(); // Carga los permisos desde la base de datos
+    const { permissions } = getState(); // Permisos del estado de la aplicación
+    console.log('Permisos cargados desde la base de datos:', permissions);
+    renderPermissionsCheckboxes(permissions); // Renderizar los checkboxes
+};
+
+// Renderizar checkboxes de permisos
+const renderPermissionsCheckboxes = (permissions) => {
+    const container = document.getElementById('rolePermissionsContainer');
+    container.innerHTML = ''; // Limpiar cualquier contenido previo
+
+    // Crear un checkbox por cada permiso
+    permissions.forEach(permission => {
+        console.log('Creando checkbox para permiso:', permission);
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `permission-${permission._id}`;
+        checkbox.value = permission._id;
+        checkbox.name = 'permissions'; // Nombre común para los checkboxes
+
+        const label = document.createElement('label');
+        label.htmlFor = checkbox.id;
+        label.textContent = permission.name;
+
+        container.appendChild(checkbox);
+        container.appendChild(label);
+        container.appendChild(document.createElement('br'));
+    });
+};
+
+// Marcar los permisos seleccionados previamente
+// Marcar los permisos seleccionados previamente
+const markSelectedPermissions = (assignedPermissions) => {
+    const checkboxes = document.querySelectorAll('#rolePermissionsContainer input[type="checkbox"]');
+    
+    // Extraer solo los IDs de los permisos asignados
+    const assignedPermissionIds = assignedPermissions.map(permission => permission._id);
+
+    checkboxes.forEach(checkbox => {
+        console.log('Revisando checkbox:', checkbox.value);
+
+        // Si el permiso está en la lista de IDs de permisos asignados, lo marcamos
+        if (assignedPermissionIds.includes(checkbox.value)) {
+            console.log(`Marcando checkbox con ID ${checkbox.value}`);
+            checkbox.checked = true; // Marcar como seleccionado
+        } else {
+            checkbox.checked = false; // Desmarcar si no está asignado
+        }
+    });
+};
+
+
+
+    const saveRole = async () => {
+        const name = document.getElementById('roleName').value.trim();
+        const alias = document.getElementById('roleAlias').value.trim();
+        const description = document.getElementById('roleDescription').value.trim();
+        const permissions = Array.from(document.querySelectorAll('#rolePermissionsContainer input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
+
+        // Validar que se ingresen al menos un permiso
+        if (!name || !alias || permissions.length === 0) {
+            showSnackbar('Por favor, complete todos los campos y seleccione al menos un permiso.', false);
+            return;
+        }
+
+        const data = { name, alias, description, permissions };
+
+        try {
+            let message;
+            if (currentEditingRoleId) {
+                data._id = currentEditingRoleId; // Agrega el ID al objeto para la edición
+                message = await updateRoleService(data);
+            } else {
+                message = await createRole(data);
+            }
+
+            if (message) {
+                Modal.close('#addRoleModal');
+                await loadRoles(); // Actualizar la lista de roles
+                showSnackbar(message, true);
+            } else {
+                showSnackbar('Error al guardar el rol.', false);
+            }
+        } catch (error) {
+            console.error('Error al guardar el rol:', error);
+            showSnackbar('Error al guardar el rol.', false);
+        }
+    };
+
+    // Exponer onAction globalmente
+    window.onAction = onAction;
+
+</script>
+
+{% endblock %}

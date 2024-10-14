@@ -41,6 +41,7 @@
     const loadPermissions = async () => {
         await fetchPermissions();
         const { permissions } = getState(); // Obtener permisos del estado
+        console.log('permissions', permissions);
         renderTable(permissions, permissionHeaders, 'permissionTableContainer', onAction); // Renderizar permisos
     };
 

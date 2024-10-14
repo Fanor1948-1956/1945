@@ -30,6 +30,7 @@
         <button id="savePermissionsButton">Guardar Permisos</button>
     </div>
 </div>
+
 <!-- Modal para ver detalles de un rol -->
 <div id="viewRoleModal" class="modal">
     <div class="modal-content">
@@ -38,16 +39,29 @@
         <div id="viewRoleFormContainer"></div>
     </div>
 </div>
+<!-- Modal para Confirmar Eliminación (Generico) -->
+<div id="confirmDeleteModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-button" id="closeConfirmDeleteModal">&times;</span>
+        <h2>Confirmar Eliminación</h2>
+        <p id="deleteConfirmationMessage"></p>
+        <button id="confirmDeleteButton">Eliminar</button>
+        <button id="cancelDeleteButton">Cancelar</button>
+    </div>
+</div>
+
 <script type="module">
 import { renderTable } from './js/components/common/table.js'; // Ajusta la ruta según sea necesario
 import { renderPagination } from './js/components/common/pagination.js'; // Ajusta la ruta según sea necesario
 import { RegisterRole } from './js/logic/roles/register.js'; 
-import { loadDetails } from './js/logic/common/detailItem.js'; // Importa la función genérica
-
+import { loadDetails } from './js/logic/common/detailItem.js';
+import { translationsRole, allowedKeysRole} from './js/logic/utils/traslates.js'
+import { showDeleteConfirmationModal, handleDeleteConfirmation } from './js/logic/common/deleteItem.js'; // Ajusta la ruta según sea necesario
 $(document).ready(function() {
     let currentPage = 1; // Página actual
     const rolesPerPage = 5; // Número de roles por página
     let allRoles = []; // Almacenar todos los roles
+    let roleToDelete; // Variable para almacenar el rol a eliminar
 
     // Definición de encabezados
     const headers = ['Nombre del Rol', 'Alias', 'Descripción', 'Permisos'];
@@ -61,7 +75,9 @@ $(document).ready(function() {
     function fetchRoles() {
         apiFetch('/roles/api', 'GET')
             .then(response => {
+                console.log('Respuesta de la API:', response);
                 allRoles = response.roles; // Almacenar todos los roles
+                console.log('Roles cargados:', allRoles); // Imprimir roles en consola
                 renderRoles(); // Renderizar la tabla con la paginación
             })
             .catch(function(xhr) {
@@ -77,7 +93,8 @@ $(document).ready(function() {
             name: role.name,
             alias: role.alias,
             description: role.description || 'N/A',
-            permissions: role.permissions ? role.permissions.map(p => p.name).join(', ') : 'N/A'
+            permissions: role.permissions ? role.permissions.map(p => p.name).join(', ') : 'N/A',
+        
         }));
 
         // Renderizar la tabla
@@ -95,41 +112,52 @@ $(document).ready(function() {
         renderRoles(); // Renderizar roles y paginación nuevamente
     }
 
-    // Manejar clic en el botón de ver detalles
-    $(document).on('click', '.details-button', function() {
-        const roleId = $(this).data('id');
-        onAction('details', roleId); // Llamar a onAction directamente
-    });
-
-    // Función que maneja las acciones (detalles, editar, etc.)
-    function onAction(action, roleId) {
+      function onAction(action, itemId, type) {
         switch (action) {
             case 'details':
-                // Llamar a loadDetails sin necesidad de definir campos manualmente
-                loadDetails('roles', roleId)
+                loadDetails('roles', itemId, translationsRole, allowedKeysRole)
                     .then(detailsHtml => {
-                        $('#viewRoleFormContainer').html(detailsHtml); // Renderizar los detalles
-                        $('#viewRoleModal').show(); // Mostrar modal de detalles
+                        $('#viewRoleFormContainer').html(detailsHtml);
+                        $('#viewRoleModal').show();
                     })
                     .catch(error => {
-                        showSnackbar(error.message, false); // Mostrar error en Snackbar
+                        showSnackbar(error.message, false);
                     });
                 break;
+
+            case 'delete':
+                showDeleteConfirmationModal('roles', itemId, 'Rol'); // Mostrar modal de confirmación
+                break;
+
             default:
                 console.error('Acción no reconocida:', action);
         }
     }
 
-    // Función para cerrar el modal
-    $(document).on('click', '.close-button', function() {
-        $('.modal').hide(); // Ocultar cualquier modal abierto
+    // Manejar clic en el botón de confirmación de eliminación
+    $(document).on('click', '#confirmDeleteButton', function () {
+        handleDeleteConfirmation(fetchRoles); // Pasar la función para refrescar roles
     });
 
-    // Hacer la función onAction accesible globalmente
-    window.onAction = onAction;
+    // Manejar clic en el botón de ver detalles
+    $(document).on('click', '.details-button', function() {
+        const roleId = $(this).data('id');
+        onAction('details', roleId, 'rol'); // Llamar a onAction para mostrar detalles
+    });
+
+    // Manejar clic en el botón de eliminación
+    $(document).on('click', '.delete-button', function() {
+        const roleId = $(this).data('id');
+        onAction('delete', roleId, 'rol'); // Llamar a onAction para eliminar
+    });
+    // Manejar clic en botones de paginación
+    $(document).on('click', '.page-button', function() {
+        const newPage = parseInt($(this).data('page'));
+        handlePageChange(newPage);
+    });
+
+    window.onAction = onAction; // Hacer onAction accesible globalmente si es necesario
 });
 </script>
-
-
 
 {% endblock %}

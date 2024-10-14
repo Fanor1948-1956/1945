@@ -85,7 +85,7 @@ legend {
 .modal {
   display: none;
   position: fixed;
-  z-index: 1000;
+  z-index: 3000;
   left: 0;
   top: 0;
   width: 100%;
@@ -146,7 +146,7 @@ legend {
 
 /* Estilos para los botones de paginación */
 .page-button {
-  background-color: #010e1d; /* Color de fondo del botón */
+  background-color: #00162e; /* Color de fondo del botón */
   color: white; /* Color del texto */
   border: none; /* Sin borde */
   padding: 10px 15px; /* Espaciado interno */
@@ -160,7 +160,7 @@ legend {
 }
 
 .page-button.active {
-  background-color: #100346; /* Color para la página activa */
+  background-color: #0074a8; /* Color de fondo */
   pointer-events: none; /* Deshabilitar clics en la página activa */
 }
 .details-button,

@@ -2,13 +2,11 @@ import {
   registerData,
   updateData,
   fetchAndRenderData,
-  deleteData, // Importa la función deleteData
-  deactivateData, // Importa la función deactivateData
-  activateData, // Importa la función activateData
+  deleteData, 
+  deactivateData, 
+  activateData,
 } from '../api/apiUserManager.js';
 
-// Obtener roles desde la API
-// roleService.js
 export const fetchRoles = async (itemEndpoints, loadItems) => {
   try {
     const response = await fetchAndRenderData(itemEndpoints.list);

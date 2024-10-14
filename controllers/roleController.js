@@ -22,11 +22,11 @@ exports.createRole = async (req, res) => {
 // Get all roles
 exports.getAllRoles = async (req, res) => {
   try {
-    const roles = await Role.find().populate('permissions');
+    const items = await Role.find().populate('permissions');
     res.status(200).json({
       success: true,
       message: 'Roles retrieved successfully',
-      roles,
+      items,
     });
   } catch (error) {
     res.status(500).json({

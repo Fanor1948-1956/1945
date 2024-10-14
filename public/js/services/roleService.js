@@ -2,8 +2,8 @@ import {
   registerData,
   updateData,
   fetchAndRenderData,
-  deleteData, 
-  deactivateData, 
+  deleteData,
+  deactivateData,
   activateData,
 } from '../api/apiUserManager.js';
 
@@ -54,11 +54,11 @@ export const updateRoleService = async (
   }
 };
 // Eliminar un rol existente
-export const deleteRoleService = async (roleId, itemEndpoints, deleteItem) => {
+export const deleteRoleService = async (itemId, itemEndpoints, deleteItem) => {
   try {
-    const response = await deleteData(`${itemEndpoints.delete}/${roleId}`);
+    const response = await deleteData(`${itemEndpoints.delete}/${itemId}`);
     if (response) {
-      deleteItem(roleId); // Elimina el rol del estado
+      deleteItem(itemId); // Elimina el rol del estado
       return response.message; // Devuelve el mensaje del servidor
     }
   } catch (error) {
@@ -68,10 +68,10 @@ export const deleteRoleService = async (roleId, itemEndpoints, deleteItem) => {
 };
 
 // Desactivar un rol existente
-export const deactivateRoleService = async (roleId, itemEndpoints) => {
+export const deactivateRoleService = async (itemId, itemEndpoints) => {
   try {
     const response = await deactivateData(
-      `${itemEndpoints.deactivate}/${roleId}`
+      `${itemEndpoints.deactivate}/${itemId}`
     ); // Asegúrate de que el endpoint sea correcto
     if (response) {
       // Aquí podrías manejar el estado si es necesario
@@ -84,9 +84,9 @@ export const deactivateRoleService = async (roleId, itemEndpoints) => {
 };
 
 // Activar un rol existente
-export const activateRoleService = async (roleId) => {
+export const activateRoleService = async (itemId) => {
   try {
-    const response = await activateData(`${itemEndpoints.activate}/${roleId}`); // Asegúrate de que el endpoint sea correcto
+    const response = await activateData(`${itemEndpoints.activate}/${itemId}`); // Asegúrate de que el endpoint sea correcto
     if (response) {
       // Aquí podrías manejar el estado si es necesario
       return response.message; // Devuelve el mensaje del servidor

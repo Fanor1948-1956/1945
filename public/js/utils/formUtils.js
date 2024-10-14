@@ -1,46 +1,49 @@
-// js/utils/formUtils.js
-import { toggleCheckboxes } from './checkboxUtils.js'; // Asegúrate de importar toggleCheckboxes
+// formUtils.js
 
-export const clearRoleForm = () => {
-  document.getElementById('roleName').value = '';
-  document.getElementById('roleAlias').value = '';
-  document.getElementById('roleDescription').value = '';
-  clearPermissionsSelection();
+/**
+ * Limpia todos los campos de texto de un formulario dado.
+ * @param {string} formId - ID del formulario que se desea limpiar.
+ */
+export const clearFormFields = (formId) => {
+  const form = document.getElementById(formId);
+  if (form) {
+    form.reset();
+  }
 };
 
-export const clearPermissionsSelection = () => {
-  const checkboxes = document.querySelectorAll(
-    '#rolePermissionsContainer input[type="checkbox"]'
-  );
-  checkboxes.forEach((checkbox) => (checkbox.checked = false));
-};
-
-export const markSelectedPermissions = (assignedPermissions) => {
-  const assignedPermissionIds = assignedPermissions.map(
-    (permission) => permission._id
-  );
-  toggleCheckboxes('rolePermissionsContainer', assignedPermissionIds); // Usar la función importada
-};
-
-// js/utils/formUtils.js
-
-export const renderSubitems = (items, containerId, itemType) => {
+/**
+ * Limpia una selección específica, como checkboxes o radios, en un contenedor.
+ * @param {string} containerId - ID del contenedor donde están los inputs seleccionables.
+ */
+export const clearSelection = (containerId) => {
   const container = document.getElementById(containerId);
-  container.innerHTML = '';
+  if (container) {
+    const checkboxes = container.querySelectorAll(
+      'input[type="checkbox"]:checked'
+    );
+    checkboxes.forEach((checkbox) => (checkbox.checked = false));
+  }
+};
 
-  items.forEach((item) => {
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.id = `${itemType}-${item._id}`;
-    checkbox.value = item._id;
-    checkbox.name = itemType;
-
-    const label = document.createElement('label');
-    label.htmlFor = checkbox.id;
-    label.textContent = item.name;
-
-    container.appendChild(checkbox);
-    container.appendChild(label);
-    container.appendChild(document.createElement('br'));
+/**
+ * Resetea campos específicos de un formulario, como los campos de texto.
+ * @param {Array} fieldIds - Lista de IDs de los campos de texto que se desean resetear.
+ */
+export const resetFormFields = (fieldIds) => {
+  fieldIds.forEach((fieldId) => {
+    const field = document.getElementById(fieldId);
+    if (field) {
+      field.value = '';
+    }
   });
+};
+
+/**
+ * Limpia todas las selecciones (checkboxes, radios, etc.) en un contenedor y actualiza un array de seleccionados.
+ * @param {string} containerId - ID del contenedor donde están los inputs seleccionables.
+ * @param {Array} selectedArray - Array donde se almacenan los elementos seleccionados.
+ */
+export const clearSelectionsAndArray = (containerId, selectedArray) => {
+  clearSelection(containerId);
+  selectedArray.length = 0; // Vacía el array de seleccionados
 };

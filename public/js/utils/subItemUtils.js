@@ -1,30 +1,31 @@
+// subItemsUtils.js
 
-
-export const renderPermissionsCheckboxes = (
-  permissions,
-  assignedPermissions
+/**
+ * Renderizar los checkboxes de subItem en el contenedor.
+ * @param {Array} subItems - Lista de subItem a renderizar.
+ * @param {Array} selectedSubItems - Lista de subItem seleccionados.
+ * @param {string} containerId - ID del contenedor donde se renderizarán los checkboxes.
+ */
+export const renderSubItemsCheckboxesForSelection = (
+  subItems,
+  selectedSubItems,
+  containerId
 ) => {
-  const container = document.getElementById('permissionsContainer');
-  container.innerHTML = '';
+  const container = document.getElementById(containerId);
+  container.innerHTML = ''; // Limpiar cualquier contenido previo
 
-  // Crea un conjunto de IDs de permisos asignados para búsqueda eficiente
-  const assignedPermissionIds = new Set(
-    assignedPermissions.map((permission) => permission._id)
-  );
-
-  permissions.forEach((permission) => {
+  subItems.forEach((subItem) => {
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
-    checkbox.id = `permission-${permission._id}`;
-    checkbox.value = permission._id;
-    checkbox.name = 'permissions';
-
-    // Marcar el checkbox si el permiso está asignado
-    checkbox.checked = assignedPermissionIds.has(permission._id); // Usar Set para eficiencia
+    checkbox.id = `selectSubItems-${subItem._id}`;
+    checkbox.value = subItem._id;
 
     const label = document.createElement('label');
     label.htmlFor = checkbox.id;
-    label.textContent = permission.name;
+    label.textContent = subItem.name;
+
+    // Marcar el checkbox si el permiso está en la selección actual
+    checkbox.checked = selectedSubItems.includes(subItem._id);
 
     container.appendChild(checkbox);
     container.appendChild(label);

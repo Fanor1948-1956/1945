@@ -1,28 +1,41 @@
 // modal.js
 
-import { setupRoleForm, editRole } from '../../logic/roles/index.js';
-import { fetchRoles } from '../../services/roleService.js';
-import { renderTable } from '../../renderTable.js';
-import { getState } from '../../reducers/state.js';
+let onConfirm = null;
 
-export const setupModalEvents = () => {
-  document.addEventListener('DOMContentLoaded', async () => {
-    await loadRoles();
-    setupRoleForm();
-  });
+export const openModal = (message, confirmCallback) => {
+  onConfirm = confirmCallback; // Guarda la función de confirmación
+
+  const modal = document.getElementById('deleteItemModal');
+  modal.style.display = 'flex'; // Muestra el modal
+
+  // Establece el mensaje del modal
+  setModalMessage(message); // Actualiza el mensaje del modal
+
+  // Agrega eventos para los botones
+  document.getElementById('confirmDeleteButton').onclick = () => {
+    if (onConfirm) {
+      onConfirm(); // Llama a la función de confirmación
+    }
+    closeModal(); // Cierra el modal
+  };
+
+  document.getElementById('cancelDeleteButton').onclick = closeModal; // Cierra el modal al cancelar
+
+  // Evento para cerrar el modal al hacer clic en la X
+  document.querySelector('.close-button').onclick = closeModal;
+
+  // Cierra el modal al hacer clic fuera de él
+  modal.onclick = (event) => {
+    if (event.target === modal) {
+      closeModal();
+    }
+  };
 };
 
-const loadRoles = async () => {
-  await fetchRoles();
-  const { roles } = getState();
-  renderTable(roles, onAction); // Asume que renderTable maneja la lógica de renderización de la tabla
-};
-
-const onAction = (action, id) => {
-  const roles = getState().roles;
-  const selectedRole = roles.find((role) => role._id === id);
-
-  if (action === 'edit') {
-    editRole(selectedRole); // Llama a la función para editar rol
+export const closeModal = () => {
+  const modal = document.getElementById('deleteItemModal');
+  if (modal) {
+    modal.style.display = 'none'; // Oculta el modal
+    modal.remove(); // Elimina el modal del DOM
   }
 };

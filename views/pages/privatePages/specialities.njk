@@ -1,26 +1,121 @@
-
+// Layout y Script Principal
 {% extends "layouts/privateLayout.njk" %}
+
 {% block content %}
-    <h1>Lista de Especialidades</h1>
-    <div id="specialtyTableContainer"></div>
+<h1>Lista de Especialidades</h1>
+<button id="addSpecialtyBtn">Agregar Especialidad</button>
+<div id="specialtyTableContainer"></div>
+<div id="snackbar" class="snackbar"></div>
 
-    <script type="module">
-        import { fetchAndRenderData } from './js/apiUserManager.js';
-        import { renderTable } from './js/renderTable.js'; // Asegúrate de la ruta correcta
+<!-- Modal para agregar especialidades -->
+<div class="modal" id="addSpecialtyModal" style="display:none;">
+  <div class="modal-content">
+    <span class="close-button" onclick="Modal.close('#addSpecialtyModal')">&times;</span>
+    <h2>Agregar Especialidad</h2>
+    <label for="specialtyName">Nombre:</label>
+    <input type="text" id="specialtyName" required>
+    <label for="specialtyDescription">Descripción:</label>
+    <input type="text" id="specialtyDescription" required>
+    <button id="saveSpecialtyBtn">Guardar</button>
+  </div>
+</div>
 
-        // Configuración de las columnas para especialidades
-        const specialtyHeaders = {
-            name: 'Nombre',
-            description: 'Descripción',
-            category: 'Categoría'
-        };
+<script type="module">
+import {
+  loadItems,
+  addItem,
+  updateItem,
+  deleteItem,
+} from './js/reducers/index.js';
 
-        document.addEventListener('DOMContentLoaded', function () {
-            fetchAndRenderData(
-                'https://8000-fanoro1956-1945-ct1ygkepe97.ws-us116.gitpod.io/api/specialties',
-                (data) => renderTable(data, specialtyHeaders, 'specialtyTableContainer'),
-                specialtyHeaders
-            );
-        });
-    </script>
+import { fetchServices, createService, updateService, deleteService } from './js/services/index.js';
+import { getState } from './js/reducers/state.js';
+import { renderTable } from './js/renderTable.js'; 
+import { specialtyEndpoints } from './js/config/apiEndpoints.js';
+import { confirmDelete } from './js/utils/confirmDelete.js'; // Importa la función de utilidad
+
+const specialtyHeaders = {
+  name: 'Nombre',
+  description: 'Descripción',
+  isActive: 'Estado',
+};
+
+let currentEditingSpecialtyId = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadSpecialties();
+  setupEventListeners();
+});
+
+const loadSpecialties = async () => {
+  await fetchServices(specialtyEndpoints, loadItems);
+  const { items } = getState();
+  console.log('specialties', items);
+  renderTable(items, specialtyHeaders, 'specialtyTableContainer', onAction); 
+};
+
+const setupEventListeners = () => {
+  document.getElementById('addSpecialtyBtn').addEventListener('click', () => {
+    currentEditingSpecialtyId = null;
+    document.getElementById('specialtyName').value = '';
+    document.getElementById('specialtyDescription').value = '';
+    Modal.open('#addSpecialtyModal');
+  });
+
+  document.getElementById('saveSpecialtyBtn').addEventListener('click', saveSpecialty);
+};
+
+const onAction = (action, id) => {
+  const items = getState().items;
+  const selectedSpecialty = items.find(item => item._id === id);
+
+  if (action === 'edit') {
+    document.getElementById('specialtyName').value = selectedSpecialty.name;
+    document.getElementById('specialtyDescription').value = selectedSpecialty.description;
+    currentEditingSpecialtyId = id;
+    Modal.open('#addSpecialtyModal');
+  } else if (action === 'delete') {
+    confirmDelete(id, specialtyEndpoints, 'especialidad', loadSpecialties); // Llama a confirmDelete
+    // No se necesita manejar más aquí, todo se hace dentro de confirmDelete
+  }
+};
+
+const saveSpecialty = async () => {
+  const name = document.getElementById('specialtyName').value.trim();
+  const description = document.getElementById('specialtyDescription').value.trim();
+
+  if (!name || !description) {
+    showSnackbar('Por favor, complete todos los campos.', false);
+    return;
+  }
+
+  const data = { name, description };
+  if (currentEditingSpecialtyId) {
+    data._id = currentEditingSpecialtyId;
+    const message = await updateService(data, specialtyEndpoints, updateItem);
+    if (message) {
+      currentEditingSpecialtyId = null;
+      Modal.close('#addSpecialtyModal');
+      loadSpecialties();
+      showSnackbar(message, true);
+    } else {
+      showSnackbar('Error al actualizar la especialidad.', false);
+    }
+  } else {
+    const message = await createService(data, specialtyEndpoints, addItem);
+    if (message) {
+      Modal.close('#addSpecialtyModal');
+      loadSpecialties();
+      showSnackbar(message, true);
+    } else {
+      showSnackbar('Error al agregar la especialidad.', false);
+    }
+  }
+};
+
+// Exponer onAction globalmente
+window.onAction = onAction;
+
+</script>
+
 {% endblock %}

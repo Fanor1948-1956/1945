@@ -16,11 +16,11 @@ export const roleEndpoints = {
   delete: `${BASE_URL}/roles/delete`, // Si es necesario
 };
 
-export const specialtiesEndpoints = {
-  list: `${BASE_URL}/api/specialties`,
-  create: `${BASE_URL}/api/specialties/create-permission`,
-  update: `${BASE_URL}/api/specialties/update-permission`, // Si es necesario
-  delete: `${BASE_URL}/api/specialties/delete-permission`, // Si es necesario
+export const specialtyEndpoints = {
+  list: `${BASE_URL}/specialties/api`,
+  create: `${BASE_URL}/specialties/create-specialty`,
+  update: `${BASE_URL}/specialties/update-specialty`, // Si es necesario
+  delete: `${BASE_URL}/specialties/delete`, // Si es necesario
 };
 
 // Puedes agregar más grupos de endpoints aquí en el futuro

@@ -30,13 +30,19 @@ exports.createPermission = async (req, res) => {
   }
 };
 
-// Get all permissions
 exports.getAllPermissions = async (req, res) => {
   try {
-    const permissions = await Permission.find();
-    res.status(200).json(permissions);
+    const items = await Permission.find();
+    res.status(200).json({
+      success: true,
+      message: 'Items retrieved successfully',
+      items,
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error retrieving permissions',
+    });
   }
 };
 
@@ -125,15 +131,18 @@ exports.activatePermission = async (req, res) => {
   }
 };
 
-// Delete permission
 exports.deletePermission = async (req, res) => {
   try {
-    const permission = await Permission.findByIdAndDelete(req.params.id);
-    if (!permission) {
-      return res.status(404).json({ message: 'Permission not found' });
+    const permissionId = req.params.id; // Obtén el ID del rol de los parámetros
+    const deletedPermission = await Permission.findByIdAndDelete(permissionId); // Elimina el rol por ID
+
+    if (!deletedPermission) {
+      return res.status(404).json({ message: 'Permiso no encontrado' }); // Manejar rol no encontrado
     }
-    res.status(204).json(); // No content
+
+    res.json({ success: true, message: 'Permiso eliminado exitosamente' }); // Mensaje de éxito
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error al eliminar el Permiso:', error);
+    res.status(500).json({ message: 'Error al eliminar el rol' }); // Mensaje de error genérico
   }
 };

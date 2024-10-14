@@ -9,7 +9,7 @@
 <!-- Modal para agregar permisos -->
 <div class="modal" id="addPermissionModal" style="display:none;">
     <div class="modal-content">
-        <span class="close-button">&times;</span>
+        <span class="close-button" onclick="Modal.close('#addPermissionModal')">&times;</span>
         <h2>Agregar Permiso</h2>
         <label for="permissionName">Nombre:</label>
         <input type="text" id="permissionName" required>
@@ -20,95 +20,127 @@
         <button id="savePermissionBtn">Guardar</button>
     </div>
 </div>
+
+<!-- Modal de confirmación para eliminar Permiso-->
+<div id="deleteItemModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close-button" onclick="Modal.close('#deleteItemModal')">&times;</span>
+        <h2>Confirmar Eliminación</h2>
+        <p>¿Estás seguro de que deseas eliminar este permiso?</p>
+        <button id="confirmDeleteButton">Confirmar</button>
+        <button id="cancelDeleteButton" onclick="Modal.close('#deleteItemModal')">Cancelar</button>
+    </div>
+</div>
+
 <script type="module">
-    import { fetchPermissions, createPermission, updatePermissionService } from './js/services/permissionService.js'; // Ajusta la ruta según tu estructura
-    import { getState } from './js/reducers/state.js';
-    import { renderTable } from './js/renderTable.js'; // Ajusta la ruta según tu estructura
+import {
+    loadItems,
+    addItem,
+    updateItem,
+    deleteItem,
+} from './js/reducers/index.js';
 
-    const permissionHeaders = {
-        name: 'Nombre',
-        description: 'Descripción',
-        isActive: 'Estado',
-    };
+import { fetchServices, createService, updateService, deleteService } from './js/services/index.js';
+import { getState } from './js/reducers/state.js';
+import { renderTable } from './js/renderTable.js'; 
+import { permissionEndpoints } from './js/config/apiEndpoints.js';
 
-    let currentEditingPermissionId = null; // Variable para almacenar el ID del permiso en edición
+const permissionHeaders = {
+    name: 'Nombre',
+    description: 'Descripción',
+    isActive: 'Estado',
+};
 
-    document.addEventListener('DOMContentLoaded', () => {
-        loadPermissions();
-        setupEventListeners();
+let currentEditingPermissionId = null;
+let currentDeletingPermissionId = null; // Variable para almacenar el ID del permiso que se va a eliminar
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadPermissions();
+    setupEventListeners();
+});
+
+const loadPermissions = async () => {
+    await fetchServices(permissionEndpoints, loadItems);
+    const { items } = getState();
+    console.log('permissions', items);
+    renderTable(items, permissionHeaders, 'permissionTableContainer', onAction); 
+};
+
+const setupEventListeners = () => {
+    document.getElementById('addPermissionBtn').addEventListener('click', () => {
+        currentEditingPermissionId = null;
+        document.getElementById('permissionName').value = '';
+        document.getElementById('permissionDescription').value = '';
+        Modal.open('#addPermissionModal');
     });
 
-    const loadPermissions = async () => {
-        await fetchPermissions();
-        const { permissions } = getState(); // Obtener permisos del estado
-        console.log('permissions', permissions);
-        renderTable(permissions, permissionHeaders, 'permissionTableContainer', onAction); // Renderizar permisos
-    };
+    document.getElementById('savePermissionBtn').addEventListener('click', savePermission);
 
-    const setupEventListeners = () => {
-        document.getElementById('addPermissionBtn').addEventListener('click', () => {
-            currentEditingPermissionId = null; // Reinicia la variable cuando se abre el modal
-            document.getElementById('permissionName').value = ''; // Limpia el campo de nombre
-            document.getElementById('permissionDescription').value = ''; // Limpia el campo de descripción
-            Modal.open('#addPermissionModal'); // Abre el modal para agregar permiso
-        });
+    document.getElementById('confirmDeleteButton').addEventListener('click', confirmDeletePermission); // Configura el evento de confirmación
+};
 
-        document.getElementById('savePermissionBtn').addEventListener('click', savePermission);
-    };
+const onAction = (action, id) => {
+    const items = getState().items;
+    const selectedPermission = items.find(item => item._id === id);
 
-    const onAction = (action, id) => {
-        const permissions = getState().permissions;
-        const selectedPermission = permissions.find(permission => permission._id === id);
+    if (action === 'edit') {
+        document.getElementById('permissionName').value = selectedPermission.name;
+        document.getElementById('permissionDescription').value = selectedPermission.description;
+        currentEditingPermissionId = id;
+        Modal.open('#addPermissionModal');
+    } else if (action === 'delete') {
+        currentDeletingPermissionId = id; // Guarda el ID del permiso a eliminar
+        Modal.open('#deleteItemModal'); // Abre el modal de confirmación
+    }
+};
 
-        if (action === 'edit') {
-            // Abre el modal y llena los campos con los datos del permiso
-            document.getElementById('permissionName').value = selectedPermission.name;
-            document.getElementById('permissionDescription').value = selectedPermission.description;
-            currentEditingPermissionId = id; // Guarda el ID del permiso que se está editando
-            Modal.open('#addPermissionModal');
-        } else if (action === 'deactivate') {
-            // Aquí puedes llamar a una función para desactivar el permiso
-            deactivatePermission(id); // Asegúrate de implementar esta función
-        }
-    };
+const savePermission = async () => {
+    const name = document.getElementById('permissionName').value.trim();
+    const description = document.getElementById('permissionDescription').value.trim();
 
-    const savePermission = async () => {
-        const name = document.getElementById('permissionName').value.trim();
-        const description = document.getElementById('permissionDescription').value.trim();
+    if (!name || !description) {
+        showSnackbar('Por favor, complete todos los campos.', false);
+        return;
+    }
 
-        if (!name || !description) {
-            showSnackbar('Por favor, complete todos los campos.', false);
-            return;
-        }
-
-        const data = { name, description };
-        if (currentEditingPermissionId) {
-            // Si estamos editando un permiso
-            data._id = currentEditingPermissionId; // Agrega el ID al objeto
-            const message = await updatePermissionService(data); // Llama al servicio para actualizar permiso
-            if (message) {
-                currentEditingPermissionId = null; // Reinicia la variable
-                Modal.close('#addPermissionModal');
-                loadPermissions();
-                showSnackbar(message, true); // Mostrar mensaje del servidor
-            } else {
-                showSnackbar('Error al actualizar el permiso.', false); // Mostrar mensaje de error
-            }
+    const data = { name, description };
+    if (currentEditingPermissionId) {
+        data._id = currentEditingPermissionId;
+        const message = await updateService(data, permissionEndpoints, updateItem);
+        if (message) {
+            currentEditingPermissionId = null;
+            Modal.close('#addPermissionModal');
+            loadPermissions();
+            showSnackbar(message, true);
         } else {
-            // Si estamos creando un nuevo permiso
-            const message = await createPermission(data);
-            if (message) {
-                Modal.close('#addPermissionModal');
-                loadPermissions();
-                showSnackbar(message, true); // Mostrar mensaje del servidor
-            } else {
-                showSnackbar('Error al agregar el permiso.', false); // Mostrar mensaje de error
-            }
+            showSnackbar('Error al actualizar el permiso.', false);
         }
-    };
+    } else {
+        const message = await createService(data, permissionEndpoints, addItem);
+        if (message) {
+            Modal.close('#addPermissionModal');
+            loadPermissions();
+            showSnackbar(message, true);
+        } else {
+            showSnackbar('Error al agregar el permiso.', false);
+        }
+    }
+};
 
-    // Exponer onAction globalmente
-    window.onAction = onAction; 
+// Función para confirmar la eliminación del permiso
+const confirmDeletePermission = async () => {
+    const message = await deleteService(currentDeletingPermissionId, permissionEndpoints, deleteItem); // Llama a deleteService con el ID
+    if (message) {
+        Modal.close('#deleteItemModal'); // Cierra el modal después de la eliminación
+        loadPermissions(); // Recargar permisos después de la eliminación
+        showSnackbar(message, true); // Mostrar mensaje de éxito
+    } else {
+        showSnackbar('Error al eliminar el permiso.', false); // Mostrar mensaje de error
+    }
+};
+
+// Exponer onAction globalmente
+window.onAction = onAction;
 
 </script>
 

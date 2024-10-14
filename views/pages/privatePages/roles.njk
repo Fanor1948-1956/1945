@@ -56,13 +56,14 @@ loadItems,
   deleteItem,
 } from './js/reducers/index.js';
     import { fetchServices, createService, updateService, deleteService } from './js/services/index.js';
-    import { fetchPermissions } from './js/services/permissionService.js';
+
     import { getState } from './js/reducers/state.js';
     import { renderTable } from './js/renderTable.js';
     import { renderSubItemsCheckboxesForSelection } from './js/utils/subItemUtils.js'; // Importamos la función para renderizar ítems
     import { clearFormFields, resetFormFields, clearSelectionsAndArray } from './js/utils/formUtils.js'; // Importamos las funciones de manejo de formularios
     import { saveSelectedSubItems, saveItem } from './js/logic/itemLogic/index.js'; // Importamos las nuevas funciones
-import { roleEndpoints } from './js/config/apiEndpoints.js';
+import { roleEndpoints,permissionEndpoints } from './js/config/apiEndpoints.js';
+
     const roleHeaders = {
         name: 'Nombre',
         alias: 'Alias',
@@ -151,14 +152,14 @@ import { roleEndpoints } from './js/config/apiEndpoints.js';
 
     // Cargar permisos disponibles desde la base de datos
     const loadPermissions = async () => {
-        await fetchPermissions(); // Carga los permisos desde la base de datos
-        const { permissions } = getState(); // Permisos del estado de la aplicación
-        renderSubItemsCheckboxesForSelection(permissions, selectedPermissions, 'permissionsContainer'); // Usamos la nueva función
+        await fetchServices(permissionEndpoints, loadItems);
+        const { items } = getState(); // Permisos del estado de la aplicación
+        renderSubItemsCheckboxesForSelection(items, selectedPermissions, 'permissionsContainer'); // Usamos la nueva función
     };
 
     const openPermissionsModal = () => {
-        const { permissions } = getState(); // Obtiene los permisos cargados
-        renderSubItemsCheckboxesForSelection(permissions, selectedPermissions, 'permissionsContainer'); // Usamos la nueva función
+        const { items } = getState(); // Obtiene los permisos cargados
+        renderSubItemsCheckboxesForSelection(items, selectedPermissions, 'permissionsContainer'); // Usamos la nueva función
         Modal.open('#selectPermissionsModal'); // Abre el modal de selección de permisos
     };
 

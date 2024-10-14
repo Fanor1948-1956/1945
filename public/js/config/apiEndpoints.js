@@ -6,7 +6,7 @@ export const permissionEndpoints = {
   list: `${BASE_URL}/permissions/api`,
   create: `${BASE_URL}/permissions/create-permission`,
   update: `${BASE_URL}/permissions/update-permission`, // Si es necesario
-  delete: `${BASE_URL}/permissions/delete-permission`, // Si es necesario
+  delete: `${BASE_URL}/permissions/delete`, // Si es necesario
 };
 
 export const roleEndpoints = {

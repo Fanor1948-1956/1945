@@ -24,6 +24,41 @@ export async function updateData(url, data) {
     return null; // Devuelve null en caso de error
   }
 }
+// Función para eliminar datos
+export async function deleteData(url) {
+  try {
+    const response = await apiFetch(url, 'DELETE');
+    console.log('Datos eliminados:', response);
+    return response; // Devuelve la respuesta si es necesario
+  } catch (error) {
+    console.error('Error al eliminar datos:', error);
+    return null; // Devuelve null en caso de error
+  }
+}
+
+// Función para desactivar datos
+export async function deactivateData(url) {
+  try {
+    const response = await apiFetch(url, 'PATCH', { active: false }); // Envío de un cuerpo de solicitud si es necesario
+    console.log('Datos desactivados:', response);
+    return response; // Devuelve la respuesta si es necesario
+  } catch (error) {
+    console.error('Error al desactivar datos:', error);
+    return null; // Devuelve null en caso de error
+  }
+}
+
+// Función para activar datos
+export async function activateData(url) {
+  try {
+    const response = await apiFetch(url, 'PATCH', { active: true }); // Envío de un cuerpo de solicitud si es necesario
+    console.log('Datos activados:', response);
+    return response; // Devuelve la respuesta si es necesario
+  } catch (error) {
+    console.error('Error al activar datos:', error);
+    return null; // Devuelve null en caso de error
+  }
+}
 
 // Función para obtener y renderizar datos
 export async function fetchAndRenderData(url) {

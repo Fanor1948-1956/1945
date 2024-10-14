@@ -13,7 +13,7 @@ export const roleEndpoints = {
   list: `${BASE_URL}/roles/api`,
   create: `${BASE_URL}/roles/create-role`,
   update: `${BASE_URL}/roles/update-role`, // Si es necesario
-  delete: `${BASE_URL}/roles/delete-role`, // Si es necesario
+  delete: `${BASE_URL}/roles/delete`, // Si es necesario
 };
 
 export const specialtiesEndpoints = {

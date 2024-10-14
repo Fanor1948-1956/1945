@@ -2,39 +2,6 @@ const permissionModel = require('../models/permissionModel');
 const roleModel = require('../models/roleModel');
 const { User, Patient } = require('../models/userModel');
 
-// Definir las rutas privadas
-// app.use('/dashboard', verifyToken, async (req, res) => {
-//   const user = await User.findById(req.user._id).populate('roles');
-//   const userRoles = user.roles.map((role) => role.name);
-
-//   // Obtener los permisos del usuario
-//   const userPermissions = await Permission.find({ roles: { $in: userRoles } });
-//   const userPermissionsNames = userPermissions.map((permission) => permission.name);
-
-//   // Obtener las rutas privadas
-//   const privateRoutes = await Promise.all(
-//     privateRoutes.map(async (route) => {
-//       // Verificar si el usuario tiene permisos para esta ruta
-//       const routePermissions = route.permissions || [];
-//       const hasPermissions = routePermissions.some((permission) =>
-//         userPermissionsNames.includes(permission)
-//       );
-
-//       if (hasPermissions) {
-//         const items = await route.items(userRoles
-//           );
-//         return {
-//           path: route.path,
-//           title: route.title,
-//           view: route.view,
-//           items: items,
-//           subRoutes: route.subRoutes,
-//         };
-
-//         }
-//       }
-//       return null;
-
 const privateRoutes = [
   {
     path: '/dashboard',
@@ -65,58 +32,20 @@ const privateRoutes = [
 
       return items;
     },
-    // subRoutes: [
-    //   {
-    //     path: '/dashboard/configuracion',
-    //     title: 'Configuración de Perfil',
-    //     view: 'pages/privatePages/configuracion.njk',
-    //     items: async () => [
-    //       {
-    //         title: 'Datos Básicos',
-    //         link: '/dashboard/configuracion/datos-basicos',
-    //       },
-    //       {
-    //         title: 'Datos Específicos',
-    //         link: '/dashboard/configuracion/datos-especificos',
-    //       },
-    //       { title: 'Privacidad', link: '/dashboard/configuracion/privacidad' },
-    //     ],
-    //     subRoutes: [
-    //       {
-    //         path: '/dashboard/configuracion/datos-basicos',
-    //         title: 'Datos Básicos',
-    //         view: 'pages/privatePages/datosBasicos.njk',
-    //         items: async () => [],
-    //       },
-    //       {
-    //         path: '/dashboard/configuracion/datos-especificos',
-    //         title: 'Datos Específicos',
-    //         view: 'pages/privatePages/datosEspecificos.njk',
-    //         items: async () => [],
-    //       },
-    //       {
-    //         path: '/dashboard/configuracion/privacidad',
-    //         title: 'Privacidad',
-    //         view: 'pages/privatePages/privacidad.njk',
-    //         items: async () => [],
-    //       },
-    //     ],
-    //   },
-    // ],
   },
 
   {
     path: '/users',
     title: 'Lista de',
     view: 'pages/privatePages/users.njk',
-
+    roles: ['Administrador', 'Paciente'],
     items: async () => [],
     subRoutes: [
       {
         path: '/users/admin',
         title: 'Administradores',
         view: 'pages/privatePages/users/adminUsers.njk',
-        roles: ['Administrador'],
+        roles: ['Administrador', 'Paciente'],
         items: async () => [],
       },
       {
@@ -195,14 +124,14 @@ const privateRoutes = [
     path: '/permissions',
     title: 'Permisos',
     view: 'pages/privatePages/permissions.njk',
-    roles: ['Administrador'],
+    roles: ['Administrador', 'Paciente'],
     items: async () => await permissionModel.find(),
   },
   {
     path: '/roles',
     title: 'Roles',
     view: 'pages/privatePages/roles.njk',
-    roles: ['Administrador'],
+    roles: ['Administrador', 'Paciente'],
     items: async () => {
       const permissions = await permissionModel.find();
       const roles = await roleModel.find().populate('permissions');

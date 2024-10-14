@@ -56,16 +56,14 @@ export function renderTable(data, columnHeaders, containerId, onAction) {
     });
 
     // Añadir la columna de acciones con botones
-    // Añadir la columna de acciones
     tableHtml += `
             <td>
                 <button class="details-button" data-id="${item._id}" onclick="onAction('details', '${item._id}')">Ver Detalles</button>
                 <button class="edit-button" data-id="${item._id}" onclick="onAction('edit', '${item._id}')">Editar</button>
                 <button class="deactivate-button" data-id="${item._id}" onclick="onAction('deactivate', '${item._id}')">Desactivar</button>
+                <button class="delete-button" data-id="${item._id}" onclick="onAction('delete', '${item._id}')">Eliminar</button>
             </td>
         `;
-    tableHtml += '</tr>';
-
     tableHtml += '</tr>';
   });
 

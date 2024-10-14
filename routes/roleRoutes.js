@@ -9,6 +9,6 @@ router.get('/detail-role/:id', roleController.getRoleById);
 router.put('/update-role/:id', roleController.updateRole);
 router.patch('/:id/deactivate', roleController.deactivateRole);
 router.patch('/:id/activate', roleController.activateRole);
-router.delete('/delete-role/:id', roleController.deleteRole);
+router.delete('/delete/:id', roleController.deleteRole);
 
 module.exports = router;

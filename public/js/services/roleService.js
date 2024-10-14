@@ -2,6 +2,9 @@ import {
   registerData,
   updateData,
   fetchAndRenderData,
+  deleteData, // Importa la función deleteData
+  deactivateData, // Importa la función deactivateData
+  activateData, // Importa la función activateData
 } from '../api/apiUserManager.js';
 import {
   loadRoles,
@@ -55,11 +58,10 @@ export const updateRoleService = async (updatedRole) => {
     return 'Error al actualizar el rol.'; // Mensaje de error por defecto
   }
 };
-
 // Eliminar un rol existente
 export const deleteRoleService = async (roleId) => {
   try {
-    const response = await updateData(`${roleEndpoints.delete}/${roleId}`);
+    const response = await deleteData(`${roleEndpoints.delete}/${roleId}`);
     if (response) {
       deleteRole(roleId); // Elimina el rol del estado
       return response.message; // Devuelve el mensaje del servidor
@@ -67,5 +69,35 @@ export const deleteRoleService = async (roleId) => {
   } catch (error) {
     console.error('Error al eliminar el rol:', error);
     return 'Error al eliminar el rol.'; // Mensaje de error por defecto
+  }
+};
+
+// Desactivar un rol existente
+export const deactivateRoleService = async (roleId) => {
+  try {
+    const response = await deactivateData(
+      `${roleEndpoints.deactivate}/${roleId}`
+    ); // Asegúrate de que el endpoint sea correcto
+    if (response) {
+      // Aquí podrías manejar el estado si es necesario
+      return response.message; // Devuelve el mensaje del servidor
+    }
+  } catch (error) {
+    console.error('Error al desactivar el rol:', error);
+    return 'Error al desactivar el rol.'; // Mensaje de error por defecto
+  }
+};
+
+// Activar un rol existente
+export const activateRoleService = async (roleId) => {
+  try {
+    const response = await activateData(`${roleEndpoints.activate}/${roleId}`); // Asegúrate de que el endpoint sea correcto
+    if (response) {
+      // Aquí podrías manejar el estado si es necesario
+      return response.message; // Devuelve el mensaje del servidor
+    }
+  } catch (error) {
+    console.error('Error al activar el rol:', error);
+    return 'Error al activar el rol.'; // Mensaje de error por defecto
   }
 };

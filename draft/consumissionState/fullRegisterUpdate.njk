@@ -21,7 +21,8 @@
             <label for="roleDescription">Descripción:</label>
             <input type="text" id="roleDescription" name="description">
 
-            <button type="button" id="selectPermissionsBtn">Seleccionar Permisos</button>
+            <!-- Eliminamos el contenedor de permisos en el primer modal -->
+            <button type="button" id="selectPermissionsBtn">Seleccionar Permisos</button> <!-- Cambiado a "Seleccionar Permisos" -->
             <button type="button" id="saveItemBtn">Guardar</button>
         </form>
     </div>
@@ -31,25 +32,13 @@
 <div class="modal" id="selectPermissionsModal" style="display:none;">
     <div class="modal-content">
         <span class="close-button" onclick="Modal.close('#selectPermissionsModal')">&times;</span>
-        <h2 id="permissionsModalTitle">Seleccionar Permisos</h2>
-        <div id="permissionsContainer"></div>
+        <h2 id="permissionsModalTitle">Seleccionar Permisos</h2> <!-- Cambiado dinámicamente dependiendo de la acción -->
+        <div id="permissionsContainer"></div> <!-- Aquí irán los checkboxes de permisos -->
         <button type="button" id="savePermissionsBtn">Guardar Permisos</button>
     </div>
 </div>
-
-<!-- Modal de confirmación para eliminar rol -->
-<div id="deleteRoleModal" class="modal" style="display:none;">
-    <div class="modal-content">
-        <span class="close-button" onclick="Modal.close('#deleteRoleModal')">&times;</span>
-        <h2>Confirmar Eliminación</h2>
-        <p>¿Estás seguro de que deseas eliminar este Rol?</p>
-        <button id="confirmDeleteButton">Confirmar</button>
-        <button id="cancelDeleteButton">Cancelar</button>
-    </div>
-</div>
-
 <script type="module">
-    import { fetchRoles, createRole, updateRoleService, deleteRoleService } from './js/services/roleService.js';
+    import { fetchRoles, createRole, updateRoleService } from './js/services/roleService.js';
     import { fetchPermissions } from './js/services/permissionService.js';
     import { getState } from './js/reducers/state.js';
     import { renderTable } from './js/renderTable.js';
@@ -92,23 +81,6 @@
         document.getElementById('saveItemBtn').addEventListener('click', saveItemHandler);
         document.getElementById('selectPermissionsBtn').addEventListener('click', openPermissionsModal); // Cambiado a "Seleccionar Permisos"
         document.getElementById('savePermissionsBtn').addEventListener('click', savePermissionsHandler);
-
-        // Manejar confirmación de eliminación
-        document.getElementById('confirmDeleteButton').addEventListener('click', async () => {
-            try {
-                const message = await deleteRoleService(currentEditingRoleId); // Llamar al servicio para eliminar
-                await loadRoles(); // Recargar la lista de roles
-                showSnackbar(message, true); // Mostrar mensaje de éxito
-            } catch (error) {
-                showSnackbar(error.message || 'Error al eliminar el rol.', false); // Mostrar mensaje de error
-            }
-            Modal.close('#deleteRoleModal'); // Cerrar el modal después de eliminar
-        });
-
-        // Manejar cancelación de eliminación
-        document.getElementById('cancelDeleteButton').addEventListener('click', () => {
-            Modal.close('#deleteRoleModal'); // Cierra el modal sin hacer nada
-        });
     };
 
     const clearRoleForm = () => {
@@ -136,10 +108,6 @@
             document.getElementById('permissionsModalTitle').textContent = 'Modificar Permisos';
             
             Modal.open('#addRoleModal'); // Reabrimos el modal principal para editar
-        } else if (action === 'delete') {
-            // Configurar el modal de confirmación de eliminación
-            currentEditingRoleId = id; // Guardamos el ID del rol que se va a eliminar
-            Modal.open('#deleteRoleModal'); // Abrimos el modal de confirmación
         }
     };
 
@@ -194,5 +162,6 @@
     window.onAction = onAction;
 
 </script>
+
 
 {% endblock %}

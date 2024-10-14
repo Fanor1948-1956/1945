@@ -1,0 +1,116 @@
+{% extends "layouts/privateLayout.njk" %}
+
+{% block content %}
+<h1>Lista de Roles</h1>
+<hr />
+
+<section>
+    <div id="roleTableContainer"></div> <!-- Contenedor donde se renderizará la tabla de roles -->
+</section>
+
+<!-- Snackbar para mostrar mensajes -->
+<div id="snackbar" class="snackbar"></div>
+
+<!-- Modal para ver detalles de un rol -->
+<div id="viewRoleModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Detalles del Rol</h2>
+        <div id="viewRoleFormContainer"></div>
+    </div>
+</div>
+
+<script type="module">
+    import { renderTable } from './js/components/common/table.js';
+    import { renderPagination } from './js/components/common/pagination.js';
+
+    $(document).ready(function() {
+        let currentPage = 1;
+        const rolesPerPage = 5;
+        let allRoles = [];
+
+        const headers = ['Nombre del Rol', 'Alias', 'Descripción', 'Permisos'];
+
+        // Obtener roles cuando se carga la página
+        fetchRoles();
+
+        function fetchRoles() {
+            apiFetch('/roles/api', 'GET')
+                .then(response => {
+                    allRoles = response.roles;
+                    renderRoles();
+                })
+                .catch(function(xhr) {
+                    console.error('Error al obtener los roles:', xhr);
+                    showSnackbar('Error al cargar los roles', false);
+                });
+        }
+
+        // Manejar clic en el botón de ver detalles
+        $(document).on('click', '.details-button', function() {
+            const roleId = $(this).data('id');
+            onAction('details', roleId); // Llamar a onAction directamente
+        });
+
+        function onAction(action, roleId) {
+            switch (action) {
+                case 'details':
+                    loadRoleDetails(roleId);
+                    $('#viewRoleModal').show(); // Abrir el modal
+                    break;
+                // Otros casos como 'edit', 'deactivate', 'delete' aquí...
+                default:
+                    console.error('Acción no reconocida:', action);
+            }
+        }
+
+        function loadRoleDetails(roleId) {
+            apiFetch(`/roles/detail-role/${roleId}`, 'GET')
+                .then(response => {
+                    const role = response.role;
+                    const permissionsHtml = role.permissions.map(permission => `<li>${permission.name}</li>`).join('');
+                    $('#viewRoleFormContainer').html(`
+                        <div>
+                            <p><strong>Nombre del Rol:</strong> ${role.name}</p>
+                            <p><strong>Alias:</strong> ${role.alias}</p>
+                            <p><strong>Descripción:</strong> ${role.description || 'N/A'}</p>
+                            <p><strong>Permisos:</strong></p>
+                            <ul>${permissionsHtml}</ul>
+                        </div>
+                    `);
+                })
+                .catch(xhr => {
+                    console.error('Error al cargar los detalles del rol:', xhr);
+                    showSnackbar('Error al cargar los detalles del rol', false);
+                });
+        }
+
+        function renderRoles() {
+            const tableData = allRoles.map(role => ({
+                _id: role._id,
+                name: role.name,
+                alias: role.alias,
+                description: role.description || 'N/A',
+                permissions: role.permissions ? role.permissions.map(p => p.name).join(', ') : 'N/A'
+            }));
+
+            const tableHtml = renderTable(headers, tableData, currentPage, rolesPerPage);
+            $('#roleTableContainer').html(tableHtml);
+            const paginationHtml = renderPagination(currentPage, allRoles.length, rolesPerPage, handlePageChange);
+            $('#roleTableContainer').append(paginationHtml);
+        }
+
+        function handlePageChange(newPage) {
+            currentPage = newPage;
+            renderRoles();
+        }
+
+        // Función para cerrar el modal
+        $(document).on('click', '.close-button', function() {
+            $('#viewRoleModal').hide();
+        });
+          window.onAction = onAction; // Esto la hace accesible globalmente
+    });
+</script>
+
+{% endblock %}

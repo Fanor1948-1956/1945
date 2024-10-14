@@ -1,4 +1,6 @@
-// Función para renderizar una tabla genérica
+// scripts/table.js
+import { Tooltip } from './tooltip.js';
+
 export function renderTable(headers, data, currentPage, itemsPerPage) {
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
@@ -23,7 +25,11 @@ export function renderTable(headers, data, currentPage, itemsPerPage) {
                 <td>${rowNumber}</td> <!-- Mostrar el número de la fila -->
                 ${Object.values(item)
                   .filter((_, idx) => idx !== 0) // Esto asume que el primer índice es el ID; ajústalo si es necesario
-                  .map((value) => `<td>${value}</td>`)
+                  .map(
+                    (value) => `
+                        <td class="truncate tooltip" data-tooltip="${value}">${value}</td>
+                    `
+                  )
                   .join('')}
                 <td>
                     <button class="details-button" data-id="${
@@ -53,5 +59,12 @@ export function renderTable(headers, data, currentPage, itemsPerPage) {
             </tbody>
         </table>
     `;
+
+  // Insertar el HTML de la tabla en el contenedor deseado
+
+  // Llamar a la función de tooltip después de renderizar la tabla
+  const tooltipElements = document.querySelectorAll('.tooltip');
+  Tooltip(tooltipElements); // Añadir tooltips a las celdas
+
   return tableHtml;
 }

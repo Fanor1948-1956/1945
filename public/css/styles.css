@@ -181,6 +181,14 @@ legend {
 .deactivate-button:hover {
   background-color: #005b80; /* Color al pasar el mouse */
 }
+/* styles.css */
+
+.truncate {
+  white-space: nowrap; /* Evita el salto de línea */
+  overflow: hidden; /* Oculta el texto que excede el contenedor */
+  text-overflow: ellipsis; /* Muestra '...' al final */
+  max-width: 150px; /* Ajusta el ancho máximo según sea necesario */
+}
 
 /* Estilos responsivos para móvil */
 @media (max-width: 768px) {

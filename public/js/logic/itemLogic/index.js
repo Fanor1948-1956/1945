@@ -14,15 +14,18 @@ export const saveItem = async (
   itemData,
   currentEditingItemId,
   updateItemService,
-  createItem
+  createItem,
+  itemEndpoints,
+  addItem,
+  updateItem
 ) => {
   try {
     let message;
     if (currentEditingItemId) {
       itemData._id = currentEditingItemId; // Agrega el ID al objeto para la edición
-      message = await updateItemService(itemData);
+      message = await updateItemService(itemData, itemEndpoints, addItem);
     } else {
-      message = await createItem(itemData);
+      message = await createItem(itemData, itemEndpoints, updateItem);
     }
     return message; // Retorna el mensaje de éxito
   } catch (error) {

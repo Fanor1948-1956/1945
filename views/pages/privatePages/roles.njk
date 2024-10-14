@@ -49,6 +49,12 @@
 </div>
 
 <script type="module">
+import {
+loadRoles,
+  addRole,
+  updateRole,
+  deleteRole,
+} from './js/reducers/roleReducer.js';
     import { fetchRoles, createRole, updateRoleService, deleteRoleService } from './js/services/roleService.js';
     import { fetchPermissions } from './js/services/permissionService.js';
     import { getState } from './js/reducers/state.js';
@@ -56,7 +62,7 @@
     import { renderSubItemsCheckboxesForSelection } from './js/utils/subItemUtils.js'; // Importamos la función para renderizar ítems
     import { clearFormFields, resetFormFields, clearSelectionsAndArray } from './js/utils/formUtils.js'; // Importamos las funciones de manejo de formularios
     import { saveSelectedSubItems, saveItem } from './js/logic/itemLogic/index.js'; // Importamos las nuevas funciones
-
+import { roleEndpoints } from './js/config/apiEndpoints.js';
     const roleHeaders = {
         name: 'Nombre',
         alias: 'Alias',
@@ -69,12 +75,12 @@
     let selectedPermissions = []; // Array para almacenar permisos seleccionados
 
     document.addEventListener('DOMContentLoaded', () => {
-        loadRoles();
+        loadsRoles();
         setupEventListeners();
     });
 
-    const loadRoles = async () => {
-        await fetchRoles();
+    const loadsRoles = async () => {
+        await fetchRoles(roleEndpoints, loadRoles);
         const { roles } = getState();
         renderTable(roles, roleHeaders, 'roleTableContainer', onAction);
     };
@@ -96,8 +102,8 @@
         // Manejar confirmación de eliminación
         document.getElementById('confirmDeleteButton').addEventListener('click', async () => {
             try {
-                const message = await deleteRoleService(currentEditingRoleId); // Llamar al servicio para eliminar
-                await loadRoles(); // Recargar la lista de roles
+                const message = await deleteRoleService(currentEditingRoleId, roleEndpoints, deleteRole); // Llamar al servicio para eliminar
+                await loadsRoles(); // Recargar la lista de roles
                 showSnackbar(message, true); // Mostrar mensaje de éxito
             } catch (error) {
                 showSnackbar(error.message || 'Error al eliminar el rol.', false); // Mostrar mensaje de error
@@ -177,10 +183,10 @@
         const data = { name, alias, description, permissions: selectedPermissions };
 
         try {
-            const message = await saveItem(data, currentEditingRoleId, updateRoleService, createRole);
+            const message = await saveItem(data, currentEditingRoleId, updateRoleService, createRole, roleEndpoints, addRole,updateRole);
             if (message) {
                 Modal.close('#addRoleModal');
-                await loadRoles(); // Actualizar la lista de roles
+                await loadsRoles(); // Actualizar la lista de roles
                 showSnackbar(message, true);
             } else {
                 showSnackbar('Error al guardar el rol.', false);

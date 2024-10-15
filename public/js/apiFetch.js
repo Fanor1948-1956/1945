@@ -6,6 +6,7 @@ export function apiFetch(url, method = 'GET', data = null) {
     method: method,
     headers: {
       'Content-Type': 'application/json',
+      Accept: 'application/json',
     },
   };
 

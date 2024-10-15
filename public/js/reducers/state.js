@@ -1,7 +1,8 @@
 // state.js
 let state = {
   permissions: [], // Lista de permisos
-  roles: [], // Lista de roles
+  roles: [], // Lista de roles del usuario
+profile:{}
 };
 
 // Obtener el estado actual

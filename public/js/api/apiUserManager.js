@@ -70,3 +70,14 @@ export async function fetchAndRenderData(url) {
     console.error('Error al obtener los datos:', error);
   }
 }
+export async function getById(url) {
+  try {
+    const response = await apiFetch(url, "GET");
+   
+    console.log("Datos obtenidos por ID:", response);
+    return response; // Devuelve la respuesta con los datos
+  } catch (error) {
+    console.error("Error al obtener datos por ID:", error);
+    return null; // Devuelve null en caso de error
+  }
+}

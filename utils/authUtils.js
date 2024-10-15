@@ -1,18 +1,3 @@
-// // /utils/authUtils.js
-// const jwt = require('jsonwebtoken');
-// const bcrypt = require('bcryptjs');
-
-// // Función para generar un token JWT
-// const generateToken = (user) => {
-//   return jwt.sign({ id: user.id, username: user.username }, 'mi_secreto', {
-//     expiresIn: '1h', // Token válido por 1 hora
-//   });
-// };
-
-// // Función para verificar la contraseña
-// const verifyPassword = (password, hashedPassword) => {
-//   return bcrypt.compareSync(password, hashedPassword);
-// };
 
 // module.exports = { generateToken, verifyPassword };
 const jwt = require('jsonwebtoken');

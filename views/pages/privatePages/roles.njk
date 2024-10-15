@@ -55,7 +55,8 @@ loadRoles,
   updateRole,
   deleteRole,
 } from './js/reducers/roleReducer.js';
-    import { fetchRoles, createRole, updateRoleService, deleteRoleService } from './js/services/roleService.js';
+ 
+    import { fetchServices,createService,  updateService, deleteService} from './js/services/index.js';
     import { fetchPermissions } from './js/services/permissionService.js';
     import { getState } from './js/reducers/state.js';
     import { renderTable } from './js/renderTable.js';
@@ -80,7 +81,7 @@ import { roleEndpoints } from './js/config/apiEndpoints.js';
     });
 
     const loadsRoles = async () => {
-        await fetchRoles(roleEndpoints, loadRoles);
+        await fetchServices(roleEndpoints, loadRoles);
         const { roles } = getState();
         renderTable(roles, roleHeaders, 'roleTableContainer', onAction);
     };
@@ -102,7 +103,7 @@ import { roleEndpoints } from './js/config/apiEndpoints.js';
         // Manejar confirmación de eliminación
         document.getElementById('confirmDeleteButton').addEventListener('click', async () => {
             try {
-                const message = await deleteRoleService(currentEditingRoleId, roleEndpoints, deleteRole); // Llamar al servicio para eliminar
+                const message = await deleteService(currentEditingRoleId, roleEndpoints, deleteRole); // Llamar al servicio para eliminar
                 await loadsRoles(); // Recargar la lista de roles
                 showSnackbar(message, true); // Mostrar mensaje de éxito
             } catch (error) {
@@ -183,7 +184,7 @@ import { roleEndpoints } from './js/config/apiEndpoints.js';
         const data = { name, alias, description, permissions: selectedPermissions };
 
         try {
-            const message = await saveItem(data, currentEditingRoleId, updateRoleService, createRole, roleEndpoints, addRole,updateRole);
+            const message = await saveItem(data, currentEditingRoleId, updateService, createService, roleEndpoints, addRole,updateRole);
             if (message) {
                 Modal.close('#addRoleModal');
                 await loadsRoles(); // Actualizar la lista de roles

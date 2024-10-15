@@ -20,7 +20,7 @@ const specialtyRoutes = require('./routes/specialtyRoutes');
 // Importar la función
 
 const app = express();
-const port = 8000;
+const port = 5000;
 
 // Conectar a la base de datos
 connectDB();
@@ -88,10 +88,10 @@ app.use('/permissions', verifyToken, permissionRoutes);
 app.use('/roles', verifyToken, roleRoutes);
 app.use('/users', verifyToken, userRoutes);
 app.use('/services', verifyToken, serviceRoutes);
-app.use('/profile', verifyToken, profileRoutes);
+app.use('/api', verifyToken, profileRoutes);
 app.use('/auth', authRoutes); // Rutas de autenticación
 
-app.use('/api/specialties', verifyToken, specialtyRoutes);
+app.use('/specialties', verifyToken, specialtyRoutes);
 
 // Iniciar el servidor
 app.listen(port, () => {

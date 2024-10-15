@@ -9,6 +9,6 @@ router.get('/:id', permissionController.getPermissionById);
 router.put('/update-permission/:id', permissionController.updatePermission);
 router.patch('/:id/deactivate', permissionController.deactivatePermission);
 router.patch('/:id/activate', permissionController.activatePermission);
-router.delete('/:id', permissionController.deletePermission);
+router.delete('/delete/:id', permissionController.deletePermission);
 
 module.exports = router;

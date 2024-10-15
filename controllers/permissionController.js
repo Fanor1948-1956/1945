@@ -1,4 +1,4 @@
-const Permission = require('../models/permissionModel');
+const Permission = require("../models/permissionModel");
 
 exports.createPermission = async (req, res) => {
   const { name, description } = req.body;
@@ -6,7 +6,7 @@ exports.createPermission = async (req, res) => {
   // Validar que los campos requeridos están presentes
   if (!name || !description) {
     return res.status(400).json({
-      message: 'Faltan campos requeridos: nombre y descripción.',
+      message: "Faltan campos requeridos: nombre y descripción.",
     });
   }
 
@@ -17,26 +17,32 @@ exports.createPermission = async (req, res) => {
 
     // Responder con el nuevo permiso y un mensaje
     res.status(201).json({
-      message: 'Permiso creado correctamente',
+      message: "Permiso creado correctamente",
       permission: newPermission,
     });
   } catch (error) {
-    console.error('Error al crear el permiso:', error);
+    console.error("Error al crear el permiso:", error);
 
     // Responder con un mensaje de error específico
     res.status(500).json({
-      message: 'Error al crear el permiso. Inténtelo de nuevo más tarde.',
+      message: "Error al crear el permiso. Inténtelo de nuevo más tarde.",
     });
   }
 };
 
-// Get all permissions
 exports.getAllPermissions = async (req, res) => {
   try {
     const permissions = await Permission.find();
-    res.status(200).json(permissions);
+    res.status(200).json({
+      success: true,
+      message: "Items retrieved successfully",
+      permissions,
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message || "Error retrieving permissions",
+    });
   }
 };
 
@@ -45,7 +51,7 @@ exports.getPermissionById = async (req, res) => {
   try {
     const permission = await Permission.findById(req.params.id);
     if (!permission) {
-      return res.status(404).json({ message: 'Permission not found' });
+      return res.status(404).json({ message: "Permission not found" });
     }
     res.status(200).json(permission);
   } catch (error) {
@@ -61,7 +67,7 @@ exports.updatePermission = async (req, res) => {
   // Validar que los campos requeridos están presentes
   if (!name || !description) {
     return res.status(400).json({
-      message: 'Faltan campos requeridos: nombre y descripción.',
+      message: "Faltan campos requeridos: nombre y descripción.",
     });
   }
 
@@ -75,18 +81,18 @@ exports.updatePermission = async (req, res) => {
 
     // Si no se encuentra el permiso
     if (!updatedPermission) {
-      return res.status(404).json({ message: 'Permiso no encontrado.' });
+      return res.status(404).json({ message: "Permiso no encontrado." });
     }
 
     // Responder con el permiso actualizado
     res.status(200).json({
-      message: 'Permiso actualizado correctamente',
+      message: "Permiso actualizado correctamente",
       permission: updatedPermission,
     });
   } catch (error) {
-    console.error('Error al actualizar el permiso:', error);
+    console.error("Error al actualizar el permiso:", error);
     res.status(500).json({
-      message: 'Error al actualizar el permiso. Inténtelo de nuevo más tarde.',
+      message: "Error al actualizar el permiso. Inténtelo de nuevo más tarde.",
     });
   }
 };
@@ -100,7 +106,7 @@ exports.deactivatePermission = async (req, res) => {
       { new: true }
     );
     if (!permission) {
-      return res.status(404).json({ message: 'Permission not found' });
+      return res.status(404).json({ message: "Permission not found" });
     }
     res.status(200).json(permission);
   } catch (error) {
@@ -117,7 +123,7 @@ exports.activatePermission = async (req, res) => {
       { new: true }
     );
     if (!permission) {
-      return res.status(404).json({ message: 'Permission not found' });
+      return res.status(404).json({ message: "Permission not found" });
     }
     res.status(200).json(permission);
   } catch (error) {
@@ -125,15 +131,18 @@ exports.activatePermission = async (req, res) => {
   }
 };
 
-// Delete permission
 exports.deletePermission = async (req, res) => {
   try {
-    const permission = await Permission.findByIdAndDelete(req.params.id);
-    if (!permission) {
-      return res.status(404).json({ message: 'Permission not found' });
+    const permissionId = req.params.id; // Obtén el ID del rol de los parámetros
+    const deletedPermission = await Permission.findByIdAndDelete(permissionId); // Elimina el rol por ID
+
+    if (!deletedPermission) {
+      return res.status(404).json({ message: "Permiso no encontrado" }); // Manejar rol no encontrado
     }
-    res.status(204).json(); // No content
+
+    res.json({ success: true, message: "Permiso eliminado exitosamente" }); // Mensaje de éxito
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Error al eliminar el Permiso:", error);
+    res.status(500).json({ message: "Error al eliminar el rol" }); // Mensaje de error genérico
   }
 };

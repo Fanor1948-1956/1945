@@ -4,138 +4,145 @@ const { User, Patient } = require('../models/userModel');
 
 const privateRoutes = [
   {
-    path: '/dashboard',
-    title: 'Dashboard privado',
-    view: 'pages/privatePages/dashboard.njk',
+    path: "/dashboard",
+    title: "Dashboard privado",
+    view: "pages/privatePages/dashboard.njk",
     items: async (userRoles) => {
       let items = [];
 
-      if (userRoles.includes('Doctor')) {
-        items.push({ title: 'Gestión de Usuarios', link: '/users' });
-        items.push({ title: 'Mis Especialidades', link: '/speciality' });
-        items.push({ title: 'Mis Horarios de Atención', link: '/schedule' });
-        items.push({ title: 'Mis Dispinibilidad', link: '/availability' });
-        items.push({ title: 'Mis Citas', link: '/appointment' });
+      if (userRoles.includes("Doctor")) {
+        items.push({ title: "Gestión de Usuarios", link: "/users" });
+        items.push({ title: "Mis Especialidades", link: "/speciality" });
+        items.push({ title: "Mis Horarios de Atención", link: "/schedule" });
+        items.push({ title: "Mis Dispinibilidad", link: "/availability" });
+        items.push({ title: "Mis Citas", link: "/appointment" });
       }
 
-      if (userRoles.includes('Paciente')) {
-        items.push({ title: 'Mis Citas', link: '/appointment' });
-        items.push({ title: 'Historia Clínica', link: '/historyClinic' });
+      if (userRoles.includes("Paciente")) {
+        items.push({ title: "Mis Citas", link: "/appointment" });
+        items.push({ title: "Historia Clínica", link: "/historyClinic" });
       }
 
-      if (userRoles.includes('Administrador')) {
-        items.push({ title: 'Gestión de Usuarios', link: '/users' });
-        items.push({ title: 'Roles y Permisos', link: '/roles' });
+      if (userRoles.includes("Administrador")) {
+        items.push({ title: "Gestión de Usuarios", link: "/users" });
+        items.push({ title: "Roles y Permisos", link: "/roles" });
       }
 
-      items.push({ title: 'Configuración', link: '/dashboard/configuracion' });
+      items.push({ title: "Configuración", link: "/dashboard/configuracion" });
 
       return items;
     },
   },
 
   {
-    path: '/users',
-    title: 'Lista de',
-    view: 'pages/privatePages/users.njk',
-    roles: ['Administrador', 'Paciente'],
+    path: "/users",
+    title: "Lista de",
+    view: "pages/privatePages/users.njk",
+    roles: ["Administrador", "Paciente"],
     items: async () => [],
     subRoutes: [
       {
-        path: '/users/admin',
-        title: 'Administradores',
-        view: 'pages/privatePages/users/adminUsers.njk',
-        roles: ['Administrador', 'Paciente'],
+        path: "/users/admin",
+        title: "Administradores",
+        view: "pages/privatePages/users/adminUsers.njk",
+        roles: ["Administrador", "Paciente"],
         items: async () => [],
       },
       {
-        path: '/users/chiefMedical',
-        title: 'Jefes Médicos',
-        view: 'pages/privatePages/users/chiefMedicalUsers.njk',
-        roles: ['Administrador'],
+        path: "/users/chiefMedical",
+        title: "Jefes Médicos",
+        view: "pages/privatePages/users/chiefMedicalUsers.njk",
+        roles: ["Administrador"],
         items: async () => [],
       },
       {
-        path: '/users/doctor',
-        title: 'Médicos',
-        roles: ['Jefe Médico'],
-        view: 'pages/privatePages/users/docUsers.njk',
+        path: "/users/doctor",
+        title: "Médicos",
+        roles: ["Jefe Médico"],
+        view: "pages/privatePages/users/docUsers.njk",
         items: async () => [],
       },
       {
-        path: '/users/patient',
-        title: 'Pacientes',
-        view: 'pages/privatePages/users/patientUsers.njk',
-        roles: ['Doctor'],
+        path: "/users/patient",
+        title: "Pacientes",
+        view: "pages/privatePages/users/patientUsers.njk",
+        roles: ["Doctor"],
         items: async () => [],
       },
     ],
   },
   {
-    path: '/schedule',
-    title: 'Horarios de Atención',
+    path: "/schedule",
+    title: "Horarios de Atención",
 
-    roles: ['Doctor', 'Jefe Médico'],
+    roles: ["Doctor", "Jefe Médico"],
     items: async () => await permissionModel.find(),
   },
   {
-    path: '/disponibility',
-    title: 'Disponibilidad',
+    path: "/disponibility",
+    title: "Disponibilidad",
 
-    roles: ['Doctor'],
+    roles: ["Doctor"],
     items: async () => await permissionModel.find(),
   },
   {
-    path: '/speciality',
-    title: 'Especialidad',
-    view: 'pages/privatePages/specialities.njk',
-    roles: ['Doctor', 'Jefe Médico', 'Paciente'],
-    items: async () => await permissionModel.find(),
-  },
-  {
-    path: '/services',
-    title: 'Servicio',
+    path: "/profile",
+    title: "Perfil",
+    view: "pages/privatePages/auth/profile.njk",
 
-    roles: ['Jefe Médico'],
+    items: async () => [],
+  },
+  {
+    path: "/speciality",
+    title: "Especialidad",
+    view: "pages/privatePages/specialities.njk",
+    roles: ["Doctor", "Jefe Médico", "Paciente", "Administrador"],
     items: async () => await permissionModel.find(),
   },
   {
-    path: '/appointment',
-    title: 'Citas Médicas',
+    path: "/services",
+    title: "Servicio",
 
-    roles: ['Paciente', 'Doctor'],
+    roles: ["Jefe Médico"],
     items: async () => await permissionModel.find(),
   },
   {
-    path: '/prodoucers',
-    title: 'Resultados Médicos',
-    view: 'pages/privatePages/permissions.njk',
-    roles: ['Doctor'],
-    items: async () => await permissionModel.find(),
-  },
-  {
-    path: '/historyClinic',
-    title: 'Historia Clinico',
+    path: "/appointment",
+    title: "Citas Médicas",
 
-    roles: ['Paciente'],
+    roles: ["Paciente", "Doctor"],
     items: async () => await permissionModel.find(),
   },
   {
-    path: '/permissions',
-    title: 'Permisos',
-    view: 'pages/privatePages/permissions.njk',
-    roles: ['Administrador', 'Paciente'],
+    path: "/prodoucers",
+    title: "Resultados Médicos",
+    view: "pages/privatePages/permissions.njk",
+    roles: ["Doctor"],
     items: async () => await permissionModel.find(),
   },
   {
-    path: '/roles',
-    title: 'Roles',
-    view: 'pages/privatePages/roles.njk',
-    roles: ['Administrador', 'Paciente'],
+    path: "/historyClinic",
+    title: "Historia Clinico",
+
+    roles: ["Paciente"],
+    items: async () => await permissionModel.find(),
+  },
+  {
+    path: "/permissions",
+    title: "Permisos",
+    view: "pages/privatePages/permissions.njk",
+    roles: ["Administrador", "Paciente"],
+    items: async () => await permissionModel.find(),
+  },
+  {
+    path: "/roles",
+    title: "Roles",
+    view: "pages/privatePages/roles.njk",
+    roles: ["Administrador", "Paciente"],
     items: async () => {
       const permissions = await permissionModel.find();
-      const roles = await roleModel.find().populate('permissions');
-      const users = await User.find().populate('roles');
+      const roles = await roleModel.find().populate("permissions");
+      const users = await User.find().populate("roles");
       return { roles, permissions, users };
     },
   },

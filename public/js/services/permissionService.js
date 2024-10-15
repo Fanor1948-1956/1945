@@ -54,3 +54,16 @@ export const updatePermissionService = async (updatedPermission) => {
     return 'Error al actualizar el permiso.'; // Mensaje de error por defecto
   }
 };
+// Eliminar un permiso existente
+export const deletePermissionService = async (permissionId) => {
+  try {
+    const response = await deleteData(`${permissionEndpoints.delete}/${permissionId}`);
+    if (response) {
+      // Elimina el permiso del estado
+      return response.message; // Devuelve el mensaje del servidor
+    }
+  } catch (error) {
+    console.error('Error eliminando permiso:', error);
+    return 'Error al eliminar el permiso.'; // Mensaje de error por defecto
+  }
+};

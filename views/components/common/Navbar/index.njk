@@ -11,7 +11,7 @@
                             <ul class="submenuNav {% if route.subRoutes|length > 2 %}horizontal{% endif %}"> <!-- Clase para el submenú -->
                                 {% for section in route.subRoutes %}
                                     <li class="submenu__item">
-                                        {# Verifica si la subruta tiene un path y lo usa; de lo contrario, usa el id # #}
+                                        {# Verifica si la subruta tiene un path y lo usa; de lo contrario, usa el id #}
                                         <a href="{{ section.path or (route.path ~ '#' ~ section.id) }}" class="submenuLink">{{ section.title }}</a>
                                     </li>
                                 {% endfor %}
@@ -20,23 +20,27 @@
                     {% endif %}
                 </li>
             {% endfor %}
+
             {# Enlaces de rutas privadas (solo si el usuario está autenticado) #}
             {% if isAuthenticated %}
                 {% for route in privateRoutes %}
-                    <li class="navbar__item">
-                        <a href="{{ route.path }}" class=" {% if route.subRoutes %}has-submenu{% endif %}">{{ route.title }}</a>
-                        {% if route.subRoutes %}
-                            <div class="submenuContainer"> <!-- Contenedor para el submenú -->
-                                <ul class="submenuNav {% if route.subRoutes|length > 2 %}horizontal{% endif %}"> <!-- Clase para el submenú -->
-                                    {% for subRoute in route.subRoutes %}
-                                        <li class="submenu__item">
-                                            <a href="{{ subRoute.path }}">{{ subRoute.title }}</a>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        {% endif %}
-                    </li>
+                    {# Mostrar solo la ruta que tiene el título 'Configuración' #}
+                    {% if route.title == 'Configuración' %}
+                        <li class="navbar__item">
+                            <a href="{{ route.path }}" class=" {% if route.subRoutes %}has-submenu{% endif %}">{{ route.title }}</a>
+                            {% if route.subRoutes %}
+                                <div class="submenuContainer"> <!-- Contenedor para el submenú -->
+                                    <ul class="submenuNav {% if route.subRoutes|length > 2 %}horizontal{% endif %}"> <!-- Clase para el submenú -->
+                                        {% for subRoute in route.subRoutes %}
+                                            <li class="submenu__item">
+                                                <a href="{{ subRoute.path }}">{{ subRoute.title }}</a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </li>
+                    {% endif %}
                 {% endfor %}
             {% endif %}
         </ul>

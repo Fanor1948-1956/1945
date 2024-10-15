@@ -87,7 +87,7 @@ const privateRoutes = [
   },
   {
     path: "/profile",
-    title: "Perfil",
+    title: "Configuración",
     view: "pages/privatePages/auth/profile.njk",
 
     items: async () => [],
@@ -134,6 +134,7 @@ const privateRoutes = [
     roles: ["Administrador", "Paciente"],
     items: async () => await permissionModel.find(),
   },
+
   {
     path: "/roles",
     title: "Roles",

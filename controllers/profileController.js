@@ -49,3 +49,18 @@ exports.viewProfile = async (req, res) => {
         res.status(500).json({ message: "Error al ver el perfil" });
     }
 };
+exports.updateProfile = async (req, res) => {
+  const { name, surnames, email, gender } = req.body; // Ajusta según tus campos
+  try {
+    await User.findByIdAndUpdate(req.session.userId, {
+      name,
+      surnames,
+      email,
+      gender,
+    });
+    res.redirect("/profile?message=Perfil actualizado correctamente");
+  } catch (error) {
+    console.error("Error al actualizar el perfil:", error);
+    res.status(500).send("Error al actualizar el perfil");
+  }
+};

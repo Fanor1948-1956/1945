@@ -3,31 +3,29 @@
     <ul>
         {# Enlaces de rutas públicas #}
         {% for route in publicRoutes %}
-                <li>
-                  <a href="{{ route.path }}" class=" {% if route.subRoutes %}has-submenu{% endif %}">{{ route.title }}</a>
-                    {% if route.subRoutes %}
-                      
-                            <ul class="submenu"> <!-- Clase para el submenú -->
-                              {% for subRoute in route.subRoutes %}
-                        <li class="submenu__item">
-                            {# Verificar si subRoute.path está definido, si no usar el id #}
-                            {% if subRoute.path %}
-                                <a href="{{ subRoute.path }}" class="submenuLink">{{ subRoute.title }}</a> {# Enlace a otra ruta #}
-                            {% else %}
-                                <a href="{{ route.path }}#{{ subRoute.id }}" class="submenuLink">{{ subRoute.title }}</a> {# Enlace a la sección específica #}
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                            </ul>
-              
-                    {% endif %}
-                </li>
-            {% endfor %}
+            <li>
+                <a href="{{ route.path }}" class="{% if route.subRoutes %}has-submenu{% endif %}">{{ route.title }}</a>
+                {% if route.subRoutes %}
+                    <ul class="submenu"> <!-- Clase para el submenú -->
+                        {% for subRoute in route.subRoutes %}
+                            <li class="submenu__item">
+                                {# Verificar si subRoute.path está definido, si no usar el id #}
+                                {% if subRoute.path %}
+                                    <a href="{{ subRoute.path }}" class="submenuLink">{{ subRoute.title }}</a>
+                                {% else %}
+                                    <a href="{{ route.path }}#{{ subRoute.id }}" class="submenuLink">{{ subRoute.title }}</a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </li>
+        {% endfor %}
 
         {# Enlaces de rutas privadas #}
         {% if isAuthenticated %}
             {% for route in privateRoutes %}
-                {% if hasAccess(userRoles, route) %}
+                {% if hasAccess(userRoles, route) and route.title != 'Configuración' %}  {# Excluyendo "Configuración" #}
                     <li>
                         <a href="{{ route.path }}">
                             <i class="fas fa-hospital-alt"></i>

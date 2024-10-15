@@ -25,20 +25,10 @@
 <body class="show-hamburger">
 
 
-<header class="header">
-    <nav class="navbar">
-        <button class="hamburger" id="hamburgerBtn">☰</button>
-        <ul class="navbar__links">
-       <nav class="navbar">
-    <ul class="navbar__links">
-        <li><a href="/profile">Perfil</a></li>
-        <li><a href="/auth/logout">Cerrar Sesión</a></li>
-    </ul>
 
-</nav>
-        </ul>
-    </nav>
-    </header>
+ 
+    {% include 'components/common/Navbar/index.njk' %}
+
     {% include 'components/common/Sidebar/index.njk' %}
     <div class="container">
      

@@ -1,6 +1,6 @@
 <header class="header">
     <nav class="navbar">
-       
+        <button class="hamburger" id="hamburgerBtn">☰</button>
         <ul class="navbar__links" id="navbarLinks">
             {# Enlaces de rutas públicas #}
             {% for route in publicRoutes %}
@@ -24,8 +24,8 @@
             {# Enlaces de rutas privadas (solo si el usuario está autenticado) #}
             {% if isAuthenticated %}
                 {% for route in privateRoutes %}
-                    {# Mostrar solo la ruta que tiene el título 'Configuración' #}
-                    {% if route.title == 'Configuración' %}
+                    {# Mostrar solo la ruta que tiene el título 'Perfil' #}
+                    {% if route.title == 'Perfil' %}
                         <li class="navbar__item">
                             <a href="{{ route.path }}" class=" {% if route.subRoutes %}has-submenu{% endif %}">{{ route.title }}</a>
                             {% if route.subRoutes %}

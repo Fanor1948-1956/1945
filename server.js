@@ -35,16 +35,17 @@ app.set('view engine', 'njk'); // Establecer Nunjucks como motor de vista
 // Configurar middleware de sesión
 app.use(
   session({
-    secret: "mi_secreto", // Cambia esto por una clave más segura en producción
+    secret: 'mi_secreto', // Cambia esto por una clave más segura en producción
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: "mongodb://localhost:27017/clinic",
+      mongoUrl:
+        'mongodb+srv://fanoro1945:fanoro1945@cluster0.j7bgf.mongodb.net/andres?retryWrites=true&w=majority',
     }),
     cookie: {
-      secure: process.env.NODE_ENV === "production", // Usa true si estás en producción
+      secure: process.env.NODE_ENV === 'production', // Usa true si estás en producción
       maxAge: 1000 * 60 * 60, // 1 hora
-      sameSite: "lax",
+      sameSite: 'lax',
     },
   })
 );

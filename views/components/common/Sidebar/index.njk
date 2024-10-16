@@ -25,7 +25,7 @@
         {# Enlaces de rutas privadas #}
         {% if isAuthenticated %}
             {% for route in privateRoutes %}
-                {% if hasAccess(userRoles, route) and route.title != 'Configuración' %}  {# Excluyendo "Configuración" #}
+                {% if hasAccess(userRoles, route) and route.title != 'Perfil' %}  {# Excluyendo "Configuración" #}
                     <li>
                         <a href="{{ route.path }}">
                             <i class="fas fa-hospital-alt"></i>

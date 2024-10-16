@@ -1,0 +1,182 @@
+
+
+/* Estilos generales */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.snackbar {
+  visibility: hidden; /* Escondido por defecto */
+  min-width: 250px; /* Ancho mínimo */
+  margin-left: -125px; /* Centrado */
+  background-color: #333; /* Color de fondo */
+  color: #fff; /* Color del texto */
+  text-align: center; /* Centrar texto */
+  border-radius: 2px; /* Bordes redondeados */
+  padding: 16px; /* Espaciado */
+  position: fixed; /* Fijo */
+  z-index: 1; /* Por encima de otros elementos */
+  left: 50%; /* Centro horizontal */
+  bottom: 30px; /* Posición en la parte inferior */
+  font-size: 17px; /* Tamaño de fuente */
+  transition: visibility 0s, opacity 0.5s linear; /* Transiciones */
+}
+
+.snackbar.show {
+  visibility: visible; /* Mostrar */
+  opacity: 1; /* Opacidad */
+}
+
+/* Estilo del contenido principal */
+main {
+  padding: 20px; /* Espaciado del contenido */
+  background-color: white; /* Color de fondo del contenido */
+  border-radius: 8px; /* Bordes redondeados para el contenido */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidad */
+  margin: 20px; /* Margen para el contenido */
+}
+.form-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #06040f;
+  color: white !important;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 10px 0px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.3s;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  border-color: #135eadb9; /* Cambia el color al hacer foco */
+  outline: none;
+}
+
+fieldset {
+  border: none; /* Eliminar el borde por defecto del fieldset */
+  margin: 0;
+  padding: 0;
+}
+
+legend {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+/* Estilos para el modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+.close-button {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+.hamburger {
+  background: none;
+  display: none;
+  max-width: 50px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid white !important;
+  background: transparent;
+  border-radius: 50%;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.show-hamburger .hamburger {
+  display: block;
+}
+.container {
+  padding: 50px 20px 0 20px;
+  transition: margin-left 0.3s;
+}
+
+.sidebar.active ~ .container {
+  margin-left: 250px; /* En escritorio, deja espacio para el sidebar */
+}
+
+/* Estilos para el contenedor de paginación */
+.pagination {
+  display: flex; /* Usar flexbox para distribuir los botones */
+  justify-content: center; /* Centrar los botones de paginación */
+  margin-top: 20px; /* Espacio superior para separar de la tabla */
+  margin-bottom: 40px; /* Espacio inferior para separación adicional */
+}
+
+/* Estilos para los botones de paginación */
+.page-button {
+  background-color: #00162e; /* Color de fondo del botón */
+  color: white; /* Color del texto */
+  border: none; /* Sin borde */
+  padding: 10px 15px; /* Espaciado interno */
+  cursor: pointer; /* Cambiar el cursor al pasar por encima */
+  border-radius: 5px; /* Bordes redondeados */
+  margin: 0 5px; /* Espaciado entre botones */
+}
+
+.page-button:hover {
+  background-color: #000000; /* Color al pasar el mouse */
+}
+
+.page-button.active {
+  background-color: #0074a8; /* Color de fondo */
+  pointer-events: none; /* Deshabilitar clics en la página activa */
+}
+/* Estilos responsivos para móvil */
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex; /* Mostrar el botón de hamburguesa en móvil */
+  }
+
+  .sidebar.active ~ .container {
+    margin-left: 0px; /* En escritorio, deja espacio para el sidebar */
+  }
+}

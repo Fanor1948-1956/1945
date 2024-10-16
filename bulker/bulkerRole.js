@@ -10,14 +10,19 @@ const connectDB = require("./database");
 // Datos de ejemplo para insertar
 const roles = [
   {
-    name: "Admin",
+    name: "Administrador",
     alias: "admin",
     description: "Rol de administrador",
     permissions: [],
   },
+    {
+    name: 'Doctor',
+    alias: 'doctor',
+    description: 'Rol para doctores con permisos de atención'
+  },
   {
-    name: "Editor",
-    alias: "editor",
+    name: "Paciente",
+    alias: "patient",
     description: "Rol de editor",
     permissions: [],
   },

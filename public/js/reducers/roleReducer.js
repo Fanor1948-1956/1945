@@ -1,9 +1,7 @@
 // roleReducer.js
 import { setState, getState } from './state.js';
 
-// Cargar roles en el estado
-// Cargar roles en el estado
-// roleReducer.js
+
 export const loadRoles = (rolesResponse) => {
   if (Array.isArray(rolesResponse.roles)) {
     setState({ roles: rolesResponse.roles }); // Asigna correctamente el array de roles

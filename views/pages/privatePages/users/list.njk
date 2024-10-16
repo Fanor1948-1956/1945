@@ -1,43 +1,174 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Usuario Docss</title>
+    <title>Selección de Género</title>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
+        /* Estilo básico del botón */
+        .gender-button {
             padding: 10px;
-            border: 1px solid #ddd;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .gender-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Dropdown colapsable */
+        .dropdown {
+            position: absolute;
+            display: none;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            width: 200px;
+            z-index: 1000;
+        }
+
+        .dropdown.show {
+            display: block;
+        }
+
+        .gender-option {
+            padding: 10px;
+            cursor: pointer;
+            text-align: left;
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .gender-option:last-child {
+            border-bottom: none;
+        }
+
+        .gender-option:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Flecha que indica colapso */
+        .arrow {
+            margin-left: 5px;
+            display: inline-block;
+            transform: rotate(0deg);
+            transition: transform 0.3s ease;
+        }
+
+        .arrow.down {
+            transform: rotate(180deg);
+        }
+
+        /* Colocaciones para dropdown */
+        .placement-below {
+            top: 100%;
+            left: 0;
+        }
+
+        .placement-above {
+            bottom: 100%;
+            left: 0;
+        }
+
+        .placement-right {
+            top: 0;
+            left: 100%;
+        }
+
+        .placement-left {
+            top: 0;
+            right: 100%;
         }
     </style>
 </head>
 <body>
-    <h1>Lista de Usuarios</h1>
+    <!-- Botón que abre el dropdown de selección de género -->
+    <button id="genderButton" class="gender-button">
+        Seleccionar Género <span class="arrow">▼</span>
+    </button>
 
-    <!-- Botón para agregar un nuevo usuario -->
-    <button id="addUserButton">Agregar Usuario</button>
+    <!-- Dropdown colapsable de selección de género -->
+    <div id="genderDropdown" class="dropdown placement-below">
+        <div class="gender-option" data-gender="masculino">Masculino</div>
+        <div class="gender-option" data-gender="femenino">Femenino</div>
+        <div class="gender-option" data-gender="otro">Otro</div>
+        <div class="gender-option" data-gender="no-binario">No Binario</div>
+        <div class="gender-option" data-gender="prefiero-no-decirlo">Prefiero No Decirlo</div>
+    </div>
 
-    <!-- Contenedor de la tabla de usuarios -->
-    <div id="userTableContainer"></div>
+    <input type="hidden" id="userGender" name="userGender">
 
-    <script type="module">
-        import { fetchUsers, renderUserTable, addUser } from '../../../public/js/fetchUsers.js';
-
-        // Configurar eventos
-        document.addEventListener('DOMContentLoaded', function () {
-            // Cargar usuarios cuando la página se carga
-            fetchUsers(renderUserTable);
-
-            // Evento para agregar un usuario cuando se hace clic en el botón
-            document.getElementById('addUserButton').addEventListener('click', async () => {
-                const user = await addUser();
-                fetchUsers(renderUserTable); // Refrescar la lista de usuarios después de agregar
-            });
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            setupGenderDropdown();  // Configura la selección de género y colapso
         });
+
+        // Función para abrir/cerrar el dropdown y manejar la selección de género
+        const setupGenderDropdown = () => {
+            const genderButton = document.getElementById('genderButton');
+            const genderDropdown = document.getElementById('genderDropdown');
+            const arrow = genderButton.querySelector('.arrow');
+
+            // Alterna el dropdown al hacer clic en el botón
+            genderButton.addEventListener('click', () => {
+                const isOpen = genderDropdown.classList.contains('show');
+                if (isOpen) {
+                    genderDropdown.classList.remove('show');
+                    arrow.classList.remove('down');
+                } else {
+                    genderDropdown.classList.add('show');
+                    arrow.classList.add('down');
+                    adjustDropdownPlacement(genderButton, genderDropdown);  // Ajustar la colocación
+                }
+            });
+
+            // Cierra el dropdown si se hace clic fuera de él
+            document.addEventListener('click', (event) => {
+                if (!genderButton.contains(event.target) && !genderDropdown.contains(event.target)) {
+                    genderDropdown.classList.remove('show');
+                    arrow.classList.remove('down');
+                }
+            });
+
+            // Maneja la selección de género
+            document.querySelectorAll('.gender-option').forEach(option => {
+                option.addEventListener('click', (event) => {
+                    const selectedGender = option.getAttribute('data-gender');
+                    document.getElementById('userGender').value = selectedGender;  // Actualiza el campo oculto
+                    genderButton.innerHTML = `${option.textContent} <span class="arrow down">▼</span>`;  // Actualiza el texto del botón
+                    genderDropdown.classList.remove('show');  // Oculta el dropdown
+                    arrow.classList.remove('down');
+                });
+            });
+        };
+
+        // Función para ajustar la colocación del dropdown
+        const adjustDropdownPlacement = (button, dropdown) => {
+            const buttonRect = button.getBoundingClientRect();
+            const dropdownRect = dropdown.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            const windowWidth = window.innerWidth;
+
+            // Decide la posición según el espacio disponible
+            if (buttonRect.bottom + dropdownRect.height > windowHeight) {
+                dropdown.classList.remove('placement-below');
+                dropdown.classList.add('placement-above');
+            } else {
+                dropdown.classList.remove('placement-above');
+                dropdown.classList.add('placement-below');
+            }
+
+            if (buttonRect.right + dropdownRect.width > windowWidth) {
+                dropdown.classList.add('placement-left');
+                dropdown.classList.remove('placement-right');
+            } else {
+                dropdown.classList.remove('placement-left');
+                dropdown.classList.add('placement-right');
+            }
+        };
     </script>
 </body>
 </html>

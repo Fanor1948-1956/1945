@@ -1,20 +1,25 @@
 // models/userModel.js
 const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  surnames: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-
-  gender: {
-    type: String,
-    enum: ['masculino', 'femenino', 'otro'],
-    required: true,
+const userSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    surnames: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    gender: {
+      type: String,
+      enum: ["masculino", "femenino", "otro"],
+      required: true,
+    },
+    roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Role" }],
+    isActive: {
+      type: Boolean,
+      default: true, // Las especialidades se activan por defecto
+    },
   },
-  roles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Role' }],
-  createdAt: { type: Date, default: Date.now }, // Asegúrate de tener esto
-});
+  { timestamps: true }
+);
 
 // Definir discriminadores para los diferentes tipos de usuarios
 const User = mongoose.model('User', userSchema);

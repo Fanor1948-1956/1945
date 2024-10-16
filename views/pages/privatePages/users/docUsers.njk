@@ -15,3 +15,179 @@
  
 
 {% endblock %}
+
+
+
+{% extends "layouts/privateLayout.njk" %}
+
+{% block content %}
+<h1>Lista de Usuarios</h1>
+<hr />
+
+<!-- Botón para registrar un nuevo usuario -->
+<button id="addUserButton">Registrar Usuario</button>
+
+<section>
+    <div id="userTableContainer"></div> <!-- Contenedor donde se renderizará la tabla de usuarios -->
+</section>
+
+<!-- Snackbar para mostrar mensajes -->
+<div id="snackbar" class="snackbar"></div>
+
+<!-- Modal para registrar un nuevo usuario -->
+<div id="createUserModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" id="closeModal">&times;</span>
+        <h2>Registrar Nuevo Usuario</h2>
+        <div id="createUserFormContainer"></div>
+    </div>
+</div>
+
+<script type="module">
+import { renderTable } from '../js/components/common/table.js'; // Ajusta la ruta según sea necesario
+import { renderPagination } from '../js/components/common/pagination.js'; // Ajusta la ruta según sea necesario
+
+$(document).ready(function() {
+    let currentPage = 1; // Página actual
+    const usersPerPage = 5; // Número de usuarios por página
+    let allUsers = []; // Almacenar todos los usuarios
+
+    // Definición de encabezados
+    const headers = ['Nombre', 'Apellidos', 'Correo', 'Contraseña', 'Género', 'Roles'];
+
+    // Obtener usuarios cuando se carga la página
+    fetchUsers();
+
+    function fetchUsers() {
+        apiFetch('/users/getUsers', 'GET')
+            .then(response => {
+                console.log('Respuesta de la API:', response);
+                allUsers = response.users; // Almacenar todos los usuarios
+                console.log('Usuarios cargados:', allUsers); // Imprimir usuarios en consola
+                renderUsers(); // Renderizar la tabla con la paginación
+            })
+            .catch(function(xhr) {
+                console.error('Error al obtener los usuarios:', xhr);
+                showSnackbar('Error al cargar los usuarios', false);
+            });
+    }
+
+    // Función para renderizar usuarios y paginación
+    function renderUsers() {
+        const tableData = allUsers.map(user => ({
+            _id: user._id, // Asegúrate de que el ID esté aquí
+            name: user.name,
+            surnames: user.surnames,
+            email: user.email,
+            password: user.password,
+            gender: user.gender,
+            roles: user.roles.map(role => role.name).join(', '), // Convertir roles a cadena separada por comas
+        }));
+
+        // Renderizar la tabla
+        const tableHtml = renderTable(headers, tableData, currentPage, usersPerPage);
+        $('#userTableContainer').html(tableHtml);
+
+        // Renderizar la paginación
+        const paginationHtml = renderPagination(currentPage, allUsers.length, usersPerPage, handlePageChange);
+        $('#userTableContainer').append(paginationHtml); // Agregar la paginación después de la tabla
+    }
+
+    // Manejar el cambio de página
+    function handlePageChange(newPage) {
+        currentPage = newPage; // Actualizar la página actual
+        renderUsers(); // Renderizar usuarios y paginación nuevamente
+    }
+
+    // Manejar clic en botones de paginación
+    $(document).on('click', '.page-button', function() {
+        const newPage = parseInt($(this).data('page'));
+        handlePageChange(newPage);
+    });
+
+    // Manejar evento para abrir el modal de registrar usuario
+    $('#addUserButton').click(function() {
+        renderCreateUserForm(); // Renderizar formulario de creación
+        Modal.open('#createUserModal'); // Abrir el modal de creación
+    });
+
+    // Renderizar el formulario de creación de usuario
+    function renderCreateUserForm() {
+        apiFetch('/roles/api', 'GET') // Obtener roles disponibles
+                  .then(response => {
+                const roles = response.data || response.roles || [];
+                const rolesHtml = roles.map(role => `
+                    <label>
+                        <input type="checkbox" name="roles" value="${role._id}">
+                        ${role.name}
+                    </label>
+                `).join('');
+
+                $('#createUserFormContainer').html(`
+                    <form id="userCreateForm">
+                        <label for="name">Nombre:</label>
+                        <input type="text" id="name" name="name" required>
+
+                        <label for="surnames">Apellidos:</label>
+                        <input type="text" id="surnames" name="surnames" required>
+
+                        <label for="email">Correo:</label>
+                        <input type="email" id="email" name="email" required>
+
+                        <label for="password">Contraseña:</label>
+                        <input type="password" id="password" name="password" required>
+
+                        <label for="gender">Género:</label>
+                        <select id="gender" name="gender" required>
+                            <option value="male">Masculino</option>
+                            <option value="female">Femenino</option>
+                            <option value="other">Otro</option>
+                        </select>
+
+                        <fieldset>
+                            <legend>Roles:</legend>
+                            ${rolesHtml}
+                        </fieldset>
+                        <button type="submit">Crear Usuario</button>
+                    </form>
+                `);
+            })
+            .catch(xhr => {
+                const errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : 'Error al obtener los roles';
+                showSnackbar(errorMessage, false);
+            });
+    }
+
+    // Envío del formulario de creación
+    $(document).on('submit', '#userCreateForm', function(e) {
+        e.preventDefault();
+
+        const roles = $('input[name="roles"]:checked').map(function() {
+            return this.value;
+        }).get();
+
+        const newUserData = {
+            name: $('#name').val(),
+            surnames: $('#surnames').val(),
+            email: $('#email').val(),
+            password: $('#password').val(),
+            gender: $('#gender').val(),
+            roles: roles
+        };
+
+        apiFetch('/users/create-user', 'POST', newUserData)
+            .then(response => {
+                showSnackbar(response.message, true);
+                fetchUsers(); // Refrescar la lista de usuarios
+                Modal.close('#createUserModal'); // Cerrar el modal de creación
+            })
+            .catch(xhr => {
+                const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al crear el usuario';
+                showSnackbar(errorMessage, false);
+            });
+    });
+
+});
+</script>
+
+{% endblock %}

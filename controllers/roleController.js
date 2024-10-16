@@ -36,9 +36,7 @@ exports.getAllRoles = async (req, res) => {
   }
 };
 
-// Get role by ID
-// Get role by ID
-// Get role by ID
+
 exports.getRoleById = async (req, res) => {
   const roleId = req.params.id;
   try {

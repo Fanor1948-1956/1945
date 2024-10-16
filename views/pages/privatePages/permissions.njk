@@ -28,10 +28,10 @@ import {
   deletePermission,
 } from './js/reducers/permissionReducer.js';
 
-import { fetchServices, createService, updateService } from './js/services/index.js';
-
+import {  createService, updateService } from './js/services/index.js';
+import {fetchPermissions} from './js/services/loadFetchs.js';
 import { getState } from './js/reducers/state.js';
-import { renderTable } from './js/renderTable.js'; 
+    import { renderTable } from './js/components/global/renderTable.js';
 import { permissionEndpoints } from './js/config/apiEndpoints.js';
 import { confirmDelete } from './js/utils/confirmDelete.js'; // Importa la función de utilidad
 
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const loadsPermissions = async () => {
-  await fetchServices(permissionEndpoints, loadPermissions);
+  await fetchPermissions();
   const { permissions } = getState();
   console.log('permissions', permissions);
   renderTable(permissions, permissionHeaders, 'permissionTableContainer', onAction); 

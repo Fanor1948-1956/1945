@@ -5,7 +5,7 @@ import {
   deleteData,
   deactivateData,
   activateData,
-} from "../api/apiUserManager.js";
+} from "../api/common/apiUserManager.js";
 
 export const fetchServices = async (itemEndpoints, loadItems) => {
   try {

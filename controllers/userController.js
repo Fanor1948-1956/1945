@@ -48,12 +48,16 @@ exports.createUser = async (req, res) => {
       password: hashedPassword,
       gender,
       roles: rolesFound,
-      ...additionalProperties,
+     
     });
 
     await newUser.save();
-
-    return res.status(201).json({ message: 'Usuario creado exitosamente' });
+    // Devolver el usuario creado con éxito con success, message y el usuario sucess true
+    return res.status(201).json({
+      success: true,
+      message: 'Usuario creado exitosamente',
+      user: newUser,
+    });
   } catch (error) {
     console.error('Error al crear el usuario:', error);
     res.status(500).json({ message: 'Error al crear el usuario' });
@@ -62,20 +66,25 @@ exports.createUser = async (req, res) => {
 
 exports.getUsers = async (req, res) => {
   try {
-    const users = await User.find().populate('roles');
+    const users = await User.find().populate("roles");
 
-    if (req.xhr) {
-      return res.status(200).json(users);
-    } else if (req.accepts('application/json')) {
-      return res.status(200).json(users);
+    // Comprobamos si la solicitud es de tipo XHR (AJAX)
+    if (req.xhr || req.accepts("application/json")) {
+      return res.status(200).json({
+        success: true,
+        message: "user revive successfully",
+        users,
+      });
     } else {
-      return res.render('pages/privatePages/users/list.njk', { users });
+      // Renderiza la vista si no es una solicitud AJAX y espera un HTML
+      return res.render("pages/privatePages/users/list.njk", { users });
     }
   } catch (error) {
-    console.error('Error al obtener los usuarios:', error);
-    res.status(500).send('Error al obtener los usuarios');
+    console.error("Error al obtener los usuarios:", error);
+    res.status(500).send("Error al obtener los usuarios");
   }
 };
+
 
 exports.showUserInfo = async (req, res) => {
   const userId = req.params.id;

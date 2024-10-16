@@ -1,14 +1,12 @@
 // apiFetch.js
 
 // Función para hacer peticiones a la API
-export function apiFetch(url, method = "GET", data = null, headers = {}) {
+export function apiFetch(url, method = 'GET', data = null) {
   const options = {
     method: method,
     headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-
-      ...headers, // Combina con otros headers que puedas querer agregar
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
     },
   };
 
@@ -24,7 +22,7 @@ export function apiFetch(url, method = "GET", data = null, headers = {}) {
       return response.json();
     })
     .catch((error) => {
-      console.error("Error en la solicitud:", error);
+      console.error('Error en la solicitud:', error);
       throw error;
     });
 }

@@ -3,8 +3,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const nunjucks = require('nunjucks');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
+const sessionConfig = require("./config/session"); 
 const { connectDB } = require('./config/database');
 const authRoutes = require('./routes/authRoutes');
 const permissionRoutes = require('./routes/permissionRoutes');
@@ -20,7 +19,7 @@ const specialtyRoutes = require('./routes/specialtyRoutes');
 // Importar la función
 
 const app = express();
-const port = 7000;
+const port = process.env.PORT || 3000;
 
 // Conectar a la base de datos
 connectDB();
@@ -33,22 +32,7 @@ const env = nunjucks.configure('views', {
 });
 app.set('view engine', 'njk'); // Establecer Nunjucks como motor de vista
 // Configurar middleware de sesión
-app.use(
-  session({
-    secret: 'mi_secreto', // Cambia esto por una clave más segura en producción
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl:
-        'mongodb+srv://fanoro1945:fanoro1945@cluster0.j7bgf.mongodb.net/andres?retryWrites=true&w=majority',
-    }),
-    cookie: {
-      secure: process.env.NODE_ENV === 'production', // Usa true si estás en producción
-      maxAge: 1000 * 60 * 60, // 1 hora
-      sameSite: 'lax',
-    },
-  })
-);
+app.use(sessionConfig());
 env.addFilter('date', function (dateString) {
   const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
   const date = new Date(dateString);

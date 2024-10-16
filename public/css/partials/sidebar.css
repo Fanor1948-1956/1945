@@ -8,6 +8,8 @@
   border-radius: 5px;
   background-color: #001f3f; /* Azul marino */
   transition: 0.3s;
+  display: flex;
+  flex-direction: column; /* Para apilar elementos verticalmente */
 }
 
 .logo {
@@ -23,6 +25,7 @@
 .sidebar ul {
   list-style-type: none;
   padding: 0;
+  flex-grow: 1; /* Para que la lista crezca y ocupe el espacio disponible */
 }
 
 .sidebar ul li {
@@ -60,7 +63,20 @@
   background-color: #0c032e; /* Color de fondo del submenú */
   z-index: 1000; /* Asegura que el submenú esté por encima de otros elementos */
 }
+.logout-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  padding: 10px 0;
+  background-color: #001f3f; /* Color del sidebar */
+  transition: background-color 0.3s ease;
+}
 
+.logout-link:hover {
+  background-color: #ff4136; /* Color al hacer hover */
+}
 /* Mostrar el submenú al pasar el mouse (en escritorio) */
 @media (min-width: 769px) {
   .sidebar ul li:hover .submenu {

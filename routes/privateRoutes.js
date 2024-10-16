@@ -1,7 +1,7 @@
 const permissionModel = require('../models/permissionModel');
 const roleModel = require('../models/roleModel');
 const { User, Patient } = require('../models/userModel');
-
+const { logout } = require('../controllers/authController'); 
 const privateRoutes = [
   {
     path: "/dashboard",
@@ -132,7 +132,6 @@ const privateRoutes = [
     path: "/profile",
     title: "Perfil",
     view: "pages/privatePages/auth/profile.njk",
-    roles: ["Administrador", "Paciente"],
     items: async () => [],
   },
 
@@ -148,6 +147,13 @@ const privateRoutes = [
       return { roles, permissions, users };
     },
   },
+  {
+    path: "/logout", // Nueva subruta para cerrar sesión
+    title: "Abandonar", // Título para la opción de cerrar sesión
+    items: async () => [], // Puedes dejarlo vacío ya que solo es una acción
+
+    handler: logout, // Función para manejar el logout
+  },
 ];
 
 const hasAccess = (userRoles, route) => {
@@ -159,19 +165,18 @@ const hasAccess = (userRoles, route) => {
 };
 
 const getUserRoles = (req) => req.session.roles || [];
-
 const registerPrivateRoutes = (app) => {
   privateRoutes.forEach((route) => {
     app.use(route.path, (req, res, next) => {
       if (!req.session.authenticated) {
-        return res.redirect('/home');
+        return res.redirect("/home");
       }
 
       const userRoles = getUserRoles(req);
       route.userRoles = userRoles; // Asignar roles a la ruta
 
       if (!hasAccess(userRoles, route)) {
-        return res.status(403).send('Acceso denegado');
+        return res.status(403).send("Acceso denegado");
       }
 
       next();
@@ -179,11 +184,15 @@ const registerPrivateRoutes = (app) => {
 
     app.get(route.path, async (req, res) => {
       try {
+          if (route.handler) {
+            // Verificar si hay un handler para la subruta
+            return route.handler(req, res);
+          }
         const userRoles = getUserRoles(req);
         const items = await route.items(userRoles);
 
         const allRoles = await roleModel.find();
-        const allUsers = await User.find().populate('roles');
+        const allUsers = await User.find().populate("roles");
 
         // Datos del perfil del usuario
         const userProfile = await User.findById(req.session.userId);
@@ -202,7 +211,7 @@ const registerPrivateRoutes = (app) => {
         });
       } catch (error) {
         console.error(`Error al cargar los datos para ${route.path}:`, error);
-        res.status(500).send('Error al cargar los datos');
+        res.status(500).send("Error al cargar los datos");
       }
     });
 
@@ -212,13 +221,17 @@ const registerPrivateRoutes = (app) => {
         app.use(subRoute.path, (req, res, next) => {
           const userRoles = getUserRoles(req);
           if (!hasAccess(userRoles, subRoute)) {
-            return res.status(403).send('Acceso denegado');
+            return res.status(403).send("Acceso denegado");
           }
           next();
         });
 
         app.get(subRoute.path, async (req, res) => {
           try {
+            if (subRoute.handler) {
+              // Verificar si hay un handler para la subruta
+              return subRoute.handler(req, res);
+            }
             const subItems = await subRoute.items();
             res.render(subRoute.view, {
               title: subRoute.title,
@@ -234,7 +247,7 @@ const registerPrivateRoutes = (app) => {
               `Error al cargar los datos para ${subRoute.path}:`,
               error
             );
-            res.status(500).send('Error al cargar los datos');
+            res.status(500).send("Error al cargar los datos");
           }
         });
       });

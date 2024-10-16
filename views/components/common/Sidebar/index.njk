@@ -1,15 +1,14 @@
 <aside id="sidebar" class="sidebar">
     <div class='logo'>Empresa</div>
     <ul>
-        {# Enlaces de rutas públicas #}
+        {# Aquí van los enlaces de rutas públicas #}
         {% for route in publicRoutes %}
             <li>
                 <a href="{{ route.path }}" class="{% if route.subRoutes %}has-submenu{% endif %}">{{ route.title }}</a>
                 {% if route.subRoutes %}
-                    <ul class="submenu"> <!-- Clase para el submenú -->
+                    <ul class="submenu">
                         {% for subRoute in route.subRoutes %}
                             <li class="submenu__item">
-                                {# Verificar si subRoute.path está definido, si no usar el id #}
                                 {% if subRoute.path %}
                                     <a href="{{ subRoute.path }}" class="submenuLink">{{ subRoute.title }}</a>
                                 {% else %}
@@ -25,7 +24,7 @@
         {# Enlaces de rutas privadas #}
         {% if isAuthenticated %}
             {% for route in privateRoutes %}
-                {% if hasAccess(userRoles, route) and route.title != 'Perfil' %}  {# Excluyendo "Configuración" #}
+                {% if hasAccess(userRoles, route) and route.path != '/logout' and route.title != 'Perfil' %}
                     <li>
                         <a href="{{ route.path }}">
                             <i class="fas fa-hospital-alt"></i>
@@ -40,7 +39,7 @@
                                                 <i class="fas fa-notes-medical"></i>
                                                 {{ subRoute.title }}
                                             </a>
-                                            {% if subRoute.subRoutes %}  {# Verifica si hay subrutas para este submenú #}
+                                            {% if subRoute.subRoutes %}
                                                 <ul class="submenu">
                                                     {% for subSubRoute in subRoute.subRoutes %}
                                                         <li>
@@ -62,4 +61,16 @@
             {% endfor %}
         {% endif %}
     </ul>
+
+     {% if isAuthenticated %}
+        {% for route in privateRoutes %}
+            {% if route.path == '/logout' %}
+                <div class="logout-container">
+                    <a href="{{ route.path }}" class="logout-link">
+                        <i class="fas fa-sign-out-alt"></i> {{ route.title }}
+                    </a>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 </aside>

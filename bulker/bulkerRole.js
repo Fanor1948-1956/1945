@@ -3,22 +3,9 @@
 const mongoose = require("mongoose");
 const Role = require("../models/roleModel");
 const Permission = require("../models/permissionModel"); // Asegúrate de tener este modelo
-
+const connectDB = require("./database");
 // Conectar a la base de datos
-mongoose
-  .connect(
-    "mongodb+srv://fanoro1945:fanoro1945@cluster0.j7bgf.mongodb.net/andres?retryWrites=true&w=majority",
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }
-  )
-  .then(() => {
-    console.log("Conectado a la base de datos");
-  })
-  .catch((err) => {
-    console.error("Error al conectar a la base de datos", err);
-  });
+
 
 // Datos de ejemplo para insertar
 const roles = [
@@ -117,6 +104,7 @@ const roles = [
 // Función para registrar roles
 const registerRoles = async () => {
   try {
+    await connectDB(); // Conectar a la base de datos
     // Recuperar los permisos desde la base de datos
     const permissions = await Permission.find(); // Asegúrate de que tu modelo de permisos esté bien definido
 

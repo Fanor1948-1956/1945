@@ -1,15 +1,15 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+require("dotenv").config(); // Cargar variables de entorno
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(
-      'mongodb+srv://fanoro1945:fanoro1945@cluster0.j7bgf.mongodb.net/andres?retryWrites=true&w=majority'
-    );
-    console.log('Conectado a MongoDB');
+    await mongoose.connect(process.env.MONGO_URI); // Eliminar las opciones en desuso
+    console.log("Conectado a MongoDB");
   } catch (error) {
-    console.error('Error conectando a MongoDB', error);
-    process.exit(1);
+    console.error("Error conectando a MongoDB", error);
+    process.exit(1); // Terminar el proceso en caso de error
   }
 };
 
 module.exports = { connectDB };
+

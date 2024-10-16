@@ -10,25 +10,11 @@ const {
   Patient,
 } = require('../models/userModel');
 const roleModel = require('../models/roleModel');
-
-const MONGODB_URI =
-  'mongodb+srv://fanoro1945:fanoro1945@cluster0.j7bgf.mongodb.net/andres?retryWrites=true&w=majority'; // Cambia esto a tu URI de MongoDB
-
-// Conexión a MongoDB
-mongoose
-  .connect(MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log('Conectado a MongoDB');
-  })
-  .catch((err) => {
-    console.error('Error al conectar a MongoDB:', err);
-  });
+const connectDB = require("./database");
 
 const bulkRegisterUsers = async () => {
   try {
+       await connectDB();
     const rolesFound = await roleModel.find();
 
     if (!rolesFound.length) {

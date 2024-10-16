@@ -1,9 +1,10 @@
+/* Estilos generales del header */
 header {
   position: fixed;
   padding: 0.1px;
   width: 100%;
+    
   background-color: #001f3f;
-  position: fixed;
   z-index: 1500;
 }
 
@@ -11,10 +12,25 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #001f3f;
-  padding: 15px 5px;
+border:1px solid white;
+  background-color: #0a71d8;
+  padding: 10px 5px;
 }
 
+/* Estilos para la navegación pública */
+.publicNav {
+  background-color: #001a33; /* Color para el navbar público */
+
+}
+
+/* Estilos específicos para las rutas privadas */
+.privateNav {
+  background-color: #001a33; /* Color para el navbar privado */
+  color: white;
+  border: none;
+}
+
+/* Submenús */
 .submenuContainer {
   visibility: hidden;
   opacity: 0;
@@ -40,6 +56,10 @@ header {
 .navbar__links li:hover .submenuNav {
   flex-direction: column;
   list-style-type: none;
+
+  
+
+
 }
 
 .navbar__links li:hover .submenuNav.horizontal {
@@ -53,13 +73,14 @@ header {
 .submenuNav li {
   margin: 0 10px;
   padding: 0;
+  transition: background-color 0.5s ease;
 }
-.submenu__item {
-}
+
 .submenuNav li a {
   padding: 10px 15px;
   color: white;
   text-decoration: none;
+  font-size: smaller;
 }
 
 .submenuNav li a:hover {
@@ -71,16 +92,20 @@ header {
   display: flex;
   list-style-type: none;
   margin: 0;
+  justify-content: space-between; /* Mantiene el espacio entre los elementos */
+  flex-wrap: nowrap;
 }
 
 .navbar__links li {
   margin: 0;
+  
+  
 }
 
 .navbar__links li a {
   color: white;
   text-decoration: none;
-  padding: 14px 20px;
+  padding: 10px 15px;
   display: block;
 }
 
@@ -89,29 +114,54 @@ header {
   border-radius: 5px;
 }
 
+/* Estilos para móviles */
 @media (max-width: 768px) {
-  .navbar__links {
+  /* El navbar público se convierte en columna en móviles */
+  .publicNav .navbar__links {
     display: none;
-    flex-direction: column;
+    flex-direction: column; /* Los enlaces en publicNav se convierten en columna */
     width: 100%;
-    background-color: #001f3f;
+    background-color: #031c35;
     position: absolute;
-    top: 60px;
+    top: 40px;
     left: 0;
     z-index: 1500;
   }
+.menu-container{
+  display: flex;
+  justify-content: center;
+  background-color: #010107;
+  width: 100%;
+  align-items: center;
 
-  .navbar__links.active {
+}
+  .publicNav .navbar__links.active {
     display: flex;
+  }
+
+  /* Mantener disposición horizontal en privateNav en móviles */
+  .privateNav .navbar__links {
+    display: flex;
+    flex-direction: row; /* Mantiene los enlaces en fila (horizontal) */
+   
   }
 
   .submenuNav {
     display: none;
     flex-direction: column;
-    padding-left: 20px;
+    justify-content: center;
+    align-items: center;
+
+    padding-right: 20px;
   }
 
   .submenuNav.active {
     display: flex;
+    flex-direction: column;
+    padding-right: 20px;
+    gap: 10px;
+    width: 100%;
+    background-color: #010107;
+    position: absolute;
   }
 }

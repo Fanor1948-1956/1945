@@ -28,7 +28,7 @@ const publicRoutes = [
   {
     path: '/about',
     id: generateIdFromPath('/about'), // Generar id
-    title: 'Sobre Nosotros',
+    title: 'Sobre Nosostros',
     view: 'pages/publicPages/about.njk',
     subRoutes: [
       { id: 'mission', title: 'Nuestra Misión' },

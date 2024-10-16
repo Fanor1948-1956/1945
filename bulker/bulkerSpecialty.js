@@ -2,24 +2,8 @@
 
 const mongoose = require("mongoose");
 const Specialty = require("../models/Specialty");
+const connectDB = require("./database");
 
-// Conectar a la base de datos
-mongoose
-  .connect(
-    "mongodb+srv://fanoro1945:fanoro1945@cluster0.j7bgf.mongodb.net/andres?retryWrites=true&w=majority",
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }
-  )
-  .then(() => {
-    console.log("Conectado a la base de datos");
-  })
-  .catch((err) => {
-    console.error("Error al conectar a la base de datos", err);
-  });
-
-// Datos de ejemplo para insertar
 const specialties = [
   {
     name: "Cardiología",
@@ -125,6 +109,7 @@ const specialties = [
 // Función para registrar especialidades
 const bulkerSpecialty = async () => {
   try {
+      await connectDB();
     await Specialty.insertMany(specialties);
     console.log("Especialidades registradas con éxito");
   } catch (error) {

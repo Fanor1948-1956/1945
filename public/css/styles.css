@@ -67,7 +67,7 @@ main {
 
 .input-group input:focus,
 .input-group select:focus {
-  border-color: #007bff; /* Cambia el color al hacer foco */
+  border-color: #135eadb9; /* Cambia el color al hacer foco */
   outline: none;
 }
 
@@ -117,11 +117,17 @@ legend {
 }
 .hamburger {
   background: none;
-  border: none;
+  display: none;
+max-width: 50px;
+    align-items: center;
+    justify-content: center;
+   border:1px solid white !important;
+    background: transparent;
+    border-radius: 50%;
   color: white;
   font-size: 20px;
   cursor: pointer;
-  display: none; /* Escondido por defecto */
+
 }
 
 .show-hamburger .hamburger {
@@ -140,11 +146,9 @@ legend {
 @media (max-width: 768px) {
   .hamburger {
     display: flex; /* Mostrar el botón de hamburguesa en móvil */
-    background: none;
-    border: none;
-    color: white;
-    font-size: 25px;
-    cursor: pointer;
+
+
+    
   }
 
   .sidebar.active ~ .container {

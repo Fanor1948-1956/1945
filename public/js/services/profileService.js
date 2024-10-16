@@ -1,5 +1,5 @@
 // profileService.js
-import { fetchAndRenderData } from "../api/apiUserManager.js";
+import { fetchAndRenderData } from "../api/common/apiUserManager.js";
 import { profileEndpoints } from "../config/apiEndpoints.js";
 import {  setState } from "../reducers/state.js";
 

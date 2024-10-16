@@ -14,7 +14,8 @@ import "./components/global/toggleFields.js"
 
 /*libraries*/
 
-import "./libraries/jquery-3.6.0.min.js";
-import "./libraries/bootstrap-4.6.0.min.js";
-import "./libraries/select2-4.0.13.min.js"; 
-import "./libraries/sweetalert2-10.16.8.min.js";
+
+
+import "./libraries/select2.min.js";
+
+

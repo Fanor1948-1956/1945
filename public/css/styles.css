@@ -5,32 +5,28 @@
 @import './partials/sidebar.css';
 @import './partials/table.css';
 @import './partials/buttons.css';
-@import './partials/pagination.css';
-@import './partials/modal.css';
+/* @import './partials/pagination.css'; */
+/* @import './partials/modal.css'; */
 @import './partials/global.css';
 
 /* Estilos específicos para las rutas públicas */
-@import './public/styles.css';
+/* @import './public/styles.css';
 @import './pages//publicPages/home.css';
 @import './pages//publicPages/about.css';
 @import './pages//publicPages/contact.css';
-@import './pages//publicPages/sign-in.css';
+@import './pages//publicPages/sign-in.css'; */
 /* Estilos específicos para las rutas privadas */
 
 
 /* Aquí puedes agregar más estilos globales si es necesario */
 
 /*libraries*/
-@import '~bootstrap/dist/css/bootstrap.min.css';
-@import '~font-awesome/css/font-awesome.min.css';
-@import '~animate.css/animate.min.css';
+
 @import './libraries/select2.min.css';
 
 
 
 
 /*fonts*/
-
-@import './fonts/fontawesome.min.css';
 
 

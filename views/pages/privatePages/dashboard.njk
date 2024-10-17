@@ -4,48 +4,49 @@
 {% block title %}Dashboard{% endblock %} <!-- Bloque de título -->
 
 {% block content %}
-  <h1>{{ title }}</h1>
-  <p>Bienvenido al dashboard privado.</p>
+<div class="dashboard-container">
 
-<div>
-  <h1>Bienvenido, {{ name }} {{ surnames }}</h1>
-  <p>Tus roles son:</p>
-  <ul>
-    {% for role in userRoles %}
-      <li>{{ role }}</li>
-    {% endfor %}
-  </ul>
-         <li><a href="/auth/logout">Cerrar Sesión</a></li>
-</div>
+  <!-- Título principal -->
+  <section class="dashboard-section">
+    <h1 class="main-heading">{{ title }}</h1>
+    <p class="subheading">Bienvenido al dashboard privado.</p>
+  </section>
 
-<h2>    {{isAuthenticated}}</h2>
-  <div class="cards-container">
-   
-    <section>
+  <!-- Bienvenida al usuario -->
+  <section class="dashboard-section">
+    <h2 class="section-heading">Bienvenido, {{ name }} {{ surnames }}</h2>
+    <p class="subtext">Tus roles son:</p>
+    <div class="roles-list">
+      <ul>
+        {% for role in userRoles %}
+        <li class="role-item">{{ role }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <a href="/auth/logout" class="logout-button">Cerrar Sesión</a>
+  </section>
 
+  <!-- Información adicional -->
+  <section class="dashboard-section">
+    <h2 class="section-heading">Opciones del Dashboard</h2>
 
-
-  <h1>Bienvenido, {{ username }}</h1>
-    <h1>Bienvenido a la Clínica</h1>
-    <div id="icon-container"></div>
-  <h2>Opciones del Dashboard</h2>
-  <ul>
+    {% set contador = 1 %}
     {% for item in items %}
-      <li>
-        <a href="{{ item.link }}">{{ item.title }}</a>
-      </li>
-    {% endfor %}
-  </ul>
-
-  <h3>Información del Perfil</h3>
-  <p>Email: {{ profile.email }}</p>
-  <p>Roles: {{ userRoles | join(', ') }}</p>
-
-
+    <section class="dashboard-subsection">
+      <h3 class="subsection-title">Opción {{ contador }}: {{ item.title }}</h3>
+      <p><a href="{{ item.link }}" class="option-link">Ir a {{ item.title }}</a></p>
     </section>
+    {% set contador = contador + 1 %}
+    {% endfor %}
 
+  </section>
 
-
-</section>
+  <!-- Información de perfil -->
+  <section class="dashboard-section">
+    <h3 class="section-heading">Información del Perfil</h3>
+    <p class="subtext">Email: {{ profile.email }}</p>
+    <p class="subtext">Roles: {{ userRoles | join(', ') }}</p>
+  </section>
+</div>
 
 {% endblock %}

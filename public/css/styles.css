@@ -21,6 +21,9 @@
 
 /* Aquí puedes agregar más estilos globales si es necesario */
 
+/*paginas privadas*/
+@import './pages/privatePages/dashboard.css';
+
 /*libraries*/
 
 @import './libraries/select2.min.css';

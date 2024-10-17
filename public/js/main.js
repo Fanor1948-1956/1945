@@ -9,6 +9,8 @@ import "./components/global/modal.js";
 import "./components/global/dropdown.js";
 import "./components/global/toggleFields.js"
 
+/*icons*/
+import "./components/custom/icons.js"
 // Puedes continuar agregando más imports aquí conforme sea necesario
 
 

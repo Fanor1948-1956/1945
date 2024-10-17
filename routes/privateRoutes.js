@@ -2,11 +2,16 @@ const permissionModel = require('../models/permissionModel');
 const roleModel = require('../models/roleModel');
 const { User, Patient } = require('../models/userModel');
 const { logout } = require('../controllers/authController'); 
+const { getIcon } = require('../utils/iconUtils');
+
+
+
 const privateRoutes = [
   {
     path: "/dashboard",
     title: "Dashboard privado",
     view: "pages/privatePages/dashboard.njk",
+    icon: getIcon("home"), // Utiliza la función para obtener el icono
     items: async (userRoles) => {
       let items = [];
 
@@ -39,6 +44,7 @@ const privateRoutes = [
     title: "Lista de",
     view: "pages/privatePages/users.njk",
     roles: ["Administrador", "Paciente"],
+    icon: getIcon("user"),
     items: async () => [],
     subRoutes: [
       {
@@ -46,6 +52,7 @@ const privateRoutes = [
         title: "Administradores",
         view: "pages/privatePages/users/adminUsers.njk",
         roles: ["Administrador", "Paciente"],
+        icon: getIcon("user"), // Obtiene el icono
         items: async () => [],
       },
       {
@@ -53,6 +60,7 @@ const privateRoutes = [
         title: "Jefes Médicos",
         view: "pages/privatePages/users/chiefMedicalUsers.njk",
         roles: ["Administrador"],
+        icon: getIcon("user"), // Obtiene el icono
         items: async () => [],
       },
       {
@@ -60,6 +68,7 @@ const privateRoutes = [
         title: "Médicos",
         roles: ["Jefe Médico"],
         view: "pages/privatePages/users/docUsers.njk",
+        icon: getIcon("user"), // Obtiene el icono
         items: async () => [],
       },
       {
@@ -67,6 +76,7 @@ const privateRoutes = [
         title: "Pacientes",
         view: "pages/privatePages/users/patientUsers.njk",
         roles: ["Doctor"],
+        icon: getIcon("user"), // Obtiene el icono
         items: async () => [],
       },
     ],
@@ -74,37 +84,37 @@ const privateRoutes = [
   {
     path: "/schedule",
     title: "Horarios de Atención",
-
     roles: ["Doctor", "Jefe Médico"],
+    icon: getIcon("settings"),
     items: async () => await permissionModel.find(),
   },
   {
     path: "/disponibility",
     title: "Disponibilidad",
-
     roles: ["Doctor"],
+    icon: getIcon("availability"),
     items: async () => await permissionModel.find(),
   },
-
   {
     path: "/speciality",
     title: "Especialidad",
     view: "pages/privatePages/specialities.njk",
     roles: ["Doctor", "Jefe Médico", "Paciente", "Administrador"],
+    icon: getIcon("speciality"),
     items: async () => await permissionModel.find(),
   },
   {
     path: "/services",
     title: "Servicio",
-
     roles: ["Jefe Médico"],
+    icon: getIcon("service"),
     items: async () => await permissionModel.find(),
   },
   {
     path: "/appointment",
     title: "Citas Médicas",
-
     roles: ["Paciente", "Doctor"],
+    icon: getIcon("appointment"),
     items: async () => await permissionModel.find(),
   },
   {
@@ -112,13 +122,14 @@ const privateRoutes = [
     title: "Resultados Médicos",
     view: "pages/privatePages/permissions.njk",
     roles: ["Doctor"],
+    icon: getIcon("results"),
     items: async () => await permissionModel.find(),
   },
   {
     path: "/historyClinic",
     title: "Historia Clinico",
-
     roles: ["Paciente"],
+    icon: getIcon("history"),
     items: async () => await permissionModel.find(),
   },
   {
@@ -126,20 +137,22 @@ const privateRoutes = [
     title: "Permisos",
     view: "pages/privatePages/permissions.njk",
     roles: ["Administrador", "Paciente"],
+    icon: getIcon("permissions"),
     items: async () => await permissionModel.find(),
   },
   {
     path: "/profile",
     title: "Perfil",
     view: "pages/privatePages/auth/profile.njk",
+    icon: getIcon("profile"),
     items: async () => [],
   },
-
   {
     path: "/roles",
     title: "Roles",
     view: "pages/privatePages/roles.njk",
     roles: ["Administrador", "Paciente"],
+    icon: getIcon("roles"),
     items: async () => {
       const permissions = await permissionModel.find();
       const roles = await roleModel.find().populate("permissions");
@@ -150,12 +163,10 @@ const privateRoutes = [
   {
     path: "/logout", // Nueva subruta para cerrar sesión
     title: "Abandonar", // Título para la opción de cerrar sesión
-    items: async () => [], // Puedes dejarlo vacío ya que solo es una acción
-
-    handler: logout, // Función para manejar el logout
+    items: async () => [], // Puedes dejar esto vacío o añadir lógica para cerrar sesión
+    icon: getIcon("logout"), // Puedes usar el mismo ícono o cambiarlo si prefieres
   },
 ];
-
 const hasAccess = (userRoles, route) => {
   return (
     !route.roles ||
@@ -202,6 +213,7 @@ const registerPrivateRoutes = (app) => {
           items: items,
           userRoles: userRoles, // Pasar los roles del usuario a la vista
           allRoles,
+          
           allUsers,
           privateRoutes,
           isAuthenticated: req.session.authenticated,

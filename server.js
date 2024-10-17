@@ -14,7 +14,7 @@ const profileRoutes = require('./routes/profileRoutes');
 const registerPublicRoutes = require('./routes/publicRoutes');
 const registerPrivateRoutes = require('./routes/privateRoutes');
 const { verifyToken } = require('./middleware/authMiddleware');
-const apiRoutes = require('./routes/api');
+
 const specialtyRoutes = require('./routes/specialtyRoutes');
 // Importar la función
 
@@ -70,7 +70,7 @@ app.get('/', (req, res) => {
 registerPublicRoutes(app);
 registerPrivateRoutes(app);
 
-app.use(apiRoutes);
+
 // Importar rutas específicas
 app.use('/permissions', verifyToken, permissionRoutes);
 app.use('/roles', verifyToken, roleRoutes);

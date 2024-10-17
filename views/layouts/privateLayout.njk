@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
+    {{route.icon}}
 
 <script src="/js/libraries/jquery.min.js"></script>
 
@@ -24,7 +25,7 @@
     {% include 'components/common/Sidebar/index.njk' %}
     <div class="container">
      
-        
+        <h1>{{username}}</h1>
         {# Bloque donde se renderizará el contenido específico de cada ruta #}
         {% block content %}{% endblock %}
     </div>

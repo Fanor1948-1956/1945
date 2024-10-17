@@ -87,7 +87,13 @@
 .sidebar ul li.active > a {
   background-color: #555555; /* Cambia este color al que desees para el fondo activo */
 }
-
+.icon {
+    margin-right: 8px; /* Espacio entre ícono y texto */
+    width: 20px; /* Ajusta el tamaño del ícono */
+    height: 20px;
+    display: inline-block; /* Alinear el ícono en línea */
+    fill: currentColor; /* El ícono se adapta al color del texto */
+}
 /* Otras reglas previas permanecen igual */
 
 /* Media queries para móviles */

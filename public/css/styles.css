@@ -5,6 +5,7 @@
 @import './partials/sidebar.css';
 @import './partials/table.css';
 @import './partials/buttons.css';
+
 /* @import './partials/pagination.css'; */
 /* @import './partials/modal.css'; */
 @import './partials/global.css';
@@ -27,6 +28,8 @@
 
 
 
-/*fonts*/
+/*icons*/
+@import './icons/style.css';
+
 
 

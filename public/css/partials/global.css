@@ -143,6 +143,7 @@ legend {
   margin-left: 250px; /* En escritorio, deja espacio para el sidebar */
 }
 
+
 /* Estilos para el contenedor de paginación */
 .pagination {
   display: flex; /* Usar flexbox para distribuir los botones */

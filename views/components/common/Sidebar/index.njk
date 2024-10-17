@@ -3,10 +3,7 @@
     <ul>
         {# Aquí van los enlaces de rutas públicas #}
         {% for route in publicRoutes %}
-        <li>
-            <div class="icon" style="display:flex">
-                {{ route.icon() | safe }} <!-- Llamada a la función para generar el icono -->
-            </div>
+        <li></li>
             <a href="{{ route.path }}" class="{% if route.subRoutes %}has-submenu{% endif %}">{{ route.title }}</a>
             {% if route.subRoutes %}
             <ul class="submenu">

@@ -1,27 +1,39 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="/css/styles.css">
-
-    <link rel="stylesheet" href="/css/fonts/fontawesome.min.css">
+    <link
+      rel="stylesheet"
+      href="/css/styles.css"
+    />
 
     <script src="/js/libraries/jquery.min.js"></script>
-<script type="module" src="/js/main.js" defer></script>
-</head>
-<body>
-    {% include 'components/common/Navbar/index.njk' %}
-       {% include 'components/common/Sidebar/index.njk' %}
 
-       
+    <link
+      rel="stylesheet"
+      href="/css/fontawesome.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="/css/styles.css"
+    />
+    <script
+      type="module"
+      src="/js/main.js"
+      defer
+    ></script>
+  </head>
+  <body>
+    {% include 'components/common/Navbar/index.njk' %} {% include
+    'components/common/Sidebar/index.njk' %} sadasd
     <div class="container">
-
-        {# Bloque donde se renderizará el contenido específico de cada ruta #}
-        {% block content %}{% endblock %}
-  
+      {# Bloque donde se renderizará el contenido específico de cada ruta #} {%
+      block content %}{% endblock %}
     </div>
-  
-</body>
+  </body>
 </html>

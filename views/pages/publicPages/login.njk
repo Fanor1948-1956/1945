@@ -1,216 +1,250 @@
-{% extends "layouts/publicLayout.njk" %}
+{% extends "layouts/publicLayout.njk" %} {% block content %}
+<style>
+  /* Estilos Generales */
+  .main {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+  }
 
-{% block content %}
-    <style>
-        /* Estilos Generales */
-        .main {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+  /* Estilo del Contenedor del Formulario */
+  .form-container {
+    background-color: #0d0238; /* Fondo oscuro para el formulario */
+    border-radius: 8px;
+    padding: 20px 0px;
+    box-shadow: 0 4px 10px rgba(7, 0, 74, 0.2);
+    width: 100%;
+    justify-content: center;
+    max-width: 350px; /* Máximo ancho para el formulario */
+    text-align: center; /* Centrar texto dentro del contenedor */
+  }
 
-        /* Estilo del Contenedor del Formulario */
-        .form-container {
-            background-color: #0d0238; /* Fondo oscuro para el formulario */
-            border-radius: 8px;
-            padding: 20px 0px;
-            box-shadow: 0 4px 10px rgba(7, 0, 74, 0.2);
-            width: 100%;
-justify-content:center;
-            max-width: 350px; /* Máximo ancho para el formulario */
-            text-align: center; /* Centrar texto dentro del contenedor */
-        }
+  /* Estilo del Título */
+  h2 {
+    text-align: center;
+    color: white;
+    margin-bottom: 20px; /* Espaciado inferior */
+  }
 
-        /* Estilo del Título */
-        h2 {
-            text-align: center;
-            color: white;
-            margin-bottom: 20px; /* Espaciado inferior */
-        }
+  /* Mensaje de Error */
+  .error-message {
+    color: red;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: bold; /* Negrita para el mensaje de error */
+  }
 
-        /* Mensaje de Error */
-        .error-message {
-            color: red;
-            margin-bottom: 15px;
-            text-align: center;
-            font-weight: bold; /* Negrita para el mensaje de error */
-        }
+  /* Estilos para las Etiquetas */
+  label {
+    margin: 8px 0 4px;
+    display: block;
+    color: white; /* Color de texto blanco */
+  }
 
-        /* Estilos para las Etiquetas */
-        label {
-            margin: 8px 0 4px;
-            display: block;
-            color: white; /* Color de texto blanco */
-        }
+  /* Estilos para los Inputs */
+  input[type='email'],
+  input[type='password'] {
+    width: 100%;
+    padding: 12px; /* Aumento del padding */
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px; /* Tamaño de fuente */
+    box-sizing: border-box; /* Para incluir el padding en el ancho total */
+  }
 
-        /* Estilos para los Inputs */
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px; /* Aumento del padding */
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px; /* Tamaño de fuente */
-            box-sizing: border-box; /* Para incluir el padding en el ancho total */
-        }
+  .input-content {
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0px 20px;
+  }
 
-        .input-content {
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 0px 20px;
-      
-        }
+  .button-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none !important;
+    padding: 0px 80px;
+    margin-top: 20px;
+  }
 
-        .button-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-  border:none !important;
-            padding: 0px 80px;
-            margin-top: 20px;
-        }
+  /* Estilos para el Botón */
+  button {
+    width: 100%;
+    background-color: #ffffff; /* Color de fondo del botón */
+    color: #0d0238; /* Color del texto del botón */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 12px; /* Aumento del padding en el botón */
+    transition: background-color 0.3s; /* Transición suave */
+  }
 
-        /* Estilos para el Botón */
-        button {
-            width: 100%;
-            background-color: #ffffff; /* Color de fondo del botón */
-            color: #0d0238; /* Color del texto del botón */
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            padding: 12px; /* Aumento del padding en el botón */
-            transition: background-color 0.3s; /* Transición suave */
-        }
+  /* Estilo al pasar el mouse sobre el botón */
+  button:hover {
+    background-color: #001b38; /* Color al pasar el mouse */
+    color: white; /* Color del texto al pasar el mouse */
+    border: 1px solid white;
+  }
+  /* Contenedor principal del logo */
+  .logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-        /* Estilo al pasar el mouse sobre el botón */
-        button:hover {
-            background-color: #001b38; /* Color al pasar el mouse */
-            color: white; /* Color del texto al pasar el mouse */
-            border: 1px solid white;
-        }
- /* Contenedor principal del logo */
-    .logo-container {
-    
-       display: flex;
-        align-items: center;
-        justify-content: center;
-        
-    
+  /* Círculo que contiene el texto */
+  .circle {
+    width: 150px;
+    height: 150px;
+    border: 5px solid #ffffff;
+    border-radius: 50%; /* Hacer el div circular */
+    position: relative;
+  }
+
+  /* Texto que gira alrededor del borde del círculo */
+  .rotating-text {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    animation: spin 10s linear infinite; /* Animación para girar el texto */
+    transform-origin: center;
+  }
+
+  /* Cada letra del texto */
+  .rotating-text span {
+    position: absolute;
+    transform-origin: 0px 75px; /* Ubica las letras en el borde del círculo */
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    padding: 5px;
+    font-family: Arial, sans-serif;
+
+    color: #ffffff;
+  }
+
+  /* Distribuir las letras alrededor del círculo comenzando en la parte superior */
+  .rotating-text span:nth-child(1) {
+    transform: rotate(-90deg);
+  }
+  .rotating-text span:nth-child(2) {
+    transform: rotate(-60deg);
+  }
+  .rotating-text span:nth-child(3) {
+    transform: rotate(-30deg);
+  }
+  .rotating-text span:nth-child(4) {
+    transform: rotate(0deg);
+  }
+  .rotating-text span:nth-child(5) {
+    transform: rotate(30deg);
+  }
+  .rotating-text span:nth-child(6) {
+    transform: rotate(60deg);
+  }
+  .rotating-text span:nth-child(7) {
+    transform: rotate(90deg);
+  }
+  .rotating-text span:nth-child(8) {
+    transform: rotate(120deg);
+  }
+  .rotating-text span:nth-child(9) {
+    transform: rotate(150deg);
+  }
+  .rotating-text span:nth-child(10) {
+    transform: rotate(180deg);
+  }
+  .rotating-text span:nth-child(11) {
+    transform: rotate(210deg);
+  }
+  .rotating-text span:nth-child(12) {
+    transform: rotate(240deg);
+  }
+
+  /* Texto fijo en el centro del círculo */
+  .center-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: Arial, sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: #fefefe;
+    text-align: center;
+  }
+
+  /* Animación para hacer girar el texto alrededor del círculo */
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
     }
-
-    /* Círculo que contiene el texto */
-    .circle {
-        width: 150px;
-        height: 150px;
-        border: 5px solid #ffffff;
-        border-radius: 50%; /* Hacer el div circular */
-        position: relative;
+    to {
+      transform: rotate(360deg);
     }
+  }
+</style>
 
-    /* Texto que gira alrededor del borde del círculo */
-    .rotating-text {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-      
-        animation: spin 10s linear infinite; /* Animación para girar el texto */
-        transform-origin: center;
-    }
-
-    /* Cada letra del texto */
-    .rotating-text span {
-        position: absolute;
-        transform-origin: 0px 75px; /* Ubica las letras en el borde del círculo */
-        font-family: Arial, sans-serif;
-        font-size: 10px;
-        padding:5px;
-          font-family: Arial, sans-serif;
- 
-        color: #ffffff;
-    }
-
-    /* Distribuir las letras alrededor del círculo comenzando en la parte superior */
-    .rotating-text span:nth-child(1) { transform: rotate(-90deg); }
-    .rotating-text span:nth-child(2) { transform: rotate(-60deg); }
-    .rotating-text span:nth-child(3) { transform: rotate(-30deg); }
-    .rotating-text span:nth-child(4) { transform: rotate(0deg); }
-    .rotating-text span:nth-child(5) { transform: rotate(30deg); }
-    .rotating-text span:nth-child(6) { transform: rotate(60deg); }
-    .rotating-text span:nth-child(7) { transform: rotate(90deg); }
-    .rotating-text span:nth-child(8) { transform: rotate(120deg); }
-    .rotating-text span:nth-child(9) { transform: rotate(150deg); }
-    .rotating-text span:nth-child(10) { transform: rotate(180deg); }
-    .rotating-text span:nth-child(11) { transform: rotate(210deg); }
-    .rotating-text span:nth-child(12) { transform: rotate(240deg); }
-
-    /* Texto fijo en el centro del círculo */
-    .center-text {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-family: Arial, sans-serif;
-        font-size: 24px;
-        font-weight: bold;
-        color: #fefefe;
-        text-align: center;
-    }
-
-    /* Animación para hacer girar el texto alrededor del círculo */
-    @keyframes spin {
-        from {
-            transform: rotate(0deg);
-        }
-        to {
-            transform: rotate(360deg);
-        }
-    }
-    </style>
-
-    <div class="main">
-        <div class="form-container">
-<div class="logo-container">
-    <div class="circle">
+<div class="main">
+  <div class="form-container">
+    <div class="logo-container">
+      <div class="circle">
         <div class="rotating-text">
-            <span>C</span>
-            <span>L</span>
-            <span>Í</span>
-            <span>N</span>
-            <span>I</span>
-            <span>C</span>
-            <span>A</span>
-            <span>1</span>
-            <span>G</span>
-            <span>R</span>
-            <span>A</span>
-            <span>N</span>
+          <span>C</span>
+          <span>L</span>
+          <span>Í</span>
+          <span>N</span>
+          <span>I</span>
+          <span>C</span>
+          <span>A</span>
+          <span>1</span>
+          <span>G</span>
+          <span>R</span>
+          <span>A</span>
+          <span>N</span>
         </div>
         <div class="center-text">
-            <p>Potosí</p>
+          <p>Potosí</p>
         </div>
+      </div>
     </div>
+    <form
+      class="form-action"
+      action="/auth/login"
+      method="POST"
+    >
+      <div class="input-content">
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Ingresa tu correo electrónico"
+          required
+        />
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Ingresa tu contraseña"
+          required
+        />
+      </div>
+      <!-- Mensaje de error -->
+      {% if query.error %}
+      <div class="error-message">{{ query.error }}</div>
+      {% endif %}
+      <div class="button-content">
+        <button type="submit">Ingresar</button>
+      </div>
+    </form>
+  </div>
 </div>
-    <form class="form-action" action="/auth/login" method="POST">
-                <div class="input-content">
-                    <input type="email" id="email" name="email" placeholder="Ingresa tu correo electrónico" required>
-                    <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" required>
-                </div>
-                <!-- Mensaje de error -->
-                {% if query.error %}
-                    <div class="error-message">{{ query.error }}</div>
-                {% endif %}
-                <div class="button-content">
-                    <button type="submit">Ingresar</button>
-                </div>
-            </form>
-        </div>
-    </div>
 {% endblock %}

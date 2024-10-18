@@ -1,35 +1,37 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
     <title>{{ title }}</title>
-    {{route.icon}}
+    {{
+      route.icon
+    }}
 
-<script src="/js/libraries/jquery.min.js"></script>
+    <script src="/js/libraries/jquery.min.js"></script>
 
-    <link rel="stylesheet" href="/css/fontawesome.min.css">
-    <link rel="stylesheet" href="/css/styles.css">
+    <link
+      rel="stylesheet"
+      href="/css/fontawesome.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="/css/styles.css"
+    />
 
-<script type="module" src="/js/main.js" defer></script>
+    <script
+      type="module"
+      src="/js/main.js"
+      defer
+    ></script>
+  </head>
 
-    
-</head>
-<body class="show-hamburger">
-
-
-
- 
-    {% include 'components/common/Navbar/index.njk' %}
-
-    {% include 'components/common/Sidebar/index.njk' %}
-    <div class="container">
- 
-        {# Bloque donde se renderizará el contenido específico de cada ruta #}
-        {% block content %}{% endblock %}
-    </div>
-       
-
-
-</body>
+  <body class="show-hamburger">
+    {% include 'components/common/Navbar/index.njk' %} {% include
+    'components/common/Sidebar/index.njk' %}
+    <div class="container">{% block content %}{% endblock %}</div>
+  </body>
 </html>

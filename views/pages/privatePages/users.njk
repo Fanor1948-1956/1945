@@ -1,17 +1,8 @@
-{% extends "layouts/privateLayout.njk" %}
+{% extends "layouts/privateLayout.njk" %} {% block content %}
 
-{% block content %}
+<h1>Lista de {{ title }}</h1>
+<section>sddsadasdasd {% include "components/api/fetch.njk" %}</section>
 
-    <h1>Lista de {{title}}</h1>
-        <section>
-        {% include "components/api/fetch.njk" %}
-    </section>
-
-    <hr />
-
-
-
-  
- 
+<hr />
 
 {% endblock %}

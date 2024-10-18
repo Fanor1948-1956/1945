@@ -1,7 +1,6 @@
 const roleModel = require('../models/roleModel');
-const { User } = require('../models/userModel');
+const { getIcon } = require('../utils/iconUtils');
 
-// Función para generar un ID a partir del path
 const generateIdFromPath = (path) => {
   return path
     .replace(/\//g, '-')
@@ -9,73 +8,75 @@ const generateIdFromPath = (path) => {
     .toLowerCase();
 };
 
-// Definir las rutas públicas
+// Función para validar y obtener un ícono
+const validateIcon = (iconName) => {
+  const icon = getIcon(iconName);
+  // Si el ícono no existe, podrías devolver un ícono por defecto o null
+  return icon ? icon : getIcon('defaultIcon'); // Cambia 'defaultIcon' por el ícono que prefieras
+};
+
 const publicRoutes = [
   {
     path: '/home',
-
+    icon: validateIcon('hospital'),
     title: 'Inicio',
     view: 'pages/publicPages/home.njk',
-    items: async () => [], // Datos adicionales si es necesario
+    items: async () => [],
     subRoutes: [
-      { id: 'practices', title: 'Prácticas' },
-      { id: 'doctors', title: 'Médicos' },
-      { id: 'schedule', title: 'Agendar Cita' },
-      { id: 'features', title: 'Características' },
-      { id: 'news', title: 'Noticias' },
+      { id: 'practices', title: 'Prácticas', icon: validateIcon('practices') },
+      { id: 'doctors', title: 'Médicos', icon: validateIcon('doctors') },
+      { id: 'schedule', title: 'Agendar Cita', icon: validateIcon('agendar') },
+      {
+        id: 'features',
+        title: 'Características',
+        icon: validateIcon('features'),
+      },
+      { id: 'news', title: 'Noticias', icon: validateIcon('new') },
     ],
   },
   {
     path: '/about',
-    id: generateIdFromPath('/about'), // Generar id
-    title: 'Sobre Nosostros',
+    icon: validateIcon('about'),
+    id: generateIdFromPath('/about'),
+    title: 'Sobre Nosotros',
     view: 'pages/publicPages/about.njk',
     subRoutes: [
-      { id: 'mission', title: 'Nuestra Misión' },
-      { id: 'mission', title: 'Nuestra Misión' },
+      { id: 'mission', title: 'Nuestra Misión', icon: validateIcon('mission') },
+      { id: 'vision', title: 'Nuestra Visión', icon: validateIcon('vision') },
     ],
-    items: async () => [], // Datos adicionales si es necesario
+    items: async () => [],
   },
-
   {
     path: '/contact',
-    id: generateIdFromPath('/contact'), // Generar id
+    icon: validateIcon('contact'),
+    id: generateIdFromPath('/contact'),
     title: 'Contacto',
     view: 'pages/publicPages/contact.njk',
-    items: async () => [], // Datos adicionales si es necesario
+    items: async () => [],
   },
   {
     path: '/register',
-    id: generateIdFromPath('/register'), // Generar id
-    title: 'Registro',
+    icon: validateIcon('register'),
+    id: generateIdFromPath('/register'),
+    title: 'Regidsstro',
     view: 'pages/publicPages/register.njk',
     items: async () => await roleModel.find(),
   },
   {
     path: '/login',
-    id: generateIdFromPath('/login'), // Generar id
-    title: 'Iniciar Sesión',
+    icon: validateIcon('login'),
+    id: generateIdFromPath('/login'),
+    title: 'Inicisdsdar Sessión',
     view: 'pages/publicPages/login.njk',
     items: async () => [],
   },
-  {
-    path: '/begin',
-    id: generateIdFromPath('/begin'), // Generar id
-    title: 'Comienza',
-    view: 'pages/publicPages/about.njk',
-    subRoutes: [
-      { id: 'mission', title: 'Nuestra Misión' },
-      { id: 'mission', title: 'Nuestra Misión' },
-    ],
-    items: async () => [], // Datos adicionales si es necesario
-  },
 ];
+
 const registerPublicRoutes = (app) => {
   publicRoutes.forEach((route) => {
-    // Registrar la ruta principal solo si tiene un path
+    // Ruta principal
     if (route.path) {
       app.get(route.path, async (req, res) => {
-        // Redirigir si el usuario ya está autenticado
         if (
           req.session.authenticated &&
           (route.path === '/home' || route.path === '/register')
@@ -84,11 +85,11 @@ const registerPublicRoutes = (app) => {
         }
 
         try {
-          const items = await route.items(); // Obtener los items
+          const items = await route.items();
           res.render(route.view, {
             title: route.title,
             items: items,
-            publicRoutes, // Rutas públicas
+            publicRoutes,
             isAuthenticated: req.session.authenticated,
             username: req.session.name,
           });
@@ -99,29 +100,29 @@ const registerPublicRoutes = (app) => {
       });
     }
 
-    // Registrar subrutas si existen
+    // Subrutas
     if (route.subRoutes) {
       route.subRoutes.forEach((subRoute) => {
-        if (subRoute.path) {
-          app.get(subRoute.path, async (req, res) => {
-            try {
-              const items = (await subRoute.items) ? subRoute.items() : []; // Obtener los items de la subruta
-              res.render(subRoute.view, {
-                title: subRoute.title,
-                items: items,
-                publicRoutes, // Rutas públicas
-                isAuthenticated: req.session.authenticated,
-                username: req.session.name,
-              });
-            } catch (error) {
-              console.error(
-                `Error al cargar los datos para ${subRoute.path}:`,
-                error
-              );
-              res.status(500).send('Error al cargar los datos');
-            }
-          });
-        }
+        const subRoutePath = `${route.path}/${subRoute.id}`;
+        app.get(subRoutePath, async (req, res) => {
+          try {
+            const items = (await subRoute.items) ? await subRoute.items() : [];
+            res.render(route.view, {
+              title: subRoute.title,
+              items: items,
+              publicRoutes,
+              isAuthenticated: req.session.authenticated,
+              username: req.session.name,
+              icon: subRoute.icon, // Pasa el ícono de la subruta
+            });
+          } catch (error) {
+            console.error(
+              `Error al cargar los datos para ${subRoutePath}:`,
+              error
+            );
+            res.status(500).send('Error al cargar los datos');
+          }
+        });
       });
     }
   });

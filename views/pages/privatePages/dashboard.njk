@@ -1,32 +1,58 @@
 <!-- Plantilla hija: views/pages/privatePages/dashboard.njk -->
-{% extends "layouts/privateLayout.njk" %}
-
-{% block title %}Dashboard{% endblock %}
+{% extends "layouts/privateLayout.njk" %} {% block title %}Dashboard{% endblock
+%}
+<!-- Bloque de título -->
 
 {% block content %}
 <div class="dashboard-container">
-
   <!-- Título principal -->
   <section class="dashboard-section">
     <h1 class="main-heading">{{ title }}</h1>
     <p class="subheading">Bienvenido al dashboard privado.</p>
   </section>
 
-  <!-- Sección de Cards -->
-  <section id="cards-container" class="dashboard-cards-container">
-    {% set contador = 1 %}
-    {% for item in items %}
-    <section class="dashboard-card">
-      <img src="/path/to/img{{ contador }}.jpg" alt="Image {{ contador }}" class="card-img">
-      <div class="card-content">
-        <h2 class="card-title">{{ item.title }}</h2>
-        <p class="card-description">Descripción para {{ item.title }}.</p>
-        <a href="{{ item.link }}" class="option-link">Ir a {{ item.title }}</a>
-      </div>
-    </section>
-    {% set contador = contador + 1 %}
-    {% endfor %}
+  <!-- Bienvenida al usuario -->
+  <section class="dashboard-section">
+    <h2 class="section-heading">Bienvenido, {{ name }} {{ surnames }}</h2>
+    <p class="subtext">Tus roles son:</p>
+    <div class="roles-list">
+      <ul>
+        {% for role in userRoles %}
+        <li class="role-item">{{ role }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <a
+      href="/auth/logout"
+      class="logout-button"
+      >Cerrar Sesión</a
+    >
   </section>
 
+  <!-- Información adicional -->
+  <section class="dashboard-section">
+    <h2 class="section-heading">Opciones del Dashboard</h2>
+
+    {% set contador = 1 %} {% for item in items %}
+    <section class="dashboard-subsection">
+      <h3 class="subsection-title">Opción {{ contador }}: {{ item.title }}</h3>
+      <p>
+        <a
+          href="{{ item.link }}"
+          class="option-link"
+          >Ir a {{ item.title }}</a
+        >
+      </p>
+    </section>
+    {% set contador = contador + 1 %} {% endfor %}
+  </section>
+
+  <!-- Información de perfil -->
+  <section class="dashboard-section">
+    <h3 class="section-heading">Información del Perfil</h3>
+    <p class="subtext">Email: {{ profile.email }}</p>
+    <p class="subtext">Roles: {{ userRoles | join(', ') }}</p>
+  </section>
 </div>
+
 {% endblock %}

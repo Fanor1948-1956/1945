@@ -84,7 +84,7 @@
     </div>
 
     <input type="hidden" id="userGender" name="userGender">
-
+        {% include "pages/privatePages/users/list.njk" %}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             setupGenderDropdown();  // Configura la selección de género y colapso

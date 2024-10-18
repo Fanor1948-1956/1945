@@ -3,8 +3,8 @@ header {
   position: fixed;
   padding: 0.1px;
   width: 100%;
-    
-  background-color: #001f3f;
+
+  background-color: #0b7ef1;
   z-index: 1500;
 }
 
@@ -12,15 +12,14 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-border:1px solid white;
+  border: 1px solid white;
   background-color: #0a71d8;
   padding: 10px 5px;
 }
 
 /* Estilos para la navegación pública */
 .publicNav {
-  background-color: #001a33; /* Color para el navbar público */
-
+  background-color: #011026; /* Color para el navbar público */
 }
 
 /* Estilos específicos para las rutas privadas */
@@ -56,10 +55,6 @@ border:1px solid white;
 .navbar__links li:hover .submenuNav {
   flex-direction: column;
   list-style-type: none;
-
-  
-
-
 }
 
 .navbar__links li:hover .submenuNav.horizontal {
@@ -98,8 +93,6 @@ border:1px solid white;
 
 .navbar__links li {
   margin: 0;
-  
-  
 }
 
 .navbar__links li a {
@@ -127,14 +120,13 @@ border:1px solid white;
     left: 0;
     z-index: 1500;
   }
-.menu-container{
-  display: flex;
-  justify-content: center;
-  background-color: #010107;
-  width: 100%;
-  align-items: center;
-
-}
+  .menu-container {
+    display: flex;
+    justify-content: center;
+    background-color: #010107;
+    width: 100%;
+    align-items: center;
+  }
   .publicNav .navbar__links.active {
     display: flex;
   }
@@ -143,7 +135,6 @@ border:1px solid white;
   .privateNav .navbar__links {
     display: flex;
     flex-direction: row; /* Mantiene los enlaces en fila (horizontal) */
-   
   }
 
   .submenuNav {

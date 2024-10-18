@@ -7,7 +7,7 @@ const { getIcon } = require('../utils/iconUtils');
 const privateRoutes = [
   {
     path: '/dashboard',
-    title: 'Dashboard privado',
+    title: 'Dassdsdhboard privado',
     view: 'pages/privatePages/dashboard.njk',
     icon: getIcon('home'), // Utiliza la función para obtener el icono
     items: async (userRoles) => {

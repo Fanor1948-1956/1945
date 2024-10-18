@@ -15,8 +15,9 @@ import './components/custom/icons.js';
 /*libraries*/
 import './libraries/select2.min.js';
 // Conexión WebSocket desde el cliente
+
 const socket = new WebSocket(
-  'wss://6001-fanoro1956-1945-zibszpmbub3.ws-us116.gitpod.io'
+  'wss://6002-fanoro1956-1945-zibszpmbub3.ws-us116.gitpod.io'
 );
 
 // Manejar la conexión
@@ -41,19 +42,16 @@ socket.addEventListener('message', (event) => {
     loadingDiv.style.transition = 'opacity 0.5s'; // Transición para el cambio de opacidad
     document.body.appendChild(loadingDiv); // Añadir el mensaje al cuerpo del documento
 
-    // Mostrar el mensaje de carga
     setTimeout(() => {
-      loadingDiv.style.opacity = '0'; // Se mantiene invisible
-    }, 100); // Un breve retraso antes de mostrar el mensaje
+      loadingDiv.style.opacity = '0';
+    }, 500);
 
-    // Esperar un tiempo antes de recargar
     setTimeout(() => {
-      location.reload(); // Agregar un retraso antes de recargar
-    }, 500); // Ajusta el tiempo según sea necesario
+      location.reload();
+    }, 500);
   }
 });
 
-// Manejar errores de conexión
 socket.addEventListener('error', (error) => {
   console.error('Error en la conexión WebSocket:', error);
 });

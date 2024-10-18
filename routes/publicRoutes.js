@@ -1,19 +1,5 @@
 const roleModel = require('../models/roleModel');
-const { getIcon } = require('../utils/iconUtils');
-
-const generateIdFromPath = (path) => {
-  return path
-    .replace(/\//g, '-')
-    .replace(/[^a-z0-9-]/gi, '')
-    .toLowerCase();
-};
-
-// Función para validar y obtener un ícono
-const validateIcon = (iconName) => {
-  const icon = getIcon(iconName);
-  // Si el ícono no existe, podrías devolver un ícono por defecto o null
-  return icon ? icon : getIcon('defaultIcon'); // Cambia 'defaultIcon' por el ícono que prefieras
-};
+const { validateIcon, generateIdFromPath } = require('../utils/iconUtils');
 
 const publicRoutes = [
   {
@@ -31,12 +17,12 @@ const publicRoutes = [
         title: 'Características',
         icon: validateIcon('features'),
       },
-      { id: 'news', title: 'Noticias', icon: validateIcon('new') },
+      { id: 'news', title: 'Noticias', icon: validateIcon('news') },
     ],
   },
   {
     path: '/about',
-    icon: validateIcon('about'),
+    icon: validateIcon('stethoscope'),
     id: generateIdFromPath('/about'),
     title: 'Sobre Nosotros',
     view: 'pages/publicPages/about.njk',
@@ -58,7 +44,7 @@ const publicRoutes = [
     path: '/register',
     icon: validateIcon('register'),
     id: generateIdFromPath('/register'),
-    title: 'Regidsstro',
+    title: 'Registro',
     view: 'pages/publicPages/register.njk',
     items: async () => await roleModel.find(),
   },
@@ -66,7 +52,7 @@ const publicRoutes = [
     path: '/login',
     icon: validateIcon('login'),
     id: generateIdFromPath('/login'),
-    title: 'Inicisdsdar Sessión',
+    title: 'Iniciar Sessión',
     view: 'pages/publicPages/login.njk',
     items: async () => [],
   },

@@ -13,18 +13,16 @@ header {
   justify-content: space-between;
   align-items: center;
   border: 1px solid white;
-  background-color: #0a71d8;
+  background-color: #001837;
   padding: 10px 5px;
 }
 
-/* Estilos para la navegación pública */
 .publicNav {
-  background-color: #011026; /* Color para el navbar público */
+  background-color: #01070f;
 }
 
-/* Estilos específicos para las rutas privadas */
 .privateNav {
-  background-color: #001a33; /* Color para el navbar privado */
+  background-color: #0c64b7;
   color: white;
   border: none;
 }

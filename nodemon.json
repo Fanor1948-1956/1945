@@ -1,5 +1,5 @@
 {
-  "watch": ["server.js", "views", "routes", "public"],
-  "ext": "js,njk",
+  "watch": ["./**/*.js", "./**/*.njk", "./**/*.css"],
+  "ext": "js,njk,css",
   "exec": "node server.js"
 }

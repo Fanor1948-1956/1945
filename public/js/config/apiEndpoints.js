@@ -1,6 +1,6 @@
 // js/config/apiEndpoints.js
 export const BASE_URL =
-  'https://6001-fanoro1956-1945-zibszpmbub3.ws-us116.gitpod.io';
+  'https://6002-fanoro1956-1945-zibszpmbub3.ws-us116.gitpod.io';
 
 export const permissionEndpoints = {
   list: `${BASE_URL}/permissions/api`,

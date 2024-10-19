@@ -4,7 +4,7 @@ header {
   width: 100%;
 
   background-color: #0b7ef1;
-  z-index: 1500;
+  z-index: 100;
 }
 
 .navbar {

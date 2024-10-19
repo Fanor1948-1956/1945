@@ -140,7 +140,7 @@ const privateRoutes = [
     path: '/permissions',
     title: 'Permisos',
     view: 'pages/privatePages/permission/index.njk',
-    // roles: ['Administrador'],
+    roles: ['Administrador'],
 
     icon: getIcon('permissions'),
     items: async () => [],

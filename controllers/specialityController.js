@@ -1,6 +1,6 @@
 // controllers/specialtyController.js
 
-const Specialty = require("../models/Specialty");
+const Specialty = require('../models/Specialty');
 
 // Crear una nueva especialidad
 exports.createSpecialty = async (req, res) => {
@@ -9,7 +9,7 @@ exports.createSpecialty = async (req, res) => {
   // Validar que los campos requeridos están presentes
   if (!name || !description) {
     return res.status(400).json({
-      message: "Faltan campos requeridos: nombre y descripción.",
+      message: 'Faltan campos requeridos: nombre y descripción.',
     });
   }
 
@@ -20,13 +20,13 @@ exports.createSpecialty = async (req, res) => {
 
     // Responder con la nueva especialidad y un mensaje
     res.status(201).json({
-      message: "Especialidad creada correctamente",
+      message: 'Especialidad creada correctamente',
       specialty: newSpecialty,
     });
   } catch (error) {
-    console.error("Error al crear la especialidad:", error);
+    console.error('Error al crear la especialidad:', error);
     res.status(500).json({
-      message: "Error al crear la especialidad. Inténtelo de nuevo más tarde.",
+      message: 'Error al crear la especialidad. Inténtelo de nuevo más tarde.',
     });
   }
 };
@@ -34,16 +34,16 @@ exports.createSpecialty = async (req, res) => {
 // Obtener todas las especialidades
 exports.getAllSpecialties = async (req, res) => {
   try {
-    const items = await Specialty.find();
+    const specialties = await Specialty.find();
     res.status(200).json({
       success: true,
-      message: "Especialidades recuperadas exitosamente",
-      items,
+      message: 'Especialidades recuperadas exitosamente',
+      specialties,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: error.message || "Error al recuperar las especialidades",
+      message: error.message || 'Error al recuperar las especialidades',
     });
   }
 };
@@ -53,7 +53,7 @@ exports.getSpecialtyById = async (req, res) => {
   try {
     const specialty = await Specialty.findById(req.params.id);
     if (!specialty) {
-      return res.status(404).json({ message: "Especialidad no encontrada" });
+      return res.status(404).json({ message: 'Especialidad no encontrada' });
     }
     res.status(200).json(specialty);
   } catch (error) {
@@ -69,7 +69,7 @@ exports.updateSpecialty = async (req, res) => {
   // Validar que los campos requeridos están presentes
   if (!name || !description) {
     return res.status(400).json({
-      message: "Faltan campos requeridos: nombre y descripción.",
+      message: 'Faltan campos requeridos: nombre y descripción.',
     });
   }
 
@@ -83,19 +83,19 @@ exports.updateSpecialty = async (req, res) => {
 
     // Si no se encuentra la especialidad
     if (!updatedSpecialty) {
-      return res.status(404).json({ message: "Especialidad no encontrada." });
+      return res.status(404).json({ message: 'Especialidad no encontrada.' });
     }
 
     // Responder con la especialidad actualizada
     res.status(200).json({
-      message: "Especialidad actualizada correctamente",
+      message: 'Especialidad actualizada correctamente',
       specialty: updatedSpecialty,
     });
   } catch (error) {
-    console.error("Error al actualizar la especialidad:", error);
+    console.error('Error al actualizar la especialidad:', error);
     res.status(500).json({
       message:
-        "Error al actualizar la especialidad. Inténtelo de nuevo más tarde.",
+        'Error al actualizar la especialidad. Inténtelo de nuevo más tarde.',
     });
   }
 };
@@ -107,12 +107,12 @@ exports.deleteSpecialty = async (req, res) => {
     const deletedSpecialty = await Specialty.findByIdAndDelete(specialtyId); // Elimina la especialidad por ID
 
     if (!deletedSpecialty) {
-      return res.status(404).json({ message: "Especialidad no encontrada" }); // Manejar especialidad no encontrada
+      return res.status(404).json({ message: 'Especialidad no encontrada' }); // Manejar especialidad no encontrada
     }
 
-    res.json({ success: true, message: "Especialidad eliminada exitosamente" }); // Mensaje de éxito
+    res.json({ success: true, message: 'Especialidad eliminada exitosamente' }); // Mensaje de éxito
   } catch (error) {
-    console.error("Error al eliminar la especialidad:", error);
-    res.status(500).json({ message: "Error al eliminar la especialidad" }); // Mensaje de error genérico
+    console.error('Error al eliminar la especialidad:', error);
+    res.status(500).json({ message: 'Error al eliminar la especialidad' }); // Mensaje de error genérico
   }
 };

@@ -1,31 +1,73 @@
-{% extends "layouts/publicLayout.njk" %}
+{% extends "layouts/publicLayout.njk" %} {% block content %}
+<div class="home-container">
+  {#
+  <section
+    id="hero"
+    class="home-hero"
+  >
+    {% include "pages/privatePages/permission/index.njk" %}
+  </section>
+  <section
+    id="hero"
+    class="home-hero"
+  >
+    {% include "pages/privatePages/role/index.njk" %}
+  </section>
+  <section
+    id="hero"
+    class="home-hero"
+  >
+    {% include "pages/privatePages/specialities.njk" %}
+  </section>
+  <section
+    id="hero"
+    class="home-hero"
+  >
+    {% include "pages/privatePages/services.njk" %}
+  </section>
+  #}
 
-{% block content %}
-  <div class='home-container'>
-      <section id='hero' class='home-hero'>
-          {% include "partials/heroAndFeatures.njk" %}
-      </section>
+  <section
+    id="hero"
+    class="home-hero"
+  >
+    {% include "partials/heroAndFeatures.njk" %}
+  </section>
 
-      <section id='practices' class='home-practices'>
-          {% include "partials/practicesAndWhyChooseUs.njk" %}
-      </section>
+  <section
+    id="practices"
+    class="home-practices"
+  >
+    {% include "partials/practicesAndWhyChooseUs.njk" %}
+  </section>
 
-      <section id='doctors' class='home-doctors'>
-          {% include "partials/meetOurDoctors.njk" %}
-      </section>
+  <section
+    id="doctors"
+    class="home-doctors"
+  >
+    {% include "partials/meetOurDoctors.njk" %}
+  </section>
 
-      <section id='schedule' class='home-schedule'>
-          {% include "partials/scheduleAppointment.njk" %}
-      </section>
+  <section
+    id="schedule"
+    class="home-schedule"
+  >
+    {% include "partials/scheduleAppointment.njk" %}
+  </section>
 
-      <section id='features' class='home-features'>
-          {% include "partials/featuresSection.njk" %}
-      </section>
+  <section
+    id="features"
+    class="home-features"
+  >
+    {% include "partials/featuresSection.njk" %}
+  </section>
 
-      <section id='news' class='home-news'>
-          {% include "partials/latestNews.njk" %}
-      </section>
-  </div>
-
+  <section
+    id="news"
+    class="home-news"
+  >
+    {% include "partials/latestNews.njk" %}
+  </section>
+</div>
 
 {% endblock %}

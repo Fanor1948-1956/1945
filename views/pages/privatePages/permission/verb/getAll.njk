@@ -1,6 +1,27 @@
-{% extends "layouts/publicLayout.njk" %} {% block content %}
-<h1>Lista de Permisos</h1>
-<button id="addPermissionBtn">Agregar Permiso</button>
+<!--conditionaly isAutenticated user button -->
+<!--conditionaly isAutenticated user title -->
+{% if isAuthenticated %}
+<h1>{{ title }}</h1>
+{% endif %}
+
+<button
+  id="addPermissionBtn"
+  class="add-button"
+  {%
+  if
+  not
+  isAuthenticated
+  %}
+  style="display: none"
+  {%
+  endif
+  %}
+>
+  Agregar Permiso
+</button>
+
+<!-- conditionaly isAutenticated user snackbar -->
+
 <div id="permissionTableContainer"></div>
 <div
   id="snackbar"
@@ -42,14 +63,14 @@
     addPermission,
     updatePermission,
     deletePermission,
-  } from './js/reducers/permissionReducer.js';
+  } from '../../js/reducers/permissionReducer.js';
 
-  import { createService, updateService } from './js/services/index.js';
-  import { fetchPermissions } from './js/services/loadFetchs.js';
-  import { getState } from './js/reducers/state.js';
-  import { renderTable } from './js/components/global/renderTable.js';
-  import { permissionEndpoints } from './js/config/apiEndpoints.js';
-  import { confirmDelete } from './js/utils/confirmDelete.js'; // Importa la función de utilidad
+  import { createService, updateService } from '../../js/services/index.js';
+  import { fetchPermissions } from '../../js/services/loadFetchs.js';
+  import { getState } from '../../js/reducers/state.js';
+  import { renderTable } from '../../js/components/global/renderTable.js';
+  import { permissionEndpoints } from '../../js/config/apiEndpoints.js';
+  import { confirmDelete } from '../../js/utils/confirmDelete.js'; // Importa la función de utilidad
 
   const permissionHeaders = {
     name: 'Nombre',
@@ -161,5 +182,3 @@
   // Exponer onAction globalmente
   window.onAction = onAction;
 </script>
-
-{% endblock %}

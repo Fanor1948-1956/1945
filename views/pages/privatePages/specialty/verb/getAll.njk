@@ -1,0 +1,168 @@
+{% if isAuthenticated %}
+<h1>{{ title }}</h1>
+{% endif %}
+
+<button
+  id="addSpecialtyBtn"
+  class="add-button"
+  {%
+  if
+  not
+  isAuthenticated
+  %}
+  style="display: none"
+  {%
+  endif
+  %}
+>
+  Agregar Especialidad
+</button>
+<div
+  id="snackbar"
+  class="snackbar"
+></div>
+<div id="specialtyTableContainer"></div>
+<!-- Modal para agregar especialidades -->
+<div
+  class="modal"
+  id="addSpecialtyModal"
+  style="display: none"
+>
+  <div class="modal-content">
+    <span
+      class="close-button"
+      onclick="Modal.close('#addSpecialtyModal')"
+      >&times;</span
+    >
+    <h2>Agregar Especialidad</h2>
+    <label for="specialtyName">Nombre:</label>
+    <input
+      type="text"
+      id="specialtyName"
+      required
+    />
+    <label for="specialtyDescription">Descripción:</label>
+    <input
+      type="text"
+      id="specialtyDescription"
+      required
+    />
+    <button id="saveSpecialtyBtn">Guardar</button>
+  </div>
+</div>
+
+<script type="module">
+  import {
+    loadItems,
+    addItem,
+    updateItem,
+    deleteItem,
+  } from './js/reducers/index.js';
+
+  import { createService, updateService } from './js/services/index.js';
+  import { getState } from './js/reducers/state.js';
+  import { fetchSpecialty } from './js/services/loadFetchs.js';
+  import { renderTable } from './js/components/global/renderTable.js';
+  import { specialtyEndpoints } from './js/config/apiEndpoints.js';
+  import { confirmDelete } from './js/utils/confirmDelete.js'; // Importa la función de utilidad
+  console.log(specialtyEndpoints.list);
+  const specialtyHeaders = {
+    name: 'Nombre',
+    description: 'Descripción',
+    isActive: 'Estado',
+  };
+
+  let currentEditingSpecialtyId = null;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadSpecialties();
+    setupEventListeners();
+  });
+
+  const loadSpecialties = async () => {
+    await fetchSpecialty();
+    const { specialties } = getState();
+    console.log('specialties', specialties);
+    renderTable(
+      specialties,
+      specialtyHeaders,
+      'specialtyTableContainer',
+      onAction
+    );
+  };
+
+  const setupEventListeners = () => {
+    document.getElementById('addSpecialtyBtn').addEventListener('click', () => {
+      currentEditingSpecialtyId = null;
+      document.getElementById('specialtyName').value = '';
+      document.getElementById('specialtyDescription').value = '';
+      Modal.open('#addSpecialtyModal');
+    });
+
+    document
+      .getElementById('saveSpecialtyBtn')
+      .addEventListener('click', saveSpecialty);
+  };
+
+  const onAction = (action, id) => {
+    const specialties = getState().specialties;
+    const selectedSpecialty = specialties.find(
+      (specialty) => specialty._id === id
+    );
+
+    if (action === 'edit') {
+      document.getElementById('specialtyName').value = selectedSpecialty.name;
+      document.getElementById('specialtyDescription').value =
+        selectedSpecialty.description;
+      currentEditingSpecialtyId = id;
+      Modal.open('#addSpecialtyModal');
+    } else if (action === 'delete') {
+      confirmDelete(
+        id,
+        specialtyEndpoints,
+        'especialidad',
+        loadSpecialties,
+        deleteItem
+      ); // Llama a confirmDelete
+      // No se necesita manejar más aquí, todo se hace dentro de confirmDelete
+    }
+  };
+
+  const saveSpecialty = async () => {
+    const name = document.getElementById('specialtyName').value.trim();
+    const description = document
+      .getElementById('specialtyDescription')
+      .value.trim();
+
+    if (!name || !description) {
+      showSnackbar('Por favor, complete todos los campos.', false);
+      return;
+    }
+
+    const data = { name, description };
+    if (currentEditingSpecialtyId) {
+      data._id = currentEditingSpecialtyId;
+      const message = await updateService(data, specialtyEndpoints, updateItem);
+      if (message) {
+        currentEditingSpecialtyId = null;
+        Modal.close('#addSpecialtyModal');
+        loadSpecialties();
+        showSnackbar(message, true);
+      } else {
+        showSnackbar('Error al actualizar la especialidad.', false);
+      }
+    } else {
+      const message = await createService(data, specialtyEndpoints, addItem);
+      if (message) {
+        Modal.close('#addSpecialtyModal');
+        loadSpecialties();
+        showSnackbar(message, true);
+      } else {
+        showSnackbar('Error al agregar la especialidad.', false);
+      }
+    }
+  };
+
+  // Exponer onAction globalmente
+  window.onAction = onAction;
+</script>

@@ -64,13 +64,13 @@ app.use(express.static('public'));
 registerPublicRoutes(app);
 registerPrivateRoutes(app);
 
-app.use('/permissions', verifyToken, permissionRoutes);
-app.use('/roles', verifyToken, roleRoutes);
-app.use('/users', verifyToken, userRoutes);
+app.use('/permissions', permissionRoutes);
+app.use('/roles', roleRoutes);
+app.use('/users', userRoutes);
 app.use('/services', verifyToken, serviceRoutes);
 app.use('/api', verifyToken, profileRoutes);
 app.use('/auth', authRoutes);
-app.use('/specialties', verifyToken, specialtyRoutes);
+app.use('/specialties', specialtyRoutes);
 
 const server = app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);

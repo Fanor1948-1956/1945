@@ -1,14 +1,15 @@
 // apiFetch.js
 
 // Función para hacer peticiones a la API
-export function apiFetch(url, method = 'GET', data = null ) {
+export function apiFetch(url, method = 'GET', data = null) {
   const options = {
     method: method,
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-     /*  ...headers */
+      /*  ...headers */
     },
+    credentials: 'include',
   };
 
   if (data) {
@@ -18,7 +19,10 @@ export function apiFetch(url, method = 'GET', data = null ) {
   return fetch(url, options)
     .then((response) => {
       if (!response.ok) {
-        return Promise.reject(response);
+        return response.text().then((text) => {
+          console.error('Respuesta del servidor:', text); // Muestra la respuesta del servidor
+          return Promise.reject(response);
+        });
       }
       return response.json();
     })

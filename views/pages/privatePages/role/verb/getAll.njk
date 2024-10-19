@@ -1,0 +1,308 @@
+
+<h1>{{ title }}</h1>
+<button id="addRoleBtn">Agregar Rol</button>
+<div id="roleTableContainer"></div>
+<div
+  id="snackbar"
+  class="snackbar"
+></div>
+
+<!-- Modal para agregar/editar roles -->
+<div
+  class="modal"
+  id="addRoleModal"
+  style="display: none"
+>
+  <div class="modal-content">
+    <span
+      class="close-button"
+      onclick="Modal.close('#addRoleModal')"
+      >&times;</span
+    >
+    <h2 id="modalTitle">Agregadsdr Rol</h2>
+    <form id="roleForm">
+      <label for="roleName">Nombre:</label>
+      <input
+        type="text"
+        id="roleName"
+        name="name"
+        required
+      />
+
+      <label for="roleAlias">Alias:</label>
+      <input
+        type="text"
+        id="roleAlias"
+        name="alias"
+        required
+      />
+
+      <label for="roleDescription">Descripción:</label>
+      <input
+        type="text"
+        id="roleDescription"
+        name="description"
+      />
+
+      <button
+        type="button"
+        id="selectPermissionsBtn"
+      >
+        Seleccionar Permisos
+      </button>
+      <button
+        type="button"
+        id="saveItemBtn"
+      >
+        Guardar
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal para seleccionar permisos -->
+<div
+  class="modal"
+  id="selectPermissionsModal"
+  style="display: none"
+>
+  <div class="modal-content">
+    <span
+      class="close-button"
+      onclick="Modal.close('#selectPermissionsModal')"
+      >&times;</span
+    >
+    <h2 id="permissionsModalTitle">Seleccionar Permisos</h2>
+    <div id="permissionsContainer"></div>
+    <button
+      type="button"
+      id="savePermissionsBtn"
+    >
+      Guardar Permisos
+    </button>
+  </div>
+</div>
+
+<!-- Modal de confirmación para eliminar rol -->
+<div
+  id="deleteRoleModal"
+  class="modal"
+  style="display: none"
+>
+  <div class="modal-content">
+    <span
+      class="close-button"
+      onclick="Modal.close('#deleteRoleModal')"
+      >&times;</span
+    >
+    <h2>Confirmar Eliminación</h2>
+    <p>¿Estás seguro de que deseas eliminar este Rol?</p>
+    <button id="confirmDeleteButton">Confirmar</button>
+    <button id="cancelDeleteButton">Cancelar</button>
+  </div>
+</div>
+
+<script type="module">
+  import {
+    loadRoles,
+    addRole,
+    updateRole,
+    deleteRole,
+  } from '../../js/reducers/roleReducer.js';
+
+  import {
+    fetchServices,
+    createService,
+    updateService,
+    deleteService,
+  } from '../../js/services/index.js';
+  import { fetchPermissions } from '../../js/services/loadFetchs.js';
+  import { getState } from '../../js/reducers/state.js';
+  import { renderTable } from '../../js/components/global/renderTable.js';
+  import { renderSubItemsCheckboxesForSelection } from '../../js/utils/subItemUtils.js'; // Importamos la función para renderizar ítems
+  import {
+    clearFormFields,
+    resetFormFields,
+    clearSelectionsAndArray,
+  } from '../../js/components/forms/formUtils.js'; // Importamos las funciones de manejo de formularios
+  import {
+    saveSelectedSubItems,
+    saveItem,
+  } from '../../js/logic/itemLogic/index.js'; // Importamos las nuevas funciones
+  import { roleEndpoints } from '../../js/config/apiEndpoints.js';
+  const roleHeaders = {
+    name: 'Nombre',
+    alias: 'Alias',
+    description: 'Descripción',
+    permissions: 'Permisos',
+    isActive: 'Estado',
+  };
+
+  let currentEditingRoleId = null; // Variable para almacenar el ID del rol en edición
+  let selectedPermissions = []; // Array para almacenar permisos seleccionados
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadsRoles();
+    setupEventListeners();
+  });
+
+  const loadsRoles = async () => {
+    await fetchServices(roleEndpoints, loadRoles);
+    const { roles } = getState();
+    renderTable(roles, roleHeaders, 'roleTableContainer', onAction);
+  };
+  //menaj guardo d eroles
+  const setupEventListeners = () => {
+    document.getElementById('addRoleBtn').addEventListener('click', () => {
+      currentEditingRoleId = null; // Reinicia la variable al abrir el modal
+      clearRoleForm();
+      loadPermissions(); // Cargar permisos antes de abrir el modal
+      document.getElementById('modalTitle').textContent = 'Agregar Rol';
+      document.getElementById('permissionsModalTitle').textContent =
+        'Seleccionar Permisos';
+      Modal.open('#addRoleModal'); // Abre el modal para agregar rol
+    });
+
+    document
+      .getElementById('saveItemBtn')
+      .addEventListener('click', saveItemHandler);
+    document
+      .getElementById('selectPermissionsBtn')
+      .addEventListener('click', openPermissionsModal); // Cambiado a "Seleccionar Permisos"
+    document
+      .getElementById('savePermissionsBtn')
+      .addEventListener('click', savePermissionsHandler);
+
+    // Manejar confirmación de eliminación
+    document
+      .getElementById('confirmDeleteButton')
+      .addEventListener('click', async () => {
+        try {
+          const message = await deleteService(
+            currentEditingRoleId,
+            roleEndpoints,
+            deleteRole
+          ); // Llamar al servicio para eliminar
+          await loadsRoles(); // Recargar la lista de roles
+          showSnackbar(message, true); // Mostrar mensaje de éxito
+        } catch (error) {
+          showSnackbar(error.message || 'Error al eliminar el rol.', false); // Mostrar mensaje de error
+        }
+        Modal.close('#deleteRoleModal'); // Cerrar el modal después de eliminar
+      });
+
+    // Manejar cancelación de eliminación
+    document
+      .getElementById('cancelDeleteButton')
+      .addEventListener('click', () => {
+        Modal.close('#deleteRoleModal'); // Cierra el modal sin hacer nada
+      });
+  };
+
+  const clearRoleForm = () => {
+    clearFormFields('roleForm'); // Usamos clearFormFields para limpiar todos los campos del formulario
+    clearSelectionsAndArray('permissionsContainer', selectedPermissions); // Limpia las selecciones y el array de permisos seleccionados
+  };
+
+  const onAction = async (action, id) => {
+    const roles = getState().roles;
+    const selectedRole = roles.find((role) => role._id === id);
+
+    if (action === 'edit') {
+      // Cargar datos del rol para editar
+      resetFormFields(['roleName', 'roleAlias', 'roleDescription']); // Resetea los campos específicos
+      document.getElementById('roleName').value = selectedRole.name;
+      document.getElementById('roleAlias').value = selectedRole.alias;
+      document.getElementById('roleDescription').value =
+        selectedRole.description;
+      currentEditingRoleId = id; // Guarda el ID del rol que se está editando
+
+      // Cargar permisos desde la base de datos (todos los permisos disponibles)
+      await loadPermissions();
+
+      // Marcar los permisos seleccionados previamente
+      selectedPermissions = selectedRole.permissions.map((p) => p._id);
+      document.getElementById('permissionsModalTitle').textContent =
+        'Modificar Permisos';
+
+      Modal.open('#addRoleModal'); // Reabrimos el modal principal para editar
+    } else if (action === 'delete') {
+      // Configurar el modal de confirmación de eliminación
+      currentEditingRoleId = id; // Guardamos el ID del rol que se va a eliminar
+      Modal.open('#deleteRoleModal'); // Abrimos el modal de confirmación
+    }
+  };
+
+  // Cargar permisos disponibles desde la base de datos
+  const loadPermissions = async () => {
+    await fetchPermissions(); // Carga los permisos desde la base de datos
+    const { permissions } = getState(); // Permisos del estado de la aplicación
+    console.log('permissions', permissions);
+    renderSubItemsCheckboxesForSelection(
+      permissions,
+      selectedPermissions,
+      'permissionsContainer'
+    ); // Usamos la nueva función
+  };
+
+  const openPermissionsModal = () => {
+    const { permissions } = getState(); // Obtiene los permisos cargados
+    renderSubItemsCheckboxesForSelection(
+      permissions,
+      selectedPermissions,
+      'permissionsContainer'
+    ); // Usamos la nueva función
+    Modal.open('#selectPermissionsModal'); // Abre el modal de selección de permisos
+  };
+
+  // Maneja el guardado de permisos seleccionados
+  const savePermissionsHandler = () => {
+    selectedPermissions = saveSelectedSubItems(
+      'permissionsContainer',
+      selectedPermissions
+    ); // Guardar los permisos seleccionados
+    Modal.close('#selectPermissionsModal'); // Cierra el modal
+  };
+
+  // Maneja el guardado de rol
+  const saveItemHandler = async () => {
+    const name = document.getElementById('roleName').value.trim();
+    const alias = document.getElementById('roleAlias').value.trim();
+    const description = document.getElementById('roleDescription').value.trim();
+
+    // Validar que se ingresen al menos un permiso
+    if (!name || !alias || selectedPermissions.length === 0) {
+      showSnackbar(
+        'Por favor, complete todos los campos y seleccione al menos un permiso.',
+        false
+      );
+      return;
+    }
+
+    const data = { name, alias, description, permissions: selectedPermissions };
+
+    try {
+      const message = await saveItem(
+        data,
+        currentEditingRoleId,
+        updateService,
+        createService,
+        roleEndpoints,
+        addRole,
+        updateRole
+      );
+      if (message) {
+        Modal.close('#addRoleModal');
+        await loadsRoles(); // Actualizar la lista de roles
+        showSnackbar(message, true);
+      } else {
+        showSnackbar('Error al guardar el rol.', false);
+      }
+    } catch (error) {
+      showSnackbar(error.message, false);
+    }
+  };
+
+  // Exponer onAction globalmente
+  window.onAction = onAction;
+</script>

@@ -1,41 +1,91 @@
+{% extends "layouts/privateLayout.njk" %} {% block content %}
+<h1>Lista de Roles</h1>
+<hr />
 
+<section>
+  <div id="roleTableContainer"></div>
+  <!-- Contenedor donde se renderizará la tabla de roles -->
+</section>
 
-    <div id="sections-container"></div>
+<!-- Snackbar para mostrar mensajes -->
+<div
+  id="snackbar"
+  class="snackbar"
+></div>
 
-    <script>
-        // Datos de ejemplo
-        const sectionsData = [
-            {
-                title: "Sección 1",
-                content: "Contenido de la sección 1.",
-                image: "https://via.placeholder.com/150"
-            },
-            {
-                title: "Sección 2",
-                content: "Contenido de la sección 2.",
-                image: "https://via.placeholder.com/150"
-            },
-            {
-                title: "Sección 3",
-                content: "Contenido de la sección 3."
-            }
-        ];
+<script type="module">
+  import { renderTable } from '../js/components/common/table.js'; // Ajusta la ruta según sea necesario
+  import { renderPagination } from '../js/components/common/pagination.js'; // Ajusta la ruta según sea necesario
 
-        // Configurar Nunjucks
-        nunjucks.configure({ autoescape: true });
+  $(document).ready(function () {
+    let currentPage = 1; // Página actual
+    const rolesPerPage = 5; // Número de roles por página
+    let allRoles = []; // Almacenar todos los roles
+    let roleToDelete = null; // Almacenar el ID del rol a eliminar
 
-        // Cargar la plantilla y renderizar
-        async function renderSections() {
-            const template = await fetch('section.njk').then(res => res.text());
+    // Definición de encabezados
+    const headers = ['Nombre del Rol', 'Alias', 'Descripción', 'Permisos'];
 
-            const container = document.getElementById('sections-container');
-            sectionsData.forEach(section => {
-                const rendered = nunjucks.renderString(template, section);
-                container.innerHTML += rendered;
-            });
-        }
+    // Obtener roles cuando se carga la página
+    fetchRoles();
 
-        // Llamar a la función para renderizar las secciones
-        renderSections();
-    </script>
+    function fetchRoles() {
+      apiFetch('/roles/api', 'GET')
+        .then((response) => {
+          console.log('Respuesta de la API:', response);
+          allRoles = response.roles; // Almacenar todos los roles
+          console.log('Roles cargados:', allRoles); // Imprimir roles en consola
+          renderRoles(); // Renderizar la tabla con la paginación
+        })
+        .catch(function (xhr) {
+          console.error('Error al obtener los roles:', xhr);
+          showSnackbar('Error al cargar los roles', false);
+        });
+    }
 
+    // Función para renderizar roles y paginación
+    function renderRoles() {
+      const tableData = allRoles.map((role) => ({
+        _id: role._id, // Asegúrate de que el ID esté aquí
+        name: role.name,
+        alias: role.alias,
+        description: role.description || 'N/A',
+        permissions: role.permissions
+          ? role.permissions.map((p) => p.name).join(', ')
+          : 'N/A',
+      }));
+
+      // Renderizar la tabla
+      const tableHtml = renderTable(
+        headers,
+        tableData,
+        currentPage,
+        rolesPerPage
+      );
+      $('#roleTableContainer').html(tableHtml);
+
+      // Renderizar la paginación
+      const paginationHtml = renderPagination(
+        currentPage,
+        allRoles.length,
+        rolesPerPage,
+        handlePageChange
+      );
+      $('#roleTableContainer').append(paginationHtml); // Agregar la paginación después de la tabla
+    }
+
+    // Manejar el cambio de página
+    function handlePageChange(newPage) {
+      currentPage = newPage; // Actualizar la página actual
+      renderRoles(); // Renderizar roles y paginación nuevamente
+    }
+
+    // Manejar clic en botones de paginación
+    $(document).on('click', '.page-button', function () {
+      const newPage = parseInt($(this).data('page'));
+      handlePageChange(newPage);
+    });
+  });
+</script>
+
+{% endblock %}

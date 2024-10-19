@@ -41,7 +41,7 @@ const privateRoutes = [
     path: '/users',
     title: 'Lista de',
     view: 'pages/privatePages/users.njk',
-    roles: ['Administrador', 'Paciente'],
+
     icon: getIcon('user'),
     items: async () => [],
     subRoutes: [
@@ -49,7 +49,7 @@ const privateRoutes = [
         path: '/users/admin',
         title: 'Administradores',
         view: 'pages/privatePages/users/adminUsers.njk',
-        roles: ['Administrador', 'Paciente'],
+
         icon: getIcon('user'), // Obtiene el icono
         items: async () => [],
       },
@@ -57,14 +57,14 @@ const privateRoutes = [
         path: '/users/chiefMedical',
         title: 'Jefes Médicos',
         view: 'pages/privatePages/users/chiefMedicalUsers.njk',
-        roles: ['Administrador'],
+
         icon: getIcon('user'), // Obtiene el icono
         items: async () => [],
       },
       {
         path: '/users/doctor',
         title: 'Médicos',
-        roles: ['Jefe Médico'],
+
         view: 'pages/privatePages/users/docUsers.njk',
         icon: getIcon('user'), // Obtiene el icono
         items: async () => [],
@@ -73,7 +73,7 @@ const privateRoutes = [
         path: '/users/patient',
         title: 'Pacientes',
         view: 'pages/privatePages/users/patientUsers.njk',
-        roles: ['Doctor'],
+
         icon: getIcon('user'), // Obtiene el icono
         items: async () => [],
       },
@@ -84,36 +84,36 @@ const privateRoutes = [
     title: 'Horarios de Atención',
     roles: ['Doctor', 'Jefe Médico'],
     icon: getIcon('settings'),
-    items: async () => await permissionModel.find(),
+    items: async () => [],
   },
   {
     path: '/disponibility',
     title: 'Disponibilidad',
     roles: ['Doctor'],
     icon: getIcon('availability'),
-    items: async () => await permissionModel.find(),
+    items: async () => [],
   },
   {
     path: '/speciality',
     title: 'Especialidad',
-    view: 'pages/privatePages/specialities.njk',
-    roles: ['Doctor', 'Jefe Médico', 'Paciente', 'Administrador'],
+    view: 'pages/privatePages/specialty/index.njk',
+    isPublic: true,
     icon: getIcon('speciality'),
-    items: async () => await permissionModel.find(),
+    items: async () => [],
   },
   {
     path: '/services',
     title: 'Servicio',
     roles: ['Jefe Médico'],
     icon: getIcon('service'),
-    items: async () => await permissionModel.find(),
+    items: async () => [],
   },
   {
     path: '/appointment',
     title: 'Citas Médicas',
     roles: ['Paciente', 'Doctor'],
     icon: getIcon('appointment'),
-    items: async () => await permissionModel.find(),
+    items: async () => [],
   },
   {
     path: '/prodoucers',
@@ -121,22 +121,23 @@ const privateRoutes = [
     view: 'pages/privatePages/permissions.njk',
     roles: ['Doctor'],
     icon: getIcon('results'),
-    items: async () => await permissionModel.find(),
+    items: async () => [],
   },
   {
     path: '/historyClinic',
     title: 'Historia Clinico',
     roles: ['Paciente'],
     icon: getIcon('history'),
-    items: async () => await permissionModel.find(),
+    items: async () => [],
   },
   {
     path: '/permissions',
     title: 'Permisos',
-    view: 'pages/privatePages/permissions.njk',
-    roles: ['Administrador', 'Paciente'],
+    view: 'pages/privatePages/permission/index.njk',
+    // roles: ['Administrador'],
+    isPublic: true,
     icon: getIcon('permissions'),
-    items: async () => await permissionModel.find(),
+    items: async () => [],
   },
   {
     path: '/profile',
@@ -148,15 +149,10 @@ const privateRoutes = [
   {
     path: '/roles',
     title: 'Roles',
-    view: 'pages/privatePages/roles.njk',
+    view: 'pages/privatePages/role/index.njk',
     roles: ['Administrador', 'Paciente'],
     icon: getIcon('roles'),
-    items: async () => {
-      const permissions = await permissionModel.find();
-      const roles = await roleModel.find().populate('permissions');
-      const users = await User.find().populate('roles');
-      return { roles, permissions, users };
-    },
+    items: async () => [],
   },
   {
     path: '/logout',
@@ -178,12 +174,12 @@ const getUserRoles = (req) => req.session.roles || [];
 const registerPrivateRoutes = (app) => {
   privateRoutes.forEach((route) => {
     app.use(route.path, (req, res, next) => {
-      if (!req.session.authenticated) {
+      if (route.isPublic && !req.session.authenticated) {
         return res.redirect('/home');
       }
 
       const userRoles = getUserRoles(req);
-      route.userRoles = userRoles; // Asignar roles a la ruta
+      route.userRoles = userRoles;
 
       if (!hasAccess(userRoles, route)) {
         return res.status(403).send('Acceso denegado');

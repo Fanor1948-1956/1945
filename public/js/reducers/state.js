@@ -4,6 +4,9 @@ let state = {
   users: [],
   roles: [], // Lista de roles del usuario
   profile: {},
+  specialties: [], // Lista de
+  common: [],
+  tems: [],
 };
 
 // Obtener el estado actual

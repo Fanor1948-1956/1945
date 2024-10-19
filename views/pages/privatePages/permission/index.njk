@@ -1,0 +1,13 @@
+<!-- Plantilla hija: views/pages/privatePages/dashboard.njk -->
+{% extends "layouts/privateLayout.njk" %}
+<!-- Bloque de título -->
+
+{% block content %} {% block title %}Permissions{% endblock %}
+
+<section>
+  <!-- Aquí se incluiría el componente de fetch para obtener los permisos -->
+  <!-- Aquí se incluiría el componente de renderizar los permisos -->
+  {% include "pages/privatePages/permission/verb/getAll.njk" %}
+</section>
+
+{% endblock %}

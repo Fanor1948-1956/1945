@@ -28,10 +28,9 @@
       defer
     ></script>
   </head>
-
+  {% include 'components/common/Navbar/index.njk' %} {% include
+  'components/common/Sidebar/index.njk' %}
   <body class="show-hamburger">
-    {% include 'components/common/Navbar/index.njk' %} {% include
-    'components/common/Sidebar/index.njk' %}
     <div class="container">
       {# Bloque donde se renderizará el contenido específico de cada ruta #} {%
       block content %}{% endblock %}

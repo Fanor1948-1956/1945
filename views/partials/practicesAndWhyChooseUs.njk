@@ -1,13 +1,13 @@
 {# practicesAndWhyChooseUs.njk #}
 
     <div class='home-heading18'>
-        <h2 class='home-text24'>Nuestras prácticas</h2>
+        <h2 class='home-text24'>Nuestras Especialaides</h2>
         <p class='home-text25'>
             Nos dedicamos a ofrecerte los mejores servicios en diversas áreas de la salud.
         </p>
     </div>
     <div class='home-content12'>
-        <div class='home-grid2'>
+        {# <div class='home-grid2'>
             <Link to='/'>
                 <div class='home-practice-wrapper1'>
                     <Practice></Practice>
@@ -38,7 +38,8 @@
                     <Practice title='General'></Practice>
                 </div>
             </Link>
-        </div>
+        </div> #}
+            {% include "pages/privatePages/specialty/verb/getAll.njk" %}
         <button
             data-open='practices'
             class='button button-main'
@@ -59,7 +60,7 @@
         <div class='home-video1'>
             <video
                 src
-                poster='/video-1500w.png'
+                poster='/News/video-1500w.png'
                 class='home-video2'
             ></video>
             <div class='home-play'>

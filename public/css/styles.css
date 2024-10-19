@@ -4,6 +4,8 @@
 @import './partials/navbar.css';
 @import './partials/sidebar.css';
 @import './partials/table.css';
+@import './partials/card.css';
+/*controls*/
 @import './partials/buttons.css';
 
 /* @import './partials/pagination.css'; */
@@ -11,13 +13,13 @@
 @import './partials/global.css';
 
 /* Estilos específicos para las rutas públicas */
-/* @import './public/styles.css';
+/* @import './public/styles.css'; */
 @import './pages//publicPages/home.css';
-@import './pages//publicPages/about.css';
+/* @import './pages//publicPages/about.css'; */
+/*
 @import './pages//publicPages/contact.css';
 @import './pages//publicPages/sign-in.css'; */
 /* Estilos específicos para las rutas privadas */
-
 
 /* Aquí puedes agregar más estilos globales si es necesario */
 
@@ -28,11 +30,5 @@
 
 @import './libraries/select2.min.css';
 
-
-
-
 /*icons*/
 @import './icons/style.css';
-
-
-

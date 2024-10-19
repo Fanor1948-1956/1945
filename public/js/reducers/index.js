@@ -1,4 +1,4 @@
-import { setState, getState } from "./state.js";
+import { setState, getState } from './state.js';
 
 // Cargar items en el estado
 // Cargar items en el estado
@@ -6,11 +6,22 @@ import { setState, getState } from "./state.js";
 export const loadItems = (itemsResponse) => {
   if (Array.isArray(itemsResponse.items)) {
     setState({ items: itemsResponse.items }); // Asigna correctamente el array de items
-    console.log("Estado después de cargar items:", getState());
+    console.log('Estado después de cargar items:', getState());
   } else {
     console.error(
-      "loadItems: La respuesta no contiene un array de items",
+      'loadItems: La respuesta no contiene un array de items',
       itemsResponse
+    );
+  }
+};
+export const loadSpecialties = (specialtiesResponse) => {
+  if (Array.isArray(specialtiesResponse.specialties)) {
+    setState({ specialties: specialtiesResponse.specialties }); // Asigna correctamente el array de items
+    console.log('Estado después de cargar items:', getState());
+  } else {
+    console.error(
+      'loadItems: La respuesta no contiene un array de items',
+      specialtiesResponse
     );
   }
 };
@@ -24,7 +35,7 @@ export const addItem = (newItem) => {
     setState({ items: [...currentState.items, newItem] });
   } else {
     console.error(
-      "addItem: currentState.items no es un array",
+      'addItem: currentState.items no es un array',
       currentState.items
     );
   }

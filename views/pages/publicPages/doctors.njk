@@ -1,76 +1,11 @@
-{# <h1>Lista de Permisos</h1>
-<button id="addPermissionBtn">Agregar Permiso</button>
-<div id="permissionTableContainer"></div>
-<div
-  id="snackbar"
-  class="snackbar"
-></div>
+<!-- Plantilla hija: views/pages/privatePages/dashboard.njk -->
+{% extends "layouts/privateLayout.njk" %}
+<!-- Bloque de título -->
+{% block content %}
 
-<!-- Modal para agregar permisos -->
-<div
-  class="modal"
-  id="addPermissionModal"
-  style="display: none"
->
-  <div class="modal-content">
-    <span
-      class="close-button"
-      onclick="Modal.close('#addPermissionModal')"
-      >&times;</span
-    >
-    <h2>Agregar Permiso</h2>
-    <label for="permissionName">Nombre:</label>
-    <input
-      type="text"
-      id="permissionName"
-      required
-    />
-    <label for="permissionDescription">Descripción:</label>
-    <input
-      type="text"
-      id="permissionDescription"
-      required
-    />
-    <button id="savePermissionBtn">Guardar</button>
-  </div>
-</div>
+<!-- pasaar  varialves al include-->
+{% set roleAlias = 'doctor' %}
 
-<script type="module">
-  import {
-    loadPermissions,
-    addPermission,
-    updatePermission,
-    deletePermission,
-  } from './js/reducers/permissionReducer.js';
+<section>{% include "pages/privatePages/users/index.njk" %}</section>
 
-  import { createService, updateService } from './js/services/index.js';
-  import { fetchPermissions } from './js/services/loadFetchs.js';
-  import { getState } from './js/reducers/state.js';
-  import { renderTable } from './js/components/global/renderTable.js';
-  import { permissionEndpoints } from './js/config/apiEndpoints.js';
-  import { confirmDelete } from './js/utils/confirmDelete.js'; // Importa la función de utilidad
-
-  const permissionHeaders = {
-    name: 'Nombre',
-    description: 'Descripción',
-    isActive: 'Estado',
-  };
-
-  let currentEditingPermissionId = null;
-
-  document.addEventListener('DOMContentLoaded', () => {
-    loadsPermissions();
-  });
-
-  const loadsPermissions = async () => {
-    await fetchPermissions();
-    const { permissions } = getState();
-    console.log('permissions', permissions);
-    renderTable(
-      permissions,
-      permissionHeaders,
-      'permissionTableContainer',
-      onAction
-    );
-  };
-</script> #}
+{% endblock %}

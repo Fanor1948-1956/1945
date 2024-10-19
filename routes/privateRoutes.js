@@ -9,7 +9,8 @@ const privateRoutes = [
     path: '/dashboard',
     title: 'Dassdsdhboard privado',
     view: 'pages/privatePages/dashboard.njk',
-    icon: getIcon('home'), // Utiliza la función para obtener el icono
+    icon: getIcon('home'), // Utiliza la función para obtener el iconio
+    isPublic: false,
     items: async (userRoles) => {
       let items = [];
 
@@ -41,6 +42,7 @@ const privateRoutes = [
     path: '/users',
     title: 'Lista de',
     view: 'pages/privatePages/users.njk',
+    isPublic: false,
 
     icon: getIcon('user'),
     items: async () => [],
@@ -49,22 +51,24 @@ const privateRoutes = [
         path: '/users/admin',
         title: 'Administradores',
         view: 'pages/privatePages/users/adminUsers.njk',
-
+        roles: ['Administrador'],
         icon: getIcon('user'), // Obtiene el icono
+        isPublic: false,
         items: async () => [],
       },
       {
         path: '/users/chiefMedical',
         title: 'Jefes Médicos',
         view: 'pages/privatePages/users/chiefMedicalUsers.njk',
-
+        isPublic: false,
+        roles: ['Administrador'],
         icon: getIcon('user'), // Obtiene el icono
         items: async () => [],
       },
       {
         path: '/users/doctor',
         title: 'Médicos',
-
+        isPublic: false,
         view: 'pages/privatePages/users/docUsers.njk',
         icon: getIcon('user'), // Obtiene el icono
         items: async () => [],
@@ -73,7 +77,7 @@ const privateRoutes = [
         path: '/users/patient',
         title: 'Pacientes',
         view: 'pages/privatePages/users/patientUsers.njk',
-
+        isPublic: false,
         icon: getIcon('user'), // Obtiene el icono
         items: async () => [],
       },
@@ -135,7 +139,7 @@ const privateRoutes = [
     title: 'Permisos',
     view: 'pages/privatePages/permission/index.njk',
     // roles: ['Administrador'],
-    isPublic: true,
+
     icon: getIcon('permissions'),
     items: async () => [],
   },

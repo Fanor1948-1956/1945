@@ -1,16 +1,12 @@
-{% extends "pages/privatePages/auth/settings.njk" %}
+<!-- Plantilla hija: views/pages/privatePages/dashboard.njk -->
+{% extends "layouts/privateLayout.njk" %}
+<!-- Bloque de título -->
 {% block content %}
 
-    <h1>Lista de {{title}}</h1>
-        <section>
-   dasddasd
-    </section>
+<!-- pasaar  varialves al include-->
+{% set roleAlias = 'patient' %}
+<h1>{{ title }}</h1>
 
-    <hr />
-
-
-
-  
- 
+<section>{% include "pages/privatePages/users/index.njk" %}</section>
 
 {% endblock %}

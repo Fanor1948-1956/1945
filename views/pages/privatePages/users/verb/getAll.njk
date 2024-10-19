@@ -1,13 +1,17 @@
-{% if isAuthenticated %}
-<h1>{{ title }}</h1>
-{% endif %}
-
 <button
   id="addUserBtn"
   class="add-button"
+  {%
+  if
+  not
+  isAuthenticated
+  %}
+  style="display: none"
+  {%
+  endif
+  %}
 >
-  {% if not isAuthenticated %} style="display: none" {% endif %} > Agregar
-  Usuario
+  Agregar Usuario
 </button>
 
 <div id="userTableContainer"></div>
@@ -218,7 +222,6 @@
     name: 'Nombre',
     surnames: 'Apellidos',
     email: 'Correo',
-    password: 'Contraseña',
     gender: 'Género',
     roles: 'Roles',
     isActive: 'Estado',
@@ -235,7 +238,13 @@
   const loadUsersList = async () => {
     await fetchServices(userEndpoints, loadUsers);
     const { users } = getState();
-    renderTable(users, userHeaders, 'userTableContainer', onAction);
+    const roleAlias = '{{ roleAlias|lower }}'; // Obtén el rol desde la plantilla
+
+    // Filtra los usuarios según el rol
+    const filteredUsers = users.filter((user) =>
+      user.roles.some((roleObj) => roleObj.alias.toLowerCase() === roleAlias)
+    );
+    renderTable(filteredUsers, userHeaders, 'userTableContainer', onAction);
   };
 
   const setupEventListeners = () => {

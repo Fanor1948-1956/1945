@@ -68,8 +68,9 @@ const privateRoutes = [
       {
         path: '/users/doctor',
         title: 'Médicos',
-        isPublic: false,
+        isPublic: true,
         view: 'pages/privatePages/users/docUsers.njk',
+        roles: ['Administrador'],
         icon: getIcon('user'), // Obtiene el icono
         items: async () => [],
       },
@@ -77,6 +78,7 @@ const privateRoutes = [
         path: '/users/patient',
         title: 'Pacientes',
         view: 'pages/privatePages/users/patientUsers.njk',
+        roles: ['Doctor', 'Administrador'],
         isPublic: false,
         icon: getIcon('user'), // Obtiene el icono
         items: async () => [],
@@ -230,6 +232,9 @@ const registerPrivateRoutes = (app) => {
       route.subRoutes.forEach((subRoute) => {
         app.use(subRoute.path, (req, res, next) => {
           const userRoles = getUserRoles(req);
+          if (subRoute.isPublic && !req.session.authenticated) {
+            return res.redirect('/home');
+          }
           if (!hasAccess(userRoles, subRoute)) {
             return res.status(403).send('Acceso denegado');
           }

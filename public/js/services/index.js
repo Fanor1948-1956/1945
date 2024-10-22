@@ -12,28 +12,28 @@ export const fetchServices = async (itemEndpoints, loadItems) => {
     const response = await fetchAndRenderData(itemEndpoints.list);
     console.log("response", response);
 
-    // Llama a loaditemes con la respuesta completa
-    loadItems(response); // Carga los itemes en el estado
+    
+    loadItems(response); 
   } catch (error) {
     console.error("Error al obtener items:", error);
   }
 };
 
-// Crear un nuevo item
+
 export const createService = async (newItem, itemEndpoints, addItem) => {
   try {
-    const response = await registerData(itemEndpoints.create, newItem); // Llama a tu función de registro
+    const response = await registerData(itemEndpoints.create, newItem); 
     if (response) {
-      addItem(response); // Agrega el nuevo item al estado
-      return response.message; // Devuelve el mensaje del servidor
+      addItem(response); 
+      return response.message; 
     }
   } catch (error) {
     console.error("Error al crear el item:", error);
-    return "Error al crear el item."; // Mensaje de error por defecto
+    return "Error al crear el item."; 
   }
 };
 
-// Actualizar un item existente
+
 export const updateService = async (
   updatedService,
   itemEndpoints,
@@ -41,58 +41,58 @@ export const updateService = async (
 ) => {
   try {
     const response = await updateData(
-      `${itemEndpoints.update}/${updatedService._id}`, // Asume que el endpoint de actualización requiere el ID
+      `${itemEndpoints.update}/${updatedService._id}`, 
       updatedService
     );
     if (response) {
-      updateItem(response); // Agrega el item actualizado al estado
-      return response.message; // Devuelve el mensaje del servidor
+      updateItem(response); 
+      return response.message; 
     }
   } catch (error) {
     console.error("Error al actualizar el item:", error);
-    return "Error al actualizar el item."; // Mensaje de error por defecto
+    return "Error al actualizar el item."; 
   }
 };
-// Eliminar un item existente
+
 export const deleteService = async (itemId, itemEndpoints, deleteItem) => {
   try {
     const response = await deleteData(`${itemEndpoints.delete}/${itemId}`);
     if (response) {
-      deleteItem(itemId); // Elimina el item del estado
-      return response.message; // Devuelve el mensaje del servidor
+      deleteItem(itemId); 
+      return response.message; 
     }
   } catch (error) {
     console.error("Error al eliminar el item:", error);
-    return "Error al eliminar el item."; // Mensaje de error por defecto
+    return "Error al eliminar el item."; 
   }
 };
 
-// Desactivar un item existente
+
 export const deactivateService = async (itemId, itemEndpoints) => {
   try {
     const response = await deactivateData(
       `${itemEndpoints.deactivate}/${itemId}`
-    ); // Asegúrate de que el endpoint sea correcto
+    ); 
     if (response) {
-      // Aquí podrías manejar el estado si es necesario
-      return response.message; // Devuelve el mensaje del servidor
+      
+      return response.message; 
     }
   } catch (error) {
     console.error("Error al desactivar el item:", error);
-    return "Error al desactivar el item."; // Mensaje de error por defecto
+    return "Error al desactivar el item."; 
   }
 };
 
-// Activar un item existente
+
 export const activateService = async (itemId) => {
   try {
-    const response = await activateData(`${itemEndpoints.activate}/${itemId}`); // Asegúrate de que el endpoint sea correcto
+    const response = await activateData(`${itemEndpoints.activate}/${itemId}`); 
     if (response) {
-      // Aquí podrías manejar el estado si es necesario
-      return response.message; // Devuelve el mensaje del servidor
+      
+      return response.message; 
     }
   } catch (error) {
     console.error("Error al activar el item:", error);
-    return "Error al activar el item."; // Mensaje de error por defecto
+    return "Error al activar el item."; 
   }
 };

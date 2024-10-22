@@ -1,7 +1,7 @@
 const permissionModel = require('../models/permissionModel');
 const Role = require('../models/roleModel');
 
-// Create a new role
+
 exports.createRole = async (req, res) => {
   try {
     const role = new Role(req.body);
@@ -19,7 +19,7 @@ exports.createRole = async (req, res) => {
   }
 };
 
-// Get all roles
+
 exports.getAllRoles = async (req, res) => {
   try {
     const roles = await Role.find().populate('permissions');
@@ -41,19 +41,19 @@ exports.getRoleById = async (req, res) => {
   const roleId = req.params.id;
   try {
     const role = await Role.findById(roleId).populate('permissions');
-    const allPermissions = await permissionModel.find(); // Cambié el nombre a 'allPermissions' para más claridad
+    const allPermissions = await permissionModel.find(); 
 
     if (!role) {
       return res.status(404).json({ message: 'Rol no encontrado' });
     }
 
-    res.json({ role, allPermissions }); // Devuelve el rol y todos los permisos
+    res.json({ role, allPermissions }); 
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener el Rol' });
   }
 };
 
-// Update role
+
 exports.updateRole = async (req, res) => {
   try {
     const role = await Role.findByIdAndUpdate(req.params.id, req.body, {
@@ -79,7 +79,7 @@ exports.updateRole = async (req, res) => {
   }
 };
 
-// Deactivate role
+
 exports.deactivateRole = async (req, res) => {
   try {
     const role = await Role.findByIdAndUpdate(
@@ -106,7 +106,7 @@ exports.deactivateRole = async (req, res) => {
   }
 };
 
-// Activate role
+
 exports.activateRole = async (req, res) => {
   try {
     const role = await Role.findByIdAndUpdate(
@@ -135,16 +135,16 @@ exports.activateRole = async (req, res) => {
 
 exports.deleteRole = async (req, res) => {
   try {
-    const roleId = req.params.id; // Obtén el ID del rol de los parámetros
-    const deletedRole = await Role.findByIdAndDelete(roleId); // Elimina el rol por ID
+    const roleId = req.params.id; 
+    const deletedRole = await Role.findByIdAndDelete(roleId); 
 
     if (!deletedRole) {
-      return res.status(404).json({ message: 'Rol no encontrado' }); // Manejar rol no encontrado
+      return res.status(404).json({ message: 'Rol no encontrado' }); 
     }
 
-    res.json({ success: true, message: 'Rol eliminado exitosamente' }); // Mensaje de éxito
+    res.json({ success: true, message: 'Rol eliminado exitosamente' }); 
   } catch (error) {
     console.error('Error al eliminar el rol:', error);
-    res.status(500).json({ message: 'Error al eliminar el rol' }); // Mensaje de error genérico
+    res.status(500).json({ message: 'Error al eliminar el rol' }); 
   }
 };

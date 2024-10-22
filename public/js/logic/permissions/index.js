@@ -1,17 +1,17 @@
-// permissions.js
+
 
 import { fetchPermissions } from '../../services/permissionService.js';
 import { getState } from '../../reducers/state.js';
 
 export const loadPermissions = async () => {
-  await fetchPermissions(); // Cargar permisos desde la base de datos
+  await fetchPermissions(); 
   const { permissions } = getState();
   renderPermissionsCheckboxes(permissions);
 };
 
 const renderPermissionsCheckboxes = (permissions) => {
   const container = document.getElementById('rolePermissionsContainer');
-  container.innerHTML = ''; // Limpiar cualquier contenido previo
+  container.innerHTML = ''; 
 
   permissions.forEach((permission) => {
     const checkbox = document.createElement('input');

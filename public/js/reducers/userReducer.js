@@ -1,6 +1,6 @@
 import { setState, getState } from "./state.js";
 
-// Cargar usuarios en el estado
+
 export const loadUsers = (usersResponse) => {
   if (Array.isArray(usersResponse.users)) {
     setState({ users: usersResponse.users });
@@ -13,7 +13,7 @@ export const loadUsers = (usersResponse) => {
   }
 };
 
-// Agregar un nuevo usuario
+
 export const addUser = (newUser) => {
   const currentState = getState();
   if (Array.isArray(currentState.users)) {
@@ -26,7 +26,7 @@ export const addUser = (newUser) => {
   }
 };
 
-// Actualizar un usuario existente
+
 export const updateUser = (updatedUser) => {
   const currentState = getState();
   const updatedUsers = currentState.users.map((user) =>
@@ -35,7 +35,7 @@ export const updateUser = (updatedUser) => {
   setState({ users: updatedUsers });
 };
 
-// Eliminar un usuario
+
 export const deleteUser = (userId) => {
   const currentState = getState();
   const updatedUsers = currentState.users.filter((user) => user._id !== userId);

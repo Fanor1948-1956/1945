@@ -14,19 +14,19 @@
 
 
 <script type="module">
-import { renderTable } from '../js/components/common/table.js'; // Ajusta la ruta según sea necesario
-import { renderPagination } from '../js/components/common/pagination.js'; // Ajusta la ruta según sea necesario
+import { renderTable } from '../js/components/common/table.js'; 
+import { renderPagination } from '../js/components/common/pagination.js'; 
 
 $(document).ready(function() {
-    let currentPage = 1; // Página actual
-    const usersPerPage = 5; // Número de roles por página
-    let allUsers = []; // Almacenar todos los roles
-    let userToDelete = null; // Almacenar el ID del rol a eliminar
+    let currentPage = 1; 
+    const usersPerPage = 5; 
+    let allUsers = []; 
+    let userToDelete = null; 
 
-    // Definición de encabezados
+    
     const headers = ['Nombre', 'Apellidos', 'Correo', 'Contraseña','Género' ,'Roles'];
 
-    // Obtener users cuando se carga la página
+    
     fetchUsers();
 
 
@@ -35,9 +35,9 @@ $(document).ready(function() {
         apiFetch('/users/getUsers', 'GET')
             .then(response => {
                 console.log('Respuesta de la API:', response);
-                allUsers = response.users; // Almacenar todos los roles
-                console.log('Roles cargados:', allUsers); // Imprimir roles en consola
-                renderUsers(); // Renderizar la tabla con la paginación
+                allUsers = response.users; 
+                console.log('Roles cargados:', allUsers); 
+                renderUsers(); 
             })
             .catch(function(xhr) {
                 console.error('Error al obtener los roles:', xhr);
@@ -46,34 +46,34 @@ $(document).ready(function() {
     }
 
     
-        // Función para renderizar roles y paginación
+        
     function renderUsers() {
         const tableData = allUsers.map(user => ({
-            _id: user._id, // Asegúrate de que el ID esté aquí
+            _id: user._id, 
             name: user.name,
             lastname: user.lastname,
             email: user.email,
             password: user.password,
             gender: user.gender,
-            roles: user.roles.map(role => role.name).join(', '), // Convertir roles a cadena separada por comas
+            roles: user.roles.map(role => role.name).join(', '), 
         }));
 
-        // Renderizar la tabla
+        
         const tableHtml = renderTable(headers, tableData, currentPage, usersPerPage);
         $('#roleTableContainer').html(tableHtml);
 
-        // Renderizar la paginación
+        
         const paginationHtml = renderPagination(currentPage, allUsers.length, usersPerPage, handlePageChange);
-        $('#roleTableContainer').append(paginationHtml); // Agregar la paginación después de la tabla
+        $('#roleTableContainer').append(paginationHtml); 
     }
 
-    // Manejar el cambio de página
+    
     function handlePageChange(newPage) {
-        currentPage = newPage; // Actualizar la página actual
-        renderUsers(); // Renderizar roles y paginación nuevamente
+        currentPage = newPage; 
+        renderUsers(); 
     }
 
-    // Manejar clic en botones de paginación
+    
     $(document).on('click', '.page-button', function() {
         const newPage = parseInt($(this).data('page'));
         handlePageChange(newPage);

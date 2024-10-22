@@ -1,74 +1,62 @@
-/* Estilos generales */
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
 }
-/* Estilos del loader */
-/* Estilos del loader */
-.container .loader {
-  position: absolute;
+
+/* Estilos para el spinner */
+#loadingSpinner {
+  border: 16px solid #f3f3f3; /* Color claro del fondo */
+  border-top: 16px solid #3498db; /* Color del spinner */
+  border-radius: 50%;
+  width: 60px; /* Tamaño del spinner */
+  height: 60px; /* Tamaño del spinner */
+  animation: spin 2s linear infinite; /* Animación */
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgba(255, 255, 255, 0.8); /* Fondo semitransparente */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  z-index: 999; /* Asegúrate de que esté por encima del contenido del contenedor */
+  z-index: 1000; /* Asegurarse de que esté encima de otros elementos */
 }
 
-/* Spinner de carga */
-.container .spinner {
-  border: 8px solid #f3f3f3; /* Bordes del spinner */
-  border-top: 8px solid #3498db; /* Color principal */
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  animation: spin 1s linear infinite; /* Animación */
+/* Animación de rotación */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-/* Ocultar el loader cuando se cargue la página */
-.hidden {
-  display: none !important;
-}
 
-/* Ocultar el loader cuando se cargue la página */
-.hidden {
-  display: none !important;
-}
 
 .snackbar {
-  visibility: hidden; /* Escondido por defecto */
-  min-width: 250px; /* Ancho mínimo */
-  margin-left: -125px; /* Centrado */
-  background-color: #333; /* Color de fondo */
-  color: #fff; /* Color del texto */
-  text-align: center; /* Centrar texto */
-  border-radius: 2px; /* Bordes redondeados */
-  padding: 16px; /* Espaciado */
-  position: fixed; /* Fijo */
-  z-index: 1; /* Por encima de otros elementos */
-  left: 50%; /* Centro horizontal */
-  bottom: 30px; /* Posición en la parte inferior */
-  font-size: 17px; /* Tamaño de fuente */
-  transition: visibility 0s, opacity 0.5s linear; /* Transiciones */
+  visibility: hidden; 
+  min-width: 250px; 
+  margin-left: -125px; 
+  background-color: #333; 
+  color: #fff; 
+  text-align: center; 
+  border-radius: 2px; 
+  padding: 16px; 
+  position: fixed; 
+  z-index: 1; 
+  left: 50%; 
+  bottom: 30px; 
+  font-size: 17px; 
+  transition: visibility 0s, opacity 0.5s linear; 
 }
 
 .snackbar.show {
-  visibility: visible; /* Mostrar */
-  opacity: 1; /* Opacidad */
+  visibility: visible; 
+  opacity: 1; 
 }
 
-/* Estilo del contenido principal */
+
 main {
-  padding: 20px; /* Espaciado del contenido */
-  background-color: white; /* Color de fondo del contenido */
-  border-radius: 8px; /* Bordes redondeados para el contenido */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidad */
-  margin: 20px; /* Margen para el contenido */
+  padding: 20px; 
+  background-color: white; 
+  border-radius: 8px; 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
+  margin: 20px; 
 }
 .form-container {
   max-width: 600px;
@@ -102,12 +90,12 @@ main {
 
 .input-group input:focus,
 .input-group select:focus {
-  border-color: #135eadb9; /* Cambia el color al hacer foco */
+  border-color: #135eadb9; 
   outline: none;
 }
 
 fieldset {
-  border: none; /* Eliminar el borde por defecto del fieldset */
+  border: none; 
   margin: 0;
   padding: 0;
 }
@@ -116,7 +104,7 @@ legend {
   font-weight: bold;
   margin-bottom: 10px;
 }
-/* Estilos para el modal */
+
 .modal {
   display: none;
   position: fixed;
@@ -171,45 +159,59 @@ legend {
   padding: 50px 20px 0 20px;
   transition: margin-left 0.3s;
 }
+.contentContainer {
+  background: #00162e;
+  color: white;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  transition: margin-left 0.3s;
+}
+
+.sidebar.active ~.contentContainer{
+  margin-left: 250px;
+}
 
 .sidebar.active ~ .container {
-  margin-left: 250px; /* En escritorio, deja espacio para el sidebar */
+  margin-left: 250px; 
 }
 
-/* Estilos para el contenedor de paginación */
+
 .pagination {
-  display: flex; /* Usar flexbox para distribuir los botones */
-  justify-content: center; /* Centrar los botones de paginación */
-  margin-top: 20px; /* Espacio superior para separar de la tabla */
-  margin-bottom: 40px; /* Espacio inferior para separación adicional */
+  display: flex; 
+  justify-content: center; 
+  margin-top: 20px; 
+  margin-bottom: 40px; 
 }
 
-/* Estilos para los botones de paginación */
+
 .page-button {
-  background-color: #00162e; /* Color de fondo del botón */
-  color: white; /* Color del texto */
-  border: none; /* Sin borde */
-  padding: 10px 15px; /* Espaciado interno */
-  cursor: pointer; /* Cambiar el cursor al pasar por encima */
-  border-radius: 5px; /* Bordes redondeados */
-  margin: 0 5px; /* Espaciado entre botones */
+  background-color: #00162e; 
+  color: white; 
+  border: none; 
+  padding: 10px 15px; 
+  cursor: pointer; 
+  border-radius: 5px; 
+  margin: 0 5px; 
 }
 
 .page-button:hover {
-  background-color: #000000; /* Color al pasar el mouse */
+  background-color: #000000; 
 }
 
 .page-button.active {
-  background-color: #0074a8; /* Color de fondo */
-  pointer-events: none; /* Deshabilitar clics en la página activa */
+  background-color: #0074a8; 
+  pointer-events: none; 
 }
-/* Estilos responsivos para móvil */
+
 @media (max-width: 768px) {
   .hamburger {
-    display: flex; /* Mostrar el botón de hamburguesa en móvil */
+    display: flex; 
   }
 
   .sidebar.active ~ .container {
-    margin-left: 0px; /* En escritorio, deja espacio para el sidebar */
+    margin-left: 0px; 
   }
 }

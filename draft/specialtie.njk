@@ -41,14 +41,14 @@
     </div>
   </div>
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https:
   <script>
     $(document).ready(function() {
-      loadSpecialties(); // Cargar especialidades al inicio
+      loadSpecialties(); 
 
-      // Enviar formulario para crear una nueva especialidad
+      
       $('#createSpecialtyForm').submit(function(event) {
-        event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+        event.preventDefault(); 
 
         const formData = {
           name: $('#name').val(),
@@ -62,8 +62,8 @@
           data: JSON.stringify(formData),
           success: function(data) {
             alert('Especialidad creada exitosamente');
-            $('#createSpecialtyForm')[0].reset(); // Reiniciar el formulario
-            loadSpecialties(); // Recargar la lista de especialidades
+            $('#createSpecialtyForm')[0].reset(); 
+            loadSpecialties(); 
           },
           error: function(error) {
             console.error('Error al crear especialidad', error);
@@ -73,14 +73,14 @@
       });
     });
 
-    // Función para cargar especialidades
+    
     function loadSpecialties() {
       $.ajax({
         url: '/api/specialties',
         method: 'GET',
         success: function(data) {
           const container = $('#specialtiesContainer');
-          container.empty(); // Limpiar el contenedor
+          container.empty(); 
 
           data.forEach(specialty => {
             const specialtyDiv = `

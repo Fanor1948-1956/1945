@@ -1,4 +1,4 @@
-// roleHandler.js
+
 import {
   fetchRoles,
   createRole,
@@ -15,7 +15,7 @@ import {
 } from '../utils/formUtils.js';
 import { saveSelectedSubItems, saveItem } from '../logic/itemLogic/index.js';
 
-// Headers para la tabla de roles
+
 const roleHeaders = {
   name: 'Nombre',
   alias: 'Alias',
@@ -27,20 +27,20 @@ const roleHeaders = {
 let currentEditingRoleId = null;
 let selectedPermissions = [];
 
-// Cargar roles en la tabla
+
 export const loadRoles = async () => {
   await fetchRoles();
   const { roles } = getState();
   renderTable(roles, roleHeaders, 'roleTableContainer', onAction);
 };
 
-// Limpiar el formulario de roles
+
 export const clearRoleForm = () => {
   clearFormFields('roleForm');
   clearSelectionsAndArray('permissionsContainer', selectedPermissions);
 };
 
-// Acciones de edición o creación de roles
+
 export const onAction = async (action, id) => {
   const roles = getState().roles;
   const selectedRole = roles.find((role) => role._id === id);
@@ -61,7 +61,7 @@ export const onAction = async (action, id) => {
   }
 };
 
-// Cargar permisos en el modal
+
 export const loadPermissions = async () => {
   await fetchPermissions();
   const { permissions } = getState();
@@ -72,7 +72,7 @@ export const loadPermissions = async () => {
   );
 };
 
-// Guardar un rol (crear o actualizar)
+
 export const saveItemHandler = async () => {
   const name = document.getElementById('roleName').value.trim();
   const alias = document.getElementById('roleAlias').value.trim();
@@ -107,7 +107,7 @@ export const saveItemHandler = async () => {
   }
 };
 
-// Abrir el modal de permisos
+
 export const openPermissionsModal = () => {
   const { permissions } = getState();
   renderSubItemsCheckboxesForSelection(
@@ -118,7 +118,7 @@ export const openPermissionsModal = () => {
   Modal.open('#selectPermissionsModal');
 };
 
-// Guardar permisos seleccionados
+
 export const savePermissionsHandler = () => {
   selectedPermissions = saveSelectedSubItems(
     'permissionsContainer',

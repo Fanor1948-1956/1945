@@ -1,263 +1,175 @@
-.sign-in-container1 {
-  gap: var(--dl-space-space-unit);
-  width: 100%;
-  display: flex;
-  position: relative;
-  align-items: flex-start;
-  flex-direction: row;
-  justify-content: center;
-}
-.sign-in-max-width {
-  gap: var(--dl-space-space-oneandhalfunits);
-  height: 100%;
-  display: flex;
-  align-items: flex-start;
-  flex-direction: row;
-  justify-content: center;
-}
-.sign-in-container2 {
-  gap: var(--dl-space-space-twounits);
-  flex: 1;
-  width: auto;
-  height: 100%;
-  display: flex;
-  z-index: 100;
-  max-width: 600px;
-  align-items: center;
-  border-radius: var(--dl-radius-radius-cardradius);
-  flex-direction: column;
-  justify-content: center;
-  background-color: var(--dl-color-theme-accent1);
-}
-.sign-in-form1 {
-  gap: var(--dl-space-space-oneandhalfunits);
-  width: 100%;
-  display: flex;
-  max-width: 500px;
-  align-items: flex-start;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-.sign-in-container3 {
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-.sign-in-form2 {
-  gap: var(--dl-space-space-unit);
-  width: 100%;
-  height: auto;
-  display: flex;
-  flex-direction: column;
-}
-.sign-in-email {
-  gap: 4px;
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  flex-shrink: 0;
-  flex-direction: column;
-}
-.sign-in-textinput1 {
-  width: 100%;
-  border-color: var(--dl-color-theme-primary1);
-  background-color: transparent;
-}
-.sign-in-password {
-  gap: var(--dl-space-space-halfunit);
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
-}
-.sign-in-textfield {
-  gap: 4px;
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  flex-shrink: 0;
-  flex-direction: column;
-}
-.sign-in-container4 {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  justify-content: space-between;
-}
-.sign-in-hide-password {
-  gap: var(--dl-space-space-halfunit);
-  width: auto;
-  height: auto;
-  display: flex;
-  align-items: center;
-  flex-shrink: 1;
-  justify-content: center;
-}
-.sign-in-icon1 {
-  fill: var(--dl-color-theme-neutral-dark);
-  width: 24px;
-  height: 24px;
-}
-.sign-in-textinput2 {
-  width: 100%;
-  border-color: var(--dl-color-theme-primary1);
-  background-color: transparent;
-}
-.sign-in-link {
-  align-self: flex-end;
-  text-decoration: underline none;
-}
-.sign-in-button1 {
-  width: 100%;
-}
-.sign-in-divider1 {
-  gap: var(--dl-space-space-oneandhalfunits);
-  width: 100%;
-  height: auto;
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  justify-content: center;
-}
-.sign-in-divider2 {
-  flex: 1;
-  width: var(--dl-size-size-medium);
-  height: 1px;
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
-  background-color: var(--dl-color-theme-primary1);
-}
-.sign-in-divider3 {
-  flex: 1;
-  width: auto;
-  height: 1px;
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
-  background-color: var(--dl-color-theme-primary1);
-}
-.sign-in-container5 {
-  gap: var(--dl-space-space-unit);
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  flex-direction: row;
-  justify-content: flex-end;
-}
-.sign-in-button2 {
-  gap: var(--dl-space-space-halfunit);
-  width: 100%;
-  display: flex;
-  box-sizing: border-box;
-  align-items: center;
-  border-color: var(--dl-color-theme-primary1);
-  border-style: solid;
-  border-width: 1px;
-  justify-content: center;
-}
-.sign-in-icon3 {
-  width: 24px;
-  height: 24px;
-}
-.sign-in-button3 {
-  gap: var(--dl-space-space-halfunit);
-  width: 100%;
-  display: flex;
-  box-sizing: border-box;
-  align-items: center;
-  border-color: var(--dl-color-theme-primary1);
-  border-style: solid;
-  border-width: 1px;
-  justify-content: center;
-}
-.sign-in-icon5 {
-  width: 24px;
-  height: 24px;
-}
-.sign-in-container6 {
-  gap: var(--dl-space-space-unit);
-  flex: 1;
-  width: auto;
-  height: auto;
-  display: flex;
-  max-width: 500px;
-  align-items: flex-start;
-  border-radius: var(--dl-radius-radius-cardradius);
-  flex-direction: column;
-  background-color: var(--dl-color-theme-accent2);
-}
-.sign-in-container7 {
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
-}
-.sign-in-button4 {
-  width: 100%;
-}
-.sign-in-text22 {
-  display: inline-block;
-}
-.sign-in-text23 {
-  display: inline-block;
-  text-align: center;
-}
-.sign-in-text24 {
-  display: inline-block;
-}
-.sign-in-text25 {
-  display: inline-block;
-  text-align: center;
-}
-.sign-in-text26 {
-  display: inline-block;
-}
-.sign-in-text27 {
-  display: inline-block;
-}
-@media (max-width: 991px) {
-  .sign-in-container1 {
-    gap: var(--dl-space-space-twounits);
-    height: auto;
+  .main {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
     align-items: center;
-    flex-direction: column;
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  
+  .form-container-signin {
+    background-color: #0d0238; 
+    border-radius: 8px;
+    padding: 20px 0px;
+    box-shadow: 0 4px 10px rgba(7, 0, 74, 0.2);
+    width: 100%;
+    justify-content: center;
+    max-width: 350px; 
+    text-align: center; 
+  }
+
+  
+  h2 {
+    text-align: center;
+    color: white;
+    margin-bottom: 20px; 
+  }
+
+  
+  .error-message {
+    color: red;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: bold; 
+  }
+
+  
+  label {
+    margin: 8px 0 4px;
+    display: block;
+    color: white; 
+  }
+
+  
+  input[type='email'],
+  input[type='password'] {
+    width: 100%;
+    padding: 12px; 
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px; 
+    box-sizing: border-box; 
+  }
+
+  .input-content {
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0px 20px;
+  }
+
+  .button-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none !important;
+    padding: 0px 80px;
+    margin-top: 20px;
+  }
+
+
+
+  
+
+  
+  .logo-container {
+    display: flex;
+    align-items: center;
     justify-content: center;
   }
-  .sign-in-max-width {
-    align-items: center;
-    flex-direction: column;
+
+  
+  .circle {
+    width: 150px;
+    height: 150px;
+    border: 5px solid #ffffff;
+    border-radius: 50%; 
+    position: relative;
   }
-  .sign-in-container2 {
+
+  
+  .rotating-text {
+    position: absolute;
     width: 100%;
+    height: 100%;
+
+    animation: spin 10s linear infinite; 
+    transform-origin: center;
   }
-  .sign-in-container6 {
-    max-width: 600px;
+
+  
+  .rotating-text span {
+    position: absolute;
+    transform-origin: 0px 75px; 
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    padding: 5px;
+    font-family: Arial, sans-serif;
+
+    color: #ffffff;
   }
-}
-@media (max-width: 767px) {
-  .sign-in-container1 {
-    padding: var(--dl-space-space-threeunits);
+
+  
+  .rotating-text span:nth-child(1) {
+    transform: rotate(-90deg);
   }
-}
-@media (max-width: 479px) {
-  .sign-in-container1 {
-    padding: var(--dl-space-space-oneandhalfunits);
+  .rotating-text span:nth-child(2) {
+    transform: rotate(-60deg);
   }
-  .sign-in-button1 {
-    width: 100%;
+  .rotating-text span:nth-child(3) {
+    transform: rotate(-30deg);
   }
-  .sign-in-button2 {
-    width: 100%;
+  .rotating-text span:nth-child(4) {
+    transform: rotate(0deg);
   }
-  .sign-in-button3 {
-    width: 100%;
+  .rotating-text span:nth-child(5) {
+    transform: rotate(30deg);
   }
-  .sign-in-button4 {
-    width: 100%;
+  .rotating-text span:nth-child(6) {
+    transform: rotate(60deg);
   }
-  .sign-in-text26 {
+  .rotating-text span:nth-child(7) {
+    transform: rotate(90deg);
+  }
+  .rotating-text span:nth-child(8) {
+    transform: rotate(120deg);
+  }
+  .rotating-text span:nth-child(9) {
+    transform: rotate(150deg);
+  }
+  .rotating-text span:nth-child(10) {
+    transform: rotate(180deg);
+  }
+  .rotating-text span:nth-child(11) {
+    transform: rotate(210deg);
+  }
+  .rotating-text span:nth-child(12) {
+    transform: rotate(240deg);
+  }
+
+  
+  .center-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: Arial, sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: #fefefe;
     text-align: center;
   }
-}
+
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }

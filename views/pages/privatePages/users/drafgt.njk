@@ -1,0 +1,459 @@
+{# <button
+  id="addUserBtn"
+  class="add-button"
+  {%
+  if
+  not
+  isAuthenticated
+  %}
+  style="display: none"
+  {%
+  endif
+  %}
+>
+  Agregar Usuario
+</button>
+
+<div id="userTableContainer"></div>
+
+<div
+  id="snackbar"
+  class="snackbar"
+></div>
+
+<!-- Modal para agregar/editar usuarios -->
+<div
+  class="modal"
+  id="addUserModal"
+  style="display: none"
+>
+  <div class="modal-content">
+    <span
+      class="close-button"
+      onclick="Modal.close('#addUserModal')"
+      >&times;</span
+    >
+    <h2 id="modalTitle">Agregar Usuario</h2>
+    <form id="userForm">
+      <label for="userName">Nombre:</label>
+      <input
+        type="text"
+        id="userName"
+        name="name"
+        required
+      />
+
+      <label for="userSurnames">Apellidos:</label>
+      <input
+        type="text"
+        id="userSurnames"
+        name="surnames"
+        required
+      />
+
+      <label for="userEmail">Correo:</label>
+      <input
+        type="email"
+        id="userEmail"
+        name="email"
+        required
+      />
+
+      <label for="userPassword">Contraseña:</label>
+      <input
+        type="password"
+        id="userPassword"
+        name="password"
+        required
+      />
+
+      <label for="userGender">Género:</label>
+      <input
+        type="text"
+        id="userGender"
+        name="gender"
+        required
+        readonly
+      />
+      <button
+        type="button"
+        id="selectGenderBtn"
+      >
+        Seleccionar Género
+      </button>
+      <br />
+
+      <button
+        type="button"
+        id="selectRolesBtn"
+      >
+        Seleccionar Roles
+      </button>
+      <button
+        type="button"
+        id="saveItemBtn"
+      >
+        Guardar
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal para seleccionar género -->
+<div
+  class="modal"
+  id="selectGenderModal"
+  style="display: none"
+>
+  <div class="modal-content">
+    <span
+      class="close-button"
+      onclick="Modal.close('#selectGenderModal')"
+      >&times;</span
+    >
+    <h2>Seleccionar Género</h2>
+    <div id="genderContainer">
+      <label>
+        <input
+          type="radio"
+          name="gender"
+          value="masculino"
+        />
+        Masculino
+      </label>
+      <label>
+        <input
+          type="radio"
+          name="gender"
+          value="femenino"
+        />
+        Femenino
+      </label>
+      <label>
+        <input
+          type="radio"
+          name="gender"
+          value="otro"
+        />
+        Otro
+      </label>
+    </div>
+    <button
+      type="button"
+      id="saveGenderBtn"
+    >
+      Guardar Género
+    </button>
+  </div>
+</div>
+
+<!-- Modal para seleccionar roles -->
+<div
+  class="modal"
+  id="selectRolesModal"
+  style="display: none"
+>
+  <div class="modal-content">
+    <span
+      class="close-button"
+      onclick="Modal.close('#selectRolesModal')"
+      >&times;</span
+    >
+    <h2 id="rolesModalTitle">Seleccionar Roles</h2>
+    <div id="rolesContainer"></div>
+    <button
+      type="button"
+      id="saveRolesBtn"
+    >
+      Guardar Roles
+    </button>
+  </div>
+</div>
+
+<!-- Modal de confirmación para eliminar usuario -->
+<div
+  id="deleteUserModal"
+  class="modal"
+  style="display: none"
+>
+  <div class="modal-content">
+    <span
+      class="close-button"
+      onclick="Modal.close('#deleteUserModal')"
+      >&times;</span
+    >
+    <h2>Confirmar Eliminación</h2>
+    <p>¿Estás seguro de que deseas eliminar este Usuario?</p>
+    <button id="confirmDeleteButton">Confirmar</button>
+    <button id="cancelDeleteButton">Cancelar</button>
+  </div>
+</div>
+
+<script type="module">
+  import {
+    loadUsers,
+    addUser,
+    updateUser,
+    deleteUser,
+  } from '../js/reducers/userReducer.js';
+
+  import {
+    fetchServices,
+    createService,
+    updateService,
+    deleteService,
+  } from '../js/services/index.js';
+  import { fetchRoles } from '../js/services/loadFetchs.js';
+  import { getState } from '../js/reducers/state.js';
+  import { renderTable } from '../js/components/global/renderTable.js';
+  import { renderSubItemsCheckboxesForSelection } from '../js/utils/subItemUtils.js';
+  import {
+    clearFormFields,
+    resetFormFields,
+    clearSelectionsAndArray,
+  } from '../js/components/forms/formUtils.js';
+  import {
+    saveSelectedSubItems,
+    saveItem,
+  } from '../js/logic/itemLogic/index.js';
+  import { userEndpoints, roleEndpoints } from '../js/config/apiEndpoints.js';
+
+  const userHeaders = {
+    name: 'Nombre',
+    surnames: 'Apellidos',
+    email: 'Correo',
+    gender: 'Género',
+    roles: 'Roles',
+    isActive: 'Estado',
+  };
+
+  let currentEditingUserId = null; 
+  let selectedRoles = []; 
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadUsersList();
+    setupEventListeners();
+  });
+
+  const loadUsersList = async () => {
+    await fetchServices(userEndpoints, loadUsers);
+    const { users } = getState();
+    const roleAlias = '{{ roleAlias|lower }}'; 
+
+    
+    const filteredUsers = users.filter((user) =>
+      user.roles.some((roleObj) => roleObj.alias.toLowerCase() === roleAlias)
+    );
+    renderTable(filteredUsers, userHeaders, 'userTableContainer', onAction);
+  };
+
+  const setupEventListeners = () => {
+    document.getElementById('addUserBtn').addEventListener('click', () => {
+      currentEditingUserId = null; 
+      clearUserForm();
+      loadsRoles(); 
+      document.getElementById('modalTitle').textContent = 'Agregar Usuario';
+      document.getElementById('rolesModalTitle').textContent =
+        'Seleccionar Roles';
+      Modal.open('#addUserModal'); 
+    });
+
+    document
+      .getElementById('saveItemBtn')
+      .addEventListener('click', saveItemHandler);
+    document
+      .getElementById('selectRolesBtn')
+      .addEventListener('click', openRolesModal);
+    document
+      .getElementById('saveRolesBtn')
+      .addEventListener('click', saveRolesHandler);
+
+    
+    document
+      .getElementById('selectGenderBtn')
+      .addEventListener('click', openGenderModal);
+    document
+      .getElementById('saveGenderBtn')
+      .addEventListener('click', saveGenderHandler);
+
+    
+    document
+      .getElementById('confirmDeleteButton')
+      .addEventListener('click', async () => {
+        try {
+          const message = await deleteService(
+            currentEditingUserId,
+            userEndpoints,
+            deleteUser
+          ); 
+          await loadUsersList(); 
+          showSnackbar(message, true); 
+        } catch (error) {
+          showSnackbar(error.message || 'Error al eliminar el usuario.', false); 
+        }
+        Modal.close('#deleteUserModal'); 
+      });
+
+    
+    document
+      .getElementById('cancelDeleteButton')
+      .addEventListener('click', () => {
+        Modal.close('#deleteUserModal'); 
+      });
+  };
+
+  const clearUserForm = () => {
+    clearFormFields('userForm'); 
+    clearSelectionsAndArray('rolesContainer', selectedRoles); 
+  };
+  const onAction = async (action, id) => {
+    const users = getState().users;
+    const selectedUser = users.find((user) => user._id === id);
+    console.log('selectedUser', selectedUser);
+    if (action === 'edit') {
+      
+      resetFormFields([
+        'userName',
+        'userSurnames',
+        'userEmail',
+        'userPassword',
+        'userGender',
+      ]);
+      document.getElementById('userName').value = selectedUser.name;
+      document.getElementById('userSurnames').value = selectedUser.surnames;
+      document.getElementById('userEmail').value = selectedUser.email;
+      document.getElementById('userPassword').value = selectedUser.password;
+      document.getElementById('userGender').value = selectedUser.gender;
+      currentEditingUserId = id; 
+
+      
+      const isPasswordHashed =
+        selectedUser.password && selectedUser.password !== '';
+      document.getElementById('userName').disabled = isPasswordHashed;
+      document.getElementById('userSurnames').disabled = isPasswordHashed;
+      document.getElementById('userEmail').disabled = isPasswordHashed;
+      document.getElementById('userGender').disabled = isPasswordHashed;
+
+      
+      await loadsRoles();
+
+      
+      selectedRoles = selectedUser.roles.map((r) => r._id);
+      document.getElementById('rolesModalTitle').textContent =
+        'Modificar Roles';
+
+      Modal.open('#addUserModal'); 
+    } else if (action === 'delete') {
+      
+      currentEditingUserId = id; 
+      Modal.open('#deleteUserModal'); 
+    }
+  };
+
+  
+  const loadsRoles = async () => {
+    await fetchRoles(); 
+    const { roles } = getState(); 
+    console.log('roles', roles);
+    renderSubItemsCheckboxesForSelection(
+      roles,
+      selectedRoles,
+      'rolesContainer'
+    ); 
+  };
+
+  
+  const saveItemHandler = async () => {
+    const name = document.getElementById('userName').value.trim();
+    const surnames = document.getElementById('userSurnames').value.trim();
+    const email = document.getElementById('userEmail').value.trim();
+    const password = document.getElementById('userPassword').value.trim();
+    const gender = document.getElementById('userGender').value.trim();
+
+    
+    if (
+      !name ||
+      !surnames ||
+      !email ||
+      !password ||
+      !gender ||
+      selectedRoles.length === 0
+    ) {
+      showSnackbar(
+        'Por favor, complete todos los campos y seleccione al menos un rol.',
+        false
+      );
+      return;
+    }
+
+    const data = {
+      name,
+      surnames,
+      email,
+      password,
+      gender,
+      roles: selectedRoles,
+    };
+
+    try {
+      const message = await saveItem(
+        data,
+        currentEditingUserId,
+        updateService,
+        createService,
+        userEndpoints,
+        addUser,
+        updateUser
+      );
+      if (message) {
+        Modal.close('#addUserModal');
+        await loadUsersList(); 
+        showSnackbar(message, true);
+      } else {
+        showSnackbar('Error al guardar el usuario.', false);
+      }
+    } catch (error) {
+      showSnackbar(error.message, false);
+    }
+  };
+
+  
+  const openGenderModal = () => {
+    
+    const currentGender = document.getElementById('userGender').value;
+    if (currentGender) {
+      document.querySelector(
+        `input[name="gender"][value="${currentGender}"]`
+      ).checked = true;
+    }
+    Modal.open('#selectGenderModal'); 
+  };
+
+  
+  const saveGenderHandler = () => {
+    const selectedGender = document.querySelector(
+      'input[name="gender"]:checked'
+    ).value; 
+    document.getElementById('userGender').value = selectedGender; 
+    Modal.close('#selectGenderModal'); 
+  };
+
+  
+  const openRolesModal = () => {
+    const { roles } = getState(); 
+    renderSubItemsCheckboxesForSelection(
+      roles,
+      selectedRoles,
+      'rolesContainer'
+    ); 
+    Modal.open('#selectRolesModal'); 
+  };
+
+  
+  const saveRolesHandler = () => {
+    selectedRoles = saveSelectedSubItems('rolesContainer', selectedRoles); 
+    Modal.close('#selectRolesModal'); 
+  };
+
+  window.onAction = onAction;
+</script> #}

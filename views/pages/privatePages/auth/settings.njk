@@ -21,12 +21,12 @@
 <script>
     $(document).ready(function() {
         $('#fetchProfileButton').on('click', function() {
-            const profileUrl = '/api/profile'; // Cambia esta URL si es necesario
+            const profileUrl = '/api/profile'; 
             ajaxRequest(profileUrl)
                 .then(response => {
                     console.log("Perfil del usuario:", response.user);
 
-                    // Generar el HTML para mostrar el perfil
+                    
                     const roles = response.user.roles.map(role => role.name).join(', ');
 
                     $('#userProfile').html(`

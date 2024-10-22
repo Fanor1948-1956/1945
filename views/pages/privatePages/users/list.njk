@@ -215,8 +215,8 @@
     isActive: 'Estado',
   };
 
-  let currentEditingUserId = null; // Variable para almacenar el ID del usuario en edición
-  let selectedRoles = []; // Array para almacenar roles seleccionados
+  let currentEditingUserId = null; 
+  let selectedRoles = []; 
 
   document.addEventListener('DOMContentLoaded', () => {
     loadUsersList();
@@ -231,13 +231,13 @@
 
   const setupEventListeners = () => {
     document.getElementById('addUserBtn').addEventListener('click', () => {
-      currentEditingUserId = null; // Reinicia la variable al abrir el modal
+      currentEditingUserId = null; 
       clearUserForm();
-      loadsRoles(); // Cargar roles antes de abrir el modal
+      loadsRoles(); 
       document.getElementById('modalTitle').textContent = 'Agregar Usuario';
       document.getElementById('rolesModalTitle').textContent =
         'Seleccionar Roles';
-      Modal.open('#addUserModal'); // Abre el modal para agregar usuario
+      Modal.open('#addUserModal'); 
     });
 
     document
@@ -250,7 +250,7 @@
       .getElementById('saveRolesBtn')
       .addEventListener('click', saveRolesHandler);
 
-    // Manejar la selección de género
+    
     document
       .getElementById('selectGenderBtn')
       .addEventListener('click', openGenderModal);
@@ -258,7 +258,7 @@
       .getElementById('saveGenderBtn')
       .addEventListener('click', saveGenderHandler);
 
-    // Manejar confirmación de eliminación
+    
     document
       .getElementById('confirmDeleteButton')
       .addEventListener('click', async () => {
@@ -267,33 +267,33 @@
             currentEditingUserId,
             userEndpoints,
             deleteUser
-          ); // Llamar al servicio para eliminar
-          await loadUsersList(); // Recargar la lista de usuarios
-          showSnackbar(message, true); // Mostrar mensaje de éxito
+          ); 
+          await loadUsersList(); 
+          showSnackbar(message, true); 
         } catch (error) {
-          showSnackbar(error.message || 'Error al eliminar el usuario.', false); // Mostrar mensaje de error
+          showSnackbar(error.message || 'Error al eliminar el usuario.', false); 
         }
-        Modal.close('#deleteUserModal'); // Cerrar el modal después de eliminar
+        Modal.close('#deleteUserModal'); 
       });
 
-    // Manejar cancelación de eliminación
+    
     document
       .getElementById('cancelDeleteButton')
       .addEventListener('click', () => {
-        Modal.close('#deleteUserModal'); // Cierra el modal sin hacer nada
+        Modal.close('#deleteUserModal'); 
       });
   };
 
   const clearUserForm = () => {
-    clearFormFields('userForm'); // Usamos clearFormFields para limpiar todos los campos del formulario
-    clearSelectionsAndArray('rolesContainer', selectedRoles); // Limpia las selecciones y el array de roles seleccionados
+    clearFormFields('userForm'); 
+    clearSelectionsAndArray('rolesContainer', selectedRoles); 
   };
   const onAction = async (action, id) => {
     const users = getState().users;
     const selectedUser = users.find((user) => user._id === id);
     console.log('selectedUser', selectedUser);
     if (action === 'edit') {
-      // Cargar datos del usuario para editar
+      
       resetFormFields([
         'userName',
         'userSurnames',
@@ -306,9 +306,9 @@
       document.getElementById('userEmail').value = selectedUser.email;
       document.getElementById('userPassword').value = selectedUser.password;
       document.getElementById('userGender').value = selectedUser.gender;
-      currentEditingUserId = id; // Guarda el ID del usuario que se está editando
+      currentEditingUserId = id; 
 
-      // Deshabilitar campos si la contraseña está hasheada
+      
       const isPasswordHashed =
         selectedUser.password && selectedUser.password !== '';
       document.getElementById('userName').disabled = isPasswordHashed;
@@ -316,35 +316,35 @@
       document.getElementById('userEmail').disabled = isPasswordHashed;
       document.getElementById('userGender').disabled = isPasswordHashed;
 
-      // Cargar roles desde la base de datos
+      
       await loadsRoles();
 
-      // Marcar los roles seleccionados previamente
+      
       selectedRoles = selectedUser.roles.map((r) => r._id);
       document.getElementById('rolesModalTitle').textContent =
         'Modificar Roles';
 
-      Modal.open('#addUserModal'); // Reabrimos el modal principal para editar
+      Modal.open('#addUserModal'); 
     } else if (action === 'delete') {
-      // Configurar el modal de confirmación de eliminación
-      currentEditingUserId = id; // Guardamos el ID del usuario que se va a eliminar
-      Modal.open('#deleteUserModal'); // Abrimos el modal de confirmación
+      
+      currentEditingUserId = id; 
+      Modal.open('#deleteUserModal'); 
     }
   };
 
-  // Cargar roles disponibles desde la base de datos
+  
   const loadsRoles = async () => {
-    await fetchRoles(); // Carga los roles desde la base de datos
-    const { roles } = getState(); // Roles del estado de la aplicación
+    await fetchRoles(); 
+    const { roles } = getState(); 
     console.log('roles', roles);
     renderSubItemsCheckboxesForSelection(
       roles,
       selectedRoles,
       'rolesContainer'
-    ); // Usamos la nueva función
+    ); 
   };
 
-  // Maneja el guardado de usuario
+  
   const saveItemHandler = async () => {
     const name = document.getElementById('userName').value.trim();
     const surnames = document.getElementById('userSurnames').value.trim();
@@ -352,7 +352,7 @@
     const password = document.getElementById('userPassword').value.trim();
     const gender = document.getElementById('userGender').value.trim();
 
-    // Validar que se ingresen todos los campos
+    
     if (
       !name ||
       !surnames ||
@@ -389,7 +389,7 @@
       );
       if (message) {
         Modal.close('#addUserModal');
-        await loadUsersList(); // Actualizar la lista de usuarios
+        await loadUsersList(); 
         showSnackbar(message, true);
       } else {
         showSnackbar('Error al guardar el usuario.', false);
@@ -399,42 +399,42 @@
     }
   };
 
-  // Abre el modal de selección de género
+  
   const openGenderModal = () => {
-    // Verifica si ya hay un género seleccionado y marca el radio correspondiente
+    
     const currentGender = document.getElementById('userGender').value;
     if (currentGender) {
       document.querySelector(
         `input[name="gender"][value="${currentGender}"]`
       ).checked = true;
     }
-    Modal.open('#selectGenderModal'); // Abre el modal de selección de género
+    Modal.open('#selectGenderModal'); 
   };
 
-  // Maneja el guardado de género seleccionado
+  
   const saveGenderHandler = () => {
     const selectedGender = document.querySelector(
       'input[name="gender"]:checked'
-    ).value; // Obtiene el género seleccionado
-    document.getElementById('userGender').value = selectedGender; // Asigna el género al campo
-    Modal.close('#selectGenderModal'); // Cierra el modal
+    ).value; 
+    document.getElementById('userGender').value = selectedGender; 
+    Modal.close('#selectGenderModal'); 
   };
 
-  // Abre el modal de roles
+  
   const openRolesModal = () => {
-    const { roles } = getState(); // Obtiene los permisos cargados
+    const { roles } = getState(); 
     renderSubItemsCheckboxesForSelection(
       roles,
       selectedRoles,
       'rolesContainer'
-    ); // Usamos la nueva función
-    Modal.open('#selectRolesModal'); // Abre el modal de selección de permisos
+    ); 
+    Modal.open('#selectRolesModal'); 
   };
 
-  // Maneja el guardado de permisos seleccionados
+  
   const saveRolesHandler = () => {
-    selectedRoles = saveSelectedSubItems('rolesContainer', selectedRoles); // Guardar los permisos seleccionados
-    Modal.close('#selectRolesModal'); // Cierra el modal
+    selectedRoles = saveSelectedSubItems('rolesContainer', selectedRoles); 
+    Modal.close('#selectRolesModal'); 
   };
 
   window.onAction = onAction;

@@ -1,5 +1,5 @@
 {# practicesAndWhyChooseUs.njk #}
-
+ {% include "components/custom/customModal.njk" %}
     <div class='home-heading18'>
         <h2 class='home-text24'>Nuestras Especialaides</h2>
         <p class='home-text25'>
@@ -7,45 +7,16 @@
         </p>
     </div>
     <div class='home-content12'>
-        {# <div class='home-grid2'>
-            <Link to='/'>
-                <div class='home-practice-wrapper1'>
-                    <Practice></Practice>
-                </div>
-            </Link>
-            <Link to='/'>
-                <div class='home-practice-wrapper2'>
-                    <Practice title='Ortopedia'></Practice>
-                </div>
-            </Link>
-            <Link to='/'>
-                <div class='home-practice-wrapper3'>
-                    <Practice title='Oftalmología'></Practice>
-                </div>
-            </Link>
-            <Link to='/'>
-                <div class='home-practice-wrapper4'>
-                    <Practice title='Pediatría'></Practice>
-                </div>
-            </Link>
-            <Link to='/'>
-                <div class='home-practice-wrapper5'>
-                    <Practice title='Nutrición'></Practice>
-                </div>
-            </Link>
-            <Link to='/'>
-                <div class='home-practice-wrapper6'>
-                    <Practice title='General'></Practice>
-                </div>
-            </Link>
-        </div> #}
+   
             {% include "pages/privatePages/specialty/verb/getAll.njk" %}
-        <button
-            data-open='practices'
-            class='button button-main'
-        >
-            <span>Todas las prácticas</span>
-        </button>
+      <button
+  class="open-modal"
+  data-size="medium"
+  data-title="Título del Modal Medio"
+  
+>
+  Nuestras Especialiades
+</button>
     </div>
 
 

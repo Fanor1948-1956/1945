@@ -1,10 +1,10 @@
-// roleReducer.js
+
 import { setState, getState } from './state.js';
 
 
 export const loadRoles = (rolesResponse) => {
   if (Array.isArray(rolesResponse.roles)) {
-    setState({ roles: rolesResponse.roles }); // Asigna correctamente el array de roles
+    setState({ roles: rolesResponse.roles }); 
     console.log('Estado después de cargar roles:', getState());
   } else {
     console.error(
@@ -14,11 +14,11 @@ export const loadRoles = (rolesResponse) => {
   }
 };
 
-// Agregar un nuevo rol (incluyendo permisos)
-// Agregar un nuevo rol (incluyendo permisos)
+
+
 export const addRole = (newRole) => {
   const currentState = getState();
-  // Verifica que roles sea un array antes de intentar agregar un nuevo rol
+  
   if (Array.isArray(currentState.roles)) {
     setState({ roles: [...currentState.roles, newRole] });
   } else {
@@ -29,7 +29,7 @@ export const addRole = (newRole) => {
   }
 };
 
-// Actualizar un rol existente (incluyendo permisos)
+
 export const updateRole = (updatedRole) => {
   const currentState = getState();
   const updatedRoles = currentState.roles.map((role) =>
@@ -38,7 +38,7 @@ export const updateRole = (updatedRole) => {
   setState({ roles: updatedRoles });
 };
 
-// Eliminar un rol
+
 export const deleteRole = (roleId) => {
   const currentState = getState();
   const updatedRoles = currentState.roles.filter((role) => role._id !== roleId);

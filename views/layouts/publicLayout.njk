@@ -36,4 +36,14 @@
       block content %}{% endblock %}
     </div>
   </body>
+    <script>
+        // Pasar el token a una variable de JavaScript
+        const token = '{{ token }}';  // Asegúrate de escapar correctamente
+        const currentPath = '{{ currentPath }}';
+        const isAutenticated = '{{ isAuthenticated }}';  // Asegúrate de escapar correctamente
+            
+        console.log('Token desde Nunjucks:', token);
+        console.log('Autenticado desde Nunjucks:', isAutenticated);
+        console.log('Ruta actual:', currentPath);
+    </script>
 </html>

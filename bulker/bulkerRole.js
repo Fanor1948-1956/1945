@@ -1,13 +1,13 @@
-// bulkRegisterRoles.js
+
 
 const mongoose = require("mongoose");
 const Role = require("../models/roleModel");
-const Permission = require("../models/permissionModel"); // Asegúrate de tener este modelo
+const Permission = require("../models/permissionModel"); 
 const connectDB = require("./database");
-// Conectar a la base de datos
 
 
-// Datos de ejemplo para insertar
+
+
 const roles = [
   {
     name: "Administrador",
@@ -106,14 +106,14 @@ const roles = [
   },
 ];
 
-// Función para registrar roles
+
 const registerRoles = async () => {
   try {
-    await connectDB(); // Conectar a la base de datos
-    // Recuperar los permisos desde la base de datos
-    const permissions = await Permission.find(); // Asegúrate de que tu modelo de permisos esté bien definido
+    await connectDB(); 
+    
+    const permissions = await Permission.find(); 
 
-    // Asegúrate de que hay permisos en la base de datos
+    
     if (permissions.length === 0) {
       console.log(
         "No hay permisos en la base de datos para asignar a los roles."
@@ -121,21 +121,21 @@ const registerRoles = async () => {
       return;
     }
 
-    // Asignar permisos a cada rol (ejemplo, asignando todos los permisos a cada rol)
+    
     roles.forEach((role) => {
-      // Aquí puedes modificar la lógica para asignar permisos específicos según tus necesidades
+      
       role.permissions = permissions.map((permission) => permission._id);
     });
 
-    // Insertar roles en la base de datos
+    
     await Role.insertMany(roles);
     console.log("Roles registrados con éxito");
   } catch (error) {
     console.error("Error al registrar roles", error);
   } finally {
-    mongoose.connection.close(); // Cerrar la conexión a la base de datos
+    mongoose.connection.close(); 
   }
 };
 
-// Llamar a la función
+
 registerRoles();

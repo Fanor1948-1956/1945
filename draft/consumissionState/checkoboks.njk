@@ -52,8 +52,8 @@
         isActive: 'Estado',
     };
 
-    let currentEditingRoleId = null; // Variable para almacenar el ID del rol en edición
-    let selectedPermissions = []; // Array para almacenar permisos seleccionados
+    let currentEditingRoleId = null; 
+    let selectedPermissions = []; 
 
     document.addEventListener('DOMContentLoaded', () => {
         loadRoles();
@@ -68,16 +68,16 @@
 
     const setupEventListeners = () => {
         document.getElementById('addRoleBtn').addEventListener('click', () => {
-            currentEditingRoleId = null; // Reinicia la variable al abrir el modal
+            currentEditingRoleId = null; 
             clearRoleForm();
-            loadPermissions(); // Cargar permisos antes de abrir el modal
+            loadPermissions(); 
             document.getElementById('modalTitle').textContent = 'Agregar Rol'; 
             document.getElementById('permissionsModalTitle').textContent = 'Seleccionar Permisos';
-            Modal.open('#addRoleModal'); // Abre el modal para agregar rol
+            Modal.open('#addRoleModal'); 
         });
 
         document.getElementById('saveRoleBtn').addEventListener('click', saveRole);
-        document.getElementById('selectPermissionsBtn').addEventListener('click', openPermissionsModal); // Cambiado a "Seleccionar Permisos"
+        document.getElementById('selectPermissionsBtn').addEventListener('click', openPermissionsModal); 
         document.getElementById('savePermissionsBtn').addEventListener('click', saveSelectedPermissions);
     };
 
@@ -85,11 +85,11 @@
         document.getElementById('roleName').value = ''; 
         document.getElementById('roleAlias').value = ''; 
         document.getElementById('roleDescription').value = '';
-        clearPermissionsSelection(); // Limpiar selección de permisos
+        clearPermissionsSelection(); 
     };
 
     const clearPermissionsSelection = () => {
-        selectedPermissions = []; // Limpiar selección de permisos
+        selectedPermissions = []; 
     };
 
     const onAction = async (action, id) => {
@@ -97,34 +97,34 @@
         const selectedRole = roles.find(role => role._id === id);
         
         if (action === 'edit') {
-            // Cargar datos del rol para editar
+            
             document.getElementById('roleName').value = selectedRole.name;
             document.getElementById('roleAlias').value = selectedRole.alias;
             document.getElementById('roleDescription').value = selectedRole.description;
-            currentEditingRoleId = id; // Guarda el ID del rol que se está editando
+            currentEditingRoleId = id; 
             
-            // Cargar permisos desde la base de datos (todos los permisos disponibles)
+            
             await loadPermissions();
 
-            // Marcar los permisos seleccionados previamente
+            
             selectedPermissions = selectedRole.permissions.map(p => p._id);
             document.getElementById('permissionsModalTitle').textContent = 'Modificar Permisos';
             
-            Modal.open('#addRoleModal'); // Reabrimos el modal principal para editar
+            Modal.open('#addRoleModal'); 
         }
     };
 
-    // Cargar permisos disponibles desde la base de datos
+    
     const loadPermissions = async () => {
-        await fetchPermissions(); // Carga los permisos desde la base de datos
-        const { permissions } = getState(); // Permisos del estado de la aplicación
-        renderPermissionsCheckboxesForSelection(permissions); // Renderizar los checkboxes
+        await fetchPermissions(); 
+        const { permissions } = getState(); 
+        renderPermissionsCheckboxesForSelection(permissions); 
     };
 
-    // Renderizar checkboxes de permisos para el segundo modal
+    
     const renderPermissionsCheckboxesForSelection = (permissions) => {
         const container = document.getElementById('permissionsContainer');
-        container.innerHTML = ''; // Limpiar cualquier contenido previo
+        container.innerHTML = ''; 
 
         permissions.forEach(permission => {
             const checkbox = document.createElement('input');
@@ -136,7 +136,7 @@
             label.htmlFor = checkbox.id;
             label.textContent = permission.name;
 
-            // Marcar el checkbox si el permiso está en la selección actual
+            
             checkbox.checked = selectedPermissions.includes(permission._id);
 
             container.appendChild(checkbox);
@@ -146,15 +146,15 @@
     };
 
     const openPermissionsModal = () => {
-        const { permissions } = getState(); // Obtiene los permisos cargados
+        const { permissions } = getState(); 
         renderPermissionsCheckboxesForSelection(permissions);
-        Modal.open('#selectPermissionsModal'); // Abre el modal de selección de permisos
+        Modal.open('#selectPermissionsModal'); 
     };
 
     const saveSelectedPermissions = () => {
         const checkboxes = document.querySelectorAll('#permissionsContainer input[type="checkbox"]:checked');
-        selectedPermissions = Array.from(checkboxes).map(checkbox => checkbox.value); // Guardar los IDs de permisos seleccionados
-        Modal.close('#selectPermissionsModal'); // Cierra el modal
+        selectedPermissions = Array.from(checkboxes).map(checkbox => checkbox.value); 
+        Modal.close('#selectPermissionsModal'); 
     };
 
     const saveRole = async () => {
@@ -162,7 +162,7 @@
         const alias = document.getElementById('roleAlias').value.trim();
         const description = document.getElementById('roleDescription').value.trim();
         
-        // Validar que se ingresen al menos un permiso
+        
         if (!name || !alias || selectedPermissions.length === 0) {
             showSnackbar('Por favor, complete todos los campos y seleccione al menos un permiso.', false);
             return;
@@ -173,7 +173,7 @@
         try {
             let message;
             if (currentEditingRoleId) {
-                data._id = currentEditingRoleId; // Agrega el ID al objeto para la edición
+                data._id = currentEditingRoleId; 
                 message = await updateRoleService(data);
             } else {
                 message = await createRole(data);
@@ -181,7 +181,7 @@
 
             if (message) {
                 Modal.close('#addRoleModal');
-                await loadRoles(); // Actualizar la lista de roles
+                await loadRoles(); 
                 showSnackbar(message, true);
             } else {
                 showSnackbar('Error al guardar el rol.', false);
@@ -192,7 +192,7 @@
         }
     };
 
-    // Exponer onAction globalmente
+    
     window.onAction = onAction;
 
 </script>

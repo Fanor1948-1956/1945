@@ -1,4 +1,4 @@
-// Obtiene los datos de un formulario dado su ID
+
 export function getFormData(formId) {
   const form = document.getElementById(formId);
   const formData = new FormData(form);
@@ -11,7 +11,7 @@ export function getFormData(formId) {
   return formValues;
 }
 
-// Limpia los campos del formulario dado su ID
+
 export function resetForm(formId) {
   document.getElementById(formId).reset();
 }

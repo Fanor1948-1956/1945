@@ -23,19 +23,19 @@
 
 <script>
 $(document).ready(function() {
-    // Obtener usuarios cuando se carga la página
+    
     fetchUsers();
 
 
 
-    // Evento para editar un usuario
+    
     $(document).on('click', '.edit-button', function(e) {
         e.preventDefault();
         const userId = $(this).data('user-id');
-        getUserInfo(userId); // Obtener datos del usuario
+        getUserInfo(userId); 
     });
 
-    // Obtener y renderizar la tabla de usuarios
+    
     function fetchUsers() {
         $.ajax({
             url: '/users/getUsers',
@@ -47,7 +47,7 @@ $(document).ready(function() {
         });
     }
 
-    // Función para renderizar la tabla de usuarios
+    
     function renderUserTable(users) {
         let tableHtml = `
             <table>
@@ -89,21 +89,21 @@ $(document).ready(function() {
         tableHtml += '</tbody></table>';
         $('#userTableContainer').html(tableHtml);
 
-        // Manejar los eventos de eliminación de usuario
+        
         $('.delete-button').click(function() {
             const userId = $(this).data('user-id');
             deleteUser(userId);
         });
     }
 
-    // Función para obtener información del usuario
+    
     function getUserInfo(userId) {
         $.ajax({
             url: `/users/showInfo/${userId}`,
             type: 'GET',
             success: function({ user, allRoles, isPasswordHashed }) {
                 renderEditForm(user, allRoles, userId, isPasswordHashed);
-                $('#editUserModal').fadeIn(); // Abrir el modal de edición
+                $('#editUserModal').fadeIn(); 
             },
             error: function() {
                 showSnackbar('Error al obtener el formulario de edición', false);
@@ -111,7 +111,7 @@ $(document).ready(function() {
         });
     }
 
-// renderizar el formulario de edición
+
     function renderEditForm(user, allRoles, userId, isPasswordHashed) {
         const rolesHtml = allRoles.map(role => `
             <label>
@@ -144,7 +144,7 @@ $(document).ready(function() {
         `);
     }
 
-// envío del formulario de edición
+
     $(document).on('submit', '#userUpdateForm', function(e) {
         e.preventDefault();
         const userId = $(this).data('user-id');
@@ -166,9 +166,9 @@ $(document).ready(function() {
             data: JSON.stringify(userData),
             success: function(response) {
                 showSnackbar(response.message, true);
-                fetchUsers(); // Refrescar la lista de usuarios
+                fetchUsers(); 
                 setTimeout(() => {
-                    $('#editUserModal').fadeOut(); // Cerrar después de 2 segundos
+                    $('#editUserModal').fadeOut(); 
                 }, 2000);
             },
             error: function(xhr) {
@@ -180,7 +180,7 @@ $(document).ready(function() {
 
 });
 
-// eliminar un usuario
+
 function deleteUser(userId) {
     if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
         $.ajax({
@@ -188,7 +188,7 @@ function deleteUser(userId) {
             type: 'DELETE',
             success: function(response) {
                 showSnackbar(response.message, true);
-                fetchUsers(); // Refrescar la lista de usuarios
+                fetchUsers(); 
             },
             error: function(xhr) {
                 const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al eliminar el usuario';

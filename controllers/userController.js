@@ -13,13 +13,13 @@ exports.createUser = async (req, res) => {
     ...additionalProperties
   } = req.body;
 
-  console.log('Datos recibidos en la petición:', req.body); // <-- Verifica qué datos está recibiendo el backend
+  console.log('Datos recibidos en la petición:', req.body); 
 
   const rolesArray = roles || [];
 
   try {
-    // Verifica si rolesArray contiene algo
-    console.log('Roles recibidos:', rolesArray); // <-- Ver los roles antes de la búsqueda
+    
+    console.log('Roles recibidos:', rolesArray); 
 
     const rolesFound = await roleModel.find({ _id: { $in: rolesArray } });
 
@@ -38,7 +38,7 @@ exports.createUser = async (req, res) => {
         .json({ message: 'El correo electrónico no es válido.' });
     }
 
-    // Hashear la contraseña
+    
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     const newUser = new UserType({
@@ -52,7 +52,7 @@ exports.createUser = async (req, res) => {
     });
 
     await newUser.save();
-    // Devolver el usuario creado con éxito con success, message y el usuario sucess true
+    
     return res.status(201).json({
       success: true,
       message: 'Usuario creado exitosamente',
@@ -68,7 +68,7 @@ exports.getUsers = async (req, res) => {
   try {
     const users = await User.find().populate("roles");
 
-    // Comprobamos si la solicitud es de tipo XHR (AJAX)
+    
     if (req.xhr || req.accepts("application/json")) {
       return res.status(200).json({
         success: true,
@@ -76,7 +76,7 @@ exports.getUsers = async (req, res) => {
         users,
       });
     } else {
-      // Renderiza la vista si no es una solicitud AJAX y espera un HTML
+      
       return res.render("pages/privatePages/users/list.njk", { users });
     }
   } catch (error) {

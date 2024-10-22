@@ -20,5 +20,5 @@ function apiFetch(url, method, data = null) {
   });
 }
 
-// Exportar la función para uso global
+
 window.apiFetch = apiFetch;

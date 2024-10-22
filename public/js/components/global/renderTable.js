@@ -1,5 +1,5 @@
 export function renderTable(data, columnHeaders, containerId, onAction) {
-  // Comprobar si hay datos para mostrar
+  
   if (!data || data.length === 0) {
     document.getElementById(containerId).innerHTML =
       '<p>No hay datos disponibles.</p>';
@@ -13,33 +13,33 @@ export function renderTable(data, columnHeaders, containerId, onAction) {
                     <th>#</th> <!-- Columna de numeración -->
     `;
 
-  // Crear el encabezado de la tabla con los nombres de las columnas
+  
   Object.keys(columnHeaders).forEach((key) => {
     tableHtml += `<th>${columnHeaders[key]}</th>`;
   });
 
-  // Agregar la columna de acciones
+  
   tableHtml += `<th>Acciones</th>`;
   tableHtml += '</tr></thead><tbody>';
 
-  // Crear las filas de la tabla
+  
   data.forEach((item, index) => {
     tableHtml += '<tr>';
 
-    // Añadir la numeración
-    tableHtml += `<td>${index + 1}</td>`; // Numeración empieza desde 1
+    
+    tableHtml += `<td>${index + 1}</td>`; 
 
     Object.keys(columnHeaders).forEach((key) => {
       const value = item[key];
 
-      // Manejo de arrays
+      
       if (Array.isArray(value)) {
         const listItems = value
           .map((val) => `<li>${val.name || val}</li>`)
           .join('');
         tableHtml += `<td><ul>${listItems}</ul></td>`;
       }
-      // Manejo de objetos
+      
       else if (typeof value === 'object' && value !== null) {
         const objectEntries = Object.entries(value);
         const objectHtml = objectEntries
@@ -49,13 +49,13 @@ export function renderTable(data, columnHeaders, containerId, onAction) {
           .join('<br>');
         tableHtml += `<td>${objectHtml}</td>`;
       }
-      // Mostrar valor simple o vacío si no existe
+      
       else {
         tableHtml += `<td>${value !== undefined ? value : ''}</td>`;
       }
     });
 
-    // Añadir la columna de acciones con botones
+    
     tableHtml += `
             <td>
                 <button class="details-button" data-id="${item._id}" onclick="onAction('details', '${item._id}')">Ver Detalles</button>
@@ -68,5 +68,6 @@ export function renderTable(data, columnHeaders, containerId, onAction) {
   });
 
   tableHtml += '</tbody></table>';
+  console.log(tableHtml); 
   document.getElementById(containerId).innerHTML = tableHtml;
 }

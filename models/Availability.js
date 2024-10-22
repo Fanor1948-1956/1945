@@ -11,7 +11,7 @@ const availabilitySchema = new mongoose.Schema({
     required: true,
   },
   availableSlots: {
-    type: Number, // Número de citas disponibles para ese día
+    type: Number, 
     required: true,
   },
 });

@@ -4,7 +4,7 @@ function toggleFields() {
   const scheduleContainer = document.getElementById('schedule-container');
   const selectedRole = roleSelect.value;
 
-  // Muestra/oculta campos dependiendo del rol seleccionado
+  
   if (selectedRole === 'Doctor' || selectedRole === 'ChiefMedical') {
     specialtyContainer.style.display = 'block';
     scheduleContainer.style.display = 'block';

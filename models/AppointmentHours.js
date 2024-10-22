@@ -11,7 +11,7 @@ const appointmentHoursSchema = new mongoose.Schema({
     required: true,
   },
   availableSlots: {
-    type: Number, // Número de citas disponibles para ese horario
+    type: Number, 
     required: true,
   },
 });

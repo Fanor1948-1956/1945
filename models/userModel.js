@@ -1,4 +1,4 @@
-// models/userModel.js
+
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema(
@@ -15,13 +15,13 @@ const userSchema = new mongoose.Schema(
     roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Role" }],
     isActive: {
       type: Boolean,
-      default: true, // Las especialidades se activan por defecto
+      default: true, 
     },
   },
   { timestamps: true }
 );
 
-// Definir discriminadores para los diferentes tipos de usuarios
+
 const User = mongoose.model('User', userSchema);
 
 const Admin = User.discriminator(
@@ -34,26 +34,26 @@ const ChiefMedical = User.discriminator(
   'ChiefMedical',
   new mongoose.Schema({
     department: { type: String },
-    specialties: { type: mongoose.Schema.Types.ObjectId, ref: 'Speciality' }, //se llena al actualiar//e n princpio array vacio
+    specialties: { type: mongoose.Schema.Types.ObjectId, ref: 'Speciality' }, 
   })
 );
 const Doctor = User.discriminator(
   'Doctor',
   new mongoose.Schema({
-    specialties: { type: mongoose.Schema.Types.ObjectId, ref: 'Speciality' }, //se llena al actualiar//e n princpio array vacio
-    schedule: { type: mongoose.Schema.Types.ObjectId, ref: 'Schedule' }, //se llena al actualiar //e n princpio array vacio
+    specialties: { type: mongoose.Schema.Types.ObjectId, ref: 'Speciality' }, 
+    schedule: { type: mongoose.Schema.Types.ObjectId, ref: 'Schedule' }, 
     city: { type: String },
   })
 );
 const Patient = User.discriminator(
   'Patient',
   new mongoose.Schema({
-    appointments: { type: mongoose.Schema.Types.ObjectId, ref: 'Appointment' }, //se llena al actualiar//e n princpio array vacio
+    appointments: { type: mongoose.Schema.Types.ObjectId, ref: 'Appointment' }, 
     medicalHistory: [
-      { type: mongoose.Schema.Types.ObjectId, ref: 'historyClinic' }, //se llena al actualiar//e n princpio array vacio
+      { type: mongoose.Schema.Types.ObjectId, ref: 'historyClinic' }, 
     ],
   })
 );
 
-// Exportar el modelo User y los demás discriminadores
+
 module.exports = { User, Patient, Doctor, Admin, ChiefMedical };

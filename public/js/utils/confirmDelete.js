@@ -1,4 +1,4 @@
-// confirmDelete.js
+
 
 import { addModalToDOM, setModalMessage } from "./index.js";
 import { deleteService } from "../services/index.js";
@@ -12,38 +12,38 @@ export const confirmDelete = async (
   deleteItem
 ) => {
   return new Promise((resolve) => {
-    addModalToDOM(); // Asegura que el modal esté en el DOM
+    addModalToDOM(); 
 
     const message = `¿Estás seguro de que deseas eliminar este ${typeName}?`;
-    setModalMessage(message); // Establece el mensaje en el modal
+    setModalMessage(message); 
 
-    // Muestra el modal
+    
     Modal.open("#deleteItemModal");
 
-    // Añadir evento para el botón de confirmar eliminación
+    
     $("#confirmDeleteButton")
       .off("click")
       .on("click", async () => {
         try {
-          const responseMessage = await deleteService(id, endpoint, deleteItem); // Llama al servicio de eliminación
-          await loadPermissions(); // Recarga permisos después de la eliminación
-          Modal.close("#deleteItemModal"); // Cierra el modal
-          showSnackbar(responseMessage, true); // Muestra mensaje de éxito
-          resolve(); // Resuelve la promesa
+          const responseMessage = await deleteService(id, endpoint, deleteItem); 
+          await loadPermissions(); 
+          Modal.close("#deleteItemModal"); 
+          showSnackbar(responseMessage, true); 
+          resolve(); 
         } catch (error) {
           console.error("Error al eliminar:", error);
-          Modal.close("#deleteItemModal"); // Cierra el modal
-          showSnackbar("Error al eliminar el elemento.", false); // Muestra mensaje de error
-          resolve(); // Resuelve la promesa
+          Modal.close("#deleteItemModal"); 
+          showSnackbar("Error al eliminar el elemento.", false); 
+          resolve(); 
         }
       });
 
-    // Añadir evento para el botón de cancelar
+    
     $("#cancelDeleteButton")
       .off("click")
       .on("click", () => {
-        Modal.close("#deleteItemModal"); // Cierra el modal al cancelar
-        resolve(); // Resuelve la promesa
+        Modal.close("#deleteItemModal"); 
+        resolve(); 
       });
   });
 };

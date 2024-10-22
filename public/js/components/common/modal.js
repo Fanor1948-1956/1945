@@ -1,4 +1,4 @@
-// modal.js
+
 
 import { setupRoleForm, editRole } from '../../logic/roles/index.js';
 import { fetchRoles } from '../../services/roleService.js';
@@ -15,7 +15,7 @@ export const setupModalEvents = () => {
 const loadRoles = async () => {
   await fetchRoles();
   const { roles } = getState();
-  renderTable(roles, onAction); // Asume que renderTable maneja la lógica de renderización de la tabla
+  renderTable(roles, onAction); 
 };
 
 const onAction = (action, id) => {
@@ -23,6 +23,6 @@ const onAction = (action, id) => {
   const selectedRole = roles.find((role) => role._id === id);
 
   if (action === 'edit') {
-    editRole(selectedRole); // Llama a la función para editar rol
+    editRole(selectedRole); 
   }
 };

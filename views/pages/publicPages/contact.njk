@@ -1,68 +1,47 @@
+
+
+
+
 {% extends "layouts/publicLayout.njk" %} {% block content %}
-<h2>Ejemplo de Modal Global</h2>
-
-<!-- Incluir los botones desde el archivo externo -->
-{% include "/pages/publicPages/modalButtons.html" %}
-
-<div
-  id="customModal"
-  class="modal"
-  style="display: none; opacity: 0"
+ {% include "components/custom/customModal.njk" %}
+<!-- modalButtons.html -->
+<button
+  class="open-modal"
+  data-size="medium"
+  data-title="Título del Modal Medio"
+  data-show-actions="true"
 >
-  <div
-    class="modal-content"
-    id="modalContent"
-  >
-    <div class="modal-head">
-      <h3>Título del Modal</h3>
-      <span
-        class="close-button"
-        id="closeButton"
-        >&times;</span
-      >
-    </div>
-    <div class="modal-body">
-      <p>
-        Este es un modal con un tamaño ajustable según la configuración elegida.
-      </p>
-    </div>
-    <div
-      class="modal-actions"
-      style="display: none"
-    >
-      <button id="saveButton">Guardar</button>
-      <button id="cancelButton">Cancelar</button>
-    </div>
-  </div>
-</div>
-
-<!-- Incluir el archivo de JavaScript como un módulo -->
-<script type="module">
-  import { openModal, closeModal } from './js/components/custom/modal.js';
-
-  // Cerrar el modal al hacer clic fuera del contenido
-  window.addEventListener('click', (event) => {
-    const modal = document.getElementById('customModal');
-    if (event.target === modal) {
-      closeModal();
-    }
-  });
-
-  // Añadir el listener para los botones de abrir el modal
-  document.querySelectorAll('.open-modal').forEach((button) => {
-    button.addEventListener('click', () => {
-      const size = button.getAttribute('data-size');
-      const title = button.getAttribute('data-title');
-      const showActions = button.getAttribute('data-show-actions') === 'true';
-      openModal(size, title, showActions);
-    });
-  });
-
-  // Añadir el listener para el botón de cerrar
-  document.getElementById('closeButton').addEventListener('click', closeModal);
-
-  // Añadir el listener para el botón de cancelar
-  document.getElementById('cancelButton').addEventListener('click', closeModal);
-</script>
+  Abrir Modal (Medium) con Acciones
+</button>
+<button
+  class="open-modal"
+  data-size="fullwidth"
+  data-title="Título del Modal Fullwidth"
+  data-show-actions="false"
+>
+  Abrir Modal (Fullwidth) sin Acciones
+</button>
+<button
+  class="open-modal"
+  data-size="maxwidth"
+  data-title="Título del Modal Maxwidth"
+>
+  Abrir Modal (Maxwidth) con Acciones
+</button>
+<button
+  class="open-modal"
+  data-size="fullscreen"
+  data-title="Título del Modal Fullscreen"
+>
+  Abrir Modal (Fullscreen) con Acciones
+</button>
+<button
+  class="open-modal"
+  data-size="minheight"
+  data-title="Título del Modal minheight"
+  data-show-actions="true"
+>
+  Abrir Modal (minheight) con Acciones
+</button>
 
 {% endblock %}

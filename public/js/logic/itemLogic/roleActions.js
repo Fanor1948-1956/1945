@@ -1,4 +1,4 @@
-// js/utils/roleActions.js
+
 
 import { createRole, updateRoleService } from '../../services/roleService.js';
 
@@ -18,13 +18,13 @@ export const saveRole = async (currentEditingRoleId, formData) => {
   try {
     let message;
     if (currentEditingRoleId) {
-      data._id = currentEditingRoleId; // Agrega ID al objeto para la edición
-      message = await updateRoleService(data); // Llama a la función de actualización
+      data._id = currentEditingRoleId; 
+      message = await updateRoleService(data); 
     } else {
-      message = await createRole(data); // Llama a la función de creación
+      message = await createRole(data); 
     }
 
-    return message; // Retorna el mensaje de éxito o error
+    return message; 
   } catch (error) {
     console.error('Error al guardar el rol:', error);
     showSnackbar('Error al guardar el rol.', false);

@@ -3,7 +3,7 @@
   color: white;
   padding: 20px;
   border-radius: 5px;
-  overflow-x: auto; /* Hacer la tabla desplazable horizontalmente en pantallas pequeñas */
+  overflow-x: auto; 
 }
 
 table {
@@ -26,15 +26,15 @@ tr:hover {
   background-color: #f1f1f1;
 }
 
-/* Estilos responsivos para tablas en móvil */
+
 @media (max-width: 768px) {
   th,
   td {
-    padding: 5px; /* Reducir el padding en móviles */
-    font-size: 14px; /* Ajustar el tamaño del texto */
+    padding: 5px; 
+    font-size: 14px; 
   }
 
   table {
-    width: 100%; /* Mantener la tabla a lo largo del contenedor */
+    width: 100%; 
   }
 }

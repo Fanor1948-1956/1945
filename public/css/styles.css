@@ -1,35 +1,30 @@
-/* public/css/styles.css */
-
-/* Importar los estilos parciales */
 @import './partials/navbar.css';
 @import './partials/sidebar.css';
 @import './partials/table.css';
 @import './partials/card.css';
-/*controls*/
+@import './partials/backdrop.css';
 @import './partials/buttons.css';
 
-/* @import './partials/pagination.css'; */
+
 @import './partials/modal.css';
 @import './partials/global.css';
 
-/* Estilos específicos para las rutas públicas */
 
-@import './pages//publicPages/home.css';
-@import './pages//publicPages/sign-in.css';
-/* @import './pages//publicPages/about.css'; */
-/*
-@import './pages//publicPages/contact.css';
-@import './pages//publicPages/sign-in.css'; */
-/* Estilos específicos para las rutas privadas */
 
-/* Aquí puedes agregar más estilos globales si es necesario */
+@import './pages/publicPages/home.css';
+@import './pages/publicPages/sign-in.css';
 
-/*paginas privadas*/
+
+
+
+
+
+
 @import './pages/privatePages/dashboard.css';
 
-/*libraries*/
+
 
 @import './libraries/select2.min.css';
 
-/*icons*/
+
 @import './icons/style.css';

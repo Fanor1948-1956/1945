@@ -1,4 +1,4 @@
-// utils/iconUtils.js
+
 
 const generateSvg = (color = '#f06', size = 100) => {
   return `<svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
@@ -17,7 +17,7 @@ const getIcon = (iconName) => {
     doctor: `<svg class="icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-3.31 0-10 1.67-10 5v3h20v-3c0-3.33-6.69-5-10-5z"/></svg>`,
     patient: `<svg class="icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-3.31 0-10 1.67-10 5v3h20v-3c0-3.33-6.69-5-10-5z"/></svg>`,
 
-    // Nuevos íconos para clínica
+   
     stethoscope: `<svg class="icon" viewBox="0 0 24 24"><path d="M12 0c-1.1 0-2 .9-2 2v4c-1.11 0-2 .89-2 2v5.5c0 2.76 2.24 5 5 5s5-2.24 5-5V8c0-1.11-.89-2-2-2V2c0-1.1-.9-2-2-2zm0 10c-1.1 0-2 .9-2 2v5.5c0 .83-.67 1.5-1.5 1.5S7 18.33 7 17.5V8c0-1.1.9-2 2-2h1c0 .55.45 1 1 1s1-.45 1-1h1c1.1 0 2 .9 2 2v7.5c0 1.1-.9 2-2 2s-2-.9-2-2V10c0-1.1.9-2 2-2v-4c-2.21 0-4 1.79-4 4v5.5c0 3.09 2.52 5.61 5.61 5.99C16.25 20.64 21 15.87 21 10h-3c0 3.77-3.03 6.84-6.76 7.32-.64.09-1.24-.48-1.24-1.12V12c0-1.1.9-2 2-2s2 .9 2 2h3c0 4.15-3.23 7.58-7.24 7.98-2.08.21-3.76-1.56-3.76-3.64V8c0-3.31 2.69-6 6-6s6 2.69 6 6h-1c0-2.21-1.79-4-4-4s-4 1.79-4 4v5.5c0 1.1.9 2 2 2s2-.9 2-2V10c0-1.1-.9-2-2-2h-1V2c1.1 0 2-.9 2-2s-.9-2-2-2z"/></svg>`,
     prescription: `<svg class="icon" viewBox="0 0 24 24"><path d="M21 3h-6.17C14.4 2.6 13.76 2 13 2s-1.4.6-1.83 1.5H3v17h18V4c0-1.1-.9-2-2-2zm-6 12H9v-2h6v2zm0-4H9V9h6v2zm3 8H6V4h7.17c.21.38.57.67 1.02.83L21 8v11z"/></svg>`,
     hospital: `<svg class="icon" viewBox="0 0 24 24"><path d="M12 0C9.79 0 8 1.79 8 4v16c0 2.21 1.79 4 4 4s4-1.79 4-4V4c0-2.21-1.79-4-4-4zm0 20c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm2-10h-4v-2h4v2zm0-4h-4V4h4v2z"/></svg>`,
@@ -37,7 +37,7 @@ const getIcon = (iconName) => {
     features: `<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 22h18v2H3v-2zm2-3h2v-10H5v10zm4 0h2v-6H9v6zm4 0h2v-4h-2v4zm4 0h2v-12h-2v12z"/></svg>`,
     news: `<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 18H4V4h16v16zM6 6h12v2H6V6zm0 4h12v2H6v-2zm0 4h12v2H6v-2z"/></svg>`,
 
-    //icono search
+ 
     login: `<svg class="icon" viewBox="0 0 24 24"><path d="M16 13h-4v-2h4V7l5 5-5 5v-4zm-9 2v-3H3v-2h4V7h2v6H7v2h4v2H7v-3zm7 7c-1.11 0-2-.9-2-2h2c0 1.11.89 2 2 2v-2h3v-2h-3v-3h-2v3h-3v2h3v2h2v-2zm0-2v-3h3v3h-3z"/></svg>`,
     register: `<svg class="icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-3.31 0-10 1.67-10 5v3h20v-3c0-3.33-6.69-5-10-5zm2 2h-4v2h4v-2z"/></svg>`,
     contact: `<svg class="icon" viewBox="0 0 24 24"><path d="M22 2H2v20h20V2zm-3.71 12.71l-6 6c-.39.39-1.02.39-1.41 0l-6-6a.996.996 0 1 1 1.41-1.41L12 16.17l5.29-5.29a.996.996 0 1 1 1.41 1.41z"/></svg>`,
@@ -45,7 +45,7 @@ const getIcon = (iconName) => {
     stethoscope: `<svg class="icon" viewBox="0 0 24 24"><path d="M12 0c-1.1 0-2 .9-2 2v4c-1.11 0-2 .89-2 2v5.5c0 2.76 2.24 5 5 5s5-2.24 5-5V8c0-1.11-.89-2-2-2V2c0-1.1-.9-2-2-2zm0 10c-1.1 0-2 .9-2 2v5.5c0 .83-.67 1.5-1.5 1.5S7 18.33 7 17.5V8c0-1.1.9-2 2-2h1c0 .55.45 1 1 1s1-.45 1-1h1c1.1 0 2 .9 2 2v7.5c0 1.1-.9 2-2 2s-2-.9-2-2V10c0-1.1.9-2 2-2v-4c-2.21 0-4 1.79-4 4v5.5c0 3.09 2.52 5.61 5.61 5.99C16.25 20.64 21 15.87 21 10h-3c0 3.77-3.03 6.84-6.76 7.32-.64.09-1.24-.48-1.24-1.12V12c0-1.1.9-2 2-2s2 .9 2 2h3c0 4.15-3.23 7.58-7.24 7.98-2.08.21-3.76-1.56-3.76-3.64V8c0-3.31 2.69-6 6-6s6 2.69 6 6h-1c0-2.21-1.79-4-4-4s-4 1.79-4 4v5.5c0 1.1.9 2 2 2s2-.9 2-2V10c0-1.1-.9-2-2-2h-1V2c1.1 0 2-.9 2-2s-.9-2-2-2z"/></svg>`,
   };
   const icon = icons[iconName] || '';
-  // console.log(`Obteniendo ícono: ${iconName}, Resultado: ${icon}`);
+
   return icon;
 };
 
@@ -56,10 +56,10 @@ const generateIdFromPath = (path) => {
     .toLowerCase();
 };
 
-// Función para validar y obtener un ícono
+
 const validateIcon = (iconName) => {
   const icon = getIcon(iconName);
-  // Si el ícono no existe, podrías devolver un ícono por defecto o null
-  return icon ? icon : getIcon('defaultIcon'); // Cambia 'defaultIcon' por el ícono que prefieras
+
+  return icon ? icon : getIcon('defaultIcon'); 
 };
 module.exports = { generateSvg, getIcon, generateIdFromPath, validateIcon };

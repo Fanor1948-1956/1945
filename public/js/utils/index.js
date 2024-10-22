@@ -1,4 +1,4 @@
-// js/utils/checkboxUtils.js
+
 
 export const toggleCheckboxes = (containerId, assignedIds) => {
   const checkboxes = document.querySelectorAll(
@@ -9,9 +9,9 @@ export const toggleCheckboxes = (containerId, assignedIds) => {
   });
 };
 
-// utils.js
 
-// HTML del modal
+
+
 const modalHTML = `
   <div class="modal" id="deleteItemModal" style="display: none;">
     <div class="modal-content">
@@ -24,15 +24,15 @@ const modalHTML = `
   </div>
 `;
 
-// Función para agregar el modal al DOM solo una vez
+
 export const addModalToDOM = () => {
-  // Verificar si el modal ya existe
+  
   if ($("#deleteItemModal").length === 0) {
-    $("body").append(modalHTML); // Usa jQuery para agregar el modal al DOM
+    $("body").append(modalHTML); 
   }
 };
 
-// Función para actualizar el mensaje del modal
+
 export const setModalMessage = (message) => {
-  $("#modalMessage").text(message); // Usa jQuery para establecer el texto del mensaje
+  $("#modalMessage").text(message); 
 };

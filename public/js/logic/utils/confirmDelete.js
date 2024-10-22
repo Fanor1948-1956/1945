@@ -1,5 +1,5 @@
 function createDeleteModal(itemId) {
-  // Eliminar cualquier modal existente antes de crear uno nuevo
+  
   $('#confirmDeleteModal').remove();
 
   const modalHtml = `
@@ -14,13 +14,13 @@ function createDeleteModal(itemId) {
         </div>
     `;
 
-  $('body').append(modalHtml); // Añadir el modal al body
+  $('body').append(modalHtml); 
 
-  // Mostrar el modal
+  
   $('#confirmDeleteModal').show();
 
-  // Manejar el clic en la opción de cerrar
+  
   $(document).on('click', '#closeConfirmDeleteModal', function () {
-    $('#confirmDeleteModal').remove(); // Eliminar modal al cerrarlo
+    $('#confirmDeleteModal').remove(); 
   });
 }

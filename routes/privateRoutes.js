@@ -3,13 +3,14 @@ const roleModel = require('../models/roleModel');
 const { User, Patient } = require('../models/userModel');
 const { logout } = require('../controllers/authController');
 const { getIcon } = require('../utils/iconUtils');
+const { verifyToken } = require('../middleware/authMiddleware');
 
 const privateRoutes = [
   {
     path: '/dashboard',
-    title: 'Dassdsdhboard privado',
+    title: 'Dashboard',
     view: 'pages/privatePages/dashboard.njk',
-    icon: getIcon('home'), // Utiliza la función para obtener el iconio
+    icon: getIcon('home'),
     isPublic: false,
     items: async (userRoles) => {
       let items = [];
@@ -51,8 +52,8 @@ const privateRoutes = [
         path: '/users/admin',
         title: 'Administradores',
         view: 'pages/privatePages/users/adminUsers.njk',
-        roles: ['Administrador'],
-        icon: getIcon('user'), // Obtiene el icono
+        roles: ['Administrador', 'Paciente'],
+        icon: getIcon('user'),
         isPublic: false,
         items: async () => [],
       },
@@ -61,8 +62,8 @@ const privateRoutes = [
         title: 'Jefes Médicos',
         view: 'pages/privatePages/users/chiefMedicalUsers.njk',
         isPublic: false,
-        roles: ['Administrador'],
-        icon: getIcon('user'), // Obtiene el icono
+        roles: ['Administrador', 'Paciente'],
+        icon: getIcon('user'),
         items: async () => [],
       },
       {
@@ -70,8 +71,8 @@ const privateRoutes = [
         title: 'Médicos',
         isPublic: true,
         view: 'pages/privatePages/users/docUsers.njk',
-        roles: ['Administrador'],
-        icon: getIcon('user'), // Obtiene el icono
+        roles: ['Administrador', 'Paciente'],
+        icon: getIcon('user'),
         items: async () => [],
       },
       {
@@ -80,7 +81,7 @@ const privateRoutes = [
         view: 'pages/privatePages/users/patientUsers.njk',
         roles: ['Doctor', 'Administrador'],
         isPublic: false,
-        icon: getIcon('user'), // Obtiene el icono
+        icon: getIcon('user'),
         items: async () => [],
       },
     ],
@@ -183,6 +184,7 @@ const registerPrivateRoutes = (app) => {
       if (route.isPublic && !req.session.authenticated) {
         return res.redirect('/home');
       }
+    
 
       const userRoles = getUserRoles(req);
       route.userRoles = userRoles;
@@ -197,7 +199,7 @@ const registerPrivateRoutes = (app) => {
     app.get(route.path, async (req, res) => {
       try {
         if (route.handler) {
-          // Verificar si hay un handler para la subruta
+          
           return route.handler(req, res);
         }
         const userRoles = getUserRoles(req);
@@ -206,20 +208,22 @@ const registerPrivateRoutes = (app) => {
         const allRoles = await roleModel.find();
         const allUsers = await User.find().populate('roles');
 
-        // Datos del perfil del usuario
+        
         const userProfile = await User.findById(req.session.userId);
 
         res.render(route.view, {
           title: route.title,
           items: items,
-          userRoles: userRoles, // Pasar los roles del usuario a la vista
+          userRoles: userRoles, 
           allRoles,
           allUsers,
           privateRoutes,
           isAuthenticated: req.session.authenticated,
           username: req.session.name,
+          currentPath: route.path, 
+          token: req.session.token, 
           profile: userProfile,
-          hasAccess, // Asegúrate de pasar hasAccess aquí
+          hasAccess, 
         });
       } catch (error) {
         console.error(`Error al cargar los datos para ${route.path}:`, error);
@@ -227,7 +231,7 @@ const registerPrivateRoutes = (app) => {
       }
     });
 
-    // Manejo de subrutas
+    
     if (route.subRoutes && route.subRoutes.length > 0) {
       route.subRoutes.forEach((subRoute) => {
         app.use(subRoute.path, (req, res, next) => {
@@ -244,18 +248,20 @@ const registerPrivateRoutes = (app) => {
         app.get(subRoute.path, async (req, res) => {
           try {
             if (subRoute.handler) {
-              // Verificar si hay un handler para la subruta
+              
               return subRoute.handler(req, res);
             }
             const subItems = await subRoute.items();
             res.render(subRoute.view, {
               title: subRoute.title,
               items: subItems,
-              userRoles: getUserRoles(req), // Pasar los roles del usuario a la vista
+              userRoles: getUserRoles(req),
               isAuthenticated: req.session.authenticated,
               username: req.session.name,
+              currentPath: route.path,
+              token: req.session.token,
               privateRoutes,
-              hasAccess, // Asegúrate de pasar hasAccess aquí
+              hasAccess,
             });
           } catch (error) {
             console.error(
@@ -271,3 +277,14 @@ const registerPrivateRoutes = (app) => {
 };
 
 module.exports = registerPrivateRoutes;
+
+
+
+
+
+
+
+
+
+
+

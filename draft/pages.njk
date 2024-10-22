@@ -76,7 +76,7 @@
   position: fixed;
   padding: 0.1px;
   width: 100%;
-  background-color: #001f3f; /* Azul marino */
+  background-color: #001f3f; 
   position: fixed;
   z-index: 1500;
 }
@@ -85,63 +85,63 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #001f3f; /* Azul marino */
+  background-color: #001f3f; 
   padding: 15px 5px;
 }
 .submenuContainer {
-  visibility: hidden; /* Ocultar contenedor por defecto */
-  opacity: 0; /* Hacerlo invisible */
-  transition: visibility 0s, opacity 0.5s ease; /* Transición suave */
+  visibility: hidden; 
+  opacity: 0; 
+  transition: visibility 0s, opacity 0.5s ease; 
 }
 
-/* Mostrar contenedor al pasar el mouse sobre el elemento padre */
+
 .navbar__links li:hover .submenuContainer {
-  visibility: visible; /* Mostrar contenedor al pasar el mouse */
-  opacity: 1; /* Hacerlo visible */
+  visibility: visible; 
+  opacity: 1; 
 }
-/* Submenú */
+
 .submenuNav {
   border-radius: 5px;
-  display: flex; /* Usar flexbox para que los elementos estén en fila */
+  display: flex; 
 
-  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+  white-space: nowrap; 
 
-  position: absolute; /* Asegura que se muestre sobre el contenido */
+  position: absolute; 
   padding: 0;
-  background-color: #010107; /* Fondo para el submenú */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra para dar profundidad */
-  z-index: 1000; /* Asegura que el submenú esté por encima de otros elementos */
+  background-color: #010107; 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); 
+  z-index: 1000; 
 }
 
-/* Estilo del submenú cuando hay más de dos elementos */
+
 .navbar__links li:hover .submenuNav {
-  flex-direction: column; /* Por defecto será columna */
+  flex-direction: column; 
 }
 
-/* Cuando hay más de 2 elementos, se muestran en fila */
+
 .navbar__links li:hover .submenuNav.horizontal {
-  flex-direction: row; /* Cambia a fila si hay más de dos elementos */
-  align-items: center; /* Alinear los elementos del submenú en el centro */
-  justify-content: center; /* Centra los elementos del submenú en el centro */
-  gap: 10px; /* Espacio entre los elementos del submenú */
+  flex-direction: row; 
+  align-items: center; 
+  justify-content: center; 
+  gap: 10px; 
   list-style-type: none;
 }
 
-/* Espaciado entre los elementos del submenú */
+
 .submenuNav li {
-  margin: 0 10px; /* Espacio entre los elementos del submenú */
-  padding: 0; /* Elimina el padding del enlace del submenú */
+  margin: 0 10px; 
+  padding: 0; 
 }
 
 .submenuNav li a {
-  padding: 10px 15px; /* Espaciado alrededor del texto del submenú */
-  color: white; /* Color del texto del submenú */
-  text-decoration: none; /* Sin subrayado en los enlaces del submenú */
+  padding: 10px 15px; 
+  color: white; 
+  text-decoration: none; 
 }
 
 .submenuNav li a:hover {
-  background-color: #555; /* Cambia el fondo al pasar el mouse sobre el enlace del submenú */
-  border-radius: 5px; /* Bordes redondeados para los enlaces del submenú */
+  background-color: #555; 
+  border-radius: 5px; 
 }
 .navbar__links {
   display: flex;
@@ -164,30 +164,30 @@
   background-color: #555;
   border-radius: 5px;
 }
-/* Estilos del menú colapsable */
+
 @media (max-width: 768px) {
   .navbar__links {
-    display: none; /* Esconde los links de navegación en móvil */
-    flex-direction: column; /* Coloca los elementos en columna */
-    width: 100%; /* Ancho completo para el menú colapsable */
-    background-color: #001f3f; /* Fondo del menú colapsable */
-    position: absolute; /* Asegura que se superponga al contenido */
-    top: 60px; /* Ajusta según el alto de la cabecera */
+    display: none; 
+    flex-direction: column; 
+    width: 100%; 
+    background-color: #001f3f; 
+    position: absolute; 
+    top: 60px; 
     left: 0;
-    z-index: 1500; /* Asegura que el menú esté por encima */
+    z-index: 1500; 
   }
 
   .navbar__links.active {
-    display: flex; /* Muestra el menú al activar */
+    display: flex; 
   }
 
   .submenuNav {
-    display: none; /* Esconde los submenús por defecto */
-    flex-direction: column; /* Asegura que los submenús se muestren en columna */
-    padding-left: 20px; /* Espacio a la izquierda para submenús */
+    display: none; 
+    flex-direction: column; 
+    padding-left: 20px; 
   }
 
   .submenuNav.active {
-    display: flex; /* Muestra el submenú al activar */
+    display: flex; 
   }
 }

@@ -56,16 +56,16 @@
 
 <script>
 $(document).ready(function() {
-    // Obtener usuarios cuando se carga la página
+    
     fetchUsers();
 
-    // Evento para abrir el modal de registro
+    
     $('#registerNewUserButton').on('click', function() {
-        fetchRoles(); // Cargar roles para el formulario de registro
-        $('#registerUserModal').fadeIn(); // Abrir el modal de registro
+        fetchRoles(); 
+        $('#registerUserModal').fadeIn(); 
     });
 
-    // Función para obtener y renderizar la tabla de usuarios
+    
     function fetchUsers() {
         $.ajax({
             url: '/users/getUsers',
@@ -77,12 +77,12 @@ $(document).ready(function() {
         });
     }
 
-    // Función para renderizar la tabla de usuarios
+    
     function renderUserTable(users) {
         let tableHtml = '';
 
         users.forEach(user => {
-            const roles = user.roles.map(role => role.name).join(', '); // Obtener nombres de roles
+            const roles = user.roles.map(role => role.name).join(', '); 
             tableHtml += `
                 <tr>
                     <td>${user.name}</td>
@@ -99,26 +99,26 @@ $(document).ready(function() {
         $('#userTableBody').html(tableHtml);
     }
 
-    // Evento para editar un usuario
+    
     $(document).on('click', '.edit-button', function() {
         const userId = $(this).data('user-id');
-        getUserInfo(userId); // Obtener datos del usuario
+        getUserInfo(userId); 
     });
 
-    // Evento para eliminar un usuario
+    
     $(document).on('click', '.delete-button', function() {
         const userId = $(this).data('user-id');
         deleteUser(userId);
     });
 
-    // Obtener información del usuario
+    
     function getUserInfo(userId) {
         $.ajax({
             url: `/users/showInfo/${userId}`,
             type: 'GET',
             success: function({ user, allRoles, isPasswordHashed }) {
                 renderEditForm(user, allRoles, userId, isPasswordHashed);
-                $('#editUserModal').fadeIn(); // Abrir el modal de edición
+                $('#editUserModal').fadeIn(); 
             },
             error: function() {
                 showSnackbar('Error al obtener el formulario de edición', false);
@@ -126,7 +126,7 @@ $(document).ready(function() {
         });
     }
 
-    // Renderizar el formulario de edición
+    
     function renderEditForm(user, allRoles, userId, isPasswordHashed) {
         const rolesHtml = allRoles.map(role => `
             <label>
@@ -151,7 +151,7 @@ $(document).ready(function() {
         `);
     }
 
-    // Envío del formulario de edición
+    
     $(document).on('submit', '#userUpdateForm', function(e) {
         e.preventDefault();
         const userId = $(this).data('user-id');
@@ -171,8 +171,8 @@ $(document).ready(function() {
             data: JSON.stringify(userData),
             success: function(response) {
                 showSnackbar(response.message, true);
-                fetchUsers(); // Refrescar la lista de usuarios
-                $('#editUserModal').fadeOut(); // Cerrar modal
+                fetchUsers(); 
+                $('#editUserModal').fadeOut(); 
             },
             error: function(xhr) {
                 const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al actualizar el usuario';
@@ -181,7 +181,7 @@ $(document).ready(function() {
         });
     });
 
-    // Función para eliminar un usuario
+    
     function deleteUser(userId) {
         if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
             $.ajax({
@@ -189,7 +189,7 @@ $(document).ready(function() {
                 type: 'DELETE',
                 success: function(response) {
                     showSnackbar(response.message, true);
-                    fetchUsers(); // Refrescar la lista de usuarios
+                    fetchUsers(); 
                 },
                 error: function(xhr) {
                     const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al eliminar el usuario';
@@ -199,10 +199,10 @@ $(document).ready(function() {
         }
     }
 
-    // Función para cargar roles en el formulario de registro
+    
     function fetchRoles() {
         $.ajax({
-            url: '/roles/getRoles', // Asegúrate de que esta ruta sea correcta
+            url: '/roles/getRoles', 
             type: 'GET',
             success: function(roles) {
                 renderRoles(roles);
@@ -213,7 +213,7 @@ $(document).ready(function() {
         });
     }
 
-    // Renderizar los roles en el formulario de registro
+    
     function renderRoles(roles) {
         const rolesHtml = roles.map(role => `
             <label>
@@ -222,10 +222,10 @@ $(document).ready(function() {
             </label>
         `).join('');
 
-        $('#rolesContainer').html(rolesHtml); // Añadir roles al contenedor
+        $('#rolesContainer').html(rolesHtml); 
     }
 
-    // Envío del formulario de registro
+    
     $(document).on('submit', '#registerUserForm', function(e) {
         e.preventDefault();
 
@@ -239,14 +239,14 @@ $(document).ready(function() {
         };
 
         $.ajax({
-            url: '/users/register', // Asegúrate de que esta ruta sea correcta
+            url: '/users/register', 
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(newUser),
             success: function(response) {
                 showSnackbar(response.message, true);
-                fetchUsers(); // Refrescar la lista de usuarios
-                $('#registerUserModal').fadeOut(); // Cerrar modal
+                fetchUsers(); 
+                $('#registerUserModal').fadeOut(); 
             },
             error: function(xhr) {
                 const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al registrar el usuario';
@@ -256,7 +256,7 @@ $(document).ready(function() {
     });
 });
 
-// Función para mostrar mensajes en el snackbar
+
 function showSnackbar(message, isSuccess) {
     const snackbar = $('#snackbar');
     snackbar.text(message);

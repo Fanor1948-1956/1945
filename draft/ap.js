@@ -31,69 +31,69 @@
 
 <script>
 $(document).ready(function() {
-    let userToDelete = null; // Variable para almacenar el usuario que se desea eliminar
+    let userToDelete = null; 
 
-    // Obtener usuarios cuando se carga la página
+    
     fetchUsers();
 
-    // Eventos para manejar acciones de usuario
+    
     handleUserActions();
 
-    // Función para manejar las acciones de usuario
+    
     function handleUserActions() {
-        // Evento para editar un usuario
+        
         $(document).on('click', '.edit-button', function(e) {
             e.preventDefault();
             const userId = $(this).data('user-id');
-            getUserInfo(userId); // Obtener datos del usuario
+            getUserInfo(userId); 
         });
 
-        // Evento para eliminar un usuario
+        
         $(document).on('click', '.delete-button', function() {
             const userId = $(this).data('user-id');
-            const userRow = $(this).closest('tr'); // Obtener la fila del usuario
-            userToDelete = { id: userId, row: userRow }; // Almacenar información del usuario a eliminar
-            Modal.open('#deleteUserModal'); // Abrir el modal de confirmación
+            const userRow = $(this).closest('tr'); 
+            userToDelete = { id: userId, row: userRow }; 
+            Modal.open('#deleteUserModal'); 
         });
 
-        // Manejar el evento de confirmación de eliminación
+        
         $('#confirmDeleteButton').click(function() {
             if (userToDelete) {
                 deleteUser(userToDelete.id, userToDelete.row);
-                Modal.close('#deleteUserModal'); // Cerrar el modal después de confirmar
-                userToDelete = null; // Reiniciar la variable
+                Modal.close('#deleteUserModal'); 
+                userToDelete = null; 
             }
         });
 
-        // Manejar el evento de cancelación de eliminación
+        
         $('#cancelDeleteButton').click(function() {
-            Modal.close('#deleteUserModal'); // Cerrar el modal sin eliminar
-            userToDelete = null; // Reiniciar la variable
+            Modal.close('#deleteUserModal'); 
+            userToDelete = null; 
         });
     }
 
-    // Función para obtener usuarios desde el servidor y renderizar la tabla
+    
     function fetchUsers() {
         apiFetch('/users/getUsers', 'GET')
-            .then(renderUserTable) // Llama a la función renderUserTable
+            .then(renderUserTable) 
             .catch(function(xhr) {
                 console.error('Error al obtener los usuarios:', xhr);
             });
     }
 
-    // Función para obtener información del usuario
+    
     function getUserInfo(userId) {
         apiFetch(`/users/showInfo/${userId}`, 'GET')
             .then(({ user, allRoles, isPasswordHashed }) => {
-                renderEditForm(user, allRoles, userId, isPasswordHashed); // Renderizar formulario de edición
-                Modal.open('#editUserModal'); // Abrir el modal de edición
+                renderEditForm(user, allRoles, userId, isPasswordHashed); 
+                Modal.open('#editUserModal'); 
             })
             .catch(() => {
                 showSnackbar('Error al obtener el formulario de edición', false);
             });
     }
 
-    // Renderizar el formulario de edición
+    
     function renderEditForm(user, allRoles, userId, isPasswordHashed) {
         const rolesHtml = allRoles.map(role => `
             <label>
@@ -126,7 +126,7 @@ $(document).ready(function() {
         `);
     }
 
-    // Envío del formulario de edición
+    
     $(document).on('submit', '#userUpdateForm', function(e) {
         e.preventDefault();
         const userId = $(this).data('user-id');
@@ -144,9 +144,9 @@ $(document).ready(function() {
         apiFetch(`/users/update/${userId}`, 'PUT', userData)
             .then(response => {
                 showSnackbar(response.message, true);
-                fetchUsers(); // Refrescar la lista de usuarios
+                fetchUsers(); 
                 setTimeout(() => {
-                    Modal.close('#editUserModal'); // Cerrar después de 2 segundos
+                    Modal.close('#editUserModal'); 
                 }, 2000);
             })
             .catch(xhr => {
@@ -155,20 +155,20 @@ $(document).ready(function() {
             });
     });
 
-    // Función para eliminar un usuario
+    
     function deleteUser(userId, userRow) {
         apiFetch(`/users/${userId}`, 'DELETE')
             .then(response => {
                 if (response.message) {
-                    showSnackbar(response.message, true); // Mostrar mensaje de éxito
+                    showSnackbar(response.message, true); 
                 }
-                userRow.remove(); // Eliminar la fila de la tabla directamente
+                userRow.remove(); 
             })
             .catch(xhr => {
                 const errorMessage = xhr.responseJSON && xhr.responseJSON.message 
                     ? xhr.responseJSON.message 
-                    : 'Error al eliminar el usuario'; // Mensaje predeterminado si no hay respuesta
-                showSnackbar(errorMessage, false); // Mostrar mensaje de error
+                    : 'Error al eliminar el usuario'; 
+                showSnackbar(errorMessage, false); 
             });
     }
 });
@@ -177,14 +177,14 @@ $(document).ready(function() {
 
 
 
-// controllers/userController.js
+
 
 const bcrypt = require('bcrypt');
 const roleModel = require('../models/roleModel');
 const { User } = require('../models/userModel');
 const { resolveRole } = require('../services/roleService');
 
-// Crear un nuevo usuario
+
 exports.createUser = async (req, res) => {
   const {
     name,
@@ -198,7 +198,7 @@ exports.createUser = async (req, res) => {
   const rolesArray = roles || [];
 
   try {
-    // Verificar roles válidos
+    
     const rolesFound = await roleModel.find({ _id: { $in: rolesArray } });
     if (rolesFound.length === 0) {
       return res
@@ -214,7 +214,7 @@ exports.createUser = async (req, res) => {
         .json({ message: 'El correo electrónico no es válido.' });
     }
 
-    // Hashear la contraseña
+    
     const hashedPassword = bcrypt.hashSync(password, 10);
     const newUser = new UserType({
       name,
@@ -234,7 +234,7 @@ exports.createUser = async (req, res) => {
   }
 };
 
-// Obtener todos los usuarios
+
 exports.getUsers = async (req, res) => {
   try {
     const users = await User.find().populate('roles');
@@ -250,9 +250,9 @@ exports.getUsers = async (req, res) => {
   }
 };
 
-// Actualizar un usuario
+
 exports.updateUser = async (req, res) => {
-  const { userId } = req.params; // Asegúrate de que estás pasando el userId
+  const { userId } = req.params; 
   const updateData = req.body;
 
   try {
@@ -271,7 +271,7 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-// Eliminar un usuario
+
 exports.deleteUser = async (req, res) => {
   const { userId } = req.params;
 

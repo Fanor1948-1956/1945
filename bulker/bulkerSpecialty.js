@@ -1,4 +1,4 @@
-// bulkbulkerSpecialty.js
+
 
 const mongoose = require("mongoose");
 const Specialty = require("../models/Specialty");
@@ -106,7 +106,7 @@ const specialties = [
   },
 ];
 
-// Función para registrar especialidades
+
 const bulkerSpecialty = async () => {
   try {
       await connectDB();
@@ -115,9 +115,9 @@ const bulkerSpecialty = async () => {
   } catch (error) {
     console.error("Error al registrar especialidades", error);
   } finally {
-    mongoose.connection.close(); // Cerrar la conexión a la base de datos
+    mongoose.connection.close(); 
   }
 };
 
-// Llamar a la función
+
 bulkerSpecialty();

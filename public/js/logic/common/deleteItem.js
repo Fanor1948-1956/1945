@@ -1,43 +1,43 @@
-// deleteItem.js
 
-export let itemToDelete; // Variable global para el ítem a eliminar
-export let itemType; // Tipo de ítem a eliminar para el título
 
-// Mostrar el modal de confirmación de eliminación
+export let itemToDelete; 
+export let itemType; 
+
+
 export function showDeleteConfirmationModal(entryPoint, itemId, type) {
-  itemToDelete = itemId; // Guardar el ID del ítem a eliminar
-  itemType = type; // Guardar el tipo de ítem para el título
+  itemToDelete = itemId; 
+  itemType = type; 
   $('#deleteConfirmationMessage').text(
     `¿Estás seguro de que deseas eliminar el ${itemType}?`
   );
-  $('#confirmDeleteModal').show(); // Mostrar el modal
+  $('#confirmDeleteModal').show(); 
 }
 
-// Manejar clic en el botón de confirmación de eliminación
+
 export function handleDeleteConfirmation(fetchFunction) {
-  deleteItem('roles', itemToDelete, fetchFunction); // Llamar a la función genérica
-  $('#confirmDeleteModal').hide(); // Cerrar el modal
+  deleteItem('roles', itemToDelete, fetchFunction); 
+  $('#confirmDeleteModal').hide(); 
 }
 
-// Función para eliminar un ítem genérico
+
 export function deleteItem(entityType, itemId, fetchFunction) {
-  console.log(`Intentando eliminar el ítem: ${itemId}`); // Mensaje de depuración
-  apiFetch(`/${entityType}/delete/${itemId}`, 'DELETE') // Endpoint usando 'roles'
+  console.log(`Intentando eliminar el ítem: ${itemId}`); 
+  apiFetch(`/${entityType}/delete/${itemId}`, 'DELETE') 
     .then((response) => {
-      console.log('Respuesta de eliminación:', response); // Ver respuesta de eliminación
+      console.log('Respuesta de eliminación:', response); 
       if (response.success) {
-        showSnackbar(response.message, true); // Mostrar mensaje de éxito
-        fetchFunction(); // Refrescar la lista usando la función proporcionada
+        showSnackbar(response.message, true); 
+        fetchFunction(); 
       } else {
-        showSnackbar(response.message || 'Error al eliminar el ítem', false); // Mensaje de error específico
+        showSnackbar(response.message || 'Error al eliminar el ítem', false); 
       }
     })
     .catch((xhr) => {
-      console.error('Error en la petición de eliminación:', xhr); // Mensaje de error
+      console.error('Error en la petición de eliminación:', xhr); 
       const errorMessage =
         xhr.responseJSON && xhr.responseJSON.message
           ? xhr.responseJSON.message
-          : 'Error al eliminar el ítem'; // Mensaje predeterminado si no hay respuesta
-      showSnackbar(errorMessage, false); // Mostrar mensaje de error
+          : 'Error al eliminar el ítem'; 
+      showSnackbar(errorMessage, false); 
     });
 }

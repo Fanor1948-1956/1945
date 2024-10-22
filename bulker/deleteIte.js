@@ -1,10 +1,10 @@
-// deleteAllPermissions.js
+
 const mongoose = require("mongoose");
 const connectDB = require("./database");
 const roleModel = require("../models/roleModel");
 
 
-// Función para eliminar todos los permisos
+
 const eliminarTodosLosPermisos = async () => {
   try {
            await connectDB();
@@ -17,5 +17,5 @@ const eliminarTodosLosPermisos = async () => {
   }
 };
 
-// Ejecutar
+
 eliminarTodosLosPermisos();

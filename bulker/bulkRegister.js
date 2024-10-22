@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const { faker } = require('@faker-js/faker'); // Actualiza esta línea
+const { faker } = require('@faker-js/faker'); 
 
 const {
   User,
@@ -28,18 +28,18 @@ const bulkRegisterUsers = async () => {
       const name = faker.person.firstName();
       const surnames = faker.person.lastName();
       const email = faker.internet.email();
-      const password = 'Password123'; // Contraseña fija
+      const password = 'Password123'; 
       const gender = faker.helpers.arrayElement([
         'masculino',
         'femenino',
         'otro',
       ]);
-      const userRole = faker.helpers.arrayElement(rolesFound); // Aquí no debes usar faker.helpers.arrayElement
+      const userRole = faker.helpers.arrayElement(rolesFound); 
 
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         console.log(`El correo electrónico ${email} no es válido.`);
-        continue; // Saltar este usuario
+        continue; 
       }
 
       const hashedPassword = bcrypt.hashSync(password, 10);
@@ -61,7 +61,7 @@ const bulkRegisterUsers = async () => {
           break;
         default:
           console.log(`Rol no reconocido: ${userRole.name}`);
-          continue; // Saltar este usuario
+          continue; 
       }
 
       const newUser = new UserType({
@@ -70,13 +70,13 @@ const bulkRegisterUsers = async () => {
         email,
         password: hashedPassword,
         gender,
-        roles: [userRole._id], // Agregar solo el rol encontrado
+        roles: [userRole._id], 
       });
 
       usersToCreate.push(newUser);
     }
 
-    // Guardar todos los usuarios en la base de datos
+    
     await User.insertMany(usersToCreate);
     console.log('Usuarios creados exitosamente');
   } catch (error) {
@@ -86,5 +86,5 @@ const bulkRegisterUsers = async () => {
   }
 };
 
-// Ejecutar la función
+
 bulkRegisterUsers();

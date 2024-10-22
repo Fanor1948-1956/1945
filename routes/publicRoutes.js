@@ -7,6 +7,7 @@ const publicRoutes = [
     icon: validateIcon('hospital'),
     title: 'Inicio',
     view: 'pages/publicPages/home.njk',
+    isPublic: true,
     items: async () => [],
     subRoutes: [
       { id: 'practices', title: 'Prácticas', icon: validateIcon('practices') },
@@ -26,6 +27,7 @@ const publicRoutes = [
     id: generateIdFromPath('/about'),
     title: 'Sobre Nosotros',
     view: 'pages/publicPages/about.njk',
+    isPublic: true,
     subRoutes: [
       { id: 'mission', title: 'Nuestra Misión', icon: validateIcon('mission') },
       { id: 'vision', title: 'Nuestra Visión', icon: validateIcon('vision') },
@@ -38,6 +40,7 @@ const publicRoutes = [
     id: generateIdFromPath('/contact'),
     title: 'Contacto',
     view: 'pages/publicPages/contact.njk',
+    isPublic: true,
     items: async () => [],
   },
   {
@@ -46,6 +49,7 @@ const publicRoutes = [
     id: generateIdFromPath('/register'),
     title: 'Registro',
     view: 'pages/publicPages/register.njk',
+    isPublic: true,
     items: async () => await roleModel.find(),
   },
   {
@@ -55,20 +59,18 @@ const publicRoutes = [
     title: 'Iniciar Sessión',
     view: 'pages/publicPages/login.njk',
     items: async () => [],
+    isPublic: true,
   },
 ];
 
 const registerPublicRoutes = (app) => {
   publicRoutes.forEach((route) => {
-    // Ruta principal
     if (route.path) {
       app.get(route.path, async (req, res) => {
-        if (
-          req.session.authenticated &&
-          (route.path === '/home' || route.path === '/register')
-        ) {
-          return res.redirect('/dashboard');
-        }
+        // Verificar autenticación aquí también
+        if (req.session.authenticated) {
+          return res.redirect('/dashboard'); // Redirigir a dashboard si ya está autenticado
+        } 
 
         try {
           const items = await route.items();
@@ -76,8 +78,7 @@ const registerPublicRoutes = (app) => {
             title: route.title,
             items: items,
             publicRoutes,
-            isAuthenticated: req.session.authenticated,
-            username: req.session.name,
+              currentPath: route.path, 
           });
         } catch (error) {
           console.error(`Error al cargar los datos para ${route.path}:`, error);
@@ -86,20 +87,23 @@ const registerPublicRoutes = (app) => {
       });
     }
 
-    // Subrutas
+    // Manejo de subrutas
     if (route.subRoutes) {
       route.subRoutes.forEach((subRoute) => {
         const subRoutePath = `${route.path}/${subRoute.id}`;
         app.get(subRoutePath, async (req, res) => {
+          // Verificar autenticación aquí también
+          if (req.session.authenticated) {
+            return res.redirect('/dashboard'); // Redirigir a dashboard si ya está autenticado
+          }
+
           try {
             const items = (await subRoute.items) ? await subRoute.items() : [];
             res.render(route.view, {
               title: subRoute.title,
               items: items,
               publicRoutes,
-              isAuthenticated: req.session.authenticated,
-              username: req.session.name,
-              icon: subRoute.icon, // Pasa el ícono de la subruta
+              currentPath: route.path,
             });
           } catch (error) {
             console.error(
@@ -115,3 +119,4 @@ const registerPublicRoutes = (app) => {
 };
 
 module.exports = registerPublicRoutes;
+

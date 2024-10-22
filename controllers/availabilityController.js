@@ -1,4 +1,4 @@
-// controllers/availabilityController.js
+
 const Availability = require('../models/Availability');
 
 exports.createAvailability = async (req, res) => {

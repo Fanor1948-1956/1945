@@ -1,13 +1,13 @@
-// roleRegistration.js
+
 
 export function RegisterRole(fetchRoles) {
-  let selectedPermissions = []; // Array para mantener los permisos seleccionados
-  let permissionsData = []; // Array para almacenar los permisos y sus nombres
+  let selectedPermissions = []; 
+  let permissionsData = []; 
 
-  // Manejar evento para abrir el modal de registrar rol
+  
   $('#addRoleButton').click(function () {
-    renderCreateRoleForm(); // Renderizar formulario de creación
-    Modal.open('#createRoleModal'); // Abrir el modal de creación
+    renderCreateRoleForm(); 
+    Modal.open('#createRoleModal'); 
   });
 
   function renderCreateRoleForm() {
@@ -33,7 +33,7 @@ export function RegisterRole(fetchRoles) {
         `);
   }
 
-  // Manejar el envío del formulario de creación
+  
   $(document).on('submit', '#roleCreateForm', function (e) {
     e.preventDefault();
 
@@ -41,14 +41,14 @@ export function RegisterRole(fetchRoles) {
       name: $('#name').val(),
       alias: $('#alias').val(),
       description: $('#description').val(),
-      permissions: selectedPermissions, // Usar permisos seleccionados
+      permissions: selectedPermissions, 
     };
 
     apiFetch('/roles/create-role', 'POST', newRoleData)
       .then((response) => {
         showSnackbar(response.message, true);
-        fetchRoles(); // Refrescar la lista de roles
-        Modal.close('#createRoleModal'); // Cerrar el modal de creación
+        fetchRoles(); 
+        Modal.close('#createRoleModal'); 
       })
       .catch((xhr) => {
         const errorMessage =
@@ -59,22 +59,22 @@ export function RegisterRole(fetchRoles) {
       });
   });
 
-  // Manejar clic en el botón "Permisos"
+  
   $(document).on('click', '#selectPermissionsButton', function () {
-    loadPermissions(); // Cargar y mostrar los permisos
-    Modal.open('#permissionsModal'); // Abrir el modal de permisos
+    loadPermissions(); 
+    Modal.open('#permissionsModal'); 
   });
 
-  // Cargar permisos en el modal
+  
   function loadPermissions() {
     apiFetch('/permissions/api', 'GET')
       .then((permissions) => {
-        permissionsData = permissions; // Guardar los permisos obtenidos
+        permissionsData = permissions; 
         const permissionsHtml = permissions
           .map((permission) => {
             const isChecked = selectedPermissions.includes(permission._id)
               ? 'checked'
-              : ''; // Verificar si el permiso está seleccionado
+              : ''; 
             return `
                             <label>
                                 <input type="checkbox" name="selectedPermissions" value="${permission._id}" ${isChecked}>
@@ -83,8 +83,8 @@ export function RegisterRole(fetchRoles) {
                         `;
           })
           .join('');
-        $('#permissionsContainer').html(permissionsHtml); // Cargar permisos en el contenedor
-        updatePermissionCount(); // Actualizar el contador de permisos seleccionados
+        $('#permissionsContainer').html(permissionsHtml); 
+        updatePermissionCount(); 
       })
       .catch((xhr) => {
         const errorMessage =
@@ -95,40 +95,40 @@ export function RegisterRole(fetchRoles) {
       });
   }
 
-  // Manejar cambios en los checkboxes de permisos
+  
   $(document).on('change', 'input[name="selectedPermissions"]', function () {
     const permissionId = this.value;
 
     if (this.checked) {
-      selectedPermissions.push(permissionId); // Agregar permiso si está seleccionado
+      selectedPermissions.push(permissionId); 
     } else {
       selectedPermissions = selectedPermissions.filter(
         (id) => id !== permissionId
-      ); // Remover permiso si está deseleccionado
+      ); 
     }
 
-    updatePermissionCount(); // Actualizar el contador de permisos seleccionados
+    updatePermissionCount(); 
   });
 
-  // Función para actualizar el contador de permisos seleccionados
+  
   function updatePermissionCount() {
     $('#selectPermissionsButton').text(
       `Permisos (${selectedPermissions.length})`
-    ); // Actualizar el texto del botón
-    updateSelectedPermissionsDisplay(); // Actualizar la visualización de permisos seleccionados
+    ); 
+    updateSelectedPermissionsDisplay(); 
   }
 
-  // Función para mostrar los permisos seleccionados en el formulario
+  
   function updateSelectedPermissionsDisplay() {
     const selectedNames = permissionsData
       .filter((permission) => selectedPermissions.includes(permission._id))
-      .map((permission) => permission.name); // Obtener nombres de los permisos seleccionados
+      .map((permission) => permission.name); 
 
-    $('#selectedPermissionsContainer').html(selectedNames.join(', ')); // Mostrar nombres en el contenedor
+    $('#selectedPermissionsContainer').html(selectedNames.join(', ')); 
   }
 
-  // Guardar permisos seleccionados
+  
   $(document).on('click', '#savePermissionsButton', function () {
-    Modal.close('#permissionsModal'); // Cerrar el modal de permisos
+    Modal.close('#permissionsModal'); 
   });
 }

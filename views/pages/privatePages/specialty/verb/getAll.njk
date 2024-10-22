@@ -64,7 +64,7 @@
   import { fetchSpecialty } from './js/services/loadFetchs.js';
   import { renderTable } from './js/components/global/renderTable.js';
   import { specialtyEndpoints } from './js/config/apiEndpoints.js';
-  import { confirmDelete } from './js/utils/confirmDelete.js'; // Importa la función de utilidad
+  import { confirmDelete } from './js/utils/confirmDelete.js'; 
   console.log(specialtyEndpoints.list);
   const specialtyHeaders = {
     name: 'Nombre',
@@ -123,8 +123,8 @@
         'especialidad',
         loadSpecialties,
         deleteItem
-      ); // Llama a confirmDelete
-      // No se necesita manejar más aquí, todo se hace dentro de confirmDelete
+      ); 
+      
     }
   };
 
@@ -163,6 +163,6 @@
     }
   };
 
-  // Exponer onAction globalmente
+  
   window.onAction = onAction;
 </script>

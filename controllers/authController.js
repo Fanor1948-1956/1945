@@ -3,28 +3,23 @@ const { User, Patient } = require('../models/userModel'); // Importa los modelos
 const Role = require('../models/roleModel'); // Modelo de rol
 const { generateToken } = require('../services/tokenService');
 
-
 exports.register = async (req, res) => {
   const { name, surnames, email, password, gender, ...additionalProperties } =
     req.body;
 
   try {
-
     const patientRole = await Role.findOne({ name: 'Paciente' });
     if (!patientRole) {
       return res.status(400).send('No se encontró el rol de Paciente.');
     }
-
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).send('El correo electrónico no es válido.');
     }
 
-
     const hashedPassword = bcrypt.hashSync(password, 10);
 
- 
     const newUser = new Patient({
       name,
       surnames,
@@ -48,22 +43,27 @@ exports.register = async (req, res) => {
   }
 };
 
+
+
+
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const user = await User.findOne({ email }).populate('roles');
     if (!user) {
-      return res.redirect(
-        '/login?error=Correo electrónico o contraseña incorrectos.'
-      );
+      return res.status(401).json({
+        success: false,
+        message: 'Correo electrónico o contraseña incorrectos.'
+      });
     }
 
     const isMatch = bcrypt.compareSync(password, user.password);
     if (!isMatch) {
-      return res.redirect(
-        '/login?error=Correo electrónico o contraseña incorrectos.'
-      );
+      return res.status(401).json({
+        success: false,
+        message: 'Correo electrónico o contraseña incorrectos.'
+      });
     }
 
     const token = generateToken(user);
@@ -72,6 +72,8 @@ exports.login = async (req, res) => {
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax', 
+      maxAge: 1000 * 60 * 60, // 1 hora de duración del token en la cookie
     });
 
     // Almacenar información del usuario en la sesión
@@ -79,25 +81,54 @@ exports.login = async (req, res) => {
     req.session.userId = user._id;
     req.session.name = user.name;
     req.session.surnames = user.surnames;
-    req.session.token = user.token;
+    req.session.token = token;
     req.session.roles = user.roles.map((role) => role.name);
-    // Redirigir al dashboard
-    return res.redirect('/');
+
+    // Responder con éxito
+    return res.json({
+      success: true,
+      message: 'Inicio de sesión exitoso.',
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        surnames: user.surnames,
+        roles: req.session.roles,
+      },
+    });
   } catch (error) {
     console.error('Error al iniciar sesión:', error);
-    return res.redirect('/login?error=Error en el servidor.');
+    return res.status(500).json({
+      success: false,
+      message: 'Error en el servidor.'
+    });
   }
 };
 
-// Controlador de cierre de sesión
-// Controlador de cierre de sesión
+
+
 exports.logout = (req, res) => {
+  // Destruir la sesión actual
   req.session.destroy((err) => {
-    if (err) {
-      return res.redirect('/'); // Redirigir a dashboard si hay un error
-    }
-    res.clearCookie('token'); // Limpiar la cookie que almacena el token
-    res.redirect('/login'); // Redirigir a la página de inicio de sesión
+   
+
+    // Limpiar la cookie que almacena el token JWT
+    res.clearCookie('token', {
+      httpOnly: true, // Mantener las mismas opciones que usaste al crearla
+      sameSite: 'strict', // Asegurarte de que coincidan las configuraciones
+      secure: process.env.NODE_ENV === 'production', // Solo para HTTPS en producción
+    });
+
+    // Eliminar el token y el usuario del localStorage
+    res.send(`
+      <script>
+        localStorage.removeItem('token'); // Eliminar el token
+        localStorage.removeItem('user'); // Eliminar el usuario (si lo tienes almacenado)
+        history.replaceState(null, null, '/login'); // Redirigir a la página de inicio
+        window.location.href = '/login'; // Redirigir a la página de inicio
+     
+      </script>
+    `);
   });
 };
 

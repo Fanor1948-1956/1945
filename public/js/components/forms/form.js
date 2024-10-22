@@ -1,4 +1,4 @@
-// form.js
+
 import { apiFetch } from './api.js';
 
 export async function handleFormSubmit(url, id, data, onSuccess) {

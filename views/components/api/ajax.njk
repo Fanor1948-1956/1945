@@ -29,41 +29,41 @@
         </div>
     </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https:
 <script>
-// main.js
+
 
 $(document).ready(function() {
-    let userIdToDelete; // Variable para almacenar el ID del usuario a eliminar
+    let userIdToDelete; 
 
-    // Obtener usuarios cuando se carga la página
+    
     fetchUsers();
 
-    // Evento para abrir el modal de edición
+    
     $(document).on('click', '.edit-button', function(e) {
         e.preventDefault();
         const userId = $(this).data('user-id');
-        getUserInfo(userId); // Obtener datos del usuario
+        getUserInfo(userId); 
     });
 
-    // Evento para abrir el modal de confirmación de eliminación
+    
     $(document).on('click', '.delete-button', function() {
-        userIdToDelete = $(this).data('user-id'); // Guardar el ID del usuario a eliminar
-        Modal.open('#deleteUserModal'); // Mostrar el modal de confirmación
+        userIdToDelete = $(this).data('user-id'); 
+        Modal.open('#deleteUserModal'); 
     });
 
-    // Confirmar eliminación
+    
     $('#confirmDeleteButton').on('click', function() {
-        deleteUser(userIdToDelete); // Llamar a la función de eliminación
-        Modal.close('#deleteUserModal'); // Cerrar el modal de confirmación
+        deleteUser(userIdToDelete); 
+        Modal.close('#deleteUserModal'); 
     });
 
-    // Cancelar eliminación
+    
     $('#cancelDeleteButton').on('click', function() {
-        Modal.close('#deleteUserModal'); // Cerrar el modal de confirmación
+        Modal.close('#deleteUserModal'); 
     });
 
-    // Obtener y renderizar la tabla de usuarios
+    
     function fetchUsers() {
         ajaxRequest('/users/getUsers', 'GET')
             .then(renderUserTable)
@@ -72,7 +72,7 @@ $(document).ready(function() {
             });
     }
 
-    // Función para renderizar la tabla de usuarios
+    
     function renderUserTable(users) {
         let tableHtml = `
             <table>
@@ -115,19 +115,19 @@ $(document).ready(function() {
         $('#userTableContainer').html(tableHtml);
     }
 
-    // Función para obtener información del usuario
+    
     function getUserInfo(userId) {
         ajaxRequest(`/users/showInfo/${userId}`, 'GET')
             .then(({ user, allRoles, isPasswordHashed }) => {
                 renderEditForm(user, allRoles, userId, isPasswordHashed);
-                Modal.open('#editUserModal'); // Abrir el modal de edición
+                Modal.open('#editUserModal'); 
             })
             .catch(() => {
                 showSnackbar('Error al obtener el formulario de edición', false);
             });
     }
 
-    // Renderizar el formulario de edición
+    
     function renderEditForm(user, allRoles, userId, isPasswordHashed) {
         const rolesHtml = allRoles.map(role => `
             <label>
@@ -160,7 +160,7 @@ $(document).ready(function() {
         `);
     }
 
-    // Envío del formulario de edición
+    
     $(document).on('submit', '#userUpdateForm', function(e) {
         e.preventDefault();
         const userId = $(this).data('user-id');
@@ -178,9 +178,9 @@ $(document).ready(function() {
         ajaxRequest(`/users/update/${userId}`, 'PUT', userData)
             .then(response => {
                 showSnackbar(response.message, true);
-                fetchUsers(); // Refrescar la lista de usuarios
+                fetchUsers(); 
                 setTimeout(() => {
-                    Modal.close('#editUserModal'); // Cerrar después de 2 segundos
+                    Modal.close('#editUserModal'); 
                 }, 2000);
             })
             .catch(xhr => {
@@ -189,18 +189,18 @@ $(document).ready(function() {
             });
     });
 
-    // Función para eliminar un usuario
+    
     function deleteUser(userId) {
         $.ajax({
             url: `/users/${userId}`,
             type: 'DELETE',
             success: function(response) {
-                showSnackbar(response.message, true); // Mostrar mensaje de éxito
-                fetchUsers(); // Refrescar la tabla de usuarios
+                showSnackbar(response.message, true); 
+                fetchUsers(); 
             },
             error: function(xhr) {
                 const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al eliminar el usuario';
-                showSnackbar(errorMessage, false); // Mostrar mensaje de error
+                showSnackbar(errorMessage, false); 
             }
         });
     }

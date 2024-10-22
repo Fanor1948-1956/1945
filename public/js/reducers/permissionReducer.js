@@ -1,10 +1,10 @@
-// permissionReducer.js
+
 import { setState, getState } from './state.js';
 
-// Cargar permisos en el estado array
+
 export const loadPermissions = (permissionsResponse) => {
   if (Array.isArray(permissionsResponse.permissions)) {
-    setState({ permissions: permissionsResponse.permissions }); // Asigna correctamente el array de permisos
+    setState({ permissions: permissionsResponse.permissions }); 
     console.log('Estado después de cargar permisos:', getState());
   } else{
     console.error(
@@ -14,13 +14,13 @@ export const loadPermissions = (permissionsResponse) => {
   }
 }
 
-// Agregar un nuevo permiso
+
 export const addPermission = (newPermission) => {
   const currentState = getState();
   setState({ permissions: [...currentState.permissions, newPermission] });
 };
 
-// Actualizar un permiso existente
+
 export const updatePermission = (updatedPermission) => {
   const currentState = getState();
   const updatedPermissions = currentState.permissions.map((permission) =>
@@ -28,7 +28,7 @@ export const updatePermission = (updatedPermission) => {
   );
   setState({ permissions: updatedPermissions });
 };
-// Eliminar un permiso
+
 export const deletePermission = (permissionId) => {
   const currentState = getState();
   const updatedPermissions = currentState.permissions.filter(

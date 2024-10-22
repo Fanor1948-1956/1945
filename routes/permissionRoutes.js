@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const permissionController = require('../controllers/permissionController');
 
-// Define routes
+
 router.post('/create-permission', permissionController.createPermission);
 router.get('/api', permissionController.getAllPermissions);
 router.get('/:id', permissionController.getPermissionById);

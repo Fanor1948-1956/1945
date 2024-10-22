@@ -1,4 +1,4 @@
-// models/specialtyModel.js
+
 
 const mongoose = require('mongoose');
 
@@ -11,7 +11,7 @@ const SpecialtySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  // Este campo contendrá las referencias a los horarios de atención, comenzando como un arreglo vacío
+  
   appointmentHours: [
     {
       type: mongoose.Schema.Types.ObjectId,

@@ -1,17 +1,19 @@
-// modal.js
 
-// Función para abrir el modal con un tamaño específico
-export function openModal(size, title, showActions = false) {
-  const modal = document.getElementById('customModal');
-  const modalContent = document.getElementById('modalContent');
-  const modalTitle = modalContent.querySelector('.modal-head h3');
-  const modalActions = modalContent.querySelector('.modal-actions');
-  const closeButton = modalContent.querySelector('#closeButton'); // Asegúrate de usar el ID correcto
 
-  // Remover clases anteriores de tamaño
-  modalContent.className = 'modal-content'; // Reinicia las clases de contenido
+export function openModal(modalId, size, title) {
+  const modal = document.getElementById(modalId);
 
-  // Asignar la clase adecuada según el tamaño especificado
+  // Verificar si el modal existe antes de continuar
+  if (!modal) {
+    console.error(`Modal con ID '${modalId}' no encontrado.`);
+    return; // Detener la ejecución si no se encuentra el modal
+  }
+
+  const modalContent = modal.querySelector('.modal-content');
+
+  // Añadir clases de tamaño del modal
+  modalContent.className = 'modal-content'; // Restablecer clases anteriores
+
   if (size === 'medium') {
     modalContent.classList.add('medium');
   } else if (size === 'fullwidth') {
@@ -19,40 +21,51 @@ export function openModal(size, title, showActions = false) {
   } else if (size === 'maxwidth') {
     modalContent.classList.add('maxwidth');
   } else if (size === 'fullscreen') {
-    modalContent.classList.add('fullscreen'); // Añadir clase para pantalla completa
+    modalContent.classList.add('fullscreen');
   } else if (size === 'minheight') {
-    modalContent.classList.add('minheight'); // Añadir clase para altura mínima
+    modalContent.classList.add('minheight');
   }
 
-  modalTitle.textContent = title;
+  // Establecer el título del modal
+  modal.querySelector('.modal-title').textContent = title;
 
-  // Mostrar u ocultar la sección de acciones
-  modalActions.style.display = showActions ? 'block' : 'none'; // Mostrar o ocultar
-
-  // Ocultar el ícono de cerrar si hay acciones
-  closeButton.style.display = showActions ? 'none' : 'block';
-
-  // Mostrar el modal con una transición suave
+  // Mostrar el modal
   modal.style.display = 'flex';
-  modal.style.opacity = 0; // Iniciar con opacidad 0
-  modalContent.style.transform = 'translateY(-50px)'; // Comienza 50px arriba
+  modal.style.opacity = 0;
+  modalContent.style.transform = 'translateY(-50px)';
 
-  // Iniciar la transición
+  // Transición de apertura
   setTimeout(() => {
-    modal.style.opacity = 1; // Gradualmente hacer visible
-    modalContent.style.transform = 'translateY(0)'; // Desplazarse a su posición original
+    modal.style.opacity = 1;
+    modalContent.style.transform = 'translateY(0)';
   }, 10);
 }
 
-// Función para cerrar el modal
-export function closeModal() {
-  const modal = document.getElementById('customModal');
+export function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+
+  // Verifica si el modal existe antes de proceder
+  if (!modal) {
+    console.error(`Modal con ID '${modalId}' no encontrado.`);
+    return; // Detener la ejecución si no se encuentra el modal
+  }
+
   const modalContent = modal.querySelector('.modal-content');
 
-  // Gradualmente hacer desaparecer el modal
-  modalContent.style.transform = 'translateY(-50px)'; // Desplazarse hacia arriba
-  modal.style.opacity = 0; // Iniciar opacidad a 0
+  // Verifica si modalContent existe
+  if (!modalContent) {
+    console.error(
+      `No se encontró .modal-content dentro del modal con ID '${modalId}'`
+    );
+    return;
+  }
+
+  // Animación de cierre del modal
+  modalContent.style.transform = 'translateY(-50px)';
+  modal.style.opacity = 0;
+
   setTimeout(() => {
-    modal.style.display = 'none'; // Ocultar después de la transición
-  }, 300); // Asegúrate de que esto coincida con la duración de tu CSS
+    modal.style.display = 'none';
+  }, 300); // Espera 300ms antes de ocultar completamente el modal
 }
+

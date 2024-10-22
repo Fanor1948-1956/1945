@@ -1,11 +1,6 @@
-// subItemsUtils.js
 
-/**
- * Renderizar los checkboxes de subItem en el contenedor.
- * @param {Array} subItems - Lista de subItem a renderizar.
- * @param {Array} selectedSubItems - Lista de subItem seleccionados.
- * @param {string} containerId - ID del contenedor donde se renderizarán los checkboxes.
- */
+
+
 
 export const renderSubItemsCheckboxesForSelection = (
   subItems,
@@ -16,10 +11,10 @@ export const renderSubItemsCheckboxesForSelection = (
 
   if (!container) {
     console.error(`El contenedor con ID "${containerId}" no fue encontrado.`);
-    return; // Salir de la función si el contenedor no existe
+    return; 
   }
 
-  container.innerHTML = ""; // Limpiar cualquier contenido previo
+  container.innerHTML = ""; 
 
   subItems.forEach((subItem) => {
     const checkbox = document.createElement("input");
@@ -31,7 +26,7 @@ export const renderSubItemsCheckboxesForSelection = (
     label.htmlFor = checkbox.id;
     label.textContent = subItem.name;
 
-    // Marcar el checkbox si el permiso está en la selección actual
+    
     checkbox.checked = selectedSubItems.includes(subItem._id);
 
     container.appendChild(checkbox);

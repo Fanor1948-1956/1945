@@ -1,15 +1,15 @@
-/* buttons.css */
+
 button {
-  background-color: #141414; /* Color por defecto para botones */
-  color: white; /* Color de texto blanco */
+  background-color: #141414; 
+  color: white; 
   border: 1px solid white;
   padding: 10px 15px;
   cursor: pointer;
-  border-radius: 5px; /* Bordes redondeados para botones */
+  border-radius: 5px; 
 }
 
 button:hover {
-  background-color: #090909; /* Color más oscuro en hover */
+  background-color: #090909; 
 }
 
 button.send {
@@ -23,5 +23,5 @@ button.send {
 }
 
 button.send:hover {
-  background-color: #132232; /* Color más oscuro al pasar el ratón */
+  background-color: #132232; 
 }

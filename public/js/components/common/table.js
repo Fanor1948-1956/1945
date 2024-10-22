@@ -1,10 +1,10 @@
-// scripts/table.js
+
 import { Tooltip } from "./tooltip.js";
 
 export function renderTable(headers, data, currentPage, itemsPerPage) {
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
-  const paginatedData = data.slice(start, end); // Obtener los datos para la página actual
+  const paginatedData = data.slice(start, end); 
 
   let tableHtml = `
         <table class="table">
@@ -19,12 +19,12 @@ export function renderTable(headers, data, currentPage, itemsPerPage) {
     `;
 
   paginatedData.forEach((item, index) => {
-    const rowNumber = start + index + 1; // Calcular el número de la fila
+    const rowNumber = start + index + 1; 
     tableHtml += `
             <tr>
                 <td>${rowNumber}</td> <!-- Mostrar el número de la fila -->
                 ${Object.values(item)
-                  .filter((_, idx) => idx !== 0) // Esto asume que el primer índice es el ID; ajústalo si es necesario
+                  .filter((_, idx) => idx !== 0) 
                   .map(
                     (value) => `
                         <td class="truncate tooltip" data-tooltip="${value}">${value}</td>
@@ -60,11 +60,11 @@ export function renderTable(headers, data, currentPage, itemsPerPage) {
         </table>
     `;
 
-  // Insertar el HTML de la tabla en el contenedor deseado
+  
 
-  // Llamar a la función de tooltip después de renderizar la tabla
+  
   const tooltipElements = document.querySelectorAll(".tooltip");
-  Tooltip(tooltipElements); // Añadir tooltips a las celdas
+  Tooltip(tooltipElements); 
 
   return tableHtml;
 }

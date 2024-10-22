@@ -4,7 +4,7 @@ import { registerData } from '../js/apiUserManager.js';
 import { showSnackbar } from '../js/snackbar.js';
 import { loadEndpoints } from '../js/loadEndpoints.js';
 
-// Maneja el envío del formulario para crear un nuevo permiso
+
 export async function submitFormData(formId, resource, action, requiredFields) {
   const formData = getFormData(formId);
 

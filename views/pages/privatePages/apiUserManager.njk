@@ -4,9 +4,9 @@
 
     <script type="module">
         import { fetchAndRenderData } from './js/apiUserManager.js';
-        import { renderTable } from './js/renderTable.js'; // Asegúrate de la ruta correcta
+        import { renderTable } from './js/renderTable.js'; 
 
-        // Configuración de las columnas para usuarios
+        
         const userHeaders = {
             name: 'Nombre',
             email: 'Correo',
@@ -16,7 +16,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             fetchAndRenderData(
-                'https://8000-fanoro1956-1945-50am2qruf9y.ws-us116.gitpod.io/users/getUsers',
+                'https:
                 (data) => renderTable(data, userHeaders, 'userTableContainer'),
                 userHeaders
             );

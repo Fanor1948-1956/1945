@@ -2,40 +2,40 @@ import {
   registerData,
   updateData,
   fetchAndRenderData,
-  deleteData, // Importa la función deleteData
-  deactivateData, // Importa la función deactivateData
-  activateData, // Importa la función activateData
+  deleteData, 
+  deactivateData, 
+  activateData, 
 } from '../api/apiUserManager.js';
 
-// Obtener roles desde la API
-// roleService.js
+
+
 export const fetchRoles = async (itemEndpoints, loadItems) => {
   try {
     const response = await fetchAndRenderData(itemEndpoints.list);
     console.log('response', response);
 
-    // Llama a loadRoles con la respuesta completa
-    loadItems(response); // Carga los roles en el estado
+    
+    loadItems(response); 
   } catch (error) {
     console.error('Error al obtener items:', error);
   }
 };
 
-// Crear un nuevo rol
+
 export const createRole = async (newRole, itemEndpoints, addItem) => {
   try {
-    const response = await registerData(itemEndpoints.create, newRole); // Llama a tu función de registro
+    const response = await registerData(itemEndpoints.create, newRole); 
     if (response) {
-      addItem(response); // Agrega el nuevo rol al estado
-      return response.message; // Devuelve el mensaje del servidor
+      addItem(response); 
+      return response.message; 
     }
   } catch (error) {
     console.error('Error al crear el item:', error);
-    return 'Error al crear el rol.'; // Mensaje de error por defecto
+    return 'Error al crear el rol.'; 
   }
 };
 
-// Actualizar un rol existente
+
 export const updateRoleService = async (
   updatedRole,
   itemEndpoints,
@@ -43,58 +43,58 @@ export const updateRoleService = async (
 ) => {
   try {
     const response = await updateData(
-      `${itemEndpoints.update}/${updatedRole._id}`, // Asume que el endpoint de actualización requiere el ID
+      `${itemEndpoints.update}/${updatedRole._id}`, 
       updatedRole
     );
     if (response) {
-      updateItem(response); // Agrega el rol actualizado al estado
-      return response.message; // Devuelve el mensaje del servidor
+      updateItem(response); 
+      return response.message; 
     }
   } catch (error) {
     console.error('Error al actualizar el item:', error);
-    return 'Error al actualizar el rol.'; // Mensaje de error por defecto
+    return 'Error al actualizar el rol.'; 
   }
 };
-// Eliminar un rol existente
+
 export const deleteRoleService = async (roleId, itemEndpoints, deleteItem) => {
   try {
     const response = await deleteData(`${itemEndpoints.delete}/${roleId}`);
     if (response) {
-      deleteItem(roleId); // Elimina el rol del estado
-      return response.message; // Devuelve el mensaje del servidor
+      deleteItem(roleId); 
+      return response.message; 
     }
   } catch (error) {
     console.error('Error al eliminar el item:', error);
-    return 'Error al eliminar el rol.'; // Mensaje de error por defecto
+    return 'Error al eliminar el rol.'; 
   }
 };
 
-// Desactivar un rol existente
+
 export const deactivateRoleService = async (roleId, itemEndpoints) => {
   try {
     const response = await deactivateData(
       `${itemEndpoints.deactivate}/${roleId}`
-    ); // Asegúrate de que el endpoint sea correcto
+    ); 
     if (response) {
-      // Aquí podrías manejar el estado si es necesario
-      return response.message; // Devuelve el mensaje del servidor
+      
+      return response.message; 
     }
   } catch (error) {
     console.error('Error al desactivar el rol:', error);
-    return 'Error al desactivar el rol.'; // Mensaje de error por defecto
+    return 'Error al desactivar el rol.'; 
   }
 };
 
-// Activar un rol existente
+
 export const activateRoleService = async (roleId) => {
   try {
-    const response = await activateData(`${itemEndpoints.activate}/${roleId}`); // Asegúrate de que el endpoint sea correcto
+    const response = await activateData(`${itemEndpoints.activate}/${roleId}`); 
     if (response) {
-      // Aquí podrías manejar el estado si es necesario
-      return response.message; // Devuelve el mensaje del servidor
+      
+      return response.message; 
     }
   } catch (error) {
     console.error('Error al activar el rol:', error);
-    return 'Error al activar el rol.'; // Mensaje de error por defecto
+    return 'Error al activar el rol.'; 
   }
 };

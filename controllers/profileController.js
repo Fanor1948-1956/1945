@@ -1,4 +1,4 @@
-// controllers/profileController.js
+
 const {
   User,
   Patient,
@@ -7,7 +7,7 @@ const {
   ChiefMedical,
 } = require("../models/userModel");
 
-// Función para resolver el rol
+
 const resolveRole = (rolesFound) => {
   const roleNames = rolesFound.map((role) => role.name);
   if (roleNames.includes("Patient")) {
@@ -22,7 +22,7 @@ const resolveRole = (rolesFound) => {
     return User;
   }
 };
-// controllers/profileController.js
+
 exports.viewProfile = async (req, res) => {
     try {
         const user = await User.findById(req.session.userId).populate("roles");
@@ -31,7 +31,7 @@ exports.viewProfile = async (req, res) => {
             return res.status(404).json({ message: "Usuario no encontrado." });
         }
 
-        // Si es una solicitud AJAX o Fetch, devuelve JSON
+        
         if (req.xhr || req.headers['accept'] === 'application/json') {
             return res.json({
                 user,
@@ -39,7 +39,7 @@ exports.viewProfile = async (req, res) => {
             });
         }
 
-        // Renderiza la vista de perfil si no es una solicitud AJAX
+        
         res.render("pages/privatePages/auth/profile.njk", {
             user,
             isAuthenticated: req.session.authenticated,
@@ -50,7 +50,7 @@ exports.viewProfile = async (req, res) => {
     }
 };
 exports.updateProfile = async (req, res) => {
-  const { name, surnames, email, gender } = req.body; // Ajusta según tus campos
+  const { name, surnames, email, gender } = req.body; 
   try {
     await User.findByIdAndUpdate(req.session.userId, {
       name,

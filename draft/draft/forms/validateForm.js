@@ -1,4 +1,4 @@
-// Valida que todos los campos requeridos estén llenos
+
 export function validateFormData(formData, requiredFields) {
   for (let field of requiredFields) {
     if (!formData[field]) {

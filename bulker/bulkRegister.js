@@ -32,7 +32,7 @@ const bulkRegisterUsers = async () => {
       const gender = faker.helpers.arrayElement([
         'masculino',
         'femenino',
-        'otro',
+      
       ]);
       const userRole = faker.helpers.arrayElement(rolesFound); 
 

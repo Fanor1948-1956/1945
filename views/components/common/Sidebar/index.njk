@@ -110,7 +110,7 @@
   <ul>
     {% for route in publicRoutes %}
     <li>
-      <a href="{{ route.path }}" class="menu-item" data-content-url="{{ route.contentUrl }}">
+      <a href="{{ route.path }}" class="menu-item" data-route="{{ route.path }}">
         <div class="icon">
           {{ route.icon | safe }}
         </div>
@@ -120,7 +120,7 @@
       <ul class="submenu">
         {% for subRoute in route.subRoutes %}
         <li class="submenu__item">
-          <a href="{{ subRoute.path }}" class="submenuLink" data-content-url="{{ subRoute.contentUrl }}">
+          <a href="{{ subRoute.path }}" class="submenuLink" data-route="{{ subRoute.path }}">
             <div class="icon">
               {{ subRoute.icon | safe }}
             </div>
@@ -136,7 +136,7 @@
     {% for route in privateRoutes %}
     {% if hasAccess(userRoles, route) and route.path != '/logout' and route.title != 'Perfil' %}
     <li>
-      <a href="{{ route.path }}" class="menu-item" data-content-url="{{ route.contentUrl }}">
+      <a href="{{ route.path }}" class="menu-item" data-route="{{ route.path }}">
         <div class="icon">
           {{ route.icon | safe }}
         </div>
@@ -147,7 +147,7 @@
         {% for subRoute in route.subRoutes %}
         {% if hasAccess(userRoles, subRoute) %}
         <li>
-          <a href="{{ subRoute.path }}" class="submenuLink" data-content-url="{{ subRoute.contentUrl }}">
+          <a href="{{ subRoute.path }}" class="submenuLink" data-route="{{ subRoute.path }}">
             <div class="icon">
               {{ subRoute.icon | safe }}
             </div>
@@ -157,7 +157,7 @@
           <ul class="submenu">
             {% for subSubRoute in subRoute.subRoutes %}
             <li>
-              <a href="{{ subSubRoute.path }}" class="submenuLink" data-content-url="{{ subSubRoute.contentUrl }}">
+              <a href="{{ subSubRoute.path }}" class="submenuLink" data-route="{{ subSubRoute.path }}">
                 <div class="icon">
                   {{ subSubRoute.icon | safe }}
                 </div>
@@ -182,7 +182,7 @@
   <div class="logout-container">
     {% for route in privateRoutes %}
     {% if route.path == '/logout' %}
-    <a href="{{ route.path }}" class="logout-link">
+    <a href="{{ route.path }}"  data-route="{{route.path}}" class="logout-link">
       <div class="icon">
         {{ route.icon | safe }}
       </div>
@@ -193,4 +193,6 @@
   </div>
   {% endif %}
 </aside>
-
+<div class="container">
+    <div id="content"></div>
+</div>

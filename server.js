@@ -89,6 +89,8 @@ app.use('/specialties', specialtyRoutes);
 const server = app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
 });
+
+
 const wss = new WebSocket.Server({ noServer: true });
 
 wss.clients.forEach((client) => {

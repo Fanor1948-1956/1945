@@ -67,7 +67,6 @@
     <button type="button" id="saveRolesBtn">Guardar Roles</button>
   </div>
 </div>
-
 <!-- Modal de confirmación para eliminar usuario -->
 <div id="deleteUserModal" class="modal" style="display: none">
   <div class="modal-content">
@@ -75,6 +74,14 @@
     <h2 class="modal-title"></h2>
     <p>¿Estás seguro de que deseas eliminar este Usuario?</p>
     <button id="confirmDeleteButton">Confirmar</button>
+  </div>
+</div>
+
+<!-- Modal de confirmación para eliminar usuario -->
+<div class="custom-popper" id="userActionsPopover" style="display: none;">
+  <div class="popover-content">
+
+    <div id="popoverActions"></div>
   </div>
 </div>
 
@@ -92,7 +99,7 @@ const userHeaders = {
   name: 'Nombre',
   surnames: 'Apellidos',
   email: 'Correo',
-      password: 'Contraseña',
+      // password: 'Contraseña',
   gender: 'Género',
   roles: 'Roles',
   isActive: 'Estado',

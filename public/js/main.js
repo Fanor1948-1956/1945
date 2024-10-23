@@ -7,6 +7,7 @@ import './components/global/snackbar.js';
 import './components/global/modal.js';
 import './components/global/dropdown.js';
 import './components/global/toggleFields.js';
+import './components/common/popover.js';
 
 
 import './components/custom/icons.js';
@@ -16,39 +17,6 @@ import './components/custom/modal.js';
 
 
 import './libraries/select2.min.js';
-
-
-const socket = new WebSocket(
-  'wss://7000-fanoro1956-1945-69ikfchcawk.ws-us116.gitpod.io'
-);
-socket.addEventListener('open', () => {
-  console.log('Conectado al servidor WebSocket');
-});
-
-socket.addEventListener('message', (event) => {
-  if (event.data === 'actualizar') {
-    console.log('Actualizando la página...');
-
-    // Crear y mostrar el spinner
-    const spinnerDiv = document.createElement('div');
-    spinnerDiv.id = 'loadingSpinner'; // Asignar ID para el spinner
-    document.body.appendChild(spinnerDiv); // Agregar el spinner al DOM
-
-    // Recargar la página después de mostrar el spinner
-    setTimeout(() => {
-      spinnerDiv.remove(); // Eliminar el spinner del DOM
-      location.reload(); // Recargar la página
-    }, 2000); // Mostrar el spinner durante 2 segundos
-  }
-});
-
-socket.addEventListener('error', (error) => {
-  console.error('Error en la conexión WebSocket:', error);
-});
-
-socket.addEventListener('close', () => {
-  console.log('Conexión cerrada');
-});
 
 
 
@@ -165,3 +133,95 @@ window.addEventListener('popstate', () => {
   setCurrentPath(currentPath);
   handleRouteNavigation();
 });
+
+
+// Spinner
+let spinnerDiv = null;
+
+// Función para mostrar el spinner
+function showSpinner() {
+  if (!spinnerDiv) {
+    createSpinner();
+  }
+  spinnerDiv.style.display = 'block'; // Muestra el spinner
+}
+
+// Función para ocultar el spinner
+function hideSpinner() {
+  if (spinnerDiv) {
+    spinnerDiv.style.display = 'none'; // Oculta el spinner
+  }
+}
+
+// Función para crear el spinner
+function createSpinner() {
+  spinnerDiv = document.createElement('div');
+  spinnerDiv.id = 'loadingSpinner';
+  spinnerDiv.style.position = 'fixed';
+  spinnerDiv.style.top = '50%';
+  spinnerDiv.style.left = '50%';
+  spinnerDiv.style.transform = 'translate(-50%, -50%)';
+  spinnerDiv.style.border = '8px solid #f3f3f3';
+  spinnerDiv.style.borderTop = '8px solid #3498db';
+  spinnerDiv.style.borderRadius = '50%';
+  spinnerDiv.style.width = '50px';
+  spinnerDiv.style.height = '50px';
+  spinnerDiv.style.animation = 'spin 1s linear infinite';
+  document.body.appendChild(spinnerDiv);
+
+  // Agrega los keyframes para la animación del spinner
+  const styleSheet = document.createElement('style');
+  styleSheet.type = 'text/css';
+  styleSheet.innerText = `
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  `;
+  document.head.appendChild(styleSheet);
+}
+
+// Conexión WebSocket
+const socket = new WebSocket(
+  'wss://6000-fanor19481956-1945-0hhln0kcvpo.ws-us116.gitpod.io/home'
+); // Cambia a tu URL de WebSocket
+
+
+
+// Manejar la conexión
+socket.addEventListener('open', () => {
+  console.log('Conectado al servidor WebSocket')
+})
+
+socket.addEventListener('message', event => {
+  if (event.data === 'actualizar') {
+    console.log('Actualizando la página...')
+
+    const loadingDiv = document.createElement('div')
+    loadingDiv.id = 'loadingMessage'
+    loadingDiv.style.position = 'fixed'
+    loadingDiv.style.top = '50%'
+    loadingDiv.style.left = '50%'
+    loadingDiv.style.transform = 'translate(-50%, -50%)'
+    loadingDiv.style.opacity = '0'
+    loadingDiv.style.transition = 'opacity 0.5s'
+    document.body.appendChild(loadingDiv)
+
+    setTimeout(() => {
+      loadingDiv.style.opacity = '0'
+    }, 500)
+
+    setTimeout(() => {
+      location.reload()
+    }, 500)
+  }
+})
+
+socket.addEventListener('error', error => {
+  console.error('Error en la conexión WebSocket:', error)
+})
+
+// Manejar cierre de conexión
+socket.addEventListener('close', () => {
+  console.log('Conexión cerrada')
+})

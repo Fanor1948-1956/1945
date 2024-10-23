@@ -4,7 +4,8 @@
 @import './partials/card.css';
 @import './partials/backdrop.css';
 @import './partials/buttons.css';
-
+@import './partials/spinner.css';
+@import './partials/popover.css';
 
 @import './partials/modal.css';
 @import './partials/global.css';
@@ -13,6 +14,7 @@
 
 @import './pages/publicPages/home.css';
 @import './pages/publicPages/sign-in.css';
+@import './pages/publicPages/sign-up.css';
 
 
 

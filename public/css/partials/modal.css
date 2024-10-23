@@ -14,7 +14,8 @@
 }
 
 .modal-content {
-  background-color: #3a0491;
+    background-color: #0d0238; 
+    
   margin: auto;
   padding: 20px;
   border: 1px solid #888;
@@ -39,7 +40,7 @@
 }
 
 .modal-content.medium {
-  width: 60%;
+  width: 80%;
 }
 
 .modal-content.fullwidth {

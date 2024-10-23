@@ -11,19 +11,20 @@
     <link rel="stylesheet" href="/css/styles.css" />
     
     <script type="module" src="/js/main.js" defer></script>
-</head>
-
-<body class="show-hamburger">
-    {% include 'components/common/Navbar/index.njk' %}
+     {% include 'components/common/Navbar/index.njk' %}
     {% include 'components/common/Sidebar/index.njk' %}
+</head>
+ 
+<body class="show-hamburger">
+  
 
-    <div class="container">
-        <div id="content">
+    <div  id="layoutContainer" class="container">
+
             {% block content %}
             <h2>Página inicial</h2>
             <p>Este es el contenido por defecto.</p>
             {% endblock %}
-        </div>
+
     </div>
 
     <script>

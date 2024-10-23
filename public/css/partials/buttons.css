@@ -1,7 +1,10 @@
 
+
+
 button {
-  background-color: #141414; 
+  background-color: #021830;
   color: white; 
+  font-weight: bold;
   border: 1px solid white;
   padding: 10px 15px;
   cursor: pointer;
@@ -9,19 +12,23 @@ button {
 }
 
 button:hover {
-  background-color: #090909; 
+  background-color: #cbd4dd; 
+  color: #050505;
 }
 
 button.send {
   background-color: #021830;
+
   color: white;
   padding: 10px 15px;
-  border: none;
+  margin: 0px 100px;
+  border: 1px solid white;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 button.send:hover {
-  background-color: #132232; 
+  background-color: #cbd4dd; 
+  color: #050505;
 }

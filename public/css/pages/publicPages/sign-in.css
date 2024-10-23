@@ -35,14 +35,6 @@
     text-align: center;
     font-weight: bold; 
   }
-
-  
-  label {
-    margin: 8px 0 4px;
-    display: block;
-    color: white; 
-  }
-
   
   input[type='email'],
   input[type='password'] {
@@ -61,20 +53,6 @@
     gap: 10px;
     padding: 0px 20px;
   }
-
-  .button-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none !important;
-    padding: 0px 80px;
-    margin-top: 20px;
-  }
-
-
-
-  
-
   
   .logo-container {
     display: flex;

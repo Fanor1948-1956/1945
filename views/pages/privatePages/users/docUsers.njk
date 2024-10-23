@@ -1,13 +1,12 @@
 <!-- Plantilla hija: views/pages/privatePages/dashboard.njk -->
 {% extends "layouts/privateLayout.njk" %}
 <!-- Bloque de título -->
- {% block content %}
+{% block content %}
 
 <!-- pasaar  varialves al include-->
 {% set roleAlias = 'doctor' %}
+<h1>{{ title }}</h1>
 
-<h1>{{title}}</h1>
-
-<section>{% include "pages/privatePages/users/index.njk" %}</section>
+<section>{% include "pages/privatePages/users/verb/getAll.njk" %}</section>
 
 {% endblock %}

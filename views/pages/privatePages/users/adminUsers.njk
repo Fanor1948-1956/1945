@@ -1,49 +1,12 @@
 <!-- Plantilla hija: views/pages/privatePages/dashboard.njk -->
 {% extends "layouts/privateLayout.njk" %}
-
+<!-- Bloque de título -->
 {% block content %}
+
+<!-- pasaar  varialves al include-->
 {% set roleAlias = 'admin' %}
+<h1>{{ title }}</h1>
 
-{% if isAuthenticated %}
-    <h1>{{ title }}</h1>
-{% endif %}
-
-<section>
-    <button id="loadUsersButton" class="button">Cargar Usuarios</button>
-    
-    <!-- Contenedor donde se cargará la tabla dinámicamente -->
-    <div id="userTableContainer"></div>
-</section>
-
-<!-- Incluir el módulo externo -->
-<script type="module">
-    // Ajusta la ruta según tu estructura
-import { renderTable } from '../js/components/global/renderTable.js';
-    // Simular datos de usuarios para la demostración
-    const users = [
-        { _id: 1, name: 'Juan', lastName: 'Pérez', email: 'juan@example.com', status: 'Activo' },
-        { _id: 2, name: 'María', lastName: 'Gómez', email: 'maria@example.com', status: 'Inactivo' },
-        { _id: 3, name: 'Pedro', lastName: 'López', email: 'pedro@example.com', status: 'Activo' }
-    ];
-
-    // Columnas que deseas mostrar en la tabla
-    const columnHeaders = {
-        name: 'Nombre',
-        lastName: 'Apellido',
-        email: 'Correo',
-        status: 'Estado'
-    };
-
-    // Función de acción que maneja los botones en la tabla (ver detalles, editar, etc.)
-    function onAction(action, id) {
-        console.log(`Acción: ${action}, ID: ${id}`);
-        // Aquí puedes agregar lógica para cada acción (ver detalles, editar, eliminar)
-    }
-
-    // Evento para cargar usuarios y renderizar la tabla
-    document.getElementById('loadUsersButton').addEventListener('click', () => {
-        renderTable(users, columnHeaders, 'userTableContainer', onAction);
-    });
-</script>
+<section>{% include "pages/privatePages/users/verb/getAll.njk" %}</section>
 
 {% endblock %}

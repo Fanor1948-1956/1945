@@ -3,7 +3,7 @@ header {
   padding: 0.1px;
   width: 100%;
 
-  background-color: #0b7ef1;
+  background-color: #0c1a29;
   z-index: 100;
 }
 
@@ -17,14 +17,14 @@ header {
 }
 
 .publicNav {
-  background-color: #003680;
+  background-color: #2054a0;
   color: white;
   border: none;
   
 }
 
 .privateNav {
-  background-color: #001f3f;
+  background-color: #150e295e;
   color: white;
   border: none;
 }

@@ -8,7 +8,7 @@ export const confirmDelete = async (
   id,
   endpoint,
   typeName,
-  loadPermissions,
+  loadItems,
   deleteItem
 ) => {
   return new Promise((resolve) => {
@@ -26,7 +26,7 @@ export const confirmDelete = async (
       .on("click", async () => {
         try {
           const responseMessage = await deleteService(id, endpoint, deleteItem); 
-          await loadPermissions(); 
+          await loadItems(); 
           Modal.close("#deleteItemModal"); 
           showSnackbar(responseMessage, true); 
           resolve(); 

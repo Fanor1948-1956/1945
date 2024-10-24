@@ -1,5 +1,10 @@
 // middleware/authMiddleware.js
-// Middleware para proteger rutas (rutas privadas)
+const jwt = require('jsonwebtoken'); // Importa jwt
+require('dotenv').config();
+
+const SECRET_KEY = process.env.SECRET_KEY;
+
+// Middleware para verificar JWT
 const verifyToken = (req, res, next) => {
   let token;
 
@@ -28,16 +33,12 @@ const verifyToken = (req, res, next) => {
   });
 };
 
-
-
-// middleware/auth.js
-const isNotAuthenticated = (req, res, next) => {
-  if (!req.session || !req.session.authenticated) {
-    return next(); // Si no está autenticado, continuar
-  } else {
-    return res.redirect('/dashboard'); // Redirigir a dashboard si ya está autenticado
+// Middleware para manejar la autenticación de sesión
+const isAuthenticated = (req, res, next) => {
+  if (req.session && req.session.authenticated) {
+    return next(); // Si el usuario está autenticado, continuar
   }
+  return res.redirect('/login'); // Si no, redirigir a la página de inicio de sesión
 };
 
-module.exports = { verifyToken, isNotAuthenticated };
-
+module.exports = { verifyToken, isAuthenticated };

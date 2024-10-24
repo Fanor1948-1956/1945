@@ -1,4 +1,6 @@
 const express = require('express');
+const WebSocket = require('ws');
+const chokidar = require('chokidar'); 
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const nunjucks = require('nunjucks');
@@ -16,8 +18,7 @@ const registerPrivateRoutes = require('./routes/privateRoutes');
 const { verifyToken } = require('./middleware/authMiddleware');
 const specialtyRoutes = require('./routes/specialtyRoutes');
 
-const WebSocket = require('ws'); 
-const chokidar = require('chokidar'); 
+
 
 const app = express();
 const port = process.env.PORT || 5000; 

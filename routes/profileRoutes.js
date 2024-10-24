@@ -1,14 +1,14 @@
-
-const express = require("express");
+// routes/profileRoutes.js
+const express = require('express');
 const router = express.Router();
 const {
   viewProfile,
   updateProfile,
-} = require("../controllers/profileController");
-const { verifyToken } = require("../middleware/authMiddleware"); 
+} = require('../controllers/profileController');
+const { verifyToken } = require('../middleware/authMiddleware'); // Asegúrate de importar el middleware
 
-
-router.get("/profile", verifyToken, viewProfile);
-router.post("/update", verifyToken, updateProfile);
+// Ruta para ver el perfil (protegida)
+router.get('/profile', verifyToken, viewProfile);
+router.post('/update', verifyToken, updateProfile);
 
 module.exports = router;

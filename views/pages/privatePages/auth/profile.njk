@@ -36,45 +36,45 @@
 </div>
 
 <style>
-    
+    /* Estilos aquí */
     .transparent-input {
         background-color: transparent;
         border: none;
-        border-bottom: 1px solid #ccc; 
-        color: #000; 
+        border-bottom: 1px solid #ccc; /* Línea inferior visible */
+        color: #000; /* Color del texto */
         width: 100%;
         padding: 5px;
-        transition: border-bottom-color 0.3s ease; 
+        transition: border-bottom-color 0.3s ease; /* Animación suave para el cambio de color */
     }
 
     .transparent-input:disabled {
-        opacity: 0.5; 
+        opacity: 0.5; /* Reducir la opacidad cuando está deshabilitado */
     }
 
     .button {
-        margin-top: 10px; 
+        margin-top: 10px; /* Espacio entre botones */
         cursor: pointer;
     }
 
     .button:hover {
-        background-color: #f0f0f0; 
-        color: #000; 
+        background-color: #f0f0f0; /* Color al pasar el ratón por encima */
+        color: #000; /* Color al pasar el ratón por encima */
     }
 </style>
 
 <script type="module">
     import { loadUserProfile } from '../js/services/profileService.js';
-    import { getState, setState } from '../js/reducers/state.js'; 
+    import { getState, setState } from '../js/reducers/state.js'; // Asumiendo que setState es para actualizar el estado
 
-    
+    // Cargar el perfil del usuario en el estado y en el formulario
     async function fetchUserProfile() {
         try {
-            const user = await loadUserProfile(); 
+            const user = await loadUserProfile(); // Cargar el perfil usando el servicio
             
-            
+            // Actualizar el estado
             setState({ profile: user });
 
-            
+            // Renderizar en el formulario
             document.getElementById('nameInput').value = user.name || '';
             document.getElementById('surnamesInput').value = user.surnames || '';
             document.getElementById('emailInput').value = user.email || '';
@@ -86,41 +86,41 @@
         }
     }
 
-    
+    // Funcionalidad para editar el perfil
     document.getElementById('editButton').addEventListener('click', () => {
-        
+        // Habilitar los campos
         document.getElementById('nameInput').disabled = false;
         document.getElementById('surnamesInput').disabled = false;
         document.getElementById('emailInput').disabled = false;
         document.getElementById('genderSelect').disabled = false;
         
-        
+        // Mostrar botones de actualizar y cancelar
         document.getElementById('updateButton').style.display = 'inline-block';
         document.getElementById('cancelButton').style.display = 'inline-block';
-        document.getElementById('editButton').style.display = 'none'; 
+        document.getElementById('editButton').style.display = 'none'; // Ocultar el botón de editar
     });
 
     document.getElementById('cancelButton').addEventListener('click', () => {
-        
-        const profile = getState().profile; 
+        // Reiniciar los campos a su estado original
+        const profile = getState().profile; // Obtener el perfil del estado
         document.getElementById('nameInput').value = profile.name || '';
         document.getElementById('surnamesInput').value = profile.surnames || '';
         document.getElementById('emailInput').value = profile.email || '';
         document.getElementById('genderSelect').value = profile.gender || 'masculino';
 
-        
+        // Deshabilitar los campos
         document.getElementById('nameInput').disabled = true;
         document.getElementById('surnamesInput').disabled = true;
         document.getElementById('emailInput').disabled = true;
         document.getElementById('genderSelect').disabled = true;
 
-        
+        // Ocultar botones de actualizar y cancelar
         document.getElementById('updateButton').style.display = 'none';
         document.getElementById('cancelButton').style.display = 'none';
-        document.getElementById('editButton').style.display = 'inline-block'; 
+        document.getElementById('editButton').style.display = 'inline-block'; // Mostrar nuevamente el botón de editar
     });
 
-    
+    // Llamar a la función para cargar el perfil al cargar la página
     document.addEventListener('DOMContentLoaded', fetchUserProfile);
 </script>
 {% endblock %}

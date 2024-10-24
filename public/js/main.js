@@ -183,7 +183,7 @@ function createSpinner() {
 
 // Conexión WebSocket
 const socket = new WebSocket(
-  'wss://6000-fanor19481956-1945-0hhln0kcvpo.ws-us116.gitpod.io/home'
+  'wss://6000-fanor19481956-1945-0hhln0kcvpo.ws-us116.gitpod.io'
 ); // Cambia a tu URL de WebSocket
 
 

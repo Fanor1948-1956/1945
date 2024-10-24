@@ -50,13 +50,13 @@
     <button id="saveSpecialtyBtn">Guardar</button>
   </div>
 </div>
-
+{% include "components/custom/customPopover.njk" %}
 <script type="module">
   import {
-    loadItems,
-    addItem,
-    updateItem,
-    deleteItem,
+    loadSpecialties,
+    addSpecialty,
+    updateSpecialty,
+    deleteSpecialty,
   } from './js/reducers/index.js';
 
   import { createService, updateService } from './js/services/index.js';
@@ -75,11 +75,11 @@
   let currentEditingSpecialtyId = null;
 
   document.addEventListener('DOMContentLoaded', () => {
-    loadSpecialties();
+    loadsSpecialties();
     setupEventListeners();
   });
 
-  const loadSpecialties = async () => {
+  const loadsSpecialties = async () => {
     await fetchSpecialty();
     const { specialties } = getState();
     console.log('specialties', specialties);
@@ -121,8 +121,8 @@
         id,
         specialtyEndpoints,
         'especialidad',
-        loadSpecialties,
-        deleteItem
+        loadsSpecialties,
+        deleteSpecialty,
       ); 
       
     }
@@ -142,20 +142,20 @@
     const data = { name, description };
     if (currentEditingSpecialtyId) {
       data._id = currentEditingSpecialtyId;
-      const message = await updateService(data, specialtyEndpoints, updateItem);
+      const message = await updateService(data, specialtyEndpoints, updateSpecialty);
       if (message) {
         currentEditingSpecialtyId = null;
         Modal.close('#addSpecialtyModal');
-        loadSpecialties();
+        loadsSpecialties();
         showSnackbar(message, true);
       } else {
         showSnackbar('Error al actualizar la especialidad.', false);
       }
     } else {
-      const message = await createService(data, specialtyEndpoints, addItem);
+      const message = await createService(data, specialtyEndpoints, addSpecialty);
       if (message) {
         Modal.close('#addSpecialtyModal');
-        loadSpecialties();
+        loadsSpecialties();
         showSnackbar(message, true);
       } else {
         showSnackbar('Error al agregar la especialidad.', false);

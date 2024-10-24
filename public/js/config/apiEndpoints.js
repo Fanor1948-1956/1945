@@ -23,9 +23,10 @@ export const userEndpoints = {
   delete: `${BASE_URL}/users/delete`, 
 };
 
+
 export const profileEndpoints = {
   get: `${BASE_URL}/api/profile`,
-  update: `${BASE_URL}/api/update-profile`, 
+  update: `${BASE_URL}/api/update-profile`, // Si es necesario
 };
 
 export const specialtyEndpoints = {

@@ -67,23 +67,9 @@
     <button type="button" id="saveRolesBtn">Guardar Roles</button>
   </div>
 </div>
-<!-- Modal de confirmación para eliminar usuario -->
-<div id="deleteUserModal" class="modal" style="display: none">
-  <div class="modal-content">
-    <span class="close-button" onclick="Modal.close('#deleteUserModal')">&times;</span>
-    <h2 class="modal-title"></h2>
-    <p>¿Estás seguro de que deseas eliminar este Usuario?</p>
-    <button id="confirmDeleteButton">Confirmar</button>
-  </div>
-</div>
+{% include "components/custom/common/deleteItem.njk" %}
+{% include "components/custom/customPopover.njk" %}
 
-<!-- Modal de confirmación para eliminar usuario -->
-<div class="custom-popper" id="userActionsPopover" style="display: none;">
-  <div class="popover-content">
-
-    <div id="popoverActions"></div>
-  </div>
-</div>
 
 <script type="module">
 

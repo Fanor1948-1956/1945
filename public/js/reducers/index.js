@@ -3,24 +3,13 @@ import { setState, getState } from './state.js';
 
 
 
-export const loadItems = (itemsResponse) => {
-  if (Array.isArray(itemsResponse.items)) {
-    setState({ items: itemsResponse.items }); 
-    console.log('Estado después de cargar items:', getState());
-  } else {
-    console.error(
-      'loadItems: La respuesta no contiene un array de items',
-      itemsResponse
-    );
-  }
-};
 export const loadSpecialties = (specialtiesResponse) => {
   if (Array.isArray(specialtiesResponse.specialties)) {
     setState({ specialties: specialtiesResponse.specialties }); 
-    console.log('Estado después de cargar items:', getState());
+    console.log('Estado después de cargar specialties:', getState());
   } else {
     console.error(
-      'loadItems: La respuesta no contiene un array de items',
+      'loadspecialties: La respuesta no contiene un array de specialties',
       specialtiesResponse
     );
   }
@@ -28,31 +17,31 @@ export const loadSpecialties = (specialtiesResponse) => {
 
 
 
-export const addItem = (newItem) => {
+export const addSpecialty = (newSpecialty) => {
   const currentState = getState();
   
-  if (Array.isArray(currentState.items)) {
-    setState({ items: [...currentState.items, newItem] });
+  if (Array.isArray(currentState.specialties)) {
+    setState({ specialties: [...currentState.specialties, newSpecialty] });
   } else {
     console.error(
-      'addItem: currentState.items no es un array',
-      currentState.items
+      'addItem: currentState.specialties no es un array',
+      currentState.specialties
     );
   }
 };
 
 
-export const updateItem = (updatedItem) => {
+export const updateSpecialty = (updatedItem) => {
   const currentState = getState();
-  const updatedItems = currentState.items.map((item) =>
+  const updatedSpecialties = currentState.specialties.map((item) =>
     item._id === updatedItem._id ? updatedItem : item
   );
-  setState({ items: updatedItems });
+  setState({ specialties: updatedSpecialties });
 };
 
 
-export const deleteItem = (itemId) => {
+export const deleteSpecialty = (itemId) => {
   const currentState = getState();
-  const updatedItems = currentState.items.filter((item) => item._id !== itemId);
-  setState({ items: updatedItems });
+  const updatedSpecialties = currentState.specialties.filter((item) => item._id !== itemId);
+  setState({ specialties: updatedSpecialties });
 };

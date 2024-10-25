@@ -1,4 +1,3 @@
-// controllers/profileController.js
 const {
   User,
   Patient,
@@ -7,7 +6,7 @@ const {
   ChiefMedical,
 } = require('../models/userModel');
 
-// Función para resolver el rol
+// Función para resolver el rol basado en los roles encontrados
 const resolveRole = (rolesFound) => {
   const roleNames = rolesFound.map((role) => role.name);
   if (roleNames.includes('Patient')) {
@@ -22,37 +21,43 @@ const resolveRole = (rolesFound) => {
     return User;
   }
 };
-// controllers/profileController.js
+
+// Ver perfil
 exports.viewProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.session.userId).populate('roles');
+    // Si hay sesión activa, usa el userId de la sesión, de lo contrario el de JWT
+    const userId = req.session?.userId || req.userId;
+    const user = await User.findById(userId).populate('roles');
 
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado.' });
     }
 
-    // Si es una solicitud AJAX o Fetch, devuelve JSON
+    // Si es una solicitud AJAX o Fetch, devolver JSON
     if (req.xhr || req.headers['accept'] === 'application/json') {
       return res.json({
         user,
-        isAuthenticated: req.session.authenticated,
+        isAuthenticated: req.session?.authenticated || !!req.userId,
       });
     }
 
-    // Renderiza la vista de perfil si no es una solicitud AJAX
+    // Renderizar la vista de perfil para solicitudes normales
     res.render('pages/privatePages/auth/profile.njk', {
       user,
-      isAuthenticated: req.session.authenticated,
+      isAuthenticated: req.session?.authenticated || !!req.userId,
     });
   } catch (error) {
     console.error('Error al ver el perfil:', error);
     res.status(500).json({ message: 'Error al ver el perfil' });
   }
 };
+
+// Actualizar perfil
 exports.updateProfile = async (req, res) => {
   const { name, surnames, email, gender } = req.body; // Ajusta según tus campos
   try {
-    await User.findByIdAndUpdate(req.session.userId, {
+    const userId = req.session?.userId || req.userId;
+    await User.findByIdAndUpdate(userId, {
       name,
       surnames,
       email,

@@ -94,8 +94,6 @@
 //   container.appendChild(table);
 // }
 
-// Define currentPopoverTarget de forma global
-// Define currentPopoverTarget de forma global
 
 
 

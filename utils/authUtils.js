@@ -15,7 +15,7 @@ const generateToken = (user) => {
       roles: user.roles,
     },
     SECRET_KEY,
-    { expiresIn: '1h' } 
+    { expiresIn: '5h' } 
   );
 
   return token;

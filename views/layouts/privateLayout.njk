@@ -11,23 +11,26 @@
     <link rel="stylesheet" href="/css/styles.css" />
     
     <script type="module" src="/js/main.js" defer></script>
-     {% include 'components/common/Navbar/index.njk' %}
-    {% include 'components/common/Sidebar/index.njk' %}
+    {% include 'components/common/Navbar/index.njk' %}
+    {% include 'components/common/Sidebar/index.njk' %} 
 </head>
- 
-<body class="show-hamburger">
-  
 
-    <div  id="layoutContainer" class="container">
+<body  class="show-hamburger">
+
+
+    <div  id="contentContainer" class="container">
+          <div  id="contentMain" class="contentMain">
 
             {% block content %}
             <h2>Página inicial</h2>
             <p>Este es el contenido por defecto.</p>
             {% endblock %}
+          </div>
 
     </div>
 
-    <script>
+    <script type="module">
+       
         const token = '{{ token }}';  // Asegúrate de escapar correctamente
         const currentPath = '{{ currentPath }}';
         const isAuthenticated = '{{ isAuthenticated }}';  // Asegúrate de escapar correctamente
@@ -35,6 +38,7 @@
         console.log('Token desde Nunjucks:', token);
         console.log('Autenticado desde Nunjucks:', isAuthenticated);
         console.log('Ruta actual:', currentPath);
+        
     </script>
 </body>
 </html>

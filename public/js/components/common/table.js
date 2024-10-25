@@ -1,70 +1,75 @@
+import { showPopover } from './popover.js';
+import { Tooltip } from './tooltip.js';
 
-import { Tooltip } from "./tooltip.js";
-
-export function renderTable(headers, data, currentPage, itemsPerPage) {
+// Función renderTable: ahora no devuelve HTML
+export function renderTable(headers, data, currentPage, itemsPerPage, onAction) {
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
-  const paginatedData = data.slice(start, end); 
+  const paginatedData = data.slice(start, end);
 
+  // Limpia el contenedor antes de renderizar la tabla
+  const tableContainer = document.getElementById('userTableContainer');
+  tableContainer.innerHTML = ''; // Limpia el contenido anterior
+
+  // Construcción del HTML de la tabla
   let tableHtml = `
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>#</th> <!-- Columna para numeración -->
-                    ${headers.map((header) => `<th>${header}</th>`).join("")}
-                    <th>Acciones</th> <!-- Columna para botones de acción -->
-                </tr>
-            </thead>
-            <tbody>
-    `;
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          ${headers.map((header) => `<th>${header}</th>`).join('')}
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
 
   paginatedData.forEach((item, index) => {
-    const rowNumber = start + index + 1; 
+    const rowNumber = start + index + 1;
     tableHtml += `
-            <tr>
-                <td>${rowNumber}</td> <!-- Mostrar el número de la fila -->
-                ${Object.values(item)
-                  .filter((_, idx) => idx !== 0) 
-                  .map(
-                    (value) => `
-                        <td class="truncate tooltip" data-tooltip="${value}">${value}</td>
-                    `
-                  )
-                  .join("")}
-                <td>
-                    <button class="details-button" data-id="${
-                      item._id
-                    }" onclick="onAction('details', '${
-      item._id
-    }')">Ver Detalles</button>
-                    <button class="edit-button" data-id="${
-                      item._id
-                    }" onclick="onAction('edit', '${item._id}')">Editar</button>
-                    <button class="deactivate-button" data-id="${
-                      item._id
-                    }" onclick="onAction('deactivate', '${
-      item._id
-    }')">Desactivar</button>
-                    <button class="delete-button" data-id="${
-                      item._id
-                    }" onclick="onAction('delete', '${
-      item._id
-    }')">Eliminar</button>
-                </td>
-            </tr>
-        `;
+      <tr>
+        <td>${rowNumber}</td>
+        ${Object.values(item)
+          .filter((_, idx) => idx !== 0)
+          .map(
+            (value) =>
+              `<td class="truncate tooltip" data-tooltip="${value}">${value}</td>`
+          )
+          .join('')}
+        <td>
+          <button class="more-button" data-id="${item._id}">
+            <i class="icon-three-dots">⋮</i>
+          </button>
+        </td>
+      </tr>
+    `;
   });
 
-  tableHtml += `
-            </tbody>
-        </table>
-    `;
+  tableHtml += `</tbody></table>`;
 
+  // Inserta el HTML generado en el contenedor del DOM
+  tableContainer.innerHTML = tableHtml;
+
+  // Configurar los tooltips y listeners
+  initializeTooltipAndListeners(paginatedData, onAction);
+}
+
+function initializeTooltipAndListeners(paginatedData, onAction) {
+  // Configurar los tooltips
   
 
-  
-  const tooltipElements = document.querySelectorAll(".tooltip");
-  Tooltip(tooltipElements); 
+  // Eliminar cualquier listener previo antes de agregar uno nuevo
+  const actionButtons = document.querySelectorAll('.more-button');
+  actionButtons.forEach((button) => {
+    button.removeEventListener('click', handleActionClick); // Remueve el listener existente
+    button.addEventListener('click', handleActionClick); // Agrega el nuevo listener
+  });
 
-  return tableHtml;
+  // Función que maneja el clic en el botón
+  function handleActionClick(event) {
+    const itemId = event.target.closest('.more-button').getAttribute('data-id'); // Asegúrate de obtener el ID correctamente
+    const item = paginatedData.find((dataItem) => dataItem._id === itemId);
+    showPopover(item, event.target, onAction);
+    event.stopPropagation();
+  }
 }

@@ -41,7 +41,7 @@
 <!-- Modal para seleccionar género -->
 <div class="modal" id="selectGenderModal" style="display: none">
   <div class="modal-content">
-    <span class="close-button" onclick="closeModal('selectRolesModal')">&times;</span>
+    <span class="close-button" onclick="Modal.close('selectGenderModal')">&times;</span>
     <h2 class="modal-title"></h2>
     <div id="genderContainer">
       <label>
@@ -78,7 +78,8 @@
 import {fetchServices} from '../js/services/index.js'
 import { getState } from '../js/reducers/state.js';
 import { renderTable } from '../js/components/global/renderTable.js';
-import { setupEventListeners, onAction} from '../js/logic/users/index.js'
+import { setupEventListeners} from '../js/logic/users/index.js'
+import { onAction } from '../js/logic/users/actions.js';
 import {userEndpoints} from '../js/config/apiEndpoints.js'
 import {loadUsers} from '../js/reducers/userReducer.js'
 const userHeaders = {
@@ -93,10 +94,9 @@ const userHeaders = {
 
 
 
-document.addEventListener('DOMContentLoaded', () => {
-  loadUsersList();
-  setupEventListeners(loadUsersList, );
-});
+
+  
+
 
 const loadUsersList = async () => {
   console.log('Cargando lista de usuarios...');
@@ -112,6 +112,7 @@ const loadUsersList = async () => {
   renderTable(filteredUsers, userHeaders, 'userTableContainer', onAction);
 };
 
-
+loadUsersList();
+  setupEventListeners(loadUsersList);
 window.onAction = onAction;
 </script>

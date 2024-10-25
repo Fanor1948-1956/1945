@@ -1,112 +1,160 @@
 <section>
-  <div id="roleTableContainer"></div>
-  <!-- Contenedor donde se renderizará la tabla de roles -->
+<button
+  id="addUserBtn"
+  class="add-button"
+  data-size="medium"
+  {% if not isAuthenticated %} style="display: none" {% endif %}>
+  Agregar Usuario
+</button>
+
+<div id="userTableContainer"></div>
+
+<div id="snackbar" class="snackbar"></div>
+
+<!-- Modal para agregar/editar usuarios -->
+<div class="modal" id="addUserModal" style="display: none">
+  <div class="modal-content">
+    <span class="close-button" onclick="Modal.close('#addUserModal')">&times;</span>
+    <h2 class="modal-title"></h2>
+    <form id="userForm">
+      <label for="userName">Nombre:</label>
+      <input type="text" id="userName" name="name" required />
+
+      <label for="userSurnames">Apellidos:</label>
+      <input type="text" id="userSurnames" name="surnames" required />
+
+      <label for="userEmail">Correo:</label>
+      <input type="email" id="userEmail" name="email" required />
+
+      <label for="userPassword">Contraseña:</label>
+      <input type="password" id="userPassword" name="password" required />
+
+      <label for="userGender">Género:</label>
+      <input type="text" id="userGender" name="gender" required readonly />
+      <button type="button" id="selectGenderBtn">Seleccionar Género</button>
+      <br />
+      <button type="button" id="selectRolesBtn">Seleccionar Roles</button>
+      <button type="button" id="saveItemBtn">Guardar</button>
+    </form>
+  </div>
+</div>
+
+<!-- Modal para seleccionar género -->
+<div class="modal" id="selectGenderModal" style="display: none">
+  <div class="modal-content">
+    <span class="close-button" onclick="closeModal('selectRolesModal')">&times;</span>
+    <h2 class="modal-title"></h2>
+    <div id="genderContainer">
+      <label>
+        <input type="radio" name="gender" value="masculino" /> Masculino
+      </label>
+      <label>
+        <input type="radio" name="gender" value="femenino" /> Femenino
+      </label>
+      <label>
+        <input type="radio" name="gender" value="otro" /> Otro
+      </label>
+    </div>
+    <button type="button" id="saveGenderBtn">Guardar Género</button>
+  </div>
+</div>
+
+<!-- Modal para seleccionar roles -->
+<div class="modal" id="selectRolesModal" style="display: none">
+  <div class="modal-content">
+    <span class="close-button" onclick="Modal.close('#selectRolesModal')">&times;</span>
+    <h2 class="modal-title"></h2>
+    <div id="rolesContainer"></div>
+    <button type="button" id="saveRolesBtn">Guardar Roles</button>
+  </div>
+</div>
 </section>
 
 <!-- Snackbar para mostrar mensajes -->
-<div
-  id="snackbar"
-  class="snackbar"
-></div>
+<div id="snackbar" class="snackbar"></div>
+
+{% include "components/custom/common/deleteItem.njk" %}
+{% include "components/custom/customPopover.njk" %}
 
 <script type="module">
-  import { renderTable } from '../js/components/common/table.js'; // Ajusta la ruta según sea necesario
-  import { renderPagination } from '../js/components/common/pagination.js'; // Ajusta la ruta según sea necesario
+  import { renderTable } from '../js/components/common/table.js';
+  import { renderPagination } from '../js/components/common/pagination.js';
+  import { fetchServices } from '../js/services/index.js';
+  import { getState } from '../js/reducers/state.js';
+  import { setupEventListeners } from '../js/logic/users/index.js';
+  import { onAction } from '../js/logic/users/actions.js';
+  import { userEndpoints } from '../js/config/apiEndpoints.js';
+  import { loadUsers } from '../js/reducers/userReducer.js';
 
-  $(document).ready(function () {
-    let currentPage = 1; // Página actual
-    const usersPerPage = 10; // Número de roles por página
-    let allUsers = []; // Almacenar todos los users
-    let filteredUsers = []; // Almacenar los roles filtrados por alias de rol
+  let currentPage = 1; // Página actual
+  const usersPerPage = 10; // Número de roles por página
+  const headers = ['Nombre', 'Apellidos', 'Correo', 'Género', 'Roles']; // Encabezados de la tabla
+  let filteredUsers = []; // Declarar filteredUsers en el ámbito superior
 
-    // Definición de encabezados
-    const headers = ['Nombre', 'Apellidos', 'Correo', 'Género', 'Roles'];
+  // Obtener users cuando se carga la página
+  const loadUsersList = async () => {
+    console.log('Cargando lista de usuarios...');
+    await fetchServices(userEndpoints, loadUsers);
+    const { users } = getState();
+    const roleAlias = '{{ roleAlias|lower }}'; // Obtén el rol desde la plantilla
 
-    // Obtener users cuando se carga la página
-    fetchUsers();
+    // Filtra los usuarios según el rol
+    filteredUsers = users.filter((user) =>
+      user.roles.some((roleObj) => roleObj.alias.toLowerCase() === roleAlias)
+    );
+    
 
-    // Fetch users from the API
-    function fetchUsers() {
-      apiFetch('/users/getUsers', 'GET')
-        .then((response) => {
-          console.log('Respuesta de la API:', response);
-          allUsers = response.users; // Almacenar todos los users
-          console.log('users cargados:', allUsers); // Imprimir users en consola
+    renderUsers();
+  };
 
-          // Obtener el alias del rol desde la plantilla
-          const roleAlias = '{{ roleAlias|lower }}'; // Recibir el argumento roleAlias
-          if (roleAlias) {
-            filteredUsers = allUsers.filter((user) =>
-              user.roles.some(
-                (roleObj) => roleObj.alias.toLowerCase() === roleAlias
-              )
-            );
-          } else {
-            filteredUsers = [...allUsers]; // Si no hay rol, mostrar todos los usuarios
-          }
+  // Función para renderizar usuarios y paginación
+  function renderUsers() {
+    console.log('Renderizando usuarios...');
+    
+  console.log(filteredUsers); // Verifica los datos antes de procesar
+    const tableData = filteredUsers.map((user) => ({
+      _id: user._id, // Asegúrate de que el ID esté aquí
+      name: user.name,
+      surnames: user.surnames,
+      email: user.email,
+      gender: user.gender,
+      roles: user.roles.map((role) => role.name).join(', '), // Convertir roles a cadena separada por comas
+    }));
 
-          renderUsers(); // Renderizar la tabla con la paginación
-        })
-        .catch(function (xhr) {
-          console.error('Error al obtener los users:', xhr);
-          showSnackbar('Error al cargar los users', false);
-        });
-    }
+    // Limpiar el contenedor antes de renderizar la tabla
+    const container = document.getElementById('userTableContainer');
+    container.innerHTML = ''; // Limpia el contenido previo
 
-    // Función para renderizar roles y paginación
-    function renderUsers() {
-      // Usar filteredUsers en lugar de allUsers
-      const tableData = filteredUsers.map((user) => ({
-        _id: user._id, // Asegúrate de que el ID esté aquí
-        name: user.name,
-        lastname: user.lastname,
-        email: user.email,
-        gender: user.gender,
-        roles: user.roles.map((role) => role.name).join(', '), // Convertir roles a cadena separada por comas
-      }));
+    // Renderizar la tabla directamente
+    renderTable(headers, tableData, currentPage, usersPerPage, onAction);
 
-      // Renderizar la tabla
-      const tableHtml = renderTable(
-        headers,
-        tableData,
-        currentPage,
-        usersPerPage
-      );
-      $('#roleTableContainer').html(tableHtml);
+    // Renderizar la paginación
+    const paginationHtml = renderPagination(
+      currentPage,
+      filteredUsers.length,
+      usersPerPage,
+      handlePageChange
+    );
 
-      // Renderizar la paginación
-      const paginationHtml = renderPagination(
-        currentPage,
-        filteredUsers.length, // Cambiar allUsers.length por filteredUsers.length
-        usersPerPage,
-        handlePageChange
-      );
-      $('#roleTableContainer').append(paginationHtml); // Agregar la paginación después de la tabla
-    }
+    // Añadir la paginación al contenedor
+    container.insertAdjacentHTML('beforeend', paginationHtml);
+  }
 
-    // Manejar el cambio de página
-    function handlePageChange(newPage) {
-      currentPage = newPage; // Actualizar la página actual
-      renderUsers(); // Renderizar roles y paginación nuevamente
-    }
+  // Manejar el cambio de página
+  function handlePageChange(newPage) {
+    currentPage = newPage; // Actualizar la página actual
+    renderUsers(); // Renderizar roles y paginación nuevamente
+  }
 
-    // Manejar clic en botones de paginación
-    $(document).on('click', '.page-button', function () {
-      const newPage = parseInt($(this).data('page'));
-      handlePageChange(newPage);
-    });
-
-    // Función para mostrar un snackbar
-    function showSnackbar(message, success) {
-      const snackbar = $('#snackbar');
-      snackbar.text(message);
-      snackbar.toggleClass('success', success);
-      snackbar.removeClass('error');
-      snackbar.removeClass('show');
-      snackbar.addClass('show');
-      setTimeout(() => {
-        snackbar.removeClass('show');
-      }, 3000);
-    }
+  // Manejar clic en botones de paginación
+  $(document).off('click', '.page-button'); // Eliminar listeners anteriores
+  $(document).on('click', '.page-button', function () {
+    const newPage = parseInt($(this).data('page'));
+    handlePageChange(newPage);
   });
+
+  loadUsersList();
+  setupEventListeners(loadUsersList);
+  window.onAction = onAction;
+
 </script>

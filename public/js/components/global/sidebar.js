@@ -15,11 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const isClickInsideSidebar = sidebar.contains(event.target);
     const isClickOnHamburger = hamburgerBtn.contains(event.target);
 
-    if (
-      !isClickInsideSidebar &&
-      !isClickOnHamburger &&
-      sidebar.classList.contains('active')
-    ) {
+    if (!isClickInsideSidebar && !isClickOnHamburger && sidebar.classList.contains('active')) {
       sidebar.classList.remove('active');
       container.classList.remove('shifted');
     }
@@ -31,10 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const parentLi = link.parentElement;
       const parentHref = link.getAttribute('href');
 
+      // Si el enlace tiene un submenú
       if (submenu) {
-        // Si el enlace tiene un submenú
         event.preventDefault(); // Evita la navegación predeterminada
-
         submenu.classList.toggle('active'); // Alterna la visibilidad del submenú
         parentLi.classList.toggle('active'); // Cambia la clase active del li padre
 
@@ -43,44 +38,46 @@ document.addEventListener('DOMContentLoaded', () => {
           const otherSubmenu = otherLink.nextElementSibling;
           const otherParentLi = otherLink.parentElement;
 
-          if (
-            otherSubmenu &&
-            otherSubmenu !== submenu &&
-            otherSubmenu.classList.contains('active')
-          ) {
+          if (otherSubmenu && otherSubmenu !== submenu && otherSubmenu.classList.contains('active')) {
             otherSubmenu.classList.remove('active'); // Cierra el otro submenú
             otherParentLi.classList.remove('active'); // Remueve la clase active del padre
           }
         });
       } else {
-        // Manejar el caso de parentHref
+        // Manejar la carga de contenido
         event.preventDefault(); // Evita la navegación predeterminada
-
-        // Verificar si el href es un hash o una ruta
-        if (parentHref.startsWith('#')) {
-          const targetElement = document.querySelector(parentHref);
-          if (targetElement) {
-            // Cierra el sidebar y hace scroll hacia la sección
-            sidebar.classList.remove('active');
-            container.classList.remove('shifted');
-
-            // Desplazamiento suave hacia la sección indicada
-            targetElement.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start',
-            });
-          }
-        } else {
-          // Si el parentHref no es un hash, podría ser una ruta a otra página
-          sidebar.classList.remove('active'); // Cierra el sidebar
-          container.classList.remove('shifted'); // Cierra el contenedor
-
-          // Navega normalmente
-          window.location.href = parentHref;
-        }
+        loadContent(parentHref);
       }
     });
   });
+
+const loadContent = (url) => {
+  $.ajax({
+    url: url,
+    method: 'GET',
+    success: function (html) {
+      // Solo reemplaza el contenido principal
+      $('#contentMain').html($(html).find('#contentMain').html());
+      // No vuelvas a cargar el navbar
+      executeScripts(html); // Si hay scripts que necesitas ejecutar
+      history.pushState({ url: url }, '', url); // Manejo del historial
+    },
+    error: function (xhr, status, error) {
+      console.error('Error al cargar contenido:', error);
+    },
+  });
+};
+
+  const executeScripts = (html) => {
+    const scripts = $(html).filter('script');
+    scripts.each(function () {
+      const newScript = document.createElement('script');
+      newScript.type = $(this).attr('type') || 'text/javascript';
+      newScript.src = $(this).attr('src') || ''; // Asigna la fuente si existe
+      newScript.text = $(this).text(); // Añade el contenido del script
+      document.body.appendChild(newScript); // Añade el script al body
+    });
+  };
 
   // Cierra el sidebar al redimensionar la ventana
   window.addEventListener('resize', () => {

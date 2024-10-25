@@ -10,7 +10,8 @@ export function showPopover(item, targetButton, onAction) {
     popover.style.display === 'block' &&
     currentPopoverTarget === targetButton
   ) {
-    closePopover(); // Si el popover ya está abierto para este botón, cerrarlo
+    // Si el popover ya está abierto para este botón, cerrarlo
+    closePopover();
     return;
   }
 
@@ -27,16 +28,7 @@ export function showPopover(item, targetButton, onAction) {
     { text: 'Eliminar', action: 'delete' },
   ];
 
-  // Filtrar las acciones vacías
-  const filteredActions = actions.filter((action) => action.text.trim() !== '');
-
-  // Comprobar si hay acciones para mostrar
-  if (filteredActions.length === 0) {
-    closePopover(); // No mostrar el popover si no hay acciones
-    return; // Salir de la función
-  }
-
-  filteredActions.forEach(({ text, action }) => {
+  actions.forEach(({ text, action }) => {
     const button = document.createElement('button');
     button.className = 'button-popper';
     button.innerText = text;
@@ -60,7 +52,7 @@ export function showPopover(item, targetButton, onAction) {
 
 // Establecer la posición del popover
 function setPopoverPosition(popover, targetButton) {
-  if (!targetButton || !popover) return; // Asegúrate de que hay un botón de destino y que el popover existe
+  if (!targetButton) return; // Asegúrate de que hay un botón de destino
 
   const rect = targetButton.getBoundingClientRect();
   const popoverHeight = popover.offsetHeight;
@@ -82,7 +74,7 @@ function setPopoverPosition(popover, targetButton) {
 
   // Comprobar espacio disponible por encima y por debajo
   const spaceBelow = window.innerHeight - rect.bottom - 10; // Espacio por debajo del botón
-  const spaceAbove = rect.top - popoverHeight; // Espacio por encima del botón
+  const spaceAbove = rect.top - 310; // Espacio por encima del botón
 
   // Si hay más espacio por encima y es suficiente para el popover, mostrarlo arriba
   if (spaceAbove > popoverHeight && spaceAbove >= spaceBelow) {
@@ -103,10 +95,8 @@ function setPopoverPosition(popover, targetButton) {
 // Cerrar el popover
 export function closePopover() {
   const popover = document.getElementById('userActionsPopover');
-  if (popover) {
-    popover.style.display = 'none';
-  }
-  currentPopoverTarget = null; // Restablecer el objetivo actual
+  popover.style.display = 'none';
+  currentPopoverTarget = null; // Restablece el objetivo actual
 }
 
 // Cerrar el popover al hacer clic fuera

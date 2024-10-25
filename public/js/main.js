@@ -9,7 +9,7 @@ import './components/global/dropdown.js';
 import './components/global/toggleFields.js';
 import './components/common/popover.js';
 
-
+// import './init.js'
 import './components/custom/icons.js';
 
 import './components/custom/modal.js';
@@ -132,7 +132,7 @@ window.addEventListener('popstate', () => {
   const currentPath = getCurrentPath();
   setCurrentPath(currentPath);
   handleRouteNavigation();
-});
+});0
 
 
 // Spinner
@@ -183,7 +183,7 @@ function createSpinner() {
 
 // Conexión WebSocket
 const socket = new WebSocket(
-  'wss://6000-fanor19481956-1945-0hhln0kcvpo.ws-us116.gitpod.io'
+  'wss://7000-fanor19481956-1945-0hhln0kcvpo.ws-us116.gitpod.io'
 ); // Cambia a tu URL de WebSocket
 
 

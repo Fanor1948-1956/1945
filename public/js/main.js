@@ -14,16 +14,7 @@ import './components/custom/icons.js';
 
 import './components/custom/modal.js';
 
-
-
 import './libraries/select2.min.js';
-
-
-
-
-
-
-
 
 let modal; // Variable para almacenar el modal
 
@@ -132,8 +123,8 @@ window.addEventListener('popstate', () => {
   const currentPath = getCurrentPath();
   setCurrentPath(currentPath);
   handleRouteNavigation();
-});0
-
+});
+0;
 
 // Spinner
 let spinnerDiv = null;
@@ -183,45 +174,43 @@ function createSpinner() {
 
 // Conexión WebSocket
 const socket = new WebSocket(
-  'wss://7000-fanor19481956-1945-0hhln0kcvpo.ws-us116.gitpod.io'
+  'wss://7000-fanoro1956-1945-50am2qruf9y.ws-us116.gitpod.io'
 ); // Cambia a tu URL de WebSocket
-
-
 
 // Manejar la conexión
 socket.addEventListener('open', () => {
-  console.log('Conectado al servidor WebSocket')
-})
+  console.log('Conectado al servidor WebSocket');
+});
 
-socket.addEventListener('message', event => {
+socket.addEventListener('message', (event) => {
   if (event.data === 'actualizar') {
-    console.log('Actualizando la página...')
+    console.log('Actualizando la página...');
 
-    const loadingDiv = document.createElement('div')
-    loadingDiv.id = 'loadingMessage'
-    loadingDiv.style.position = 'fixed'
-    loadingDiv.style.top = '50%'
-    loadingDiv.style.left = '50%'
-    loadingDiv.style.transform = 'translate(-50%, -50%)'
-    loadingDiv.style.opacity = '0'
-    loadingDiv.style.transition = 'opacity 0.5s'
-    document.body.appendChild(loadingDiv)
-
-    setTimeout(() => {
-      loadingDiv.style.opacity = '0'
-    }, 500)
+    const loadingDiv = document.createElement('div');
+    loadingDiv.id = 'loadingMessage';
+    loadingDiv.style.position = 'fixed';
+    loadingDiv.style.top = '50%';
+    loadingDiv.style.left = '50%';
+    loadingDiv.style.transform = 'translate(-50%, -50%)';
+    loadingDiv.style.opacity = '0';
+    loadingDiv.style.transition = 'opacity 0.5s';
+    document.body.appendChild(loadingDiv);
 
     setTimeout(() => {
-      location.reload()
-    }, 500)
+      loadingDiv.style.opacity = '0';
+    }, 500);
+
+    setTimeout(() => {
+      location.reload();
+    }, 500);
   }
-})
+});
 
-socket.addEventListener('error', error => {
-  console.error('Error en la conexión WebSocket:', error)
-})
+socket.addEventListener('error', (error) => {
+  console.error('Error en la conexión WebSocket:', error);
+});
 
 // Manejar cierre de conexión
 socket.addEventListener('close', () => {
-  console.log('Conexión cerrada')
-})
+  console.log('Conexión cerrada');
+});

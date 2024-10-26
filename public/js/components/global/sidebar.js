@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const sidebar = document.getElementById('sidebar');
   const container = document.querySelector('.container');
   const submenuLinks = document.querySelectorAll('.sidebar ul li > a');
+  const contentMain = document.getElementById('contentMain'); // Agregar referencia a contentMain
+  const spinner = document.getElementById('spinner'); // Referencia al spinner
 
   // Abre/cierra el sidebar al hacer clic en el botón hamburguesa
   hamburgerBtn.addEventListener('click', () => {
@@ -15,7 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const isClickInsideSidebar = sidebar.contains(event.target);
     const isClickOnHamburger = hamburgerBtn.contains(event.target);
 
-    if (!isClickInsideSidebar && !isClickOnHamburger && sidebar.classList.contains('active')) {
+    if (
+      !isClickInsideSidebar &&
+      !isClickOnHamburger &&
+      sidebar.classList.contains('active')
+    ) {
       sidebar.classList.remove('active');
       container.classList.remove('shifted');
     }
@@ -26,6 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const submenu = link.nextElementSibling;
       const parentLi = link.parentElement;
       const parentHref = link.getAttribute('href');
+
+      // Cierra el sidebar al hacer clic en un enlace
+      sidebar.classList.remove('active');
+      container.classList.remove('shifted');
 
       // Si el enlace tiene un submenú
       if (submenu) {
@@ -38,7 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
           const otherSubmenu = otherLink.nextElementSibling;
           const otherParentLi = otherLink.parentElement;
 
-          if (otherSubmenu && otherSubmenu !== submenu && otherSubmenu.classList.contains('active')) {
+          if (
+            otherSubmenu &&
+            otherSubmenu !== submenu &&
+            otherSubmenu.classList.contains('active')
+          ) {
             otherSubmenu.classList.remove('active'); // Cierra el otro submenú
             otherParentLi.classList.remove('active'); // Remueve la clase active del padre
           }
@@ -51,22 +65,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-const loadContent = (url) => {
-  $.ajax({
-    url: url,
-    method: 'GET',
-    success: function (html) {
-      // Solo reemplaza el contenido principal
-      $('#contentMain').html($(html).find('#contentMain').html());
-      // No vuelvas a cargar el navbar
-      executeScripts(html); // Si hay scripts que necesitas ejecutar
-      history.pushState({ url: url }, '', url); // Manejo del historial
-    },
-    error: function (xhr, status, error) {
-      console.error('Error al cargar contenido:', error);
-    },
-  });
-};
+  const loadContent = (url) => {
+    $.ajax({
+      url: url,
+      method: 'GET',
+      success: function (data, status, xhr) {
+        const contentType = xhr.getResponseHeader('content-type');
+        if (contentType.includes('application/json')) {
+          // Si es JSON, procesa los datos como JSON
+          const response = JSON.parse(data);
+          $('#contentMain').html(response.content);
+          document.title = response.title || url;
+        } else {
+          // Si es HTML, procesa los datos como HTML
+          $('#contentMain').html($(data).find('#contentMain').html());
+          const newTitle = $(data).filter('title').text();
+          document.title = newTitle || url;
+          executeScripts(data);
+        }
+        history.pushState({ url: url }, '', url);
+      },
+      error: function (xhr, status, error) {
+        console.error('Error al cargar contenido:', error);
+      },
+    });
+  };
 
   const executeScripts = (html) => {
     const scripts = $(html).filter('script');

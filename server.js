@@ -1,6 +1,7 @@
 const express = require('express');
+const path = require('path');
 const WebSocket = require('ws');
-const chokidar = require('chokidar'); 
+const chokidar = require('chokidar');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const nunjucks = require('nunjucks');
@@ -11,6 +12,7 @@ const authRoutes = require('./routes/authRoutes');
 const permissionRoutes = require('./routes/permissionRoutes');
 const roleRoutes = require('./routes/roleRoutes');
 const userRoutes = require('./routes/userRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 const profileRoutes = require('./routes/profileRoutes');
 const registerPublicRoutes = require('./routes/publicRoutes');
@@ -18,22 +20,17 @@ const registerPrivateRoutes = require('./routes/privateRoutes');
 const { verifyToken } = require('./middleware/authMiddleware');
 const specialtyRoutes = require('./routes/specialtyRoutes');
 
-
-
 const app = express();
-const port = process.env.PORT || 5000; 
-
+const port = process.env.PORT || 5000;
 
 connectDB();
-
 
 const env = nunjucks.configure('views', {
   autoescape: true,
   express: app,
-  watch: true, 
+  watch: true,
 });
-app.set('view engine', 'njk'); 
-
+app.set('view engine', 'njk');
 
 app.use(sessionConfig());
 app.use(cookieParser());
@@ -60,7 +57,7 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  if (req.session&&req.session.authenticated) {
+  if (req.session && req.session.authenticated) {
     return res.redirect('/dashboard');
   } else {
     return res.redirect('/home');
@@ -71,26 +68,22 @@ app.use(express.static('public'));
 
 registerPublicRoutes(app);
 
-
 registerPrivateRoutes(app);
-
-
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 //controlar retroceso entre sesiones login y dashboard
-
 
 app.use('/permissions', permissionRoutes);
 app.use('/roles', roleRoutes);
 app.use('/users', userRoutes);
+app.use('/upload', verifyToken, uploadRoutes);
 app.use('/services', verifyToken, serviceRoutes);
-app.use('/api', verifyToken, profileRoutes);
+app.use('/api', profileRoutes);
 app.use('/auth', authRoutes);
-app.use('/specialties', specialtyRoutes);
+app.use('/specialties', verifyToken, specialtyRoutes);
 
 const server = app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);
 });
-
 
 const wss = new WebSocket.Server({ noServer: true });
 

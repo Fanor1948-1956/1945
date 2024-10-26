@@ -184,7 +184,10 @@ const registerPrivateRoutes = (app) => {
       if (route.isPublic && !req.session.authenticated) {
         return res.redirect('/home');
       }
-    
+
+      if (route.title === 'Perfil' && !req.session.authenticated) {
+        return res.redirect('/home');
+      }
 
       const userRoles = getUserRoles(req);
       route.userRoles = userRoles;
@@ -199,7 +202,6 @@ const registerPrivateRoutes = (app) => {
     app.get(route.path, async (req, res) => {
       try {
         if (route.handler) {
-          
           return route.handler(req, res);
         }
         const userRoles = getUserRoles(req);
@@ -208,22 +210,21 @@ const registerPrivateRoutes = (app) => {
         const allRoles = await roleModel.find();
         const allUsers = await User.find().populate('roles');
 
-        
         const userProfile = await User.findById(req.session.userId);
 
         res.render(route.view, {
           title: route.title,
           items: items,
-          userRoles: userRoles, 
+          userRoles: userRoles,
           allRoles,
           allUsers,
           privateRoutes,
           isAuthenticated: req.session.authenticated,
           username: req.session.name,
-          currentPath: route.path, 
-          token: req.session.token, 
+          currentPath: route.path,
+          token: req.session.token,
           profile: userProfile,
-          hasAccess, 
+          hasAccess,
         });
       } catch (error) {
         console.error(`Error al cargar los datos para ${route.path}:`, error);
@@ -231,7 +232,6 @@ const registerPrivateRoutes = (app) => {
       }
     });
 
-    
     if (route.subRoutes && route.subRoutes.length > 0) {
       route.subRoutes.forEach((subRoute) => {
         app.use(subRoute.path, (req, res, next) => {
@@ -248,7 +248,6 @@ const registerPrivateRoutes = (app) => {
         app.get(subRoute.path, async (req, res) => {
           try {
             if (subRoute.handler) {
-              
               return subRoute.handler(req, res);
             }
             const subItems = await subRoute.items();
@@ -277,14 +276,3 @@ const registerPrivateRoutes = (app) => {
 };
 
 module.exports = registerPrivateRoutes;
-
-
-
-
-
-
-
-
-
-
-

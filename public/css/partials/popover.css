@@ -1,4 +1,4 @@
-/* .custom-popper {
+.custom-popper {
   position: absolute;
   background-color: rgb(252, 252, 252);
   border: 1px solid #ccc;
@@ -19,21 +19,19 @@
   border-radius: 4px; /* Bordes redondeados */
 }
 
-
-
-
 .more-button {
-  background-color: #080247;
+  background-color: #f8f7ff;
   border: none;
   font-size: 18px;
   cursor: pointer;
-  color: white;
+  color: rgb(17, 7, 81);
   padding: 5px 10px;
   border-radius: 4px;
 }
 
 .more-button:hover {
-  color: #007BFF;
+  color: #ffffff;
+  background-color: rgb(17, 7, 81);
 }
 .popover {
   position: absolute;
@@ -56,4 +54,4 @@
 
 .button-popper:hover {
   background-color: #f0f0f0;
-} */
+}

@@ -1,118 +1,213 @@
-<button
-  id="addUserBtn"
-  class="add-button"
-  data-size="medium"
-  {% if not isAuthenticated %} style="display: none" {% endif %}>
-  Agregar Usuario
-</button>
+<div>
+  <button
+    id="addUserBtn"
+    class="add-button"
+    data-size="medium"
+    {%
+    if
+    not
+    isAuthenticated
+    %}
+    style="display: none"
+    {%
+    endif
+    %}
+  >
+    Agregar Usuario
+  </button>
+</div>
 
 <div id="userTableContainer"></div>
 
-<div id="snackbar" class="snackbar"></div>
+<div
+  id="snackbar"
+  class="snackbar"
+></div>
 
 <!-- Modal para agregar/editar usuarios -->
-<div class="modal" id="addUserModal" style="display: none">
+<div
+  class="modal"
+  id="addUserModal"
+  style="display: none"
+>
   <div class="modal-content">
-    <span class="close-button" onclick="Modal.close('#addUserModal')">&times;</span>
+    <span
+      class="close-button"
+      onclick="Modal.close('#addUserModal')"
+      >&times;</span
+    >
     <h2 class="modal-title"></h2>
     <form id="userForm">
       <label for="userName">Nombre:</label>
-      <input type="text" id="userName" name="name" required />
+      <input
+        type="text"
+        id="userName"
+        name="name"
+        required
+      />
 
       <label for="userSurnames">Apellidos:</label>
-      <input type="text" id="userSurnames" name="surnames" required />
+      <input
+        type="text"
+        id="userSurnames"
+        name="surnames"
+        required
+      />
 
       <label for="userEmail">Correo:</label>
-      <input type="email" id="userEmail" name="email" required />
+      <input
+        type="email"
+        id="userEmail"
+        name="email"
+        required
+      />
 
       <label for="userPassword">Contraseña:</label>
-      <input type="password" id="userPassword" name="password" required />
+      <input
+        type="password"
+        id="userPassword"
+        name="password"
+        required
+      />
 
       <label for="userGender">Género:</label>
-      <input type="text" id="userGender" name="gender" required readonly />
-      <button type="button" id="selectGenderBtn">Seleccionar Género</button>
+      <input
+        type="text"
+        id="userGender"
+        name="gender"
+        required
+        readonly
+      />
+      <button
+        type="button"
+        id="selectGenderBtn"
+      >
+        Seleccionar Género
+      </button>
       <br />
-      <button type="button" id="selectRolesBtn">Seleccionar Roles</button>
-      <button type="button" id="saveItemBtn">Guardar</button>
+      <button
+        type="button"
+        id="selectRolesBtn"
+      >
+        Seleccionar Roles
+      </button>
+      <button
+        type="button"
+        id="saveItemBtn"
+      >
+        Guardar
+      </button>
     </form>
   </div>
 </div>
 
 <!-- Modal para seleccionar género -->
-<div class="modal" id="selectGenderModal" style="display: none">
+<div
+  class="modal"
+  id="selectGenderModal"
+  style="display: none"
+>
   <div class="modal-content">
-    <span class="close-button" onclick="Modal.close('selectGenderModal')">&times;</span>
+    <span
+      class="close-button"
+      onclick="Modal.close('selectGenderModal')"
+      >&times;</span
+    >
     <h2 class="modal-title"></h2>
     <div id="genderContainer">
       <label>
-        <input type="radio" name="gender" value="masculino" /> Masculino
+        <input
+          type="radio"
+          name="gender"
+          value="masculino"
+        />
+        Masculino
       </label>
       <label>
-        <input type="radio" name="gender" value="femenino" /> Femenino
+        <input
+          type="radio"
+          name="gender"
+          value="femenino"
+        />
+        Femenino
       </label>
       <label>
-        <input type="radio" name="gender" value="otro" /> Otro
+        <input
+          type="radio"
+          name="gender"
+          value="otro"
+        />
+        Otro
       </label>
     </div>
-    <button type="button" id="saveGenderBtn">Guardar Género</button>
+    <button
+      type="button"
+      id="saveGenderBtn"
+    >
+      Guardar Género
+    </button>
   </div>
 </div>
 
 <!-- Modal para seleccionar roles -->
-<div class="modal" id="selectRolesModal" style="display: none">
+<div
+  class="modal"
+  id="selectRolesModal"
+  style="display: none"
+>
   <div class="modal-content">
-    <span class="close-button" onclick="Modal.close('#selectRolesModal')">&times;</span>
+    <span
+      class="close-button"
+      onclick="Modal.close('#selectRolesModal')"
+      >&times;</span
+    >
     <h2 class="modal-title"></h2>
     <div id="rolesContainer"></div>
-    <button type="button" id="saveRolesBtn">Guardar Roles</button>
+    <button
+      type="button"
+      id="saveRolesBtn"
+    >
+      Guardar Roles
+    </button>
   </div>
 </div>
-{% include "components/custom/common/deleteItem.njk" %}
-{% include "components/custom/customPopover.njk" %}
-
+{% include "components/custom/common/deleteItem.njk" %} {% include
+"components/custom/customPopover.njk" %}
 
 <script type="module">
+  import { fetchServices } from '../js/services/index.js';
+  import { getState } from '../js/reducers/state.js';
+  import { renderTable } from '../js/components/global/renderTable.js';
+  import { setupEventListeners } from '../js/logic/users/index.js';
+  import { onAction } from '../js/logic/users/actions.js';
+  import { userEndpoints } from '../js/config/apiEndpoints.js';
+  import { loadUsers } from '../js/reducers/userReducer.js';
+  const userHeaders = {
+    name: 'Nombre',
+    surnames: 'Apellidos',
+    email: 'Correo',
+    // password: 'Contraseña',
+    gender: 'Género',
+    roles: 'Roles',
+    uploads: 'Images',
+    isActive: 'Estado',
+  };
 
+  const loadUsersList = async () => {
+    console.log('Cargando lista de usuarios...');
+    await fetchServices(userEndpoints, loadUsers);
+    const { users } = getState();
+    const roleAlias = '{{ roleAlias|lower }}'; // Obtén el rol desde la plantilla
 
+    // Filtra los usuarios según el rol
+    const filteredUsers = users.filter((user) =>
+      user.roles.some((roleObj) => roleObj.alias.toLowerCase() === roleAlias)
+    );
+    console.log('Usuarios filtrados:', filteredUsers);
+    renderTable(filteredUsers, userHeaders, 'userTableContainer', onAction);
+  };
 
-import {fetchServices} from '../js/services/index.js'
-import { getState } from '../js/reducers/state.js';
-import { renderTable } from '../js/components/global/renderTable.js';
-import { setupEventListeners} from '../js/logic/users/index.js'
-import { onAction } from '../js/logic/users/actions.js';
-import {userEndpoints} from '../js/config/apiEndpoints.js'
-import {loadUsers} from '../js/reducers/userReducer.js'
-const userHeaders = {
-  name: 'Nombre',
-  surnames: 'Apellidos',
-  email: 'Correo',
-      // password: 'Contraseña',
-  gender: 'Género',
-  roles: 'Roles',
-  isActive: 'Estado',
-};
-
-
-
-
-  
-
-
-const loadUsersList = async () => {
-  console.log('Cargando lista de usuarios...');
-  await fetchServices(userEndpoints, loadUsers);
-  const { users } = getState();
-  const roleAlias = '{{ roleAlias|lower }}'; // Obtén el rol desde la plantilla
-
-  // Filtra los usuarios según el rol
-  const filteredUsers = users.filter((user) =>
-    user.roles.some((roleObj) => roleObj.alias.toLowerCase() === roleAlias)
-  );
-  console.log('Usuarios filtrados:', filteredUsers);
-  renderTable(filteredUsers, userHeaders, 'userTableContainer', onAction);
-};
-
-loadUsersList();
+  loadUsersList();
   setupEventListeners(loadUsersList);
-window.onAction = onAction;
+  window.onAction = onAction;
 </script>

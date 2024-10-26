@@ -1,5 +1,4 @@
-{% extends "layouts/publicLayout.njk" %}
-{% block content %}
+{% extends "layouts/publicLayout.njk" %} {% block content %}
 
 <div class="main">
   <div class="form-container-signin">
@@ -24,13 +23,17 @@
         </div>
       </div>
     </div>
-    <form id="loginForm" class="form-action" method="POST">
+    <form
+      id="loginForm"
+      class="form-action"
+      method="POST"
+    >
       <div class="input-content">
         {% if isAuthenticated %}
-          <p>Bienvenido, {{ username }}</p>
-          <p>Token: {{ token }}</p>
+        <p>Bienvenido, {{ username }}</p>
+        <p>Token: {{ token }}</p>
         {% else %}
-          <p>No estás autenticado.</p>
+        <p>No estás autenticado.</p>
         {% endif %}
 
         <input
@@ -50,9 +53,13 @@
       </div>
       <!-- Mensaje de error -->
       <div class="error-message"></div>
-   
-        <button type="submit"       class="send">Ingresar</button>
 
+      <button
+        type="submit"
+        class="send"
+      >
+        Ingresar
+      </button>
     </form>
   </div>
 </div>
@@ -89,13 +96,13 @@
         localStorage.setItem('token', data.token);
         // Almacenar la información del usuario si es necesario
         localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('isAuthenticated', data.isAuthenticated);
 
         // // Redirigir al dashboard
         // window.location.href = '/dashboard';
         // Redirigir al dashboard y evitar que vuelvan a la página de login
-// history.replaceState(null, null, '/dashboard');
-window.location.href = '/dashboard';
-
+        // history.replaceState(null, null, '/dashboard');
+        window.location.href = '/dashboard';
       } else {
         const errorData = await response.json();
         errorMessageDiv.textContent = errorData.message; // Mostrar el mensaje de error

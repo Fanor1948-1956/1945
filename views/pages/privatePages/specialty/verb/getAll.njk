@@ -1,5 +1,5 @@
 {% if isAuthenticated %}
-<h1>{{ title }}</h1>
+
 {% endif %}
 
 <button
@@ -57,14 +57,14 @@
     addSpecialty,
     updateSpecialty,
     deleteSpecialty,
-  } from './js/reducers/index.js';
+  } from '../js/reducers/index.js';
 
-  import { createService, updateService } from './js/services/index.js';
-  import { getState } from './js/reducers/state.js';
-  import { fetchSpecialty } from './js/services/loadFetchs.js';
-  import { renderTable } from './js/components/global/renderTable.js';
-  import { specialtyEndpoints } from './js/config/apiEndpoints.js';
-  import { confirmDelete } from './js/utils/confirmDelete.js'; 
+  import { createService, updateService } from '../js/services/index.js';
+  import { getState } from '../js/reducers/state.js';
+  import { fetchSpecialty } from '../js/services/loadFetchs.js';
+  import { renderTable } from '../js/components/global/renderTable.js';
+  import { specialtyEndpoints } from '../js/config/apiEndpoints.js';
+  import { confirmDelete } from '../js/utils/confirmDelete.js';
   console.log(specialtyEndpoints.list);
   const specialtyHeaders = {
     name: 'Nombre',
@@ -73,11 +73,6 @@
   };
 
   let currentEditingSpecialtyId = null;
-
-  document.addEventListener('DOMContentLoaded', () => {
-    loadsSpecialties();
-    setupEventListeners();
-  });
 
   const loadsSpecialties = async () => {
     await fetchSpecialty();
@@ -122,9 +117,8 @@
         specialtyEndpoints,
         'especialidad',
         loadsSpecialties,
-        deleteSpecialty,
-      ); 
-      
+        deleteSpecialty
+      );
     }
   };
 
@@ -142,7 +136,11 @@
     const data = { name, description };
     if (currentEditingSpecialtyId) {
       data._id = currentEditingSpecialtyId;
-      const message = await updateService(data, specialtyEndpoints, updateSpecialty);
+      const message = await updateService(
+        data,
+        specialtyEndpoints,
+        updateSpecialty
+      );
       if (message) {
         currentEditingSpecialtyId = null;
         Modal.close('#addSpecialtyModal');
@@ -152,7 +150,11 @@
         showSnackbar('Error al actualizar la especialidad.', false);
       }
     } else {
-      const message = await createService(data, specialtyEndpoints, addSpecialty);
+      const message = await createService(
+        data,
+        specialtyEndpoints,
+        addSpecialty
+      );
       if (message) {
         Modal.close('#addSpecialtyModal');
         loadsSpecialties();
@@ -163,6 +165,8 @@
     }
   };
 
-  
+  loadsSpecialties();
+  setupEventListeners();
+
   window.onAction = onAction;
 </script>

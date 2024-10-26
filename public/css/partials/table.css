@@ -1,14 +1,16 @@
 .table-container {
   background-color: #001f3f;
   color: white;
-  padding: 20px;
+
   border-radius: 5px;
-  overflow-x: auto; 
+  overflow: auto;
 }
 
 table {
   width: 100%;
+  height: auto !important;
   border-collapse: collapse;
+  margin-top: 1rem;
 }
 
 th,
@@ -20,21 +22,22 @@ td {
 
 th {
   background-color: #f2f2f2;
+  color: #160443;
 }
 
 tr:hover {
   background-color: #f1f1f1;
+  color: #160443;
 }
-
 
 @media (max-width: 768px) {
   th,
   td {
-    padding: 5px; 
-    font-size: 14px; 
+    padding: 5px;
+    font-size: 14px;
   }
 
   table {
-    width: 100%; 
+    width: 100%;
   }
 }

@@ -1,126 +1,216 @@
-{% extends "layouts/privateLayout.njk" %}
+{% extends "layouts/privateLayout.njk" %} {% block content %}
+<div
+  id="profileContainer"
+  class="profile-container"
+>
+  <h1>Perfil del Usuario</h1>
 
-{% block content %}
-<div id="profileContainer">
-    <h1>Perfil del Usuario</h1>
-    
-    <div class="profile-details">
-        <h2>Información Personal</h2>
-        <form id="profileForm" method="POST" action="/api/update">
-            <label for="name">Nombre:</label>
-            <input type="text" name="name" required id="nameInput" class="transparent-input">
-            
-            <label for="surnames">Apellidos:</label>
-            <input type="text" name="surnames" required id="surnamesInput" class="transparent-input">
-            
-            <label for="email">Email:</label>
-            <input type="email" name="email" required id="emailInput" class="transparent-input">
-            
-            <label for="gender">Género:</label>
-            <select name="gender" id="genderSelect" class="transparent-input">
-                <option value="masculino">Masculino</option>
-                <option value="femenino">Femenino</option>
-                <option value="otro">Otro</option>
-            </select>
+  <div class="profile-details">
+    <h2>Información Personal</h2>
+    <form id="profileForm">
+      <label for="name">Nombre:</label>
+      <input
+        type="text"
+        name="name"
+        required
+        id="nameInput"
+        class="transparent-input"
+        disabled
+      />
 
-            <label for="createdAt">Fecha de Registro:</label>
-            <input type="text" name="createdAt" disabled id="createdAtInput" class="transparent-input"> <!-- Solo lectura -->
+      <label for="surnames">Apellidos:</label>
+      <input
+        type="text"
+        name="surnames"
+        required
+        id="surnamesInput"
+        class="transparent-input"
+        disabled
+      />
 
-            <div class="profile-actions">
-                <button type="button" class="button" id="editButton">Modificar</button>
-                <button type="button" class="button" style="display:none;" id="cancelButton">Cancelar</button>
-                <button type="submit" class="button" style="display:none;" id="updateButton">Actualizar Perfil</button>
-            </div>
-        </form>
-    </div>
+      <label for="email">Email:</label>
+      <input
+        type="email"
+        name="email"
+        required
+        id="emailInput"
+        class="transparent-input"
+        disabled
+      />
+
+      <label for="gender">Género:</label>
+      <select
+        name="gender"
+        id="genderSelect"
+        class="transparent-input"
+        disabled
+      >
+        <option value="masculino">Masculino</option>
+        <option value="femenino">Femenino</option>
+        <option value="otro">Otro</option>
+      </select>
+
+      <label for="createdAt">Fecha de Registro:</label>
+      <input
+        type="text"
+        name="createdAt"
+        disabled
+        id="createdAtInput"
+        class="transparent-input"
+      />
+      <div class="upload-section">
+        <h3>Archivos Subidos</h3>
+        <div
+          id="uploadsList"
+          class="uploads-list"
+        >
+          <!-- Aquí se mostrarán los archivos subidos -->
+        </div>
+        <input
+          type="file"
+          id="uploadInput"
+          class="transparent-input"
+        />
+        <button
+          type="button"
+          id="uploadButton"
+          class="button"
+        >
+          Subir Archivo
+        </button>
+      </div>
+      <div class="profile-actions">
+        <button
+          type="button"
+          class="button"
+          id="editButton"
+        >
+          Modificar
+        </button>
+        <button
+          type="button"
+          class="button"
+          style="display: none"
+          id="cancelButton"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="button"
+          style="display: none"
+          id="updateButton"
+        >
+          Actualizar Perfil
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
 
-<style>
-    /* Estilos aquí */
-    .transparent-input {
-        background-color: transparent;
-        border: none;
-        border-bottom: 1px solid #ccc; /* Línea inferior visible */
-        color: #000; /* Color del texto */
-        width: 100%;
-        padding: 5px;
-        transition: border-bottom-color 0.3s ease; /* Animación suave para el cambio de color */
-    }
-
-    .transparent-input:disabled {
-        opacity: 0.5; /* Reducir la opacidad cuando está deshabilitado */
-    }
-
-    .button {
-        margin-top: 10px; /* Espacio entre botones */
-        cursor: pointer;
-    }
-
-    .button:hover {
-        background-color: #f0f0f0; /* Color al pasar el ratón por encima */
-        color: #000; /* Color al pasar el ratón por encima */
-    }
-</style>
-
+<div
+  id="snackbar"
+  class="snackbar"
+></div>
 <script type="module">
-    import { loadUserProfile } from '../js/services/profileService.js';
-    import { getState, setState } from '../js/reducers/state.js'; // Asumiendo que setState es para actualizar el estado
+  import { loadUserProfile } from '../js/services/profileService.js';
+  import { handleProfileUpdate } from '../js/logic/auth/profileLogic.js';
+  import {
+    enableEditMode,
+    cancelEditMode,
+  } from '../js/logic/common/editItem.js';
+  import { getState, setState } from '../js/reducers/state.js';
+  import {
+    loadUploads,
+    handleFileUpload,
+  } from '../js/logic/upload/uploadLogic.js';
 
-    // Cargar el perfil del usuario en el estado y en el formulario
-    async function fetchUserProfile() {
-        try {
-            const user = await loadUserProfile(); // Cargar el perfil usando el servicio
-            
-            // Actualizar el estado
-            setState({ profile: user });
+  const token = '{{ token }}'; // Asegúrate de escapar correctamente
+  const currentPath = '{{ currentPath }}';
+  const isAuthenticated = '{{ isAuthenticated }}'; // Asegúrate de escapar correctamente
 
-            // Renderizar en el formulario
-            document.getElementById('nameInput').value = user.name || '';
-            document.getElementById('surnamesInput').value = user.surnames || '';
-            document.getElementById('emailInput').value = user.email || '';
-            document.getElementById('genderSelect').value = user.gender || 'masculino';
-            document.getElementById('createdAtInput').value = new Date(user.createdAt).toLocaleDateString();
-        } catch (error) {
-            console.error('Error al obtener el perfil del usuario:', error);
-            alert('No se pudo obtener el perfil. Intenta de nuevo más tarde.');
-        }
+  // console.log('Token desde Nunjucks:', token);
+  // console.log('Autenticado desde Nunjucks:', isAuthenticated);
+  // console.log('Ruta actual:', currentPath);
+  // Función para cargar el perfil al cargar la página
+  async function fetchUserProfile() {
+    try {
+      const user = await loadUserProfile();
+      console.log('user', user);
+      // Asegúrate de definir el ownerModel y ownerId en el estado global
+      setState({
+        profile: {
+          ...user,
+          ownerModel: 'User', // Asegúrate de que el modelo esté definido
+          ownerId: user._id, // Suponiendo que el ID del usuario está en `user.id`
+        },
+      });
+
+      document.getElementById('nameInput').value = user.name || '';
+      document.getElementById('surnamesInput').value = user.surnames || '';
+      document.getElementById('emailInput').value = user.email || '';
+      document.getElementById('genderSelect').value =
+        user.gender || 'masculino';
+      document.getElementById('createdAtInput').value = new Date(
+        user.createdAt
+      ).toLocaleDateString();
+    } catch (error) {
+      console.error('Error al obtener el perfil del usuario:', error);
+      alert('No se pudo obtener el perfil. Intenta de nuevo más tarde.');
     }
+  }
 
-    // Funcionalidad para editar el perfil
-    document.getElementById('editButton').addEventListener('click', () => {
-        // Habilitar los campos
-        document.getElementById('nameInput').disabled = false;
-        document.getElementById('surnamesInput').disabled = false;
-        document.getElementById('emailInput').disabled = false;
-        document.getElementById('genderSelect').disabled = false;
-        
-        // Mostrar botones de actualizar y cancelar
-        document.getElementById('updateButton').style.display = 'inline-block';
-        document.getElementById('cancelButton').style.display = 'inline-block';
-        document.getElementById('editButton').style.display = 'none'; // Ocultar el botón de editar
+  // Eventos de los botones de editar y cancelar
+  document
+    .getElementById('editButton')
+    .addEventListener('click', enableEditMode);
+  document
+    .getElementById('cancelButton')
+    .addEventListener('click', cancelEditMode);
+  ///////////////////
+  document
+    .getElementById('profileForm')
+    .addEventListener('submit', handleProfileUpdate);
+  document.addEventListener('DOMContentLoaded', async () => {
+    await fetchUserProfile();
+    //Obtén ownerModel y ownerId del estado global
+    const { ownerModel, ownerId } = getState().profile; // Suponiendo que están en el perfil
+
+    console.log('Owner Model:', ownerModel);
+    console.log('Owner ID:', ownerId);
+
+    // Carga los archivos del usuario de manera dinámica
+    if (ownerModel && ownerId) {
+      await loadUploads(ownerModel, ownerId);
+    } else {
+      console.error('No se encontró el modelo o el ID del propietario.');
+    }
+  });
+
+  document
+    .getElementById('uploadButton')
+    .addEventListener('click', async () => {
+      await fetchUserProfile();
+      const fileInput = document.getElementById('uploadInput');
+      const file = fileInput.files[0];
+      const { ownerModel, ownerId } = getState().profile; // Obtiene datos dinámicos
+      console.log(ownerModel, ownerId);
+
+      if (!file) {
+        alert('Selecciona un archivo antes de subir.');
+        return;
+      }
+
+      if (ownerModel && ownerId) {
+        const description = 'Archivo de perfil';
+        await handleFileUpload(file, ownerModel, ownerId, description);
+        fileInput.value = ''; // Limpia el campo de entrada
+      } else {
+        console.error('No se encontró el modelo o el ID del propietario.');
+      }
     });
-
-    document.getElementById('cancelButton').addEventListener('click', () => {
-        // Reiniciar los campos a su estado original
-        const profile = getState().profile; // Obtener el perfil del estado
-        document.getElementById('nameInput').value = profile.name || '';
-        document.getElementById('surnamesInput').value = profile.surnames || '';
-        document.getElementById('emailInput').value = profile.email || '';
-        document.getElementById('genderSelect').value = profile.gender || 'masculino';
-
-        // Deshabilitar los campos
-        document.getElementById('nameInput').disabled = true;
-        document.getElementById('surnamesInput').disabled = true;
-        document.getElementById('emailInput').disabled = true;
-        document.getElementById('genderSelect').disabled = true;
-
-        // Ocultar botones de actualizar y cancelar
-        document.getElementById('updateButton').style.display = 'none';
-        document.getElementById('cancelButton').style.display = 'none';
-        document.getElementById('editButton').style.display = 'inline-block'; // Mostrar nuevamente el botón de editar
-    });
-
-    // Llamar a la función para cargar el perfil al cargar la página
-    document.addEventListener('DOMContentLoaded', fetchUserProfile);
+  // Llamar a la función para cargar el perfil al cargar la página
+  document.addEventListener('DOMContentLoaded', fetchUserProfile);
 </script>
+
 {% endblock %}

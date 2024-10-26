@@ -43,9 +43,6 @@ exports.register = async (req, res) => {
   }
 };
 
-
-
-
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -54,7 +51,7 @@ exports.login = async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Correo electrónico o contraseña incorrectos.'
+        message: 'Correo electrónico o contraseña incorrectos.',
       });
     }
 
@@ -62,7 +59,7 @@ exports.login = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Correo electrónico o contraseña incorrectos.'
+        message: 'Correo electrónico o contraseña incorrectos.',
       });
     }
 
@@ -70,9 +67,9 @@ exports.login = async (req, res) => {
 
     // Almacenar el token en la cookie
     res.cookie('token', token, {
-      httpOnly: true,
+      httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax', 
+      sameSite: 'lax',
       maxAge: 1000 * 60 * 60, // 1 hora de duración del token en la cookie
     });
 
@@ -88,6 +85,7 @@ exports.login = async (req, res) => {
     return res.json({
       success: true,
       message: 'Inicio de sesión exitoso.',
+      isAuthenticated: true,
       token,
       user: {
         id: user._id,
@@ -100,18 +98,14 @@ exports.login = async (req, res) => {
     console.error('Error al iniciar sesión:', error);
     return res.status(500).json({
       success: false,
-      message: 'Error en el servidor.'
+      message: 'Error en el servidor.',
     });
   }
 };
 
-
-
 exports.logout = (req, res) => {
   // Destruir la sesión actual
   req.session.destroy((err) => {
-   
-
     // Limpiar la cookie que almacena el token JWT
     res.clearCookie('token', {
       httpOnly: true, // Mantener las mismas opciones que usaste al crearla
@@ -124,6 +118,8 @@ exports.logout = (req, res) => {
       <script>
         localStorage.removeItem('token'); // Eliminar el token
         localStorage.removeItem('user'); // Eliminar el usuario (si lo tienes almacenado)
+        localStorage.removeItem('roles'); // Eliminar los roles (si lo tienes almacenado)
+        localStorage.removeItem('isAuthenticated'); // Eliminar el indicador de autenticación (si lo tienes almacenado)
         history.replaceState(null, null, '/login'); // Redirigir a la página de inicio
         window.location.href = '/login'; // Redirigir a la página de inicio
      

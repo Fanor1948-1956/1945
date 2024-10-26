@@ -1,17 +1,16 @@
-
-import { renderTable } from '..
+import { renderTable } from '../components/global/renderTable.js';
 import { renderPagination } from '../components/common/pagination.js';
 
-let currentPage = 1; 
-const usersPerPage = 5; 
-let allUsers = []; 
+let currentPage = 1;
+const usersPerPage = 5;
+let allUsers = [];
 
 export const loadUsersList = async (roleFilter = null) => {
   try {
     const response = await apiFetch('/users/getUsers', 'GET');
-    allUsers = response.users; 
+    allUsers = response.users;
     console.log(allUsers);
-    
+
     const filteredUsers = roleFilter
       ? allUsers.filter((user) =>
           user.roles.some((role) => role.name === roleFilter)
@@ -27,7 +26,7 @@ export const loadUsersList = async (roleFilter = null) => {
 
 const renderUsers = (users) => {
   const startIndex = (currentPage - 1) * usersPerPage;
-  const paginatedUsers = users.slice(startIndex, startIndex + usersPerPage); 
+  const paginatedUsers = users.slice(startIndex, startIndex + usersPerPage);
 
   const tableData = paginatedUsers.map((user) => ({
     _id: user._id,
@@ -48,10 +47,10 @@ const renderUsers = (users) => {
   );
 
   const userTableContainer = document.getElementById('userTableContainer');
-  userTableContainer.innerHTML = tableHtml + paginationHtml; 
+  userTableContainer.innerHTML = tableHtml + paginationHtml;
 };
 
 const handlePageChange = (newPage) => {
-  currentPage = newPage; 
-  loadUsersList(); 
+  currentPage = newPage;
+  loadUsersList();
 };

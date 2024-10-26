@@ -12,24 +12,15 @@
 
 @import './partials/modal.css';
 @import './partials/global.css';
-
-
+@import './partials/pagination.css';
 
 @import './pages/publicPages/home.css';
 @import './pages/publicPages/sign-in.css';
 @import './pages/publicPages/sign-up.css';
 
-
-
-
-
-
-
 @import './pages/privatePages/dashboard.css';
-
-
+@import './pages/privatePages/auth/profile.css';
 
 @import './libraries/select2.min.css';
-
 
 @import './icons/style.css';

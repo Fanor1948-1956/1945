@@ -1,0 +1,8 @@
+<!-- Plantilla hija: views/pages/privatePages/dashboard.njk -->
+{% extends "layouts/privateLayout.njk" %}
+<!-- Bloque de título -->
+{% block content %}
+
+<!-- pasaar  varialves al include-->
+{% set roleAlias = 'chiefMedical' %} {% include
+"pages/privatePages/users/verb/getAll.njk" %} {% endblock %}

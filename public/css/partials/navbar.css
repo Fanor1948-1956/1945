@@ -17,14 +17,13 @@ header {
 }
 
 .publicNav {
-  background-color: #2054a0;
+  background-color: #091526;
   color: white;
   border: none;
-  
 }
 
 .privateNav {
-  background-color: #150e295e;
+  background-color: #0f07255e;
   color: white;
   border: none;
 }
@@ -128,10 +127,9 @@ header {
     display: flex;
   }
 
-  
   .privateNav .navbar__links {
     display: flex;
-    flex-direction: row; 
+    flex-direction: row;
   }
 
   .submenuNav {

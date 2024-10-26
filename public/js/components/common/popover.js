@@ -3,6 +3,13 @@ let currentPopoverTarget = null; // Para mantener la referencia al botón actual
 // Mostrar popover
 export function showPopover(item, targetButton, onAction) {
   const popover = document.getElementById('userActionsPopover');
+
+  // Verificar si el popover realmente existe
+  if (!popover) {
+    console.error('El popover no existe en el DOM.');
+    return; // Salir de la función si no existe
+  }
+
   const popoverActions = document.getElementById('popoverActions');
 
   // Verificar si el popover está visible y si se está haciendo clic en el mismo botón
@@ -74,7 +81,7 @@ function setPopoverPosition(popover, targetButton) {
 
   // Comprobar espacio disponible por encima y por debajo
   const spaceBelow = window.innerHeight - rect.bottom - 10; // Espacio por debajo del botón
-  const spaceAbove = rect.top - 310; // Espacio por encima del botón
+  const spaceAbove = rect.top - popoverHeight; // Espacio por encima del botón
 
   // Si hay más espacio por encima y es suficiente para el popover, mostrarlo arriba
   if (spaceAbove > popoverHeight && spaceAbove >= spaceBelow) {
@@ -95,7 +102,14 @@ function setPopoverPosition(popover, targetButton) {
 // Cerrar el popover
 export function closePopover() {
   const popover = document.getElementById('userActionsPopover');
-  popover.style.display = 'none';
+
+  // Verifica si el popover existe antes de acceder a sus propiedades
+  if (popover) {
+    popover.style.display = 'none'; // Solo intenta cambiar el estilo si el popover existe
+  } else {
+    console.warn('El popover no se encontró en el DOM.'); // Mensaje de advertencia para ayudar a la depuración
+  }
+
   currentPopoverTarget = null; // Restablece el objetivo actual
 }
 

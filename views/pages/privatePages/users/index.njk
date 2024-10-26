@@ -1,80 +1,185 @@
 <section>
-<button
-  id="addUserBtn"
-  class="add-button"
-  data-size="medium"
-  {% if not isAuthenticated %} style="display: none" {% endif %}>
-  Agregar Usuario
-</button>
+  <button
+    id="addUserBtn"
+    class="add-button"
+    data-size="medium"
+    {%
+    if
+    not
+    isAuthenticated
+    %}
+    style="display: none"
+    {%
+    endif
+    %}
+  >
+    Agregar Usuario
+  </button>
 
-<div id="userTableContainer"></div>
+  <div id="userTableContainer"></div>
 
-<div id="snackbar" class="snackbar"></div>
+  <div
+    id="snackbar"
+    class="snackbar"
+  ></div>
 
-<!-- Modal para agregar/editar usuarios -->
-<div class="modal" id="addUserModal" style="display: none">
-  <div class="modal-content">
-    <span class="close-button" onclick="Modal.close('#addUserModal')">&times;</span>
-    <h2 class="modal-title"></h2>
-    <form id="userForm">
-      <label for="userName">Nombre:</label>
-      <input type="text" id="userName" name="name" required />
+  <!-- Modal para agregar/editar usuarios -->
+  <div
+    class="modal"
+    id="addUserModal"
+    style="display: none"
+  >
+    <div class="modal-content">
+      <span
+        class="close-button"
+        onclick="Modal.close('#addUserModal')"
+        >&times;</span
+      >
+      <h2 class="modal-title"></h2>
+      <form id="userForm">
+        <label for="userName">Nombre:</label>
+        <input
+          type="text"
+          id="userName"
+          name="name"
+          required
+        />
 
-      <label for="userSurnames">Apellidos:</label>
-      <input type="text" id="userSurnames" name="surnames" required />
+        <label for="userSurnames">Apellidos:</label>
+        <input
+          type="text"
+          id="userSurnames"
+          name="surnames"
+          required
+        />
 
-      <label for="userEmail">Correo:</label>
-      <input type="email" id="userEmail" name="email" required />
+        <label for="userEmail">Correo:</label>
+        <input
+          type="email"
+          id="userEmail"
+          name="email"
+          required
+        />
 
-      <label for="userPassword">Contraseña:</label>
-      <input type="password" id="userPassword" name="password" required />
+        <label for="userPassword">Contraseña:</label>
+        <input
+          type="password"
+          id="userPassword"
+          name="password"
+          required
+        />
 
-      <label for="userGender">Género:</label>
-      <input type="text" id="userGender" name="gender" required readonly />
-      <button type="button" id="selectGenderBtn">Seleccionar Género</button>
-      <br />
-      <button type="button" id="selectRolesBtn">Seleccionar Roles</button>
-      <button type="button" id="saveItemBtn">Guardar</button>
-    </form>
-  </div>
-</div>
-
-<!-- Modal para seleccionar género -->
-<div class="modal" id="selectGenderModal" style="display: none">
-  <div class="modal-content">
-    <span class="close-button" onclick="closeModal('selectRolesModal')">&times;</span>
-    <h2 class="modal-title"></h2>
-    <div id="genderContainer">
-      <label>
-        <input type="radio" name="gender" value="masculino" /> Masculino
-      </label>
-      <label>
-        <input type="radio" name="gender" value="femenino" /> Femenino
-      </label>
-      <label>
-        <input type="radio" name="gender" value="otro" /> Otro
-      </label>
+        <label for="userGender">Género:</label>
+        <input
+          type="text"
+          id="userGender"
+          name="gender"
+          required
+          readonly
+        />
+        <button
+          type="button"
+          id="selectGenderBtn"
+        >
+          Seleccionar Género
+        </button>
+        <br />
+        <button
+          type="button"
+          id="selectRolesBtn"
+        >
+          Seleccionar Roles
+        </button>
+        <button
+          type="button"
+          id="saveItemBtn"
+        >
+          Guardar
+        </button>
+      </form>
     </div>
-    <button type="button" id="saveGenderBtn">Guardar Género</button>
   </div>
-</div>
 
-<!-- Modal para seleccionar roles -->
-<div class="modal" id="selectRolesModal" style="display: none">
-  <div class="modal-content">
-    <span class="close-button" onclick="Modal.close('#selectRolesModal')">&times;</span>
-    <h2 class="modal-title"></h2>
-    <div id="rolesContainer"></div>
-    <button type="button" id="saveRolesBtn">Guardar Roles</button>
+  <!-- Modal para seleccionar género -->
+  <div
+    class="modal"
+    id="selectGenderModal"
+    style="display: none"
+  >
+    <div class="modal-content">
+      <span
+        class="close-button"
+        onclick="closeModal('selectRolesModal')"
+        >&times;</span
+      >
+      <h2 class="modal-title"></h2>
+      <div id="genderContainer">
+        <label>
+          <input
+            type="radio"
+            name="gender"
+            value="masculino"
+          />
+          Masculino
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="gender"
+            value="femenino"
+          />
+          Femenino
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="gender"
+            value="otro"
+          />
+          Otro
+        </label>
+      </div>
+      <button
+        type="button"
+        id="saveGenderBtn"
+      >
+        Guardar Género
+      </button>
+    </div>
   </div>
-</div>
+
+  <!-- Modal para seleccionar roles -->
+  <div
+    class="modal"
+    id="selectRolesModal"
+    style="display: none"
+  >
+    <div class="modal-content">
+      <span
+        class="close-button"
+        onclick="Modal.close('#selectRolesModal')"
+        >&times;</span
+      >
+      <h2 class="modal-title"></h2>
+      <div id="rolesContainer"></div>
+      <button
+        type="button"
+        id="saveRolesBtn"
+      >
+        Guardar Roles
+      </button>
+    </div>
+  </div>
 </section>
 
 <!-- Snackbar para mostrar mensajes -->
-<div id="snackbar" class="snackbar"></div>
+<div
+  id="snackbar"
+  class="snackbar"
+></div>
 
-{% include "components/custom/common/deleteItem.njk" %}
-{% include "components/custom/customPopover.njk" %}
+{% include "components/custom/common/deleteItem.njk" %} {% include
+"components/custom/customPopover.njk" %}
 
 <script type="module">
   import { renderTable } from '../js/components/common/table.js';
@@ -102,7 +207,6 @@
     filteredUsers = users.filter((user) =>
       user.roles.some((roleObj) => roleObj.alias.toLowerCase() === roleAlias)
     );
-    
 
     renderUsers();
   };
@@ -110,8 +214,8 @@
   // Función para renderizar usuarios y paginación
   function renderUsers() {
     console.log('Renderizando usuarios...');
-    
-  console.log(filteredUsers); // Verifica los datos antes de procesar
+
+    console.log(filteredUsers); // Verifica los datos antes de procesar
     const tableData = filteredUsers.map((user) => ({
       _id: user._id, // Asegúrate de que el ID esté aquí
       name: user.name,
@@ -156,5 +260,4 @@
   loadUsersList();
   setupEventListeners(loadUsersList);
   window.onAction = onAction;
-
 </script>

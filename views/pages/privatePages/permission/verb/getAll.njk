@@ -1,8 +1,4 @@
-<!--conditionaly isAutenticated user button -->
-<!--conditionaly isAutenticated user title -->
-{% if isAuthenticated %}
-<h1>{{ title }}</h1>
-{% endif %}
+{% if isAuthenticated %} {% endif %}
 
 <button
   id="addPermissionBtn"
@@ -70,7 +66,7 @@
   import { getState } from '../../js/reducers/state.js';
   import { renderTable } from '../../js/components/global/renderTable.js';
   import { permissionEndpoints } from '../../js/config/apiEndpoints.js';
-  import { confirmDelete } from '../../js/utils/confirmDelete.js'; 
+  import { confirmDelete } from '../../js/utils/confirmDelete.js';
 
   const permissionHeaders = {
     name: 'Nombre',
@@ -79,11 +75,6 @@
   };
 
   let currentEditingPermissionId = null;
-
-  document.addEventListener('DOMContentLoaded', () => {
-    loadsPermissions();
-    setupEventListeners();
-  });
 
   const loadsPermissions = async () => {
     await fetchPermissions();
@@ -131,8 +122,7 @@
         'permiso',
         loadsPermissions,
         deletePermission
-      ); 
-      
+      );
     }
   };
 
@@ -179,6 +169,8 @@
     }
   };
 
-  
+  loadsPermissions();
+  setupEventListeners();
+
   window.onAction = onAction;
 </script>

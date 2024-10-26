@@ -1,5 +1,4 @@
 
-<h1>{{ title }}</h1>
 <button id="addRoleBtn">Agregar Rol</button>
 <div id="roleTableContainer"></div>
 <div
@@ -140,11 +139,6 @@
 
   let currentEditingRoleId = null; // Variable para almacenar el ID del rol en edición
   let selectedPermissions = []; // Array para almacenar permisos seleccionados
-
-  document.addEventListener('DOMContentLoaded', () => {
-    loadsRoles();
-    setupEventListeners();
-  });
 
   const loadsRoles = async () => {
     await fetchServices(roleEndpoints, loadRoles);
@@ -303,6 +297,8 @@
     }
   };
 
-  // Exponer onAction globalmente
+  loadsRoles();
+  setupEventListeners();
+
   window.onAction = onAction;
 </script>

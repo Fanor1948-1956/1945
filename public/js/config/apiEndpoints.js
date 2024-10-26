@@ -1,5 +1,5 @@
 export const BASE_URL =
-  'https://7000-fanor19481956-1945-0hhln0kcvpo.ws-us116.gitpod.io';
+  'https://7000-fanoro1956-1945-50am2qruf9y.ws-us116.gitpod.io';
 
 export const permissionEndpoints = {
   list: `${BASE_URL}/permissions/api`,
@@ -25,6 +25,11 @@ export const userEndpoints = {
 export const profileEndpoints = {
   get: `${BASE_URL}/api/profile`,
   update: `${BASE_URL}/api/update-profile`, // Si es necesario
+};
+
+export const uploadEndpoints = {
+  add: `${BASE_URL}/upload/upload-add`,
+  get: `${BASE_URL}/upload`, // Si es necesario
 };
 
 export const specialtyEndpoints = {

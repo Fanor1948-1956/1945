@@ -13,13 +13,12 @@ exports.createUser = async (req, res) => {
     ...additionalProperties
   } = req.body;
 
-  console.log('Datos recibidos en la petición:', req.body); 
+  console.log('Datos recibidos en la petición:', req.body);
 
   const rolesArray = roles || [];
 
   try {
-    
-    console.log('Roles recibidos:', rolesArray); 
+    console.log('Roles recibidos:', rolesArray);
 
     const rolesFound = await roleModel.find({ _id: { $in: rolesArray } });
 
@@ -38,7 +37,6 @@ exports.createUser = async (req, res) => {
         .json({ message: 'El correo electrónico no es válido.' });
     }
 
-    
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     const newUser = new UserType({
@@ -48,11 +46,10 @@ exports.createUser = async (req, res) => {
       password: hashedPassword,
       gender,
       roles: rolesFound,
-     
     });
 
     await newUser.save();
-    
+
     return res.status(201).json({
       success: true,
       message: 'Usuario creado exitosamente',
@@ -63,29 +60,26 @@ exports.createUser = async (req, res) => {
     res.status(500).json({ message: 'Error al crear el usuario' });
   }
 };
-
 exports.getUsers = async (req, res) => {
   try {
-    const users = await User.find().populate("roles");
+    // Obtener todos los usuarios y popular los roles y uploads
+    const users = await User.find().populate('roles').populate('uploads');
 
-    
-    if (req.xhr || req.accepts("application/json")) {
+    // Responder dependiendo del tipo de solicitud
+    if (req.xhr || req.accepts('application/json')) {
       return res.status(200).json({
         success: true,
-        message: "user revive successfully",
+        message: 'Usuarios obtenidos correctamente',
         users,
       });
     } else {
-      
-      return res.render("pages/privatePages/users/list.njk", { users });
+      return res.render('pages/privatePages/users/list.njk', { users });
     }
   } catch (error) {
-    console.error("Error al obtener los usuarios:", error);
-    res.status(500).send("Error al obtener los usuarios");
+    console.error('Error al obtener los usuarios:', error);
+    res.status(500).send('Error al obtener los usuarios');
   }
 };
-
-
 exports.showUserInfo = async (req, res) => {
   const userId = req.params.id;
   try {

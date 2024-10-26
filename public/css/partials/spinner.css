@@ -1,0 +1,51 @@
+/* Contenedor para el loader en línea */
+.spinner-container {
+  position: fixed; /* Fijo en la pantalla */
+  top: 0; /* Desde la parte superior */
+  left: 0; /* Desde la izquierda */
+  width: 100%; /* Ocupa todo el ancho */
+  height: 100%; /* Ocupa toda la altura */
+  background-color: rgba(255, 255, 255, 0.8); /* Fondo semitransparente */
+  display: flex; /* Usar flexbox */
+  justify-content: center; /* Centrar horizontalmente */
+  align-items: center; /* Centrar verticalmente */
+  z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
+}
+
+/* Estilos para el loader de línea */
+.spinner {
+  position: fixed; /* Fijo en la pantalla */
+  top: 0; /* Desde la parte superior */
+  left: 0; /* Desde la izquierda */
+  width: 100%; /* Ocupa todo el ancho */
+  height: 100%; /* Ocupa toda la altura */
+  background-color: #f3f3f3; /* Fondo de la barra */
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+  display: none;
+}
+
+/* Barra de carga que se desliza */
+.spinner::before {
+  content: '';
+  position: absolute;
+  width: 40%; /* Ancho de la parte que se desliza */
+  height: 100%;
+  background-color: #031a2a; /* Color de la barra de carga */
+  animation: slide 1.5s ease-in-out infinite; /* Animación deslizante */
+  border-radius: 2px;
+}
+
+/* Animación para el efecto deslizante */
+@keyframes slide {
+  0% {
+    left: -40%;
+  }
+  50% {
+    left: 50%;
+  }
+  100% {
+    left: 100%;
+  }
+}

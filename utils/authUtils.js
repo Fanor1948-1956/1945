@@ -1,13 +1,8 @@
-
-
 const jwt = require('jsonwebtoken');
-
 
 const SECRET_KEY = 'mi-clave-secreta';
 
-
 const generateToken = (user) => {
-  
   const token = jwt.sign(
     {
       userId: user._id,
@@ -15,11 +10,10 @@ const generateToken = (user) => {
       roles: user.roles,
     },
     SECRET_KEY,
-    { expiresIn: '5h' } 
+    { expiresIn: '5h' }
   );
 
   return token;
 };
-
 
 module.exports = { generateToken };

@@ -30,20 +30,20 @@
   </head>
   <body>
     {% include 'components/common/Navbar/index.njk' %} {% include
-    'components/common/Sidebar/index.njk' %} 
+    'components/common/Sidebar/index.njk' %}
     <div class="container">
       {# Bloque donde se renderizará el contenido específico de cada ruta #} {%
       block content %}{% endblock %}
     </div>
   </body>
-    <script>
-        // Pasar el token a una variable de JavaScript
-        const token = '{{ token }}';  // Asegúrate de escapar correctamente
-        const currentPath = '{{ currentPath }}';
-        const isAutenticated = '{{ isAuthenticated }}';  // Asegúrate de escapar correctamente
-            
-        console.log('Token desde Nunjucks:', token);
-        console.log('Autenticado desde Nunjucks:', isAutenticated);
-        console.log('Ruta actual:', currentPath);
-    </script>
+  <script>
+    // Pasar el token a una variable de JavaScript
+    const token = '{{ token }}'; // Asegúrate de escapar correctamente
+    const currentPath = '{{ currentPath }}';
+    const isAutenticated = '{{ isAuthenticated }}'; // Asegúrate de escapar correctamente
+
+    // console.log('Token desde Nunjucks:', token);
+    // console.log('Autenticado desde Nunjucks:', isAutenticated);
+    // console.log('Ruta actual:', currentPath);
+  </script>
 </html>

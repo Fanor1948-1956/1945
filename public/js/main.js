@@ -15,7 +15,6 @@ import './components/custom/icons.js';
 import './components/custom/modal.js';
 
 import './libraries/select2.min.js';
-
 let modal; // Variable para almacenar el modal
 
 // Función para obtener la ruta actual
@@ -40,8 +39,8 @@ function getToken() {
 
 // Función para verificar si el usuario está autenticado
 function isAuthenticated() {
-  const token = getToken();
-  return token !== null;
+  // Aquí verificamos que el token esté presente y que el estado de autenticación sea verdadero
+  return getToken() && localStorage.getItem('isAuthenticated') === 'true';
 }
 
 // Función para manejar la navegación y verificar autenticación
@@ -51,16 +50,51 @@ function handleRouteNavigation() {
 
   // Mensajes condicionales para el modal
   let modalMessage;
+
+  // Si el usuario está en el dashboard pero no autenticado
   if (currentPath === '/dashboard' && !isAuthenticated()) {
     modalMessage = 'Necesitas iniciar sesión para acceder a esta ruta.';
     openWarningModal(modalMessage);
   }
 
+  // Si el usuario está en el login y ya está autenticado
   if (currentPath === '/login' && isAuthenticated()) {
     modalMessage = 'Ya estás autenticado. Serás redirigido al Dashboard.';
     openWarningModal(modalMessage);
-    // Aquí podrías usar history.replaceState si no quieres que el usuario vuelva al login
-    // history.replaceState(null, null, '/dashboard');
+
+    // Redirigir al dashboard y deshabilitar el retroceso
+    history.replaceState(null, null, '/dashboard'); // Reemplaza el estado actual
+    setTimeout(() => {
+      window.location.href = '/dashboard'; // Redirige después de un pequeño retraso
+    }, 2000); // Espera 2 segundos para que el usuario vea el modal
+  }
+
+  // Si el usuario intenta acceder a otras rutas públicas y está autenticado
+  const publicRoutes = ['/login', '/home']; // Rutas públicas
+  if (publicRoutes.includes(currentPath) && isAuthenticated()) {
+    modalMessage =
+      'No puedes acceder a esta ruta. Serás redirigido al Dashboard.';
+    openWarningModal(modalMessage);
+
+    // Redirigir a la ruta principal (ejemplo: /dashboard)
+    history.replaceState(null, null, '/dashboard'); // Reemplaza el estado actual
+    setTimeout(() => {
+      window.location.href = '/dashboard'; // Redirige después de un pequeño retraso
+    }, 2000); // Espera 2 segundos para que el usuario vea el modal
+  }
+
+  // Manejar retroceso en rutas restringidas
+  if (isAuthenticated()) {
+    const restrictedRoutes = ['/login', '/home']; // Rutas que no deberían ser accesibles
+    if (restrictedRoutes.includes(currentPath)) {
+      // Impide el retroceso a rutas restringidas
+      history.replaceState(null, null, '/dashboard'); // Cambia el historial a dashboard
+      modalMessage = 'Acceso restringido. Serás redirigido al Dashboard.';
+      openWarningModal(modalMessage);
+      setTimeout(() => {
+        window.location.href = '/dashboard'; // Redirige después de un pequeño retraso
+      }, 2000);
+    }
   }
 }
 
@@ -74,11 +108,11 @@ function createModal() {
   modal.style.top = '0';
   modal.style.width = '100%';
   modal.style.height = '100%';
-  modal.style.backgroundColor = 'rgba(250, 110, 20, 0.8)';
+  modal.style.backgroundColor = 'rgba(250, 150, 20, 0.8)';
   modal.style.paddingTop = '60px';
 
   const modalContent = document.createElement('div');
-  modalContent.style.backgroundColor = '#fefefe';
+  modalContent.style.backgroundColor = '#0f0248';
   modalContent.style.margin = '15% auto';
   modalContent.style.padding = '20px';
   modalContent.style.border = '1px solid #888';
@@ -109,13 +143,7 @@ function openWarningModal(messageText) {
 window.addEventListener('load', () => {
   const currentPath = getCurrentPath();
   setCurrentPath(currentPath);
-
-  const storedPath = getCurrentPathFromLocalStorage();
-  if (storedPath && storedPath !== currentPath) {
-    window.location.href = storedPath;
-  } else {
-    handleRouteNavigation();
-  }
+  handleRouteNavigation();
 });
 
 // Guardar el currentPath al cambiar la URL (enlaces o navegación interna)
@@ -124,7 +152,6 @@ window.addEventListener('popstate', () => {
   setCurrentPath(currentPath);
   handleRouteNavigation();
 });
-0;
 
 // Spinner
 let spinnerDiv = null;
@@ -174,7 +201,7 @@ function createSpinner() {
 
 // Conexión WebSocket
 const socket = new WebSocket(
-  'wss://7000-fanoro1956-1945-50am2qruf9y.ws-us116.gitpod.io'
+  'wss://7000-fanoro1956-1945-50am2qruf9y.ws-us116.gitpod.io/dashboard'
 ); // Cambia a tu URL de WebSocket
 
 // Manejar la conexión

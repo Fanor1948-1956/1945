@@ -1,44 +1,63 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
+  <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
     <title>{{ title }}</title>
-    {{ route.icon }}
-    
+    {{
+      route.icon
+    }}
+
     <script src="/js/libraries/jquery.min.js"></script>
-    <link rel="stylesheet" href="/css/fontawesome.min.css" />
-    <link rel="stylesheet" href="/css/styles.css" />
-    
-    <script type="module" src="/js/main.js" defer></script>
-    {% include 'components/common/Navbar/index.njk' %}
-    {% include 'components/common/Sidebar/index.njk' %} 
-</head>
+    <link
+      rel="stylesheet"
+      href="/css/fontawesome.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="/css/styles.css"
+    />
 
-<body  class="show-hamburger">
+    <script
+      type="module"
+      src="/js/main.js"
+      defer
+    ></script>
+    {% include 'components/common/Navbar/index.njk' %} {% include
+    'components/common/Sidebar/index.njk' %}
+  </head>
 
+  <body class="show-hamburger">
+    <div
+      id="layoutContainer"
+      class="container"
+    >
+      <div
+        id="contentMain"
+        class="contentMain"
+      >
+        <!-- Spinner -->
 
-    <div  id="contentContainer" class="container">
-          <div  id="contentMain" class="contentMain">
+        <div class="spinner"></div>
 
-            {% block content %}
-            <h2>Página inicial</h2>
-            <p>Este es el contenido por defecto.</p>
-            {% endblock %}
-          </div>
-
+        {% block content %}
+        <h2>Página inicial</h2>
+        <p>Este es el contenido por defecto.</p>
+        {% endblock %}
+      </div>
     </div>
 
     <script type="module">
-       
-        const token = '{{ token }}';  // Asegúrate de escapar correctamente
-        const currentPath = '{{ currentPath }}';
-        const isAuthenticated = '{{ isAuthenticated }}';  // Asegúrate de escapar correctamente
-            
-        console.log('Token desde Nunjucks:', token);
-        console.log('Autenticado desde Nunjucks:', isAuthenticated);
-        console.log('Ruta actual:', currentPath);
-        
+      const token = '{{ token }}'; // Asegúrate de escapar correctamente
+      const currentPath = '{{ currentPath }}';
+      const isAuthenticated = '{{ isAuthenticated }}'; // Asegúrate de escapar correctamente
+
+      // console.log('Token desde Nunjucks:', token);
+      // console.log('Autenticado desde Nunjucks:', isAuthenticated);
+      // console.log('Ruta actual:', currentPath);
     </script>
-</body>
+  </body>
 </html>

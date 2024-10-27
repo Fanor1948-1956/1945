@@ -3,6 +3,10 @@
 import { getUploads } from '../../services/uploadService.js';
 import { getState } from '../../reducers/state.js';
 import { actions, handleActionClick, onAction } from './actions.js';
+import {
+  defaultAvatarCount,
+  generateEmptyAvatars,
+} from '../../generate/generateEmptyAvatars.js';
 
 // Función para cargar archivos y actualizar la interfaz
 export const loadUploads = async (ownerModel, ownerId) => {
@@ -24,23 +28,30 @@ function displayUploads(uploads) {
   const uploadsList = document.getElementById('uploadsList');
   uploadsList.innerHTML = ''; // Limpiar la lista existente
 
+  // Si hay archivos, renderizarlos
   uploads.forEach((file) => {
     const fileItem = document.createElement('div');
     fileItem.classList.add('file-item');
 
     fileItem.innerHTML = `
-    <div class="image-container" style="position: relative; display: inline-block;">
-      <img src="${file.path}" alt="${file.filename}" class="uploaded-image" /> 
-      <button class="edit-button" data-id="${file._id}" data-owner-model="${file.ownerModel}" data-owner="${file.owner}">Editar</button> 
-    </div>
-
-         <p> ${file._id}</p>
-              <p> ${file.owner}</p>
-
-  `;
+      <div class="image-container"">
+        <img src="${file.path}" alt="${file.filename}" class="uploaded-image" /> 
+        <button class="edit-button" data-id="${file._id}" data-owner-model="${file.ownerModel}" data-owner="${file.owner}">Editar</button> 
+      </div>
+      <p>${file._id}</p>
+      
+    `;
 
     uploadsList.appendChild(fileItem);
   });
+
+  // Calcular los espacios restantes para avatares vacíos
+  const remainingSpaces = Math.max(0, defaultAvatarCount + uploads.length);
+  const ownerModel =
+    uploads.length > 0 ? uploads[0].ownerModel : 'defaultModel'; // Definir modelo de propietario por defecto
+  console.log('dsdad', ownerModel);
+  // Generar avatares vacíos si es necesario
+  generateEmptyAvatars(remainingSpaces, ownerModel);
 
   // Inicializar los listeners de botones después de renderizar
   initializeListeners('.edit-button', actions, onAction);

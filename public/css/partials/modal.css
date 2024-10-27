@@ -15,11 +15,11 @@
 
 .modal-content {
   background-color: #0d0238;
-
   margin: auto;
-  padding: 20px;
+  padding: 10px 20px;
   border: 1px solid #888;
-  width: 80%;
+  width: 60%;
+  display: inline-block;
   border-radius: 15px;
   transition: all 0.3s ease;
 }
@@ -31,7 +31,7 @@
 }
 
 .modal-body {
-  margin: 20px 0;
+  margin: 5px 0;
 }
 
 .modal-actions {
@@ -44,7 +44,7 @@
 }
 
 .modal-content.medium {
-  width: 80%;
+  width: 60%;
 }
 
 .modal-content.fullwidth {
@@ -53,16 +53,6 @@
 
 .modal-content.maxwidth {
   width: 90%;
-}
-.modal-content.minheight {
-  min-height: 600px;
-  padding: 30px;
-
-  background-color: #1a0542;
-  justify-content: center;
-  align-items: center;
-  margin: 10px;
-  color: rgb(224, 213, 213);
 }
 
 .modal-content.fullscreen {

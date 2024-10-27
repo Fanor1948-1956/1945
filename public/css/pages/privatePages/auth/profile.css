@@ -28,10 +28,10 @@
 }
 
 .uploaded-image {
-  width: 100px; /* Ajusta el tamaño según lo que necesites */
-  height: 100px;
+  width: 10rem; /* Ajusta el tamaño según lo que necesites */
+  height: 10rem;
   border-radius: 50%;
-  display: block;
+
   margin: 0 auto;
 }
 .upload {

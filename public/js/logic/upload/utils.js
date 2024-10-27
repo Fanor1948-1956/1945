@@ -16,7 +16,7 @@ export function openEditModal(file, ownerModel, ownerId) {
   currentImage.src = file.path || '/path/to/default/image.jpg'; // Recupera el path de la imagen
   currentImage.style.display = file.path ? 'block' : 'none'; // Mostrar u ocultar
 
-  openModal('genericModal', 'medium', 'Editar Archivo'); // Abre el modal
+  openModal('genericModal', 'small', 'Editar Archivo'); // Abre el modal
 
   selectedFileName.textContent = ''; // Limpia el nombre de archivo seleccionado
 

@@ -5,11 +5,13 @@
   display: flex;
   border-radius: 5px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 10px;
+
   z-index: 1000;
   width: 150px;
 }
 #userActionsPopover {
+  padding: 0;
+  margin: 0;
   max-width: 200px; /* Limitar el ancho */
   max-height: 300px; /* Limitar la altura */
   overflow-y: auto; /* Agregar desplazamiento vertical si el contenido es demasiado alto */
@@ -43,11 +45,12 @@
 }
 
 .button-popper {
-  margin: 5px 0;
+  margin: 0 0 0 0;
+  padding: 10px 5px;
   color: #f0f0f0;
   width: 100%;
-  padding: 5px 10px;
-  border-radius: 4px;
+
+  border-radius: 0px;
   border: 1px solid #bbb9d1;
   cursor: pointer;
 }

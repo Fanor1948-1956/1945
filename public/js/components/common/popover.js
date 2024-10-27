@@ -1,7 +1,7 @@
 let currentPopoverTarget = null; // Para mantener la referencia al botón actual
 
 // Mostrar popover
-export function showPopover(item, targetButton, onAction) {
+export function showPopover(item, actions, targetButton, onAction) {
   const popover = document.getElementById('userActionsPopover');
 
   // Verificar si el popover realmente existe
@@ -28,12 +28,6 @@ export function showPopover(item, targetButton, onAction) {
   popoverActions.innerHTML = '';
 
   // Crear los botones dentro del popover
-  const actions = [
-    { text: 'Ver Detalles', action: 'details' },
-    { text: 'Editar', action: 'edit' },
-    { text: 'Desactivar', action: 'deactivate' },
-    { text: 'Eliminar', action: 'delete' },
-  ];
 
   actions.forEach(({ text, action }) => {
     const button = document.createElement('button');

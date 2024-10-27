@@ -1,5 +1,3 @@
-
-
 export function openModal(modalId, size, title) {
   const modal = document.getElementById(modalId);
 
@@ -14,7 +12,9 @@ export function openModal(modalId, size, title) {
   // Añadir clases de tamaño del modal
   modalContent.className = 'modal-content'; // Restablecer clases anteriores
 
-  if (size === 'medium') {
+  if (size === 'small') {
+    modalContent.classList.add('small');
+  } else if (size === 'medium') {
     modalContent.classList.add('medium');
   } else if (size === 'fullwidth') {
     modalContent.classList.add('fullwidth');
@@ -68,4 +68,3 @@ export function closeModal(modalId) {
     modal.style.display = 'none';
   }, 300); // Espera 300ms antes de ocultar completamente el modal
 }
-

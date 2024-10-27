@@ -30,6 +30,8 @@ export const profileEndpoints = {
 export const uploadEndpoints = {
   add: `${BASE_URL}/upload/upload-add`,
   get: `${BASE_URL}/upload`, // Si es necesario
+
+  delete: `${BASE_URL}/upload/delete`, // Si es necesario
 };
 
 export const specialtyEndpoints = {

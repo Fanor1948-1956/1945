@@ -1,0 +1,47 @@
+.upload-section {
+  border: 1px solid white;
+  border-radius: 4px;
+  padding: 10px;
+  /* display: flex; */
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  background-color: #00162e;
+  color: white;
+}
+.image-container {
+  position: relative; /* Permite que los hijos se posicionen de manera absoluta */
+  display: inline-block; /* Para que las imágenes se alineen correctamente */
+}
+
+.uploaded-image {
+  width: 100%; /* Ajusta la imagen al contenedor */
+  height: auto; /* Mantiene la proporción de la imagen */
+  border-radius: 8px; /* Esquinas redondeadas */
+}
+
+.edit-button {
+  position: absolute; /* Permite posicionar el botón de manera absoluta */
+  color: darkblue;
+  bottom: 5px; /* Distancia desde la parte inferior */
+  left: 10px; /* Distancia desde el lado izquierdo */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.7
+  ); /* Fondo blanco semitransparente */
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 5px; /* Esquinas redondeadas */
+  padding: 5px 10px; /* Espaciado interno */
+  cursor: pointer; /* Cambia el cursor a mano al pasar el mouse */
+  transition: background 0.3s; /* Transición para el efecto de hover */
+}
+
+.edit-button:hover {
+  background-color: rgb(14, 2, 56); /* Cambio de fondo al hacer hover */
+  color: white;
+}

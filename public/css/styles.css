@@ -6,6 +6,7 @@
 @import './partials/buttons.css';
 @import './partials/spinner.css';
 @import './partials/popover.css';
+@import './partials/upload.css';
 
 /*popper*/
 @import './partials/popper.css';

@@ -4,23 +4,10 @@ const Upload = require('../models/uploadModel');
 const resolveModel = require('../utils/modelResolve'); // Importa la función resolver del modelo
 
 // Controlador para subir archivos
-const uploadFile = async (req, res) => {
+const saveOrUpdateUpload = async (req, res) => {
   try {
-    // Verifica si hay un archivo en la solicitud
-    if (!req.file) {
-      return res
-        .status(400)
-        .json({ message: 'No se ha subido ningún archivo.' });
-    }
-
-    // Asegúrate de que el ownerModel y ownerId se pasen en la solicitud
-    const { ownerModel, ownerId } = req.params; // Obtiene ownerModel y ownerId de los parámetros
-    const { description } = req.body; // Obtiene la descripción del cuerpo de la solicitud
-    if (!ownerModel || !ownerId) {
-      return res.status(400).json({
-        message: 'Falta el modelo de propietario o el ID del propietario.',
-      });
-    }
+    const { uploadId, ownerModel, ownerId } = req.params; // Obtiene el ID del archivo, modelo y propietario
+    const { description } = req.body;
 
     // Resuelve el modelo correspondiente
     const ModelToUpdate = resolveModel(ownerModel);
@@ -36,34 +23,86 @@ const uploadFile = async (req, res) => {
       return res.status(404).json({ message: 'Propietario no encontrado.' });
     }
 
-    // Crea una nueva instancia de Upload
-    const uploadData = new Upload({
-      filename: req.file.originalname,
-      path: req.file.path,
-      mimeType: req.file.mimetype,
-      size: req.file.size,
-      owner: ownerId,
-      ownerModel, // Aquí puedes usar cualquier modelo válido
-      description, // Agrega descripción desde req.body
-    });
+    // Si hay un uploadId, intenta actualizar el archivo existente
+    if (uploadId) {
+      const existingUpload = await Upload.findById(uploadId);
 
-    // Guarda el archivo en la base de datos
-    await uploadData.save();
+      if (!existingUpload) {
+        return res.status(404).json({ message: 'Archivo no encontrado.' });
+      }
 
-    // Actualiza el modelo correspondiente para agregar la referencia
-    await ModelToUpdate.findByIdAndUpdate(ownerId, {
-      $push: { uploads: uploadData._id },
-    });
+      // Si se proporciona un nuevo archivo, reemplaza el existente
+      if (req.file) {
+        // Primero, puedes eliminar el archivo existente del sistema de archivos (opcional)
+        const fs = require('fs');
+        const pathToDelete = existingUpload.path;
 
-    res.status(201).json({
-      success: true,
-      message: 'Archivo subido y guardado en la base de datos',
-      data: uploadData,
-    });
+        fs.unlink(pathToDelete, (err) => {
+          if (err)
+            console.error('Error al eliminar el archivo del sistema:', err);
+        });
+
+        // Actualiza los datos del upload con el nuevo archivo
+        existingUpload.filename = req.file.originalname;
+        existingUpload.path = req.file.path;
+        existingUpload.mimeType = req.file.mimetype;
+        existingUpload.size = req.file.size;
+      }
+
+      // Actualiza la descripción si se proporciona
+      if (description) {
+        existingUpload.description = description;
+      }
+
+      // Mantener el ownerModel y ownerId (opcional)
+      existingUpload.ownerModel = ownerModel;
+      existingUpload.owner = ownerId;
+
+      // Guarda los cambios
+      const updatedUpload = await existingUpload.save();
+
+      return res.status(200).json({
+        success: true,
+        message: 'Archivo actualizado exitosamente.',
+        data: updatedUpload,
+      });
+    } else {
+      // Si no hay uploadId, sube un nuevo archivo
+      if (!req.file) {
+        return res
+          .status(400)
+          .json({ message: 'No se ha subido ningún archivo.' });
+      }
+
+      // Crea una nueva instancia de Upload
+      const uploadData = new Upload({
+        filename: req.file.originalname,
+        path: req.file.path,
+        mimeType: req.file.mimetype,
+        size: req.file.size,
+        owner: ownerId,
+        ownerModel,
+        description,
+      });
+
+      // Guarda el archivo en la base de datos
+      await uploadData.save();
+
+      // Actualiza el modelo correspondiente para agregar la referencia
+      await ModelToUpdate.findByIdAndUpdate(ownerId, {
+        $push: { uploads: uploadData._id },
+      });
+
+      return res.status(201).json({
+        success: true,
+        message: 'Archivo subido y guardado en la base de datos',
+        data: uploadData,
+      });
+    }
   } catch (error) {
-    console.error('Error al subir el archivo:', error);
+    console.error('Error al guardar o actualizar el archivo:', error);
     res.status(500).json({
-      message: 'Error al guardar el archivo en la base de datos',
+      message: 'Error al guardar o actualizar el archivo.',
       error,
     });
   }
@@ -118,8 +157,101 @@ const getUploadsByModel = async (req, res) => {
   }
 };
 
+
+const updateUpload = async (req, res) => {
+  try {
+    const { uploadId } = req.params;
+    const { description } = req.body;
+    const { ownerModel, ownerId } = req.params; // Asegúrate de que ownerModel y ownerId estén en los parámetros
+
+    // Busca el archivo por ID
+    const existingUpload = await Upload.findById(uploadId);
+
+    if (!existingUpload) {
+      return res.status(404).json({ message: 'Archivo no encontrado.' });
+    }
+
+    // Si se proporciona un nuevo archivo, reemplaza el existente
+    if (req.file) {
+      // Primero, puedes eliminar el archivo existente del sistema de archivos (opcional)
+      const fs = require('fs');
+      const pathToDelete = existingUpload.path;
+
+      fs.unlink(pathToDelete, (err) => {
+        if (err)
+          console.error('Error al eliminar el archivo del sistema:', err);
+      });
+
+      // Actualiza los datos del upload con el nuevo archivo
+      existingUpload.filename = req.file.originalname;
+      existingUpload.path = req.file.path;
+      existingUpload.mimeType = req.file.mimetype;
+      existingUpload.size = req.file.size;
+    }
+
+    // Actualiza la descripción si se proporciona
+    if (description) {
+      existingUpload.description = description;
+    }
+
+    // Mantener el ownerModel y ownerId
+    existingUpload.ownerModel = ownerModel; // Esto solo si necesitas almacenarlo en el modelo Upload
+    existingUpload.owner = ownerId; // Esto solo si necesitas almacenarlo en el modelo Upload
+
+    // Guarda los cambios
+    const updatedUpload = await existingUpload.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Archivo actualizado exitosamente.',
+      data: updatedUpload,
+    });
+  } catch (error) {
+    console.error('Error al actualizar el archivo:', error);
+    res.status(500).json({
+      message: 'Error al actualizar el archivo.',
+      error,
+    });
+  }
+};
+
+const deleteUpload = async (req, res) => {
+  try {
+    const { uploadId, ownerModel, ownerId } = req.params;
+
+    // Busca y elimina el archivo
+    const uploadToDelete = await Upload.findByIdAndDelete(uploadId);
+
+    if (!uploadToDelete) {
+      return res.status(404).json({ message: 'Archivo no encontrado.' });
+    }
+
+    // Resuelve el modelo del propietario y elimina la referencia del archivo
+    const ModelToUpdate = resolveModel(ownerModel);
+    if (ModelToUpdate && ownerId) {
+      await ModelToUpdate.findByIdAndUpdate(ownerId, {
+        $pull: { uploads: uploadId },
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Archivo eliminado exitosamente.',
+      data: { uploadId }, // Incluye el ID o cualquier otro dato relevante
+    });
+  } catch (error) {
+    console.error('Error al eliminar el archivo:', error);
+    res.status(500).json({
+      message: 'Error al eliminar el archivo.',
+      error,
+    });
+  }
+};
+
 // Exporta los controladores
 module.exports = {
-  uploadFile,
+  saveOrUpdateUpload,
   getUploadsByModel,
+  updateUpload, // Nueva función de actualización
+  deleteUpload, // Nueva función de eliminación
 };

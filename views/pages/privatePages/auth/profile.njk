@@ -1,10 +1,9 @@
 {% extends "layouts/privateLayout.njk" %} {% block content %}
+<h1>Perfil del Usuario</h1>
 <div
   id="profileContainer"
   class="profile-container"
 >
-  <h1>Perfil del Usuario</h1>
-
   <div class="profile-details">
     <h2>Información Personal</h2>
     <form id="profileForm">
@@ -58,53 +57,81 @@
         id="createdAtInput"
         class="transparent-input"
       />
-      <div class="upload-section">
-        <h3>Archivos Subidos</h3>
-        <div
-          id="uploadsList"
-          class="uploads-list"
-        >
-          <!-- Aquí se mostrarán los archivos subidos -->
-        </div>
-        <input
-          type="file"
-          id="uploadInput"
-          class="transparent-input"
-        />
-        <button
-          type="button"
-          id="uploadButton"
-          class="button"
-        >
-          Subir Archivo
-        </button>
-      </div>
-      <div class="profile-actions">
-        <button
-          type="button"
-          class="button"
-          id="editButton"
-        >
-          Modificar
-        </button>
-        <button
-          type="button"
-          class="button"
-          style="display: none"
-          id="cancelButton"
-        >
-          Cancelar
-        </button>
-        <button
-          type="submit"
-          class="button"
-          style="display: none"
-          id="updateButton"
-        >
-          Actualizar Perfil
-        </button>
-      </div>
+      {% include "components/common/actions/buttonActions.njk" %}
     </form>
+  </div>
+  <div class="upload">
+    {% include "components/common/actions/uploadActions.njk" %} {% include
+    "components/custom/common/deleteItem.njk" %} {% include
+    "components/custom/customPopover.njk" %} {% include
+    "components/common/deleteItem.njk" %}
+  </div>
+</div>
+<div
+  id="genericModal"
+  class="modal"
+  style="display: none"
+>
+  <div class="modal-content">
+    <span
+      class="close"
+      onclick="closeModal('genericModal')"
+      >&times;</span
+    >
+    <h2 class="modal-title">Editar Archivo</h2>
+    <label for="genericDescriptionInput">Descripción:</label>
+    <input
+      type="text"
+      id="genericDescriptionInput"
+    />
+
+    <!-- Aquí se añade la imagen actual -->
+    <div>
+      <img
+        id="genericCurrentImage"
+        style="max-width: 100%; display: none"
+      />
+    </div>
+
+    <label for="genericFileInput">Seleccionar nuevo archivo:</label>
+    <input
+      type="file"
+      id="genericFileInput"
+    />
+    <p id="selectedFileName"></p>
+    <!-- Muestra el nombre del archivo seleccionado -->
+
+    <button id="genericSaveButton">Guardar Cambios</button>
+  </div>
+</div>
+
+<div
+  id="genericModal"
+  class="modal"
+>
+  <div class="modal-content medium">
+    <h2 class="modal-title">Editar Archivo</h2>
+    <div>
+      <img
+        id="genericCurrentImage"
+        src=""
+        alt="Imagen actual"
+        class="uploaded-image"
+      />
+    </div>
+    <input
+      type="text"
+      id="genericDescriptionInput"
+      placeholder="Descripción"
+    />
+    <input
+      type="file"
+      id="genericFileInput"
+    />
+    <span id="selectedFileName"></span>
+    <!-- Muestra el nombre del archivo seleccionado -->
+    <button id="genericSaveButton">Guardar Cambios</button>
+    <button onclick="closeModal('genericModal')">Cancelar</button>
   </div>
 </div>
 
@@ -120,29 +147,25 @@
     cancelEditMode,
   } from '../js/logic/common/editItem.js';
   import { getState, setState } from '../js/reducers/state.js';
+
   import {
-    loadUploads,
-    handleFileUpload,
-  } from '../js/logic/upload/uploadLogic.js';
+    initializeModelAndUploads,
+    setupUploadButton,
+  } from '../js/logic/common/uploadItem.js';
 
   const token = '{{ token }}'; // Asegúrate de escapar correctamente
   const currentPath = '{{ currentPath }}';
   const isAuthenticated = '{{ isAuthenticated }}'; // Asegúrate de escapar correctamente
-
-  // console.log('Token desde Nunjucks:', token);
-  // console.log('Autenticado desde Nunjucks:', isAuthenticated);
-  // console.log('Ruta actual:', currentPath);
-  // Función para cargar el perfil al cargar la página
   async function fetchUserProfile() {
     try {
       const user = await loadUserProfile();
       console.log('user', user);
-      // Asegúrate de definir el ownerModel y ownerId en el estado global
+
       setState({
         profile: {
           ...user,
           ownerModel: 'User', // Asegúrate de que el modelo esté definido
-          ownerId: user._id, // Suponiendo que el ID del usuario está en `user.id`
+          ownerId: user, // Suponiendo que el ID del usuario está en `user.id`
         },
       });
 
@@ -159,57 +182,23 @@
       alert('No se pudo obtener el perfil. Intenta de nuevo más tarde.');
     }
   }
-
-  // Eventos de los botones de editar y cancelar
   document
     .getElementById('editButton')
     .addEventListener('click', enableEditMode);
   document
     .getElementById('cancelButton')
     .addEventListener('click', cancelEditMode);
-  ///////////////////
+
   document
     .getElementById('profileForm')
     .addEventListener('submit', handleProfileUpdate);
+
   document.addEventListener('DOMContentLoaded', async () => {
-    await fetchUserProfile();
-    //Obtén ownerModel y ownerId del estado global
-    const { ownerModel, ownerId } = getState().profile; // Suponiendo que están en el perfil
+    await initializeModelAndUploads(fetchUserProfile, 'profile');
 
-    console.log('Owner Model:', ownerModel);
-    console.log('Owner ID:', ownerId);
-
-    // Carga los archivos del usuario de manera dinámica
-    if (ownerModel && ownerId) {
-      await loadUploads(ownerModel, ownerId);
-    } else {
-      console.error('No se encontró el modelo o el ID del propietario.');
-    }
+    setupUploadButton(fetchUserProfile, 'profile');
   });
 
-  document
-    .getElementById('uploadButton')
-    .addEventListener('click', async () => {
-      await fetchUserProfile();
-      const fileInput = document.getElementById('uploadInput');
-      const file = fileInput.files[0];
-      const { ownerModel, ownerId } = getState().profile; // Obtiene datos dinámicos
-      console.log(ownerModel, ownerId);
-
-      if (!file) {
-        alert('Selecciona un archivo antes de subir.');
-        return;
-      }
-
-      if (ownerModel && ownerId) {
-        const description = 'Archivo de perfil';
-        await handleFileUpload(file, ownerModel, ownerId, description);
-        fileInput.value = ''; // Limpia el campo de entrada
-      } else {
-        console.error('No se encontró el modelo o el ID del propietario.');
-      }
-    });
-  // Llamar a la función para cargar el perfil al cargar la página
   document.addEventListener('DOMContentLoaded', fetchUserProfile);
 </script>
 

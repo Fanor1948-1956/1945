@@ -94,15 +94,8 @@
 //   container.appendChild(table);
 // }
 
-
-
-
-
-
-
-
-
 import { showPopover } from '../common/popover.js';
+import { actions } from '../utils/index.js';
 
 export function renderTable(data, columnHeaders, containerId, onAction) {
   const container = document.getElementById(containerId);
@@ -162,7 +155,7 @@ export function renderTable(data, columnHeaders, containerId, onAction) {
 
     // Mostrar popover al hacer clic en el botón "More"
     moreButton.onclick = (event) => {
-      showPopover(item, moreButton, onAction); // Ahora pasas el botón como el objetivo
+      showPopover(item, actions, moreButton, onAction); // Ahora pasas el botón como el objetivo
       event.stopPropagation(); // Evitar que el clic se propague
     };
 

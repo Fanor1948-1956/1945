@@ -1,8 +1,14 @@
+import { actions } from '../utils/index.js';
 import { showPopover } from './popover.js';
-import { Tooltip } from './tooltip.js';
 
 // Función renderTable: ahora no devuelve HTML
-export function renderTable(headers, data, currentPage, itemsPerPage, onAction) {
+export function renderTable(
+  headers,
+  data,
+  currentPage,
+  itemsPerPage,
+  onAction
+) {
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
   const paginatedData = data.slice(start, end);
@@ -51,12 +57,11 @@ export function renderTable(headers, data, currentPage, itemsPerPage, onAction) 
   tableContainer.innerHTML = tableHtml;
 
   // Configurar los tooltips y listeners
-  initializeTooltipAndListeners(paginatedData, onAction);
+  initializeListeners(paginatedData, onAction);
 }
 
-function initializeTooltipAndListeners(paginatedData, onAction) {
+function initializeListeners(paginatedData, onAction) {
   // Configurar los tooltips
-  
 
   // Eliminar cualquier listener previo antes de agregar uno nuevo
   const actionButtons = document.querySelectorAll('.more-button');
@@ -69,7 +74,7 @@ function initializeTooltipAndListeners(paginatedData, onAction) {
   function handleActionClick(event) {
     const itemId = event.target.closest('.more-button').getAttribute('data-id'); // Asegúrate de obtener el ID correctamente
     const item = paginatedData.find((dataItem) => dataItem._id === itemId);
-    showPopover(item, event.target, onAction);
+    showPopover(item, actions, event.target, onAction);
     event.stopPropagation();
   }
 }

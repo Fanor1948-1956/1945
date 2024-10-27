@@ -19,12 +19,17 @@ const upload = multer({ storage });
 
 // Ruta para subir archivos
 router.post(
-  '/upload-add/:ownerModel/:ownerId',
+  '/upload-add/:ownerModel/:ownerId/:uploadId?',
   upload.single('file'),
-  uploadController.uploadFile
+  uploadController.saveOrUpdateUpload
 );
 
 // Ruta para obtener uploads por ID de usuario
 router.get('/:ownerModel/:ownerId', uploadController.getUploadsByModel);
 
+// Ruta para eliminar un archivo
+router.delete(
+  '/delete/:uploadId/:ownerModel/:ownerId',
+  uploadController.deleteUpload
+);
 module.exports = router;

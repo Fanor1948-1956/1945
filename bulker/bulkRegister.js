@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const { faker } = require('@faker-js/faker'); 
+const { faker } = require('@faker-js/faker');
 
 const {
   User,
@@ -10,11 +10,11 @@ const {
   Patient,
 } = require('../models/userModel');
 const roleModel = require('../models/roleModel');
-const connectDB = require("./database");
+const connectDB = require('./database');
 
 const bulkRegisterUsers = async () => {
   try {
-       await connectDB();
+    await connectDB();
     const rolesFound = await roleModel.find();
 
     if (!rolesFound.length) {
@@ -28,18 +28,14 @@ const bulkRegisterUsers = async () => {
       const name = faker.person.firstName();
       const surnames = faker.person.lastName();
       const email = faker.internet.email();
-      const password = 'Password123'; 
-      const gender = faker.helpers.arrayElement([
-        'masculino',
-        'femenino',
-      
-      ]);
-      const userRole = faker.helpers.arrayElement(rolesFound); 
+      const password = 'Password123';
+      const gender = faker.helpers.arrayElement(['masculino', 'femenino']);
+      const userRole = faker.helpers.arrayElement(rolesFound);
 
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         console.log(`El correo electrónico ${email} no es válido.`);
-        continue; 
+        continue;
       }
 
       const hashedPassword = bcrypt.hashSync(password, 10);
@@ -53,7 +49,7 @@ const bulkRegisterUsers = async () => {
         case 'Doctor':
           UserType = Doctor;
           break;
-        case 'ChiefMedical':
+        case 'Jefe Médico':
           UserType = ChiefMedical;
           break;
         case 'Paciente':
@@ -61,7 +57,7 @@ const bulkRegisterUsers = async () => {
           break;
         default:
           console.log(`Rol no reconocido: ${userRole.name}`);
-          continue; 
+          continue;
       }
 
       const newUser = new UserType({
@@ -70,13 +66,12 @@ const bulkRegisterUsers = async () => {
         email,
         password: hashedPassword,
         gender,
-        roles: [userRole._id], 
+        roles: [userRole._id],
       });
 
       usersToCreate.push(newUser);
     }
 
-    
     await User.insertMany(usersToCreate);
     console.log('Usuarios creados exitosamente');
   } catch (error) {
@@ -85,6 +80,5 @@ const bulkRegisterUsers = async () => {
     mongoose.connection.close();
   }
 };
-
 
 bulkRegisterUsers();

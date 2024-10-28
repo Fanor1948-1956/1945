@@ -9,7 +9,7 @@ const sessionConfig = () => {
       mongoUrl: process.env.MONGO_URI,
     }),
     cookie: {
-      httpOnly: false,
+      httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: 1000 * 60 * 60 * 5, // Establecer a 5 horas
       // maxAge: 1000 * 60 * 10, // Establecer a 10 minutos

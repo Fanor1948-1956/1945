@@ -1,5 +1,5 @@
 export const BASE_URL =
-  'https://7000-fanoro1956-1945-50am2qruf9y.ws-us116.gitpod.io';
+  'https://6000-fanor19481956-1945-7e1k25j94um.ws-us116.gitpod.io';
 
 export const permissionEndpoints = {
   list: `${BASE_URL}/permissions/api`,

@@ -21,7 +21,8 @@ const { verifyToken } = require('./middleware/authMiddleware');
 const specialtyRoutes = require('./routes/specialtyRoutes');
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000;
+console.log(`port ${port}`);
 
 connectDB();
 
@@ -79,7 +80,7 @@ app.use('/upload', verifyToken, uploadRoutes);
 app.use('/services', verifyToken, serviceRoutes);
 app.use('/api', profileRoutes);
 app.use('/auth', authRoutes);
-app.use('/specialties', verifyToken, specialtyRoutes);
+app.use('/specialties', specialtyRoutes);
 
 const server = app.listen(port, () => {
   console.log(`Servidor corriendo en http://localhost:${port}`);

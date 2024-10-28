@@ -2,7 +2,6 @@ import { getState, setState } from '../reducers/state.js';
 import { apiFetch } from '../api/apiFetch.js';
 import { uploadEndpoints } from '../config/apiEndpoints.js';
 
-// Obtener archivos subidos por el usuario
 export const getUploads = async (ownerModel, ownerId) => {
   try {
     const response = await apiFetch(
@@ -11,15 +10,20 @@ export const getUploads = async (ownerModel, ownerId) => {
     );
 
     if (response && response.success) {
-      setState({ uploads: response.data });
-      console.log('Archivos obtenidos:', response.data);
-      return response.message;
+      const uploads = response.data || []; // Datos obtenidos
+      setState({ uploads }); // Solo se llama setState si hay uploads
+
+      console.log('Archivos obtenidos:', uploads);
+      return {
+        message: response.message,
+        uploads, // Retornamos los uploads para usarlos en la UI
+      };
     } else {
       throw new Error(response.message || 'Error al obtener archivos');
     }
   } catch (error) {
     console.error('Error al obtener archivos:', error);
-    throw error;
+    throw error; // Lanza el error para manejarlo en loadUploads
   }
 };
 // Función para subir un archivo, que maneja la lógica para crear o actualizar

@@ -67,7 +67,7 @@ exports.login = async (req, res) => {
 
     // Almacenar el token en la cookie
     res.cookie('token', token, {
-      httpOnly: false,
+      httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 1000 * 60 * 60, // 1 hora de duración del token en la cookie

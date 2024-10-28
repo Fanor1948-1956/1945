@@ -67,6 +67,7 @@
     "components/common/deleteItem.njk" %}
   </div>
 </div>
+
 <div
   id="genericModal"
   class="modal"
@@ -88,7 +89,7 @@
       id="genericDescriptionInput"
     />
 
-    <!-- Aquí se añade la imagen actual -->
+    <!-- Imagen seleccionada actual -->
     <div class="image-container">
       <img
         id="genericCurrentImage"
@@ -97,45 +98,14 @@
       />
     </div>
 
-    <label for="genericFileInput">Seleccionar nuevo archivo:</label>
+    <!-- Input de archivo oculto -->
     <input
       type="file"
-      id="genericFileInput"
+      id="hiddenFileInput"
+      style="display: none"
     />
-    <p id="selectedFileName"></p>
-    <!-- Muestra el nombre del archivo seleccionado -->
 
-    <button id="genericSaveButton">Guardar Cambios</button>
-  </div>
-</div>
-
-<div
-  id="genericModal"
-  class="modal"
->
-  <div class="modal-content medium">
-    <h2 class="modal-title">Editar Archivo</h2>
-    <div>
-      <img
-        id="genericCurrentImage"
-        src=""
-        alt="Imagen actual"
-        class="uploaded-image"
-      />
-    </div>
-    <input
-      type="text"
-      id="genericDescriptionInput"
-      placeholder="Descripción"
-    />
-    <input
-      type="file"
-      id="genericFileInput"
-    />
-    <span id="selectedFileName"></span>
-    <!-- Muestra el nombre del archivo seleccionado -->
-    <button id="genericSaveButton">Guardar Cambios</button>
-    <button onclick="closeModal('genericModal')">Cancelar</button>
+    <button id="genericSaveButton">Confirmar</button>
   </div>
 </div>
 

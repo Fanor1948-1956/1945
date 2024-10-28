@@ -1,29 +1,40 @@
 // logic/auth/uploadLogic.js
 
 import { getUploads } from '../../services/uploadService.js';
-import { getState } from '../../reducers/state.js';
-import { actions, handleActionClick, onAction } from './actions.js';
-import {
-  defaultAvatarCount,
-  generateEmptyAvatars,
-} from '../../generate/generateEmptyAvatars.js';
+import { actions } from './actions.js';
+import { generateEmptyAvatars } from '../../generate/generateEmptyAvatars.js';
+const defaultAvatarCount = 25;
+import { handleGenericClick, initializeListeners } from './utils.js';
 
-// Función para cargar archivos y actualizar la interfaz
 export const loadUploads = async (ownerModel, ownerId) => {
   try {
     const message = await getUploads(ownerModel, ownerId); // Obtener los archivos
-    const uploads = getState().uploads; // Recupera el estado de los uploads
-    console.log(uploads);
-    displayUploads(uploads); // Implementa displayUploads en tu UI para mostrar archivos
+    const uploads = message.uploads || []; // Suponiendo que la respuesta tiene una estructura que incluye los uploads
 
-    // Muestra un snackbar con el mensaje de éxito
-    showSnackbar(message || 'Archivos cargados exitosamente.', true);
+    console.log(uploads);
+    displayUploads(uploads, ownerModel); // Pasar ownerModel directamente
+
+    // Calcular cuántos avatares vacíos se necesitan
+
+    const remainingSpaces = Math.max(0, defaultAvatarCount - uploads.length);
+    console.log(remainingSpaces);
+    // Generar avatares vacíos si es necesario, incluso si no hay uploads
+    generateEmptyAvatars(remainingSpaces, ownerModel, ownerId);
+
+    // Muestra un snackbar con el mensaje apropiado
+    if (uploads.length === 0) {
+      showSnackbar('Aún no tienes archivos. Debes subir algunos.', false); // Mensaje informativo
+    } else {
+      showSnackbar(message.message || 'Archivos cargados exitosamente.', true); // Mensaje de éxito
+    }
   } catch (error) {
     console.error('Error al cargar los archivos:', error);
     showSnackbar(error.message || 'Error al cargar los archivos.', false); // Muestra el mensaje de error
+
+    // Generar avatares vacíos también en caso de error
+    generateEmptyAvatars(defaultAvatarCount, ownerModel);
   }
 };
-
 function displayUploads(uploads) {
   const uploadsList = document.getElementById('uploadsList');
   uploadsList.innerHTML = ''; // Limpiar la lista existente
@@ -33,40 +44,28 @@ function displayUploads(uploads) {
     const fileItem = document.createElement('div');
     fileItem.classList.add('file-item');
 
+    const editButtonId = `edit-button-${file._id}`; // Crear un ID único basado en el ID del archivo
+
     fileItem.innerHTML = `
-      <div class="image-container"">
+      <div class="image-container">
         <img src="${file.path}" alt="${file.filename}" class="uploaded-image" /> 
-        <button class="edit-button" data-id="${file._id}" data-owner-model="${file.ownerModel}" data-owner="${file.owner}">Editar</button> 
+        <button id="${editButtonId}" class="edit-button" >Editar</button> 
       </div>
       <p>${file._id}</p>
-      
     `;
 
     uploadsList.appendChild(fileItem);
   });
 
-  // Calcular los espacios restantes para avatares vacíos
-  const remainingSpaces = Math.max(0, defaultAvatarCount + uploads.length);
-  const ownerModel =
-    uploads.length > 0 ? uploads[0].ownerModel : 'defaultModel'; // Definir modelo de propietario por defecto
-  console.log('dsdad', ownerModel);
-  // Generar avatares vacíos si es necesario
-  generateEmptyAvatars(remainingSpaces, ownerModel);
-
-  // Inicializar los listeners de botones después de renderizar
-  initializeListeners('.edit-button', actions, onAction);
-}
-export function initializeListeners(buttonSelector, actions, onActionCallback) {
-  // Selecciona los botones según el selector proporcionado
-  const actionButtons = document.querySelectorAll(buttonSelector);
-
-  actionButtons.forEach((button) => {
-    // Remover y agregar el listener para evitar múltiples registros
-    button.removeEventListener('click', (event) =>
-      handleActionClick(event, actions, onActionCallback)
-    );
-    button.addEventListener('click', (event) =>
-      handleActionClick(event, actions, onActionCallback)
-    );
+  // Inicializar listeners para todos los botones de edición
+  uploads.forEach((file) => {
+    const editButtonId = `edit-button-${file._id}`;
+    const data = {
+      item: file,
+      actions,
+      ownerModel: file.ownerModel,
+      owner: file.owner,
+    };
+    initializeListeners(editButtonId, handleGenericClick, data);
   });
 }

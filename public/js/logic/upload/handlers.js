@@ -1,7 +1,7 @@
 import { uploadFile } from '../../services/uploadService.js';
 import { loadUploads } from './uploadLogic.js';
 
-export const handleFileUploadOrUpdate = async (
+export const handleItemUploadOrUpdate = async (
   uploadId, // ID del archivo para actualizar o null para crear
   description,
   file,

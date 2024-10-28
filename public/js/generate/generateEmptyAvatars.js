@@ -1,33 +1,49 @@
-export const defaultAvatarCount = 5;
+import { actions } from '../logic/upload/actions.js';
+import {
+  handleGenericClick,
+  initializeListeners,
+} from '../logic/upload/utils.js';
 
-export function generateEmptyAvatars(count, model) {
+export function generateEmptyAvatars(count, model, ownerId) {
   const uploadsList = document.getElementById('uploadsList');
 
-  for (let i = 0; i < count; i++) {
+  const emptyAvatars = Array.from({ length: count });
+
+  emptyAvatars.forEach((_, i) => {
     const emptyAvatar = document.createElement('div');
     emptyAvatar.classList.add('file-item', 'empty-avatar');
 
-    // Aquí puedes ajustar el SVG según el modelo
-    const svgIcon = getSvgIcon(model); // Llamamos a la función que devuelve el SVG según el modelo
+    // Ajustar el SVG según el modelo
+    const svgIcon = getSvgIcon(model);
 
-    // Asignamos un ID ficticio para los botones de edición
-    const fakeId = `${Date.now()}-${i + 1}`; // ID único basado en el tiempo y el índice
+    // Generar un ID único para avatares vacíos, prefijando con "empty-avatar-"
+    const fakeId = `empty-avatar-${Date.now()}-${i + 1}`; // o algún generador de ID único
+    const editButtonId = `edit-button-${fakeId}`;
 
     emptyAvatar.innerHTML = `
-      <div class="image-container" >
-        ${svgIcon}  <!-- Insertamos el SVG directamente aquí -->
-        <button class="edit-button" data-id="${fakeId}" data-owner-model="${model}" data-owner="defaultOwner">Editar</button>
+      <div class="image-container">
+        ${svgIcon}
+        <button id="${editButtonId}" class="edit-button" data-id="${fakeId}" data-owner-model="${model}" data-owner="defaultOwner">Editar</button>
       </div>
       <p>${fakeId}</p>
     `;
 
-    // Agregar el avatar vacío a la lista existente
     uploadsList.appendChild(emptyAvatar);
-  }
+
+    // Definir data para la función genérica, diferenciando entre elementos de datos y elementos vacíos
+    const data = {
+      item: fakeId, // Este será único pero no relacionado a base de datos
+      actions,
+      ownerModel: model,
+      owner: ownerId,
+    };
+
+    initializeListeners(editButtonId, handleGenericClick, data);
+  });
 }
 
 // Función para obtener el SVG según el modelo
-function getSvgIcon(model) {
+export function getSvgIcon(model) {
   switch (model) {
     case 'User':
       return `<svg class="icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-3.31 0-10 1.67-10 5v3h20v-3c0-3.33-6.69-5-10-5z"/></svg>`;

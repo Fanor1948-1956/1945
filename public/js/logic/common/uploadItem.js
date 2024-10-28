@@ -1,7 +1,7 @@
 // common.js
 import { getState } from '../../reducers/state.js';
 import { loadUploads } from '../../logic/upload/uploadLogic.js';
-import { handleFileUploadOrUpdate } from '../upload/handlers.js';
+import { handleItemUploadOrUpdate } from '../upload/handlers.js';
 
 /**
  * Carga el perfil de usuario y los archivos asociados, y actualiza el estado global.
@@ -27,15 +27,12 @@ export async function initializeModelAndUploads(fetchModelFunc, keyModel) {
     console.error('Error al cargar el perfil y los archivos:', error);
   }
 }
-
-// Función para configurar el botón de subida
+// Configurar el botón de subida
 export function setupUploadButton(fetchModelFunc, keyModel) {
   const uploadButton = document.getElementById('uploadButton');
   const fileInput = document.getElementById('uploadInput');
 
   uploadButton.addEventListener('click', async () => {
-    await fetchModelFunc();
-
     const file = fileInput.files[0];
     const { ownerModel, ownerId } = getState()[keyModel];
 
@@ -47,14 +44,19 @@ export function setupUploadButton(fetchModelFunc, keyModel) {
     if (ownerModel && ownerId) {
       const description = 'Archivo de perfil';
 
-      await handleFileUploadOrUpdate(
-        null, // En este caso, no hay uploadId ya que es una nueva carga
+      // Manejar la subida del archivo y luego recargar uploads
+      await handleItemUploadOrUpdate(
+        null, // Sin uploadId
         description,
         file,
         ownerModel,
         ownerId._id
       );
-      fileInput.value = ''; // Limpiar el campo de entrada
+
+      // Recargar uploads para actualizar la lista
+      await loadUploads(ownerModel, ownerId._id);
+
+      fileInput.value = ''; // Limpiar entrada
     } else {
       console.error('No se encontró el modelo o el ID del propietario.');
     }

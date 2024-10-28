@@ -19,6 +19,7 @@
 }
 
 .page-button.active {
-  background-color: #0074a8;
+  background-color: transparent !important;
   pointer-events: none;
+  border: 1px solid #fbfbfb;
 }

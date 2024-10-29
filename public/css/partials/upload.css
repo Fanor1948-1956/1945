@@ -44,6 +44,7 @@
   width: 10rem;
   border-radius: 50%;
   height: 10rem;
+  border: 1px solid rgb(11, 2, 112);
   background-color: rgb(225, 243, 243);
   fill: #140359; /* Color del SVG */
 }

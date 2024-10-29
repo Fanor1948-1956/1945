@@ -20,8 +20,6 @@ export const loadUserProfile = async () => {
   }
 };
 
-// Servicio para actualizar el perfil
-// Servicio para actualizar el perfil
 export const updateUserProfile = async (profileData) => {
   try {
     const response = await registerData(profileEndpoints.update, profileData);

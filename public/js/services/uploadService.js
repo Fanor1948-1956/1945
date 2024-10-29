@@ -32,7 +32,8 @@ export const uploadFile = async (
   ownerModel,
   ownerId,
   description = '',
-  uploadId = null // uploadId como parámetro opcional
+  uploadId = null, // uploadId como parámetro opcional
+  index
 ) => {
   const formData = new FormData();
   formData.append('file', file);
@@ -60,7 +61,7 @@ export const uploadFile = async (
 
     if (response && response.success) {
       const updatedUploads = [...getState().uploads, response.data];
-      setState({ uploads: updatedUploads });
+      setState({ uploads: updatedUploads, index });
       console.log('Archivo procesado exitosamente:', response.data);
       return response.message;
     } else {

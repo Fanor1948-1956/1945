@@ -1,116 +1,103 @@
 {% extends "layouts/publicLayout.njk" %} {% block content %}
 
-<div class="main">
-  <div class="form-container-signin">
-    <div class="logo-container">
-      <div class="circle">
-        <div class="rotating-text">
-          <span>C</span>
-          <span>L</span>
-          <span>Í</span>
-          <span>N</span>
-          <span>I</span>
-          <span>C</span>
-          <span>A</span>
-          <span>1</span>
-          <span>G</span>
-          <span>R</span>
-          <span>A</span>
-          <span>N</span>
-        </div>
-        <div class="center-text">
-          <p>Potosí</p>
+<div id="cardContainer"></div>
+<!-- Contenedor para la tarjeta que contendrá el formulario -->
+<div
+  id="snackbar"
+  class="snackbar"
+></div>
+
+<script type="module">
+  import { createCustomInputs } from './js/components/custom/input.js';
+  import { createCard } from './js/components/custom/card.js';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Crear inputs personalizados para email y contraseña
+    const inputConfigs = [
+      {
+        id: 'email',
+        name: 'email',
+        type: 'email',
+        placeholder: 'Ingresa tu correo electrónico',
+      },
+      {
+        id: 'password',
+        name: 'password',
+        type: 'password',
+        placeholder: 'Ingresa tu contraseña',
+      },
+    ];
+
+    // Crear la tarjeta que contendrá el formulario
+    createCard(
+      'cardContainer',
+      'Inicio de Sesión',
+      ` 
+      <div class="logo-container">
+        <div class="circle">
+          <div class="rotating-text">
+            <span>C</span>
+            <span>L</span>
+            <span>Í</span>
+            <span>N</span>
+            <span>I</span>
+            <span>C</span>
+            <span>A</span>
+            <span>1</span>
+            <span>G</span>
+            <span>R</span>
+            <span>A</span>
+            <span>N</span>
+          </div>
+          <div class="inner-border"></div>
+          <div class="center-text">Potosí</div>
         </div>
       </div>
-    </div>
-    <form
-      id="loginForm"
-      class="form-action"
-      method="POST"
-    >
-      <div class="input-content">
-        {% if isAuthenticated %}
-        <p>Bienvenido, {{ username }}</p>
-        <p>Token: {{ token }}</p>
-        {% else %}
-        <p>No estás autenticado.</p>
-        {% endif %}
+      <form id="loginForm">
+        <div class="input-content">
+          <div id="dynamicInputs"></div>
+          <button type="submit">Ingresar</button>
+        </div>
+      </form>
+      `
+    );
 
-        <input
-          type="email"
-          id="email"
-          name="email"
-          placeholder="Ingresa tu correo electrónico"
-          required
-        />
-        <input
-          type="password"
-          id="password"
-          name="password"
-          placeholder="Ingresa tu contraseña"
-          required
-        />
-      </div>
-      <!-- Mensaje de error -->
-      <div class="error-message"></div>
+    // Agregar los inputs al formulario
+    const dynamicInputs = document.getElementById('dynamicInputs');
+    dynamicInputs.appendChild(createCustomInputs(inputConfigs));
 
-      <button
-        type="submit"
-        class="send"
-      >
-        Ingresar
-      </button>
-    </form>
-  </div>
-</div>
+    const form = document.querySelector('#loginForm');
 
-<script>
-  // Obtener el formulario de login
-  const form = document.querySelector('.form-action');
-  const errorMessageDiv = document.querySelector('.error-message');
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
 
-  // Escuchar el evento de submit
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault(); // Evitar recargar la página
-    errorMessageDiv.textContent = ''; // Limpiar mensaje de error anterior
+      const email = document.querySelector('#email').value;
+      const password = document.querySelector('#password').value;
 
-    // Obtener los valores de los campos
-    const email = document.querySelector('#email').value;
-    const password = document.querySelector('#password').value;
+      try {
+        const response = await fetch('/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
 
-    try {
-      // Realizar la solicitud de login con fetch
-      const response = await fetch('/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      // Verificar si la respuesta es exitosa
-      if (response.ok) {
-        const data = await response.json();
-
-        // Almacenar el token en localStorage
-        localStorage.setItem('token', data.token);
-        // Almacenar la información del usuario si es necesario
-        localStorage.setItem('user', JSON.stringify(data.user));
-        localStorage.setItem('isAuthenticated', data.isAuthenticated);
-
-        // // Redirigir al dashboard
-        // window.location.href = '/dashboard';
-        // Redirigir al dashboard y evitar que vuelvan a la página de login
-        // history.replaceState(null, null, '/dashboard');
-        window.location.href = '/dashboard';
-      } else {
-        const errorData = await response.json();
-        errorMessageDiv.textContent = errorData.message; // Mostrar el mensaje de error
+        if (response.ok) {
+          const data = await response.json();
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          localStorage.setItem('isAuthenticated', data.isAuthenticated);
+          window.location.href = '/dashboard';
+        } else {
+          const errorData = await response.json();
+          // Mostrar mensaje de error usando el snackbar
+          showSnackbar(errorData.message, false); // Mensaje de error
+        }
+      } catch (error) {
+        console.error('Error en la solicitud de inicio de sesión:', error);
+        // Mostrar mensaje de error genérico
+        showSnackbar('Error en la conexión. Inténtalo de nuevo.', false);
       }
-    } catch (error) {
-      console.error('Error en la solicitud de inicio de sesión:', error);
-      errorMessageDiv.textContent = 'Error en la conexión. Inténtalo de nuevo.'; // Mensaje genérico de error
-    }
+    });
   });
 </script>
 

@@ -160,14 +160,17 @@ const deleteUpload = async (req, res) => {
   try {
     const { uploadId, ownerModel, ownerId } = req.params;
 
-    // Busca y elimina el archivo
-    const uploadToDelete = await Upload.findByIdAndDelete(uploadId);
+    // Busca el archivo en la base de datos
+    const uploadToDelete = await Upload.findById(uploadId);
 
     if (!uploadToDelete) {
       return res.status(404).json({ message: 'Archivo no encontrado.' });
     }
 
-    // Resuelve el modelo del propietario y elimina la referencia del archivo
+    // Actualizar el archivo para marcarlo como eliminado
+    await Upload.findByIdAndUpdate(uploadId, { isSelected: true });
+
+    // Eliminar referencia en el modelo de propietario
     const ModelToUpdate = resolveModel(ownerModel);
     if (ModelToUpdate && ownerId) {
       await ModelToUpdate.findByIdAndUpdate(ownerId, {
@@ -178,7 +181,7 @@ const deleteUpload = async (req, res) => {
     res.status(200).json({
       success: true,
       message: 'Archivo eliminado exitosamente.',
-      data: { uploadId }, // Incluye el ID o cualquier otro dato relevante
+      data: { uploadId },
     });
   } catch (error) {
     console.error('Error al eliminar el archivo:', error);

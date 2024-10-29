@@ -1,3 +1,14 @@
-<section class="{{ class }}">
-  {{ content | safe }}
+<section
+  class="section {{ extraClasses }}"
+  data-section-id="{{ sectionId }}"
+>
+  <div class="section-content">
+    {% if title %}
+    <h2 class="section-title">{{ title }}</h2>
+    {% endif %}
+
+    <div class="section-body">
+      {{ content | safe }}
+    </div>
+  </div>
 </section>

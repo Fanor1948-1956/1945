@@ -30,7 +30,7 @@
 .spinner::before {
   content: '';
   position: absolute;
-  width: 40%; /* Ancho de la parte que se desliza */
+  width: 75%; /* Ancho de la parte que se desliza */
   height: 100%;
   background-color: #031a2a; /* Color de la barra de carga */
   animation: slide 1.5s ease-in-out infinite; /* Animación deslizante */

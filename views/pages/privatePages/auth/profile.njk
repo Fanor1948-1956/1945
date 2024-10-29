@@ -1,179 +1,143 @@
 {% extends "layouts/privateLayout.njk" %} {% block content %}
-<h1>Perfil del Usuario</h1>
+
 <div
   id="profileContainer"
   class="profile-container"
 >
-  <div class="profile-details">
-    <h2>Información Personal</h2>
-    <form id="profileForm">
-      <label for="name">Nombre:</label>
-      <input
-        type="text"
-        name="name"
-        required
-        id="nameInput"
-        class="transparent-input"
-        disabled
-      />
-
-      <label for="surnames">Apellidos:</label>
-      <input
-        type="text"
-        name="surnames"
-        required
-        id="surnamesInput"
-        class="transparent-input"
-        disabled
-      />
-
-      <label for="email">Email:</label>
-      <input
-        type="email"
-        name="email"
-        required
-        id="emailInput"
-        class="transparent-input"
-        disabled
-      />
-
-      <label for="gender">Género:</label>
-      <select
-        name="gender"
-        id="genderSelect"
-        class="transparent-input"
-        disabled
-      >
-        <option value="masculino">Masculino</option>
-        <option value="femenino">Femenino</option>
-        <option value="otro">Otro</option>
-      </select>
-
-      <label for="createdAt">Fecha de Registro:</label>
-      <input
-        type="text"
-        name="createdAt"
-        disabled
-        id="createdAtInput"
-        class="transparent-input"
-      />
-      {% include "components/common/actions/buttonActions.njk" %}
-    </form>
+  <h1>Perfil del Usuario</h1>
+ 
+  <div class="profile-detail">
+   
+    <div
+    id="uploadsList"
+    class="uploads-list"
+  >
+    <!-- Aquí se mostrarán los archivos subidos -->
   </div>
-  <div class="upload">
-    {% include "components/common/actions/uploadActions.njk" %} {% include
-    "components/custom/common/deleteItem.njk" %} {% include
+
+    <form id="profileForm">
+      <h2>Información Personal</h2>
+      
+ 
+      <div class="input-container">
+        <div id="inputsContainer">
+        </div>
+        {% include "components/common/actions/buttonActions.njk" %}
+    </form>
+
+  
+  </div>
+  {% include "components/custom/common/deleteItem.njk" %} {% include
     "components/custom/customPopover.njk" %} {% include
     "components/common/deleteItem.njk" %}
-  </div>
-</div>
+  {% include "components/custom/common/uploadItemModal.njk" %}
+  <div
+    id="snackbar"
+    class="snackbar"
+  ></div>
+  <script type="module">
+    import { loadUserProfile } from '../js/services/profileService.js';
+    import { handleProfileUpdate } from '../js/logic/auth/profileLogic.js';
+    import {
+      enableEditMode,
+      cancelEditMode,
+    } from '../js/logic/common/editItem.js';
+    import { getState, setState } from '../js/reducers/state.js';
 
-<div
-  id="genericModal"
-  class="modal"
-  style="display: none"
->
-  <div class="modal-content">
-    <div class="modal-head">
-      <h2 class="modal-title">Editar Archivo</h2>
-      <span
-        class="close-button"
-        onclick="Modal.close('#deleteUserModal')"
-        >&times;</span
-      >
-    </div>
+    import { displayUploads} from '../js/logic/upload/uploadLogic.js'
 
-    <label for="genericDescriptionInput">Descripción:</label>
-    <input
-      type="text"
-      id="genericDescriptionInput"
-    />
+    import { createCustomInputs } from '../js/components/custom/input.js';
+    import { createCustomDropdown } from '../js/components/custom/dropdown.js';
 
-    <!-- Imagen seleccionada actual -->
-    <div class="image-container">
-      <img
-        id="genericCurrentImage"
-        alt="Imagen actual"
-        class="uploaded-image-edit"
-      />
-    </div>
+    const inputConfigs = [
+      {
+        id: 'nameInput',
+        name: 'name',
+        placeholder: 'Nombre',
+        type: 'text',
+        isDisabled: true,
+      },
+      {
+        id: 'surnamesInput',
+        name: 'surnames',
+        placeholder: 'Apellidos',
+        type: 'text',
+        isDisabled: true,
+      },
+      {
+        id: 'emailInput',
+        name: 'email',
+        placeholder: 'Correo electrónico',
+        type: 'email',
+        isDisabled: true,
+      },
+      {
+        id: 'createdAtInput',
+        name: 'createdAt',
+        placeholder: 'Fecha de Registro',
+        type: 'text',
+        isDisabled: true,
+      },
+    ];
 
-    <!-- Input de archivo oculto -->
-    <input
-      type="file"
-      id="hiddenFileInput"
-      style="display: none"
-    />
+    const genderConfig = {
+      id: 'genderSelect',
+      name: 'gender',
+      options: [
+        { label: 'Masculino', value: 'masculino' },
+        { label: 'Femenino', value: 'femenino' },
+        { label: 'Otro', value: 'otro' },
+      ],
+      isDisabled: true,
+    };
 
-    <button id="genericSaveButton">Confirmar</button>
-  </div>
-</div>
+    const inputsContainer = document.getElementById('inputsContainer');
 
-<div
-  id="snackbar"
-  class="snackbar"
-></div>
-<script type="module">
-  import { loadUserProfile } from '../js/services/profileService.js';
-  import { handleProfileUpdate } from '../js/logic/auth/profileLogic.js';
-  import {
-    enableEditMode,
-    cancelEditMode,
-  } from '../js/logic/common/editItem.js';
-  import { getState, setState } from '../js/reducers/state.js';
+    // Generar e insertar inputs y dropdown
+    inputsContainer.appendChild(createCustomInputs(inputConfigs));
+    inputsContainer.appendChild(createCustomDropdown(genderConfig));
+    async function fetchUserProfile() {
+  try {
+    const user = await loadUserProfile();
+    console.log('user', user);
 
-  import {
-    initializeModelAndUploads,
-    setupUploadButton,
-  } from '../js/logic/common/uploadItem.js';
+    // Configurar los datos del perfil
+    document.getElementById('nameInput').value = user.name || '';
+    document.getElementById('surnamesInput').value = user.surnames || '';
+    document.getElementById('emailInput').value = user.email || '';
+    document.getElementById('genderSelect').value = user.gender || 'masculino';
+    document.getElementById('createdAtInput').value = new Date(
+      user.createdAt
+    ).toLocaleDateString();
 
-  const token = '{{ token }}'; // Asegúrate de escapar correctamente
-  const currentPath = '{{ currentPath }}';
-  const isAuthenticated = '{{ isAuthenticated }}'; // Asegúrate de escapar correctamente
-  async function fetchUserProfile() {
-    try {
-      const user = await loadUserProfile();
-      console.log('user', user);
-
-      setState({
-        profile: {
-          ...user,
-          ownerModel: 'User', // Asegúrate de que el modelo esté definido
-          ownerId: user, // Suponiendo que el ID del usuario está en `user.id`
-        },
-      });
-
-      document.getElementById('nameInput').value = user.name || '';
-      document.getElementById('surnamesInput').value = user.surnames || '';
-      document.getElementById('emailInput').value = user.email || '';
-      document.getElementById('genderSelect').value =
-        user.gender || 'masculino';
-      document.getElementById('createdAtInput').value = new Date(
-        user.createdAt
-      ).toLocaleDateString();
-    } catch (error) {
-      console.error('Error al obtener el perfil del usuario:', error);
-      alert('No se pudo obtener el perfil. Intenta de nuevo más tarde.');
-    }
+   
+      displayUploads(user.uploads); // Llamada a la función para mostrar los archivos
+   
+  } catch (error) {
+    console.error('Error al obtener el perfil del usuario:', error);
+    alert('No se pudo obtener el perfil. Intenta de nuevo más tarde.');
   }
-  document
-    .getElementById('editButton')
-    .addEventListener('click', enableEditMode);
-  document
-    .getElementById('cancelButton')
-    .addEventListener('click', cancelEditMode);
+}
 
-  document
-    .getElementById('profileForm')
-    .addEventListener('submit', handleProfileUpdate);
+    document
+      .getElementById('editButton')
+      .addEventListener('click', enableEditMode);
+    document
+      .getElementById('cancelButton')
+      .addEventListener('click', cancelEditMode);
 
-  document.addEventListener('DOMContentLoaded', async () => {
-    await initializeModelAndUploads(fetchUserProfile, 'profile');
+    document
+      .getElementById('profileForm')
+      .addEventListener('submit', handleProfileUpdate);
 
-    setupUploadButton(fetchUserProfile, 'profile');
-  });
 
-  document.addEventListener('DOMContentLoaded', fetchUserProfile);
-</script>
 
-{% endblock %}
+
+     
+    
+
+    document.addEventListener('DOMContentLoaded', fetchUserProfile);
+  </script>
+
+  {% endblock %}
+</div>

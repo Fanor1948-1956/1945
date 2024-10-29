@@ -1,23 +1,18 @@
-import { actions } from '../logic/upload/actions.js';
+import { getActions } from '../logic/upload/actions.js';
 import {
   handleGenericClick,
   initializeListeners,
 } from '../logic/upload/utils.js';
-
-export function generateEmptyAvatars(count, model, ownerId) {
+export function generateEmptyAvatars(count, model, ownerId, startIndex = 0) {
   const uploadsList = document.getElementById('uploadsList');
+  const emptyAvatars = [];
 
-  const emptyAvatars = Array.from({ length: count });
-
-  emptyAvatars.forEach((_, i) => {
+  Array.from({ length: count }).forEach((_, i) => {
     const emptyAvatar = document.createElement('div');
     emptyAvatar.classList.add('file-item', 'empty-avatar');
 
-    // Ajustar el SVG según el modelo
     const svgIcon = getSvgIcon(model);
-
-    // Generar un ID único para avatares vacíos, prefijando con "empty-avatar-"
-    const fakeId = `empty-avatar-${Date.now()}-${i + 1}`; // o algún generador de ID único
+    const fakeId = `empty-avatar-${model}-${startIndex + i + 1}`; // Usar el índice para crear un ID único
     const editButtonId = `edit-button-${fakeId}`;
 
     emptyAvatar.innerHTML = `
@@ -29,17 +24,20 @@ export function generateEmptyAvatars(count, model, ownerId) {
     `;
 
     uploadsList.appendChild(emptyAvatar);
+    emptyAvatars.push({ id: fakeId, element: emptyAvatar });
 
-    // Definir data para la función genérica, diferenciando entre elementos de datos y elementos vacíos
     const data = {
-      item: fakeId, // Este será único pero no relacionado a base de datos
-      actions,
+      item: fakeId,
+      index: startIndex + i,
+      actions: getActions(null),
       ownerModel: model,
       owner: ownerId,
     };
 
     initializeListeners(editButtonId, handleGenericClick, data);
   });
+
+  return emptyAvatars;
 }
 
 // Función para obtener el SVG según el modelo

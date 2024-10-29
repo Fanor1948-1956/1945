@@ -5,12 +5,11 @@ import { handleItemUploadOrUpdate } from './handlers.js';
 import { showPopover } from '../../components/common/popover.js';
 import { onAction } from './actions.js';
 
-
 export function openDetailsModal(file) {
   // Elementos del modal de detalles
   const descriptionInput = document.querySelector('#genericDescriptionInput');
   const currentImage = document.querySelector('#genericCurrentImage');
-  
+
   // Configura los valores iniciales en el modal
   descriptionInput.value = file.description || ''; // Solo muestra la descripción
   currentImage.src = file.path || ''; // Muestra la imagen
@@ -64,56 +63,59 @@ export function openEditModal(file, ownerModel, ownerId) {
     closeModal('genericModal'); // Cierra el modal después de guardar
   };
 }
-export async function openEditWithFileSelection(file, ownerModel, ownerId) {
-  const fileInput = document.querySelector('#hiddenFileInput'); // Input de archivo oculto
+export async function openEditWithFileSelection(
+  file,
+  ownerModel,
+  ownerId,
+  index
+) {
+  const fileInput = document.querySelector('#hiddenFileInput');
   const currentImage = document.querySelector('#genericCurrentImage');
-  // const selectedFileName = document.querySelector('#selectedFileName');
   const descriptionInput = document.querySelector('#genericDescriptionInput');
   const saveButton = document.querySelector('#genericSaveButton');
+
+  console.log(`Editando archivo en índice: ${index}`);
 
   // Abrir el selector de archivo automáticamente
   fileInput.click();
 
-  // Cuando el usuario selecciona un archivo, muestra el modal con la vista previa del archivo
+  // Cuando el usuario selecciona un archivo
   fileInput.onchange = () => {
     const selectedFile = fileInput.files[0];
 
     if (selectedFile) {
-      //   selectedFileName.textContent = `Archivo seleccionado: ${selectedFile.name}`;
-
-      // Cargar la vista previa de la imagen seleccionada en el modal
       const reader = new FileReader();
       reader.onload = (e) => {
-        currentImage.src = e.target.result; // Muestra la imagen seleccionada
+        currentImage.src = e.target.result;
         currentImage.style.display = 'block';
       };
       reader.readAsDataURL(selectedFile);
 
-      // Configura el modal con el archivo y descripción inicial
       descriptionInput.value = file.description || '';
-      openModal('genericModal', 'small', 'Editar Archivo'); // Abre el modal
+      openModal('genericModal', 'small', 'Editar Archivo');
 
-      // Botón "Confirmar" para guardar los cambios
+      // Botón "Confirmar"
       saveButton.onclick = async () => {
         const newDescription = descriptionInput.value;
 
-        // Llama a la función para actualizar con el archivo nuevo y la descripción
         await handleItemUploadOrUpdate(
-          file._id, // ID del archivo para actualizar
+          file._id || null, // Usar null si no hay ID
           newDescription,
-          selectedFile, // Archivo seleccionado
+          selectedFile,
           ownerModel,
-          ownerId
+          ownerId,
+          index
         );
 
-        closeModal('genericModal'); // Cierra el modal después de confirmar
+        console.log(`Confirmado: Archivo actualizado en índice: ${index}`);
+        closeModal('genericModal');
       };
     }
   };
 }
 
 // Función para abrir el modal de confirmación de eliminación
-export function openDeleteModal(file, ownerModel, ownerId) {
+export function openDeleteModal(file, ownerModel, ownerId, index) {
   // Abre el modal con el mensaje de confirmación
   openModal('deleteModal', 'small', 'Eliminar Archivo');
 
@@ -123,7 +125,7 @@ export function openDeleteModal(file, ownerModel, ownerId) {
 
   const confirmButton = document.querySelector('#confirmDelete');
   const cancelButton = document.querySelector('#cancelDeleteButton');
-
+  console.log(`Editando archivo en índice: ${index}`); // Imprime el índice en la consola
   // Listener para confirmar eliminación
   confirmButton.onclick = async () => {
     await deleteUpload(file._id, ownerModel, ownerId);
@@ -158,7 +160,7 @@ export function handleGenericClick(event, data) {
   console.log(button);
   // Mostrar el popover con acciones, pasando el callback de acción
   showPopover(data.item, data.actions, button, (action) => {
-    onAction(action, data.item, data.ownerModel, data.owner);
+    onAction(action, data.item, data.ownerModel, data.owner, data.index);
   });
 
   event.stopPropagation();

@@ -2,30 +2,33 @@ import { uploadFile } from '../../services/uploadService.js';
 import { loadUploads } from './uploadLogic.js';
 
 export const handleItemUploadOrUpdate = async (
-  uploadId, // ID del archivo para actualizar o null para crear
+  uploadId,
   description,
   file,
   ownerModel,
-  ownerId
+  ownerId,
+  index
 ) => {
   try {
-    // Llama a uploadFile, que se encargará de decidir si hacer una subida o actualización
-    await uploadFile(
+    // Realizar la operación de subida o actualización
+    const responseMessage = await uploadFile(
       file,
       ownerModel,
       ownerId,
       description,
-      uploadId // Pasamos el uploadId como argumento
+      uploadId
     );
 
-    // Cargar de nuevo los uploads para actualizar la interfaz
-    await loadUploads(ownerModel, ownerId);
-
-    // Mostrar el mensaje de éxito
+    // Condicional para mostrar mensaje dependiendo de si se está subiendo o actualizando
     const successMessage = uploadId
-      ? 'Archivo actualizado exitosamente.'
-      : 'Archivo subido exitosamente.';
+      ? responseMessage.message || 'Archivo actualizado exitosamente.'
+      : responseMessage.message || 'Archivo subido exitosamente.';
+
+    console.log(successMessage, `en índice: ${index}`);
     showSnackbar(successMessage, true);
+
+    // Recargar lista o actualizar solo la posición del índice especificado
+    await loadUploads(ownerModel, ownerId, index);
   } catch (error) {
     console.error('Error al procesar el archivo:', error);
     showSnackbar(error.message || 'Error al procesar el archivo.', false);

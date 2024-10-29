@@ -40,3 +40,5 @@ export const specialtyEndpoints = {
   update: `${BASE_URL}/specialties/update-specialty`,
   delete: `${BASE_URL}/specialties/delete`,
 };
+
+

@@ -62,15 +62,13 @@ const publicRoutes = [
     isPublic: true,
   },
 ];
-
 const registerPublicRoutes = (app) => {
   publicRoutes.forEach((route) => {
     if (route.path) {
       app.get(route.path, async (req, res) => {
-        // Verificar autenticación aquí también
         if (req.session.authenticated) {
-          return res.redirect('/dashboard'); // Redirigir a dashboard si ya está autenticado
-        } 
+          return res.redirect('/dashboard');
+        }
 
         try {
           const items = await route.items();
@@ -78,7 +76,7 @@ const registerPublicRoutes = (app) => {
             title: route.title,
             items: items,
             publicRoutes,
-              currentPath: route.path, 
+            currentPath: route.path,
           });
         } catch (error) {
           console.error(`Error al cargar los datos para ${route.path}:`, error);
@@ -92,18 +90,17 @@ const registerPublicRoutes = (app) => {
       route.subRoutes.forEach((subRoute) => {
         const subRoutePath = `${route.path}/${subRoute.id}`;
         app.get(subRoutePath, async (req, res) => {
-          // Verificar autenticación aquí también
           if (req.session.authenticated) {
-            return res.redirect('/dashboard'); // Redirigir a dashboard si ya está autenticado
+            return res.redirect('/dashboard');
           }
 
           try {
-            const items = (await subRoute.items) ? await subRoute.items() : [];
+            const items = subRoute.items ? await subRoute.items() : [];
             res.render(route.view, {
               title: subRoute.title,
               items: items,
               publicRoutes,
-              currentPath: route.path,
+              currentPath: subRoutePath,
             });
           } catch (error) {
             console.error(
@@ -119,4 +116,3 @@ const registerPublicRoutes = (app) => {
 };
 
 module.exports = registerPublicRoutes;
-

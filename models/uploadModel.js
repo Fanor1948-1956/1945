@@ -18,6 +18,7 @@ const uploadSchema = new mongoose.Schema({
     required: true, // Sin enum para permitir más flexibilidad
   },
   description: { type: String }, // Descripción opcional del archivo
+  isSelected: { type: Boolean, default: false },
 });
 
 // Agregar un método para verificar si el archivo existe

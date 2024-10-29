@@ -1,64 +1,45 @@
-.user-card {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin: 16px;
-  overflow: hidden;
-  width: 250px;
-  display: inline-block;
-  vertical-align: top;
+/* Estilos para el contenedor de la tarjeta */
+#cardContainer {
+  display: flex;
+  padding: 1rem;
+  justify-content: center; /* Centra la tarjeta horizontalmente */
+  align-items: center; /* Centra la tarjeta verticalmente */
+  min-height: 100vh; /* Altura mínima para centrar en la página */
+  background-color: #f4f4f4; /* Color de fondo de la página */
+  border-radius: 1rem;
 }
 
-.user-card__header {
-  background-color: #f4f4f4;
-  padding: 16px;
-  text-align: center;
+/* Estilos de la tarjeta */
+.card {
+  background-color: #050553; /* Color de fondo de la tarjeta */
+  border-radius: 0.5rem; /* Bordes redondeados */
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1); /* Añade sombra */
+  transition: box-shadow 0.3s ease; /* Efecto de transición para la sombra */
+
+  width: 20rem; /* Ancho de la tarjeta (300px) */
+  overflow: hidden; /* Evita que el contenido se desborde */
+  margin: 1.25rem; /* Margen alrededor de la tarjeta (20px) */
 }
 
-.user-image {
-  border-radius: 50%;
-  width: 100px;
-  height: 100px;
+/* Estilos del encabezado de la tarjeta */
+.card-header {
+  background-color: #050553; /* Color de fondo de la tarjeta */
+  color: #ffffff; /* Color del texto */
+
+  padding: 0.9375rem; /* Espaciado interno (5px 15px) */
+  text-align: center; /* Centrar el texto */
 }
 
-.user-card__body {
-  padding: 16px;
-  text-align: center;
+.card-header h5 {
+  font-size: 1.25rem; /* Tamaño de la fuente (20px) */
+  margin: 0; /* Elimina el margen */
 }
 
-.user-name {
-  font-size: 18px;
-  font-weight: bold;
-  margin: 8px 0;
-}
-
-.user-role {
-  font-size: 14px;
-  color: #888;
-  margin-bottom: 8px;
-}
-
-.user-bio {
-  font-size: 14px;
-  color: #555;
-}
-
-.user-card__footer {
-  background-color: #f9f9f9;
-  padding: 12px;
-  text-align: center;
-}
-
-.user-action {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  cursor: pointer;
-  margin: 4px;
-}
-
-.user-action:hover {
-  background-color: #0056b3;
+/* Estilos del cuerpo de la tarjeta */
+.card-body {
+  padding: 0.3125rem 0.9375rem; /* Espaciado interno (5px 15px) */
+  text-align: center; /* Centrar el texto */
+  font-size: 1.125rem; /* Tamaño de la fuente (18px) */
+  color: #060843; /* Color del texto */
+  overflow-y: auto; /* Ajustar la altura del cuerpo para mostrar scrollbar */
 }

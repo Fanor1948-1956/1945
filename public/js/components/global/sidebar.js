@@ -1,18 +1,20 @@
-document.addEventListener('DOMContentLoaded', () => {
+function initializeSidebar(idContainer, showButtonImmediately = false) {
   const hamburgerBtn = document.getElementById('hamburgerBtn');
   const sidebar = document.getElementById('sidebar');
-  const container = document.querySelector('.container');
+  const layoutContainer = document.getElementById(idContainer);
   const submenuLinks = document.querySelectorAll('.sidebar ul li > a');
-  const contentMain = document.getElementById('contentMain'); // Agregar referencia a contentMain
-  const spinner = document.getElementById('spinner'); // Referencia al spinner
 
-  // Abre/cierra el sidebar al hacer clic en el botón hamburguesa
+  const spinner = document.getElementById('spinner');
+  const viewButton = document.getElementById('viewButton');
+
+  // Inicializa el botón "Ver" según el argumento
+  viewButton.style.display = showButtonImmediately ? 'block' : 'none';
+
   hamburgerBtn.addEventListener('click', () => {
     sidebar.classList.toggle('active');
-    container.classList.toggle('shifted');
+    layoutContainer.classList.toggle('shifted');
   });
 
-  // Cierra el sidebar al hacer clic fuera de él
   document.addEventListener('click', (event) => {
     const isClickInsideSidebar = sidebar.contains(event.target);
     const isClickOnHamburger = hamburgerBtn.contains(event.target);
@@ -23,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
       sidebar.classList.contains('active')
     ) {
       sidebar.classList.remove('active');
-      container.classList.remove('shifted');
+      layoutContainer.classList.remove('shifted');
     }
   });
 
@@ -33,80 +35,108 @@ document.addEventListener('DOMContentLoaded', () => {
       const parentLi = link.parentElement;
       const parentHref = link.getAttribute('href');
 
-      // Cierra el sidebar al hacer clic en un enlace
       sidebar.classList.remove('active');
-      container.classList.remove('shifted');
+      layoutContainer.classList.remove('shifted');
 
-      // Si el enlace tiene un submenú
       if (submenu) {
-        event.preventDefault(); // Evita la navegación predeterminada
-        submenu.classList.toggle('active'); // Alterna la visibilidad del submenú
-        parentLi.classList.toggle('active'); // Cambia la clase active del li padre
+        event.preventDefault();
+        submenu.classList.toggle('active');
+        parentLi.classList.toggle('active');
 
-        // Cierra otros submenús abiertos
         submenuLinks.forEach((otherLink) => {
           const otherSubmenu = otherLink.nextElementSibling;
           const otherParentLi = otherLink.parentElement;
-
           if (
             otherSubmenu &&
             otherSubmenu !== submenu &&
             otherSubmenu.classList.contains('active')
           ) {
-            otherSubmenu.classList.remove('active'); // Cierra el otro submenú
-            otherParentLi.classList.remove('active'); // Remueve la clase active del padre
+            otherSubmenu.classList.remove('active');
+            otherParentLi.classList.remove('active');
           }
         });
       } else {
-        // Manejar la carga de contenido
-        event.preventDefault(); // Evita la navegación predeterminada
+        event.preventDefault();
+        showSpinner(); // Mostrar el spinner al cargar contenido
         loadContent(parentHref);
       }
     });
   });
 
-  const loadContent = (url) => {
-    $.ajax({
-      url: url,
-      method: 'GET',
-      success: function (data, status, xhr) {
-        const contentType = xhr.getResponseHeader('content-type');
-        if (contentType.includes('application/json')) {
-          // Si es JSON, procesa los datos como JSON
-          const response = JSON.parse(data);
-          $('#contentMain').html(response.content);
-          document.title = response.title || url;
-        } else {
-          // Si es HTML, procesa los datos como HTML
-          $('#contentMain').html($(data).find('#contentMain').html());
-          const newTitle = $(data).filter('title').text();
-          document.title = newTitle || url;
-          executeScripts(data);
-        }
-        history.pushState({ url: url }, '', url);
-      },
-      error: function (xhr, status, error) {
-        console.error('Error al cargar contenido:', error);
-      },
-    });
+  const showSpinner = () => {
+    spinner.style.display = 'flex';
+    layoutContainer.style.display = 'none';
+
+    if (!showButtonImmediately) {
+      // Si es false, mostrar el spinner por 10 segundos y luego mostrar el contenido
+      setTimeout(() => {
+        spinner.style.display = 'none'; // Ocultar spinner
+        layoutContainer.style.display = 'block'; // Mostrar contenido
+      }, 10000); // 10000 ms = 10 segundos
+    } else {
+      // Si es true, el botón "Ver" se mostrará y el contenido permanecerá oculto
+      viewButton.style.display = 'block'; // Mostrar el botón
+    }
+  };
+
+  const loadContent = async (url) => {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const contentType = response.headers.get('content-type');
+
+      if (contentType.includes('application/json')) {
+        const data = await response.json();
+        document.getElementById('contentMain').innerHTML = data.content;
+        document.title = data.title || url;
+      } else {
+        const text = await response.text();
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = text;
+        document.getElementById('contentMain').innerHTML =
+          tempDiv.querySelector('#contentMain').innerHTML;
+        const newTitle = tempDiv.querySelector('title').innerText;
+        document.title = newTitle || url;
+        executeScripts(text);
+      }
+      history.pushState({ url: url }, '', url);
+    } catch (error) {
+      console.error('Error al cargar contenido:', error);
+    }
   };
 
   const executeScripts = (html) => {
-    const scripts = $(html).filter('script');
-    scripts.each(function () {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    const scripts = tempDiv.querySelectorAll('script');
+    scripts.forEach((script) => {
       const newScript = document.createElement('script');
-      newScript.type = $(this).attr('type') || 'text/javascript';
-      newScript.src = $(this).attr('src') || ''; // Asigna la fuente si existe
-      newScript.text = $(this).text(); // Añade el contenido del script
-      document.body.appendChild(newScript); // Añade el script al body
+      newScript.type = script.type || 'text/javascript';
+      if (script.src) {
+        newScript.src = script.src;
+        newScript.onload = () => console.log(`${script.src} loaded.`);
+      } else {
+        newScript.text = script.textContent || script.innerHTML;
+      }
+      document.body.appendChild(newScript);
     });
   };
 
-  // Cierra el sidebar al redimensionar la ventana
+  // Evento para el botón "Ver"
+  viewButton.addEventListener('click', () => {
+    spinner.style.display = 'none';
+    layoutContainer.style.display = 'block';
+  });
+
   window.addEventListener('resize', () => {
     if (window.innerWidth > 768 && sidebar.classList.contains('active')) {
       sidebar.classList.remove('active');
-      container.classList.remove('shifted');
+      layoutContainer.classList.remove('shifted');
     }
   });
-});
+}
+
+// Llamada a la función (cambiar a true para mostrar el botón inmediatamente o false para ocultarlo)
+initializeSidebar('layoutContainer', false); // El botón "Ver" estará oculto y aparecerá después de 10 segundos

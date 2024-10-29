@@ -1,0 +1,40 @@
+<div
+  id="genericModal"
+  class="modal"
+  style="display: none"
+>
+  <div class="modal-content">
+    <div class="modal-head">
+      <h2 class="modal-title">Editar Archivo</h2>
+      <span
+        class="close-button"
+        onclick="Modal.close('#deleteUserModal')"
+        >&times;</span
+      >
+    </div>
+
+    <input
+      type="text"
+      id="genericDescriptionInput"
+      class="textInputHidden"
+    />
+
+    <!-- Imagen seleccionada actual -->
+    <div class="image-container">
+      <img
+        id="genericCurrentImage"
+        alt="Imagen actual"
+        class="uploaded-image-edit"
+      />
+    </div>
+
+    <!-- Input de archivo oculto -->
+    <input
+      type="file"
+      id="hiddenFileInput"
+      style="display: none"
+    />
+
+    <button id="genericSaveButton">Confirmar</button>
+  </div>
+</div>

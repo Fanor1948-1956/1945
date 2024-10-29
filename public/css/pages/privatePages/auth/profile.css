@@ -1,26 +1,35 @@
 .profile-container {
-  background-color: azure;
-  padding: 20px;
+  background-color: #0d0238;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  margin: 20px;
+  padding: 20px 0px;
+  box-shadow: 0 4px 10px rgba(7, 0, 74, 0.2);
+  width: 100%;
 
-  flex-direction: row;
-  align-items: center;
-
+  h1 {
+    color: white;
+    font-size: 24px;
+    margin-right: 10px;
+  }
+  h2 {
+    color: rgb(17, 0, 77);
+    font-size: 20px;
+    margin-left: 10px;
+  }
   p {
     color: white;
     font-size: 18px;
   }
 }
 
-.profile-details {
-  margin-top: 40px;
-  border-top: 1px solid rgb(21, 2, 105);
-  border: 1px solid rgb(22, 8, 117);
-  padding-top: 10px;
+.profile-detail {
+  margin: 0;
+  border-radius: 8px;
   display: flex;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  padding: 2rem;
+  background-color: #f0f0f0;
 }
+
 .file-item {
   display: inline-block;
   margin: 10px;
@@ -31,15 +40,17 @@
   width: 10rem; /* Ajusta el tamaño según lo que necesites */
   height: 10rem;
   border-radius: 50%;
+  border: 1px solid rgb(7, 2, 78);
 
   margin: 0 auto;
 }
 .upload {
   display: inline-block;
+  border: 1px solid rgb(11, 4, 91);
   padding: 5px 10px;
   border: none;
   border-radius: 5px;
-  background-color: #007bff;
+  background-color: transparent;
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -96,3 +107,4 @@
   background-size: cover;
   background-position: center;
 }
+

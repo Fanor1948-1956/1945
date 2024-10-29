@@ -7,17 +7,9 @@
       content="width=device-width, initial-scale=1.0"
     />
     <title>{{ title }}</title>
-    <link
-      rel="stylesheet"
-      href="/css/styles.css"
-    />
 
     <script src="/js/libraries/jquery.min.js"></script>
 
-    <link
-      rel="stylesheet"
-      href="/css/fontawesome.min.css"
-    />
     <link
       rel="stylesheet"
       href="/css/styles.css"
@@ -28,12 +20,22 @@
       defer
     ></script>
   </head>
+
   <body>
     {% include 'components/common/Navbar/index.njk' %} {% include
     'components/common/Sidebar/index.njk' %}
-    <div class="container">
-      {# Bloque donde se renderizará el contenido específico de cada ruta #} {%
-      block content %}{% endblock %}
+    <div
+      id="layoutContainer"
+      class="container"
+    >
+    
+      <div
+        id="contentMain"
+        class="contentMain"
+      >
+        {# Bloque donde se renderizará el contenido específico de cada ruta #}
+        {% block content %}{% endblock %}
+      </div>
     </div>
   </body>
   <script>

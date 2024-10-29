@@ -1,4 +1,4 @@
-function initializeSidebar(idContainer, showButtonImmediately = false) {
+export function initializeSidebar(idContainer, showButtonImmediately = false) {
   const hamburgerBtn = document.getElementById('hamburgerBtn');
   const sidebar = document.getElementById('sidebar');
   const layoutContainer = document.getElementById(idContainer);
@@ -137,6 +137,3 @@ function initializeSidebar(idContainer, showButtonImmediately = false) {
     }
   });
 }
-
-// Llamada a la función (cambiar a true para mostrar el botón inmediatamente o false para ocultarlo)
-initializeSidebar('layoutContainer', false); // El botón "Ver" estará oculto y aparecerá después de 10 segundos

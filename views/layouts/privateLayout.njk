@@ -30,7 +30,6 @@
   </head>
 
   <body class="show-hamburger">
-    <!-- Spinner de carga con botón "Ver" -->
     <div
       id="spinner"
       class="spinner"
@@ -42,14 +41,13 @@
       >
         10
       </p>
-      <!-- Contador inicial con clase blink -->
+
       <button
         id="viewButton"
         style="display: none"
       >
         Ver
       </button>
-      <!-- Botón oculto inicialmente -->
     </div>
 
     <div
@@ -73,93 +71,17 @@
       const currentPath = '{{ currentPath }}';
       const isAuthenticated = '{{ isAuthenticated }}';
 
-      // Evento para ocultar el spinner y mostrar el contenido al hacer clic en el botón "Ver"
-      document.getElementById('viewButton').addEventListener('click', () => {
-        document.getElementById('spinner').style.display = 'none'; // Ocultar spinner
-        document.getElementById('layoutContainer').style.display = 'block'; // Mostrar contenido
-      });
-
-      // Función para mostrar el contenido dependiendo del argumento
-      const showContentAndButton = (showButtonImmediately) => {
-        if (showButtonImmediately) {
-          // Si es true, ocultamos el spinner y el contenido permanece oculto
-          document.getElementById('spinner').style.display = 'flex'; // Mostrar spinner
-          document.getElementById('layoutContainer').style.display = 'none'; // Aseguramos que el contenido esté oculto
-          document.getElementById('viewButton').style.display = 'block'; // Mostrar el botón "Ver"
-        } else {
-          // Si es false, mostramos el spinner y comenzamos el contador
-          document.getElementById('spinner').style.display = 'flex'; // Mostrar spinner
-          document.getElementById('layoutContainer').style.display = 'none'; // Aseguramos que el contenido esté oculto
-          document.getElementById('viewButton').style.display = 'none'; // Aseguramos que el botón esté oculto
-
-          // Contador de 10 a 0
-          let countdown = 10;
-          const countdownElement = document.getElementById('countdown');
-          countdownElement.textContent = countdown; // Mostrar el contador inicial
-
-          const interval = setInterval(() => {
-            countdown--;
-            countdownElement.textContent = countdown; // Actualizar el contador
-            if (countdown <= 0) {
-              clearInterval(interval); // Detener el contador
-              document.getElementById('spinner').style.display = 'none'; // Ocultar spinner
-              document.getElementById('layoutContainer').style.display =
-                'block'; // Mostrar contenido
-            }
-          }, 1000); // 1000 milisegundos = 1 segundo
-        }
-      };
-
-      // Llama a la función (puedes cambiar a true para mostrar el botón y ocultar el contenido)
-      showContentAndButton(false); // Cambia a true para mostrar el botón y ocultar el contenido
+      // main.js
+      import {
+        showContentAndButton,
+        initializeViewButton,
+      } from './js/components/common/spinner.js';
+      import { initializeSidebar } from './js/components/global/sidebar.js';
+      initializeSidebar('layoutContainer', false);
+      initializeViewButton();
+      showContentAndButton(false);
     </script>
 
-    <style>
-      .spinner {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(255, 255, 255, 0.9);
-        z-index: 9999;
-      }
-      .spinner p {
-        font-size: 2em; /* Tamaño del contador */
-        margin-bottom: 10px;
-      }
-      /* Animación de parpadeo */
-      @keyframes blink {
-        0% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0;
-        }
-        100% {
-          opacity: 1;
-        }
-      }
-      .blink {
-        animation: blink 1s infinite; /* Parpadeo cada segundo */
-      }
-      #viewButton {
-        margin-top: 15px;
-        padding: 10px 20px;
-        font-size: 1em;
-        cursor: pointer;
-        border: none;
-        background-color: #007bff;
-        color: #fff;
-        border-radius: 5px;
-      }
-      #viewButton:hover {
-        background-color: #0056b3;
-      }
-    </style>
+    <style></style>
   </body>
 </html>

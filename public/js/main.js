@@ -1,7 +1,7 @@
 import './apiRequest/apiFetchs.js';
 import './apiRequest/ajaxRequest.js';
 import './components/custom/userTable.js';
-import './components/global/sidebar.js';
+
 import './components/global/navbar.js';
 import './components/global/snackbar.js';
 import './components/global/modal.js';
@@ -201,7 +201,7 @@ function createSpinner() {
 
 // Conexión WebSocket
 const socket = new WebSocket(
-  'wss://6000-fanor19481956-1945-7e1k25j94um.ws-us116.gitpod.io/dashboard'
+  'wss://6000-fanor19481956-1945-7e1k25j94um.ws-us116.gitpod.io'
 ); // Cambia a tu URL de WebSocket
 
 // Manejar la conexión

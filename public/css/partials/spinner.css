@@ -12,20 +12,6 @@
   z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
 }
 
-/* Estilos para el loader de línea */
-.spinner {
-  position: fixed; /* Fijo en la pantalla */
-  top: 0; /* Desde la parte superior */
-  left: 0; /* Desde la izquierda */
-  width: 100%; /* Ocupa todo el ancho */
-  height: 100%; /* Ocupa toda la altura */
-  background-color: #f3f3f3; /* Fondo de la barra */
-  position: relative;
-  overflow: hidden;
-  border-radius: 2px;
-  display: none;
-}
-
 /* Barra de carga que se desliza */
 .spinner::before {
   content: '';
@@ -37,6 +23,37 @@
   border-radius: 2px;
 }
 
+.spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 9999;
+}
+.spinner p {
+  font-size: 2em; /* Tamaño del contador */
+  margin-bottom: 10px;
+}
+
+#viewButton {
+  margin-top: 15px;
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 5px;
+}
+#viewButton:hover {
+  background-color: #0056b3;
+}
 /* Animación para el efecto deslizante */
 @keyframes slide {
   0% {
@@ -48,4 +65,19 @@
   100% {
     left: 100%;
   }
+}
+/* Animación de parpadeo */
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.blink {
+  animation: blink 1s infinite; /* Parpadeo cada segundo */
 }

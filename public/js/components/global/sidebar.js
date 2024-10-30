@@ -1,14 +1,16 @@
+import {
+  showContentAndButton,
+  initializeViewButton,
+} from '../../components/common/spinner.js';
+
 export function initializeSidebar(idContainer, showButtonImmediately = false) {
   const hamburgerBtn = document.getElementById('hamburgerBtn');
   const sidebar = document.getElementById('sidebar');
   const layoutContainer = document.getElementById(idContainer);
   const submenuLinks = document.querySelectorAll('.sidebar ul li > a');
 
-  const spinner = document.getElementById('spinner');
-  const viewButton = document.getElementById('viewButton');
-
-  // Inicializa el botón "Ver" según el argumento
-  viewButton.style.display = showButtonImmediately ? 'block' : 'none';
+  // Mostrar el spinner y configurar el botón "Ver" con el tiempo de espera adecuado
+  showContentAndButton(showButtonImmediately);
 
   hamburgerBtn.addEventListener('click', () => {
     sidebar.classList.toggle('active');
@@ -24,8 +26,7 @@ export function initializeSidebar(idContainer, showButtonImmediately = false) {
       !isClickOnHamburger &&
       sidebar.classList.contains('active')
     ) {
-      sidebar.classList.remove('active');
-      layoutContainer.classList.remove('shifted');
+      closeSidebar(); // Cerrar el sidebar al hacer clic fuera
     }
   });
 
@@ -35,14 +36,13 @@ export function initializeSidebar(idContainer, showButtonImmediately = false) {
       const parentLi = link.parentElement;
       const parentHref = link.getAttribute('href');
 
-      sidebar.classList.remove('active');
-      layoutContainer.classList.remove('shifted');
-
+      // Si hay un submenú, alternar su visibilidad
       if (submenu) {
-        event.preventDefault();
+        event.preventDefault(); // Prevenir la acción predeterminada
         submenu.classList.toggle('active');
         parentLi.classList.toggle('active');
 
+        // Cerrar otros submenús abiertos
         submenuLinks.forEach((otherLink) => {
           const otherSubmenu = otherLink.nextElementSibling;
           const otherParentLi = otherLink.parentElement;
@@ -56,30 +56,35 @@ export function initializeSidebar(idContainer, showButtonImmediately = false) {
           }
         });
       } else {
-        event.preventDefault();
-        showSpinner(); // Mostrar el spinner al cargar contenido
-        loadContent(parentHref);
+        // Si no hay submenú, cerrar cualquier submenú abierto
+        closeOpenSubmenus();
+
+        // Cargar el contenido y cerrar el sidebar
+        event.preventDefault(); // Prevenir el enlace si no hay submenu
+        showContentAndButton(false); // Mostrar el spinner de nuevo al cargar el contenido
+        loadContent(parentHref, true);
+        closeSidebar(); // Cerrar el sidebar
       }
     });
   });
 
-  const showSpinner = () => {
-    spinner.style.display = 'flex';
-    layoutContainer.style.display = 'none';
-
-    if (!showButtonImmediately) {
-      // Si es false, mostrar el spinner por 10 segundos y luego mostrar el contenido
-      setTimeout(() => {
-        spinner.style.display = 'none'; // Ocultar spinner
-        layoutContainer.style.display = 'block'; // Mostrar contenido
-      }, 10000); // 10000 ms = 10 segundos
-    } else {
-      // Si es true, el botón "Ver" se mostrará y el contenido permanecerá oculto
-      viewButton.style.display = 'block'; // Mostrar el botón
-    }
+  const closeSidebar = () => {
+    sidebar.classList.remove('active');
+    layoutContainer.classList.remove('shifted');
   };
 
-  const loadContent = async (url) => {
+  const closeOpenSubmenus = () => {
+    submenuLinks.forEach((link) => {
+      const submenu = link.nextElementSibling;
+      const parentLi = link.parentElement;
+      if (submenu && submenu.classList.contains('active')) {
+        submenu.classList.remove('active');
+        parentLi.classList.remove('active');
+      }
+    });
+  };
+
+  const loadContent = async (url, addToHistory = false) => {
     try {
       const response = await fetch(url);
       if (!response.ok) {
@@ -99,18 +104,21 @@ export function initializeSidebar(idContainer, showButtonImmediately = false) {
           tempDiv.querySelector('#contentMain').innerHTML;
         const newTitle = tempDiv.querySelector('title').innerText;
         document.title = newTitle || url;
-        executeScripts(text);
+
+        // Ejecutar scripts después de cargar contenido
+        executeScripts(tempDiv);
       }
-      history.pushState({ url: url }, '', url);
+
+      if (addToHistory) {
+        history.pushState({ url: url }, '', url);
+      }
     } catch (error) {
       console.error('Error al cargar contenido:', error);
     }
   };
 
-  const executeScripts = (html) => {
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
-    const scripts = tempDiv.querySelectorAll('script');
+  const executeScripts = (container) => {
+    const scripts = container.querySelectorAll('script');
     scripts.forEach((script) => {
       const newScript = document.createElement('script');
       newScript.type = script.type || 'text/javascript';
@@ -124,16 +132,21 @@ export function initializeSidebar(idContainer, showButtonImmediately = false) {
     });
   };
 
-  // Evento para el botón "Ver"
-  viewButton.addEventListener('click', () => {
-    spinner.style.display = 'none';
-    layoutContainer.style.display = 'block';
-  });
+  // Inicializar el botón "Ver" para ocultar el spinner y mostrar el contenido
+  initializeViewButton();
 
   window.addEventListener('resize', () => {
     if (window.innerWidth > 768 && sidebar.classList.contains('active')) {
-      sidebar.classList.remove('active');
-      layoutContainer.classList.remove('shifted');
+      closeSidebar();
+    }
+  });
+
+  window.addEventListener('popstate', (event) => {
+    if (event.state && event.state.url) {
+      showContentAndButton(false); // Mostrar el spinner al retroceder
+      loadContent(event.state.url, false);
     }
   });
 }
+
+initializeSidebar('layoutContainer', false);

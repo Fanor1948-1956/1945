@@ -23,7 +23,7 @@ export const loadUploads = async (ownerModel, ownerId, index) => {
     );
     console.log('Active Uploads:', activeUploads);
     // Calcular cuántos avatares vacíos se necesitan
-    displayUploads(activeUploads, ownerModel, ownerId); // Pasar ownerModel directamente
+    displayUploads(activeUploads); // Pasar ownerModel directamente
 
     const remainingSpaces = Math.max(
       0,
@@ -57,7 +57,7 @@ export const loadUploads = async (ownerModel, ownerId, index) => {
   }
 };
 
-export function displayUploads(uploads) {
+export function displayUploads(uploads, modelName) {
   const uploadsList = document.getElementById('uploadsList');
   uploadsList.innerHTML = ''; // Limpiar la lista existente
 
@@ -75,7 +75,7 @@ export function displayUploads(uploads) {
     }" class="uploaded-image" /> 
         <button id="${editButtonId}" class="edit-button">Editar</button> 
       </div>
-      <p>${index + 1}. ${file._id}</p> <!-- Aquí se agrega la numeración -->
+      <p>${index + 1}. ${modelName}</p> <!-- Aquí se agrega la numeración -->
     `;
 
     uploadsList.appendChild(fileItem);

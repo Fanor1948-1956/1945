@@ -1,5 +1,4 @@
-export const BASE_URL =
-  'https://6000-fanor19481956-1945-7e1k25j94um.ws-us116.gitpod.io';
+const BASE_URL = window.env.BASE_URL;
 
 export const permissionEndpoints = {
   list: `${BASE_URL}/permissions/api`,
@@ -40,5 +39,3 @@ export const specialtyEndpoints = {
   update: `${BASE_URL}/specialties/update-specialty`,
   delete: `${BASE_URL}/specialties/delete`,
 };
-
-

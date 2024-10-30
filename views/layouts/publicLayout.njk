@@ -20,32 +20,46 @@
       defer
     ></script>
   </head>
-
+  {% include 'components/common/Navbar/index.njk' %} {% include
+  'components/common/Sidebar/index.njk' %}
   <body>
-    {% include 'components/common/Navbar/index.njk' %} {% include
-    'components/common/Sidebar/index.njk' %}
+    <div
+      id="spinner"
+      class="spinner"
+      style="display: flex"
+    >
+      <p
+        id="countdown"
+        class="blink"
+      >
+        10
+      </p>
+
+      <button
+        id="viewButton"
+        style="display: none"
+      >
+        Ver
+      </button>
+    </div>
     <div
       id="layoutContainer"
       class="container"
     >
-    
       <div
         id="contentMain"
         class="contentMain"
       >
-        {# Bloque donde se renderizará el contenido específico de cada ruta #}
-        {% block content %}{% endblock %}
+        {% block content %}
+        <h2>Página inicial</h2>
+        <p>Este es el contenido por defecto.</p>
+        {% endblock %}
       </div>
     </div>
+    <script>
+      // console.log('Token desde Nunjucks:', token);
+      // console.log('Autenticado desde Nunjucks:', isAutenticated);
+      // console.log('Ruta actual:', currentPath);
+    </script>
   </body>
-  <script>
-    // Pasar el token a una variable de JavaScript
-    const token = '{{ token }}'; // Asegúrate de escapar correctamente
-    const currentPath = '{{ currentPath }}';
-    const isAutenticated = '{{ isAuthenticated }}'; // Asegúrate de escapar correctamente
-
-    // console.log('Token desde Nunjucks:', token);
-    // console.log('Autenticado desde Nunjucks:', isAutenticated);
-    // console.log('Ruta actual:', currentPath);
-  </script>
 </html>

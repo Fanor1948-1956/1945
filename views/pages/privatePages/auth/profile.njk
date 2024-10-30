@@ -5,139 +5,147 @@
   class="profile-container"
 >
   <h1>Perfil del Usuario</h1>
- 
-  <div class="profile-detail">
-   
-    <div
-    id="uploadsList"
-    class="uploads-list"
-  >
-    <!-- Aquí se mostrarán los archivos subidos -->
-  </div>
 
+  <div class="profile-detail">
+    <!-- Lista de archivos subidos -->
+    <div
+      id="uploadsList"
+      class="uploads-list"
+    >
+      <!-- Aquí se mostrarán los archivos subidos o un mensaje si no hay archivos -->
+    </div>
+
+    <!-- Formulario de perfil -->
     <form id="profileForm">
       <h2>Información Personal</h2>
-      
- 
       <div class="input-container">
-        <div id="inputsContainer">
-        </div>
+        <div id="inputsContainer"></div>
         {% include "components/common/actions/buttonActions.njk" %}
+      </div>
     </form>
-
-  
   </div>
+
+  <!-- Componentes adicionales y modales -->
   {% include "components/custom/common/deleteItem.njk" %} {% include
-    "components/custom/customPopover.njk" %} {% include
-    "components/common/deleteItem.njk" %}
-  {% include "components/custom/common/uploadItemModal.njk" %}
+  "components/custom/customPopover.njk" %} {% include
+  "components/common/deleteItem.njk" %} {% include
+  "components/custom/common/uploadItemModal.njk" %}
+
+  <!-- Snackbar para notificaciones -->
   <div
     id="snackbar"
     class="snackbar"
   ></div>
-  <script type="module">
-    import { loadUserProfile } from '../js/services/profileService.js';
-    import { handleProfileUpdate } from '../js/logic/auth/profileLogic.js';
-    import {
-      enableEditMode,
-      cancelEditMode,
-    } from '../js/logic/common/editItem.js';
-    import { getState, setState } from '../js/reducers/state.js';
-
-    import { displayUploads} from '../js/logic/upload/uploadLogic.js'
-
-    import { createCustomInputs } from '../js/components/custom/input.js';
-    import { createCustomDropdown } from '../js/components/custom/dropdown.js';
-
-    const inputConfigs = [
-      {
-        id: 'nameInput',
-        name: 'name',
-        placeholder: 'Nombre',
-        type: 'text',
-        isDisabled: true,
-      },
-      {
-        id: 'surnamesInput',
-        name: 'surnames',
-        placeholder: 'Apellidos',
-        type: 'text',
-        isDisabled: true,
-      },
-      {
-        id: 'emailInput',
-        name: 'email',
-        placeholder: 'Correo electrónico',
-        type: 'email',
-        isDisabled: true,
-      },
-      {
-        id: 'createdAtInput',
-        name: 'createdAt',
-        placeholder: 'Fecha de Registro',
-        type: 'text',
-        isDisabled: true,
-      },
-    ];
-
-    const genderConfig = {
-      id: 'genderSelect',
-      name: 'gender',
-      options: [
-        { label: 'Masculino', value: 'masculino' },
-        { label: 'Femenino', value: 'femenino' },
-        { label: 'Otro', value: 'otro' },
-      ],
-      isDisabled: true,
-    };
-
-    const inputsContainer = document.getElementById('inputsContainer');
-
-    // Generar e insertar inputs y dropdown
-    inputsContainer.appendChild(createCustomInputs(inputConfigs));
-    inputsContainer.appendChild(createCustomDropdown(genderConfig));
-    async function fetchUserProfile() {
-  try {
-    const user = await loadUserProfile();
-    console.log('user', user);
-
-    // Configurar los datos del perfil
-    document.getElementById('nameInput').value = user.name || '';
-    document.getElementById('surnamesInput').value = user.surnames || '';
-    document.getElementById('emailInput').value = user.email || '';
-    document.getElementById('genderSelect').value = user.gender || 'masculino';
-    document.getElementById('createdAtInput').value = new Date(
-      user.createdAt
-    ).toLocaleDateString();
-
-   
-      displayUploads(user.uploads); // Llamada a la función para mostrar los archivos
-   
-  } catch (error) {
-    console.error('Error al obtener el perfil del usuario:', error);
-    alert('No se pudo obtener el perfil. Intenta de nuevo más tarde.');
-  }
-}
-
-    document
-      .getElementById('editButton')
-      .addEventListener('click', enableEditMode);
-    document
-      .getElementById('cancelButton')
-      .addEventListener('click', cancelEditMode);
-
-    document
-      .getElementById('profileForm')
-      .addEventListener('submit', handleProfileUpdate);
-
-
-
-
-     
-    
-
-    document.addEventListener('DOMContentLoaded', fetchUserProfile);
-  </script>
-
-  {% endblock %}
 </div>
+
+<script type="module">
+  import { loadUserProfile } from '../js/services/profileService.js';
+  import { handleProfileUpdate } from '../js/logic/auth/profileLogic.js';
+  import {
+    enableEditMode,
+    cancelEditMode,
+  } from '../js/logic/common/editItem.js';
+  import { displayUploads } from '../js/logic/upload/uploadLogic.js';
+  import { createCustomInputs } from '../js/components/custom/input.js';
+  import { createCustomDropdown } from '../js/components/custom/dropdown.js';
+  import { initializeModelAndUploads } from '../js/logic/common/uploadItem.js';
+  import { setState } from '../js/reducers/state.js';
+
+  const inputConfigs = [
+    {
+      id: 'nameInput',
+      name: 'name',
+      placeholder: 'Nombre',
+      type: 'text',
+      isDisabled: true,
+    },
+    {
+      id: 'surnamesInput',
+      name: 'surnames',
+      placeholder: 'Apellidos',
+      type: 'text',
+      isDisabled: true,
+    },
+    {
+      id: 'emailInput',
+      name: 'email',
+      placeholder: 'Correo electrónico',
+      type: 'email',
+      isDisabled: true,
+    },
+    {
+      id: 'createdAtInput',
+      name: 'createdAt',
+      placeholder: 'Fecha de Registro',
+      type: 'text',
+      isDisabled: true,
+    },
+  ];
+
+  const genderConfig = {
+    id: 'genderSelect',
+    name: 'gender',
+    options: [
+      { label: 'Masculino', value: 'masculino' },
+      { label: 'Femenino', value: 'femenino' },
+      { label: 'Otro', value: 'otro' },
+    ],
+    isDisabled: true,
+  };
+
+  const inputsContainer = document.getElementById('inputsContainer');
+
+  // Generar e insertar inputs y dropdown
+  inputsContainer.appendChild(createCustomInputs(inputConfigs));
+  inputsContainer.appendChild(createCustomDropdown(genderConfig));
+
+  async function fetchUserProfile() {
+    try {
+      // Cargar el perfil del usuario con el modelo y ID
+      const user = await loadUserProfile();
+      console.log('user', user);
+
+      // Configurar los datos del perfil
+      document.getElementById('nameInput').value = user.name || '';
+      document.getElementById('surnamesInput').value = user.surnames || '';
+      document.getElementById('emailInput').value = user.email || '';
+      document.getElementById('genderSelect').value =
+        user.gender || 'masculino';
+      document.getElementById('createdAtInput').value = new Date(
+        user.createdAt
+      ).toLocaleDateString();
+
+      // Mostrar archivos subidos
+      if (user.uploads && user.uploads.length > 0) {
+        displayUploads(user.uploads, user.name);
+      } else {
+        // Extraer ownerModel y ownerId de los uploads
+        const uploads = user.uploads || [];
+        if (uploads.length === 0) {
+          const ownerModel = 'User'; // Definido como 'User' por defecto
+          const ownerId = user._id; // ID del usuario
+
+          // Llamar a initializeModelAndUploads con los parámetros recuperados
+          initializeModelAndUploads(ownerModel, ownerId);
+        }
+      }
+    } catch (error) {
+      console.error('Error al obtener el perfil del usuario:', error);
+      alert('No se pudo obtener el perfil. Intenta de nuevo más tarde.');
+    }
+  }
+
+  document
+    .getElementById('editButton')
+    .addEventListener('click', enableEditMode);
+  document
+    .getElementById('cancelButton')
+    .addEventListener('click', cancelEditMode);
+  document
+    .getElementById('profileForm')
+    .addEventListener('submit', handleProfileUpdate);
+
+  document.addEventListener('DOMContentLoaded', fetchUserProfile);
+</script>
+
+{% endblock %}

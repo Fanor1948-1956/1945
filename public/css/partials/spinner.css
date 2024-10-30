@@ -12,17 +12,6 @@
   z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
 }
 
-/* Barra de carga que se desliza */
-.spinner::before {
-  content: '';
-  position: absolute;
-  width: 75%; /* Ancho de la parte que se desliza */
-  height: 100%;
-  background-color: #031a2a; /* Color de la barra de carga */
-  animation: slide 1.5s ease-in-out infinite; /* Animación deslizante */
-  border-radius: 2px;
-}
-
 .spinner {
   display: flex;
   flex-direction: column;
@@ -33,10 +22,13 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(251, 251, 251, 0.9);
   z-index: 9999;
 }
 .spinner p {
+  color: #09035d;
+  font-weight: bold;
+
   font-size: 2em; /* Tamaño del contador */
   margin-bottom: 10px;
 }
@@ -47,25 +39,14 @@
   font-size: 1em;
   cursor: pointer;
   border: none;
-  background-color: #007bff;
+  background-color: #09035d;
   color: #fff;
   border-radius: 5px;
 }
 #viewButton:hover {
-  background-color: #0056b3;
+  background-color: #15024e;
 }
-/* Animación para el efecto deslizante */
-@keyframes slide {
-  0% {
-    left: -40%;
-  }
-  50% {
-    left: 50%;
-  }
-  100% {
-    left: 100%;
-  }
-}
+
 /* Animación de parpadeo */
 @keyframes blink {
   0% {

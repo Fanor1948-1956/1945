@@ -8,18 +8,18 @@ import { handleItemUploadOrUpdate } from '../upload/handlers.js';
  * @param {Function} fetchModelFunc - La función para cargar el perfil (por ejemplo, loadUserProfile).
  * @param {String} keyModel - La clave del modelo en el estado global (por ejemplo, 'profile').
  */
-export async function initializeModelAndUploads(fetchModelFunc, keyModel) {
+export async function initializeModelAndUploads(ownerModel, ownerId) {
   try {
-    await fetchModelFunc();
+    // await fetchModelFunc();
 
-    // Obtiene ownerModel y ownerId del estado global
-    const { ownerModel, ownerId } = getState()[keyModel];
+    // // Obtiene ownerModel y ownerId del estado global
+    // const { ownerModel, ownerId } = getState()[keyModel];
     console.log('Owner Model:', ownerModel);
     console.log('Owner ID:', ownerId);
 
     // Cargar archivos del usuario de manera dinámica
     if (ownerModel && ownerId) {
-      await loadUploads(ownerModel, ownerId._id);
+      await loadUploads(ownerModel, ownerId);
     } else {
       console.error('No se encontró el modelo o el ID del propietario.');
     }

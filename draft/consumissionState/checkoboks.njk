@@ -1,4 +1,4 @@
-{% extends "layouts/privateLayout.njk" %}
+<html><head></head><body>{% extends "layouts/privateLayout.njk" %}
 
 {% block content %}
 <h1>Lista de Roles</h1>
@@ -9,14 +9,14 @@
 <!-- Modal para agregar/editar roles -->
 <div class="modal" id="addRoleModal" style="display:none;">
     <div class="modal-content">
-        <span class="close-button" onclick="Modal.close('#addRoleModal')">&times;</span>
+        <span class="close-button" onclick="Modal.close('#addRoleModal')">×</span>
         <h2 id="modalTitle">Agregar Rol</h2>
         <form id="roleForm">
             <label for="roleName">Nombre:</label>
-            <input type="text" id="roleName" name="name" required>
+            <input type="text" id="roleName" name="name" required="">
             
             <label for="roleAlias">Alias:</label>
-            <input type="text" id="roleAlias" name="alias" required>
+            <input type="text" id="roleAlias" name="alias" required="">
 
             <label for="roleDescription">Descripción:</label>
             <input type="text" id="roleDescription" name="description">
@@ -31,7 +31,7 @@
 <!-- Modal para seleccionar permisos -->
 <div class="modal" id="selectPermissionsModal" style="display:none;">
     <div class="modal-content">
-        <span class="close-button" onclick="Modal.close('#selectPermissionsModal')">&times;</span>
+        <span class="close-button" onclick="Modal.close('#selectPermissionsModal')">×</span>
         <h2 id="permissionsModalTitle">Seleccionar Permisos</h2> <!-- Cambiado dinámicamente dependiendo de la acción -->
         <div id="permissionsContainer"></div> <!-- Aquí irán los checkboxes de permisos -->
         <button type="button" id="savePermissionsBtn">Guardar Permisos</button>
@@ -198,3 +198,4 @@
 </script>
 
 {% endblock %}
+</body></html>

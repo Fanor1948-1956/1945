@@ -1,4 +1,4 @@
-<hr />
+<html><head></head><body><hr>
 
 <!-- Botón para agregar un nuevo usuario -->
 <div>
@@ -13,7 +13,7 @@
 
    <div id="editUserModal" class="modal">
         <div class="modal-content">
-            <span class="close-button">&times;</span>
+            <span class="close-button">×</span>
             <h2>Editar Usuario</h2>
             <div id="modalFormContainer"></div> <!-- Contenedor para el formulario -->
         </div>
@@ -21,7 +21,7 @@
 
     <div id="deleteUserModal" class="modal">
         <div class="modal-content">
-            <span class="close-button">&times;</span>
+            <span class="close-button">×</span>
             <h2>Confirmar Eliminación</h2>
             <p>¿Estás seguro de que deseas eliminar este usuario?</p>
             <button id="confirmDeleteButton">Confirmar</button>
@@ -97,7 +97,7 @@ $(document).ready(function() {
             rolesHtml += '</ul>';
 
             tableHtml += `
-                <tr data-user-id="${user._id}">
+                <tr data-user-id=" ${user._id}"="">
                     <td>${user.name}</td>
                     <td>${user.surnames}</td>
                     <td>${user.email}</td>
@@ -208,3 +208,4 @@ $(document).ready(function() {
 
 </script>
 
+</body></html>

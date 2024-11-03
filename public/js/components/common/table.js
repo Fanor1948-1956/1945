@@ -1,7 +1,8 @@
 import { actions } from '../utils/index.js';
+import { createAvatar } from './avatar.js';
 import { showPopover } from './popover.js';
 
-// Función renderTable: ahora no devuelve HTML
+// renderTable con número de fila, avatar y primer elemento de datos en la primera columna
 export function renderTable(
   headers,
   data,
@@ -13,17 +14,20 @@ export function renderTable(
   const end = start + itemsPerPage;
   const paginatedData = data.slice(start, end);
 
-  // Limpia el contenedor antes de renderizar la tabla
   const tableContainer = document.getElementById('userTableContainer');
-  tableContainer.innerHTML = ''; // Limpia el contenido anterior
+  tableContainer.innerHTML = ''; // Limpiar contenido previo
 
-  // Construcción del HTML de la tabla
+  // Encabezados de la tabla
   let tableHtml = `
+  <div class="table-container">
     <table class="table">
       <thead>
         <tr>
-          <th>#</th>
-          ${headers.map((header) => `<th>${header}</th>`).join('')}
+          <th>${headers[0]}</th> <!-- Primera celda de encabezado -->
+          ${headers
+            .slice(1)
+            .map((header) => `<th>${header}</th>`)
+            .join('')}
           <th>Acciones</th>
         </tr>
       </thead>
@@ -32,16 +36,33 @@ export function renderTable(
 
   paginatedData.forEach((item, index) => {
     const rowNumber = start + index + 1;
+    const avatarElement = createAvatar(item); // Crear avatar
+    const avatarHtml = avatarElement.outerHTML;
+
+    // Combinar número de fila, avatar y primer elemento de datos en la primera celda
+    const firstDataValue = Object.entries(item).filter(
+      ([key]) => key !== '_id' && key !== 'uploads'
+    )[0][1]; // Primer dato sin 'id' ni 'uploads'
+
+    // Celda combinada con bordes visibles
+    const firstCell = `<td class="firstCell" > <span class="tdRow">${rowNumber}</span>
+    <span class="tdRow">${avatarHtml}</span>
+    <span>${firstDataValue}</span></td>`;
+
+    // Filtrar 'id' y 'uploads' para el resto de los datos en las filas
+    const rowData = Object.entries(item)
+      .filter(([key]) => key !== '_id' && key !== 'uploads')
+      .slice(1) // Omitir el primer dato ya usado
+      .map(
+        ([_, value]) =>
+          `<td class="truncate tooltip" data-tooltip="${value}">${value}</td>`
+      )
+      .join('');
+
     tableHtml += `
       <tr>
-        <td>${rowNumber}</td>
-        ${Object.values(item)
-          .filter((_, idx) => idx !== 0)
-          .map(
-            (value) =>
-              `<td class="truncate tooltip" data-tooltip="${value}">${value}</td>`
-          )
-          .join('')}
+        ${firstCell} <!-- Primera columna con número, avatar y primer dato -->
+        ${rowData} <!-- Resto de los datos sin 'id' ni 'uploads' -->
         <td>
           <button class="more-button" data-id="${item._id}">
             <i class="icon-three-dots">⋮</i>
@@ -51,28 +72,22 @@ export function renderTable(
     `;
   });
 
-  tableHtml += `</tbody></table>`;
-
-  // Inserta el HTML generado en el contenedor del DOM
+  tableHtml += `</tbody></table> </div>`;
   tableContainer.innerHTML = tableHtml;
 
-  // Configurar los tooltips y listeners
+  // Inicializar listeners para tooltips y acciones
   initializeListeners(paginatedData, onAction);
 }
 
 function initializeListeners(paginatedData, onAction) {
-  // Configurar los tooltips
-
-  // Eliminar cualquier listener previo antes de agregar uno nuevo
   const actionButtons = document.querySelectorAll('.more-button');
   actionButtons.forEach((button) => {
-    button.removeEventListener('click', handleActionClick); // Remueve el listener existente
-    button.addEventListener('click', handleActionClick); // Agrega el nuevo listener
+    button.removeEventListener('click', handleActionClick); // Remover listeners previos
+    button.addEventListener('click', handleActionClick);
   });
 
-  // Función que maneja el clic en el botón
   function handleActionClick(event) {
-    const itemId = event.target.closest('.more-button').getAttribute('data-id'); // Asegúrate de obtener el ID correctamente
+    const itemId = event.target.closest('.more-button').getAttribute('data-id');
     const item = paginatedData.find((dataItem) => dataItem._id === itemId);
     showPopover(item, actions, event.target, onAction);
     event.stopPropagation();

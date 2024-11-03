@@ -1,11 +1,11 @@
-
-
- <aside id="sidebar" class="sidebar">
-  <div class="logo">Empresa</div>
+<html><head></head><body><aside id="sidebar" class="sidebar">
+  <div class="logo">
+    Empresa
+  </div>
   <ul>
     {% for route in publicRoutes %}
     <li>
-      <a href="{{ route.path }}" class="menu-item" data-route="{{ route.path }}">
+      <a href="{{ route.path }}" class="{% if route.subRoutes %}has-submenu{% endif %}" data-route="{{ route.path }}">
         <div class="icon">
           {{ route.icon | safe }}
         </div>
@@ -15,21 +15,30 @@
       <ul class="submenu">
         {% for subRoute in route.subRoutes %}
         <li class="submenu__item">
+          {# Verificar si subRoute.path está definido, si no usar el id #} {% if
+          subRoute.path %}
           <a href="{{ subRoute.path }}" class="submenuLink" data-route="{{ subRoute.path }}">
             <div class="icon">
               {{ subRoute.icon | safe }}
             </div>
             {{ subRoute.title }}
           </a>
+          {% else %}
+          <a href="{{ route.path }}#{{ subRoute.id }}" class="submenuLink" data-route="{{ route.path }}#{{ subRoute.id }}">
+            <div class="icon">
+              {{ subRoute.icon | safe }}
+            </div>
+            {{ subRoute.title }}
+          </a>
+          {% endif %}
         </li>
         {% endfor %}
       </ul>
       {% endif %}
     </li>
-    {% endfor %}
-    {% if isAuthenticated %}
-    {% for route in privateRoutes %}
-    {% if hasAccess(userRoles, route) and route.path != '/logout' and route.title != 'Perfil' %}
+    {% endfor %} {% if isAuthenticated %} {% for route in privateRoutes %} {% if
+    hasAccess(userRoles, route) and route.path != '/logout' and route.title !=
+    'Perfil' %}
     <li>
       <a href="{{ route.path }}" class="menu-item" data-route="{{ route.path }}">
         <div class="icon">
@@ -39,8 +48,8 @@
       </a>
       {% if route.subRoutes %}
       <ul class="submenu">
-        {% for subRoute in route.subRoutes %}
-        {% if hasAccess(userRoles, subRoute) %}
+        {% for subRoute in route.subRoutes %} {% if hasAccess(userRoles,
+        subRoute) %}
         <li>
           <a href="{{ subRoute.path }}" class="submenuLink" data-route="{{ subRoute.path }}">
             <div class="icon">
@@ -63,28 +72,24 @@
           </ul>
           {% endif %}
         </li>
-        {% endif %}
-        {% endfor %}
+        {% endif %} {% endfor %}
       </ul>
       {% endif %}
     </li>
-    {% endif %}
-    {% endfor %}
-    {% endif %}
+    {% endif %} {% endfor %} {% endif %}
   </ul>
 
   {% if isAuthenticated %}
   <div class="logout-container">
-    {% for route in privateRoutes %}
-    {% if route.path == '/logout' %}
-    <a href="{{ route.path }}"  data-route="{{route.path}}" class="logout-link">
+    {% for route in privateRoutes %} {% if route.path == '/logout' %}
+    <a href="{{ route.path }}" data-route="{{ route.path }}" class="logout-link">
       <div class="icon">
         {{ route.icon | safe }}
       </div>
       {{ route.title }}
     </a>
-    {% endif %}
-    {% endfor %}
+    {% endif %} {% endfor %}
   </div>
   {% endif %}
 </aside>
+</body></html>

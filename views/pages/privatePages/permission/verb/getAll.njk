@@ -1,54 +1,23 @@
 {% if isAuthenticated %} {% endif %}
 
-<button
-  id="addPermissionBtn"
-  class="add-button"
-  {%
-  if
-  not
-  isAuthenticated
-  %}
-  style="display: none"
-  {%
-  endif
-  %}
->
+<button id="addPermissionBtn" class="add-button" {%="" if="" not="" isauthenticated="" %}="" style="display: none" endif="">
   Agregar Permiso
 </button>
 
 <!-- conditionaly isAutenticated user snackbar -->
 
 <div id="permissionTableContainer"></div>
-<div
-  id="snackbar"
-  class="snackbar"
-></div>
+<div id="snackbar" class="snackbar"></div>
 
 <!-- Modal para agregar permisos -->
-<div
-  class="modal"
-  id="addPermissionModal"
-  style="display: none"
->
+<div class="modal" id="addPermissionModal" style="display: none">
   <div class="modal-content">
-    <span
-      class="close-button"
-      onclick="Modal.close('#addPermissionModal')"
-      >&times;</span
-    >
+    <span class="close-button" onclick="Modal.close('#addPermissionModal')">×</span>
     <h2>Agregar Permiso</h2>
     <label for="permissionName">Nombre:</label>
-    <input
-      type="text"
-      id="permissionName"
-      required
-    />
+    <input type="text" id="permissionName" required="">
     <label for="permissionDescription">Descripción:</label>
-    <input
-      type="text"
-      id="permissionDescription"
-      required
-    />
+    <input type="text" id="permissionDescription" required="">
     <button id="savePermissionBtn">Guardar</button>
   </div>
 </div>

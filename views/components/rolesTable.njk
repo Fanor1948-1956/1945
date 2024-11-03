@@ -1,15 +1,16 @@
-<!-- views/components/rolesTable.njk -->
-<div class="table-container">
-    <table>
+<!-- views/components/rolesTable.njk --><html><head></head><body><div class="table-container">
+    
+            {% for role in items.roles %}
+            
+            {% endfor %}
+        <table>
         <thead>
             <tr>
                 <th>Nombre del Rol</th>
                 <th>Permisos</th>
             </tr>
         </thead>
-        <tbody>
-            {% for role in items.roles %}
-            <tr>
+        <tbody><tr>
                 <td>{{ role.name }}</td>
                 <td>
                     <ul>
@@ -18,8 +19,7 @@
                         {% endfor %}
                     </ul>
                 </td>
-            </tr>
-            {% endfor %}
-        </tbody>
+            </tr></tbody>
     </table>
 </div>
+</body></html>

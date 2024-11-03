@@ -1,55 +1,25 @@
-<!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
+<!DOCTYPE html><html lang="es"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
 
     <script src="/js/libraries/jquery.min.js"></script>
 
-    <link
-      rel="stylesheet"
-      href="/css/styles.css"
-    />
-    <script
-      type="module"
-      src="/js/main.js"
-      defer
-    ></script>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script type="module" src="/js/main.js" defer=""></script>
   </head>
-  {% include 'components/common/Navbar/index.njk' %} {% include
+  <body>{% include 'components/common/Navbar/index.njk' %} {% include
   'components/common/Sidebar/index.njk' %}
-  <body>
-    <div
-      id="spinner"
-      class="spinner"
-      style="display: flex"
-    >
-      <p
-        id="countdown"
-        class="blink"
-      >
-        10
-      </p>
+  
+    <div id="spinner" class="viseble spinner">
+      <p id="countdown" class="blink"></p>
 
-      <button
-        id="viewButton"
-        style="display: none"
-      >
+      <button id="viewButton" class="hidden viewButton">
         Ver
       </button>
     </div>
-    <div
-      id="layoutContainer"
-      class="container"
-    >
-      <div
-        id="contentMain"
-        class="contentMain"
-      >
+    <div id="layoutContainer" class="container hidden">
+      <div id="contentMain" class="contentMain">
         {% block content %}
         <h2>Página inicial</h2>
         <p>Este es el contenido por defecto.</p>
@@ -61,5 +31,6 @@
       // console.log('Autenticado desde Nunjucks:', isAutenticated);
       // console.log('Ruta actual:', currentPath);
     </script>
-  </body>
-</html>
+  
+
+</body></html>

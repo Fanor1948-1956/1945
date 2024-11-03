@@ -1,33 +1,18 @@
-<div
-  id="genericModal"
-  class="modal"
-  style="display: none"
->
+<html><head></head><body><div id="genericModal" class="modal" style="display: none">
   <div class="modal-content">
     <div class="modal-head">
       <h2 class="modal-title">Detalles del Archivo</h2>
-      <span
-        class="close-button"
-        onclick="Modal.close('#genericModal')"
-        >&times;</span
-      >
+      <span class="close-button" onclick="Modal.close('#genericModal')">×</span>
     </div>
 
     <label for="genericDescriptionInput">Descripción:</label>
-    <input
-      type="text"
-      id="genericDescriptionInput"
-      readonly
-    />
+    <input type="text" id="genericDescriptionInput" readonly="">
     <!-- Solo lectura -->
 
     <!-- Imagen seleccionada actual -->
     <div class="image-container">
-      <img
-        id="genericCurrentImage"
-        alt="Imagen actual"
-        class="uploaded-image-edit"
-      />
+      <img id="genericCurrentImage" alt="Imagen actual" class="uploaded-image-edit">
     </div>
   </div>
 </div>
+</body></html>

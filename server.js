@@ -70,6 +70,7 @@ app.use(express.static('public'));
 registerPublicRoutes(app);
 
 registerPrivateRoutes(app);
+app.use('/users/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 //controlar retroceso entre sesiones login y dashboard
 

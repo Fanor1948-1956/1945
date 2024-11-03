@@ -1,68 +1,35 @@
-{% extends "layouts/publicLayout.njk" %} {% block content %}
+<html><head></head><body>{% extends "layouts/publicLayout.njk" %} {% block content %}
 
 <div class="main">
 <div class="form-container-signup">
   <h2>Registro</h2>
-  <form
-    action="/auth/register"
-    method="POST"
-  >
-    <input
-      type="text"
-      id="name"
-      name="name"
-      placeholder="Ingresaas tu nombre"
-      required
-    />
+  <form action="/auth/register" method="POST">
+    <input type="text" id="name" name="name" placeholder="Ingresaas tu nombre" required="">
 
 
-    <input
-      type="text"
-      id="surnames"
-      name="surnames"
-      placeholder="Ingresa tus apellidos"
-      required
-    />
+    <input type="text" id="surnames" name="surnames" placeholder="Ingresa tus apellidos" required="">
 
-    <input
-      type="email"
-      id="email"
-      name="email"
-      placeholder="Ingresa tu correo electrónico"
-      required
-    />
+    <input type="email" id="email" name="email" placeholder="Ingresa tu correo electrónico" required="">
 
 
-    <input
-      type="password"
-      id="password"
-      name="password"
-      placeholder="Ingresa tu contraseña"
-      required
-    />
+    <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" required="">
 
 
-    <select
-      name="gender"
-      id="gender"
-      required
-    >
+    <select name="gender" id="gender" required="">
       <option value="">Seleccionar género</option>
       <option value="masculino">Masculino</option>
       <option value="femenino">Femenino</option>
       <option value="otro">Otro</option>
     </select>
 
-      <button
-        class="send"
-        type="submit"
-      >
+      <button class="send" type="submit">
         Registrar Paciente
       </button>
   
   </form>
 </div>
 </div>
-<hr />
+<hr>
 
 {% endblock %}
+</body></html>

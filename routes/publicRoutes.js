@@ -88,28 +88,30 @@ const registerPublicRoutes = (app) => {
     // Manejo de subrutas
     if (route.subRoutes) {
       route.subRoutes.forEach((subRoute) => {
-        const subRoutePath = `${route.path}/${subRoute.id}`;
-        app.get(subRoutePath, async (req, res) => {
-          if (req.session.authenticated) {
-            return res.redirect('/dashboard');
-          }
+        // const subRoutePath = `${route.path}/${subRoute.id}`;
+        if (subRoute.path) {
+          app.get(subRoute.path, async (req, res) => {
+            if (req.session.authenticated) {
+              return res.redirect('/dashboard');
+            }
 
-          try {
-            const items = subRoute.items ? await subRoute.items() : [];
-            res.render(route.view, {
-              title: subRoute.title,
-              items: items,
-              publicRoutes,
-              currentPath: subRoutePath,
-            });
-          } catch (error) {
-            console.error(
-              `Error al cargar los datos para ${subRoutePath}:`,
-              error
-            );
-            res.status(500).send('Error al cargar los datos');
-          }
-        });
+            try {
+              const items = subRoute.items ? await subRoute.items() : [];
+              res.render(route.view, {
+                title: subRoute.title,
+                items: items,
+                publicRoutes,
+                currentPath: subRoutePath,
+              });
+            } catch (error) {
+              console.error(
+                `Error al cargar los datos para ${subRoute.path}:`,
+                error
+              );
+              res.status(500).send('Error al cargar los datos');
+            }
+          });
+        }
       });
     }
   });

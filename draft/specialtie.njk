@@ -1,4 +1,4 @@
-{% extends "layouts/privateLayout.njk" %}
+<html><head></head><body>{% extends "layouts/privateLayout.njk" %}
 
 {% block content %}
   <div class="container">
@@ -9,12 +9,12 @@
       <h2>Crear Nueva Especialidad</h2>
       <form id="createSpecialtyForm">
         <table>
-          <tr>
+          <tbody><tr>
             <td>
               <label for="name">Nombre:</label>
             </td>
             <td>
-              <input type="text" id="name" name="name" required>
+              <input type="text" id="name" name="name" required="">
             </td>
           </tr>
           <tr>
@@ -22,7 +22,7 @@
               <label for="description">Descripción:</label>
             </td>
             <td>
-              <textarea id="description" name="description" required></textarea>
+              <textarea id="description" name="description" required=""></textarea>
             </td>
           </tr>
           <tr>
@@ -30,7 +30,7 @@
               <button type="submit">Crear Especialidad</button>
             </td>
           </tr>
-        </table>
+        </tbody></table>
       </form>
     </div>
 
@@ -84,7 +84,7 @@
 
           data.forEach(specialty => {
             const specialtyDiv = `
-              <div class="specialty">
+              <div class=" specialty"="">
                 <h3>${specialty.name}</h3>
                 <p>${specialty.description}</p>
               </div>
@@ -99,3 +99,4 @@
     }
   </script>
 {% endblock %}
+</body></html>

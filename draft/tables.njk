@@ -1,7 +1,7 @@
-{% extends "layouts/privateLayout.njk" %}
+<html><head></head><body>{% extends "layouts/privateLayout.njk" %}
 
 {% block content %}
-<body>
+
     <h1 class="text-center">Lista de Roles</h1>
 
     <!-- Formulario para crear un nuevo rol -->
@@ -10,16 +10,16 @@
         <form action="/roles/create-role" method="POST" class="p-3 border rounded shadow">
             <div class="input-group">
                 <label for="roleName">Nuevo Rol:</label>
-                <input type="text" id="roleName" name="name" class="form-control" placeholder="Nuevo Rol" required>
+                <input type="text" id="roleName" name="name" class="form-control" placeholder="Nuevo Rol" required="">
             </div>
                   <div class="input-group">
                 <label for="roleAlias">Alias:</label>
-                <input type="text" id="roleAlias" name="alias" class="form-control" placeholder="Alias Rol" required>
+                <input type="text" id="roleAlias" name="alias" class="form-control" placeholder="Alias Rol" required="">
             </div>
             
             <div class="form-group">
                 <label for="permissions">Permisos:</label>
-                <select name="permissions" id="permissions" class="form-control select2" multiple required>
+                <select name="permissions" id="permissions" class="form-control select2" multiple="" required="">
                     {% for permission in items.permissions %}
                     <option value="{{ permission._id }}">{{ permission.name }}</option>
                     {% endfor %}
@@ -33,7 +33,7 @@
     <!-- Incluir la tabla de roles -->
     {% include 'components/rolesTable.njk' %}
   
-</body>
+
 
 <script>
     $(document).ready(function() {
@@ -57,17 +57,21 @@
         <h2>Agregar Nuevo Permiso</h2>
         <form action="/permissions/create-permission" method="POST">
             <label for="name">NombrePermission:</label>
-            <input type="text" id="name" name="name" required />
+            <input type="text" id="name" name="name" required="">
 
             <label for="description">Descripción:</label>
-            <input type="text" id="description" name="description" />
+            <input type="text" id="description" name="description">
 
             <button class="send" type="submit">Agregar Permiso</button>
         </form>
     </div>
 
     <div class="table-container">
-        <table>
+        
+                {% for permission in items %}
+                
+                {% endfor %}
+            <table>
             <thead>
                 <tr>
                     <th>Nombre</th>
@@ -75,9 +79,7 @@
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody>
-                {% for permission in items %}
-                <tr>
+            <tbody><tr>
                     <td>{{ permission.name }}</td>
                     <td>{{ permission.description }}</td>
                     <td>
@@ -85,9 +87,7 @@
                             <button type="submit">Eliminar</button>
                         </form>
                     </td>
-                </tr>
-                {% endfor %}
-            </tbody>
+                </tr></tbody>
         </table>
     </div>
 
@@ -97,7 +97,7 @@
 {% extends "layouts/privateLayout.njk" %}
 
 {% block content %}
-<body>
+
     <h1 class="text-center">Lista de Roles</h1>
 
     <!-- Formulario para crear un nuevo rol -->
@@ -106,16 +106,16 @@
         <form action="/roles/create-role" method="POST" class="p-3 border rounded shadow">
             <div class="input-group">
                 <label for="roleName">Nuevo Rol:</label>
-                <input type="text" id="roleName" name="name" class="form-control" placeholder="Nuevo Rol" required>
+                <input type="text" id="roleName" name="name" class="form-control" placeholder="Nuevo Rol" required="">
             </div>
                   <div class="input-group">
                 <label for="roleAlias">Alias:</label>
-                <input type="text" id="roleAlias" name="alias" class="form-control" placeholder="Alias Rol" required>
+                <input type="text" id="roleAlias" name="alias" class="form-control" placeholder="Alias Rol" required="">
             </div>
             
             <div class="form-group">
                 <label for="permissions">Permisos:</label>
-                <select name="permissions" id="permissions" class="form-control select2" multiple required>
+                <select name="permissions" id="permissions" class="form-control select2" multiple="" required="">
                     {% for permission in items.permissions %}
                     <option value="{{ permission._id }}">{{ permission.name }}</option>
                     {% endfor %}
@@ -129,7 +129,7 @@
     <!-- Incluir la tabla de roles -->
     {% include 'components/rolesTable.njk' %}
   
-</body>
+
 
 <script>
     $(document).ready(function() {
@@ -142,3 +142,4 @@
 </script>
 
 {% endblock %}
+</body></html>

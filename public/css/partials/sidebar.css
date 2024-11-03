@@ -1,4 +1,3 @@
-
 .sidebar {
   position: fixed;
   left: -250px;
@@ -6,10 +5,32 @@
   width: 250px;
   height: 100%;
   border-radius: 5px;
-  background-color: #001f3f; 
+  background-color: #001f3f; /* Color del fondo del sidebar */
   transition: 0.3s;
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
+  z-index: 1500;
+  overflow-y: auto; /* Habilita el desplazamiento vertical */
+}
+
+/* Estilos para la barra de desplazamiento */
+.sidebar::-webkit-scrollbar {
+  width: 8px; /* Ancho de la barra de desplazamiento */
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: #001f3f; /* Color del track igual al fondo del sidebar */
+  border-radius: 10px; /* Esquinas redondeadas del track */
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.5); /* Color del thumb con opacidad */
+  border-radius: 10px; /* Esquinas redondeadas del thumb */
+  transition: background 0.3s; /* Suaviza la transición del color */
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: white; /* Color del thumb al pasar el ratón */
 }
 
 .logo {
@@ -25,44 +46,58 @@
 .sidebar ul {
   list-style-type: none;
   padding: 0;
-  flex-grow: 1; 
+  flex-grow: 1;
 }
 
 .sidebar ul li {
   padding: 10px;
   text-align: left;
-  position: relative; 
+  position: relative;
 }
 
 .sidebar ul li a i {
-  margin-right: 10px; 
+  margin-right: 10px;
 }
 
 .sidebar ul li a {
   color: white;
   padding: 10px;
   text-decoration: none;
-  display: flex; 
-  align-items: center; 
+  display: flex;
+  align-items: center;
 }
 
 .sidebar ul li a:hover {
-  background-color: #0c0320;
+  background-color: #ffffff;
+  cursor: pointer;
+  color: #001f3f;
+  border-radius: 0.5rem;
 }
-
 
 .sidebar.active {
   left: 0;
 }
 
+/* Estilo para los enlaces activos */
+.sidebar ul li.active > a {
+  background-color: #ffffff;
+  cursor: pointer;
+  color: #001f3f;
+  border-radius: 0.5rem;
+}
 
 .submenu {
-  display: none; 
-  position: relative; 
-  left: 0; 
-  background-color: #0c032e; 
-  z-index: 1000; 
+  display: none;
+  position: relative;
+  left: 0;
+  background-color: #0c032e;
+  z-index: 1000;
 }
+
+.submenu.active {
+  display: block; /* Mostrar el submenú activo */
+}
+
 .logout-link {
   display: flex;
   justify-content: center;
@@ -70,52 +105,35 @@
   color: white;
   text-decoration: none;
   padding: 10px 0;
-  background-color: #001f3f; 
+  background-color: #001f3f;
   transition: background-color 0.3s ease;
 }
 
 .logout-link:hover {
-  background-color: #ff4136; 
+  background-color: #ff4136;
+}
+
+.icon {
+  margin-right: 8px;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  fill: currentColor;
 }
 
 @media (min-width: 769px) {
   .sidebar ul li:hover .submenu {
-    display: block; 
+    display: block; /* Mostrar el submenú al pasar el ratón */
   }
 }
 
-.sidebar ul li.active > a {
-  background-color: #555555; 
-}
-.icon {
-    margin-right: 8px; 
-    width: 20px; 
-    height: 20px;
-    display: inline-block; 
-    fill: currentColor; 
-}
-
-
-
+/* Opcional: Ajustar estilos en móviles para una mejor experiencia */
 @media (max-width: 768px) {
-  .sidebar {
-    width: 250px; 
-    left: -250px; 
-    transition: left 0.5s ease; 
-    z-index: 1000;
+  .sidebar ul li .submenu {
+    display: none; /* Asegúrate de que el submenú esté oculto inicialmente */
   }
 
-  .sidebar.active ~ .container {
-    margin-left: 0px; 
-  }
-
-  
-  .submenu {
-    display: none; 
-  }
-
-  
-  .submenu.active {
-    display: block; 
+  .sidebar ul li.active .submenu {
+    display: block; /* Mostrar submenú si el padre está activo */
   }
 }

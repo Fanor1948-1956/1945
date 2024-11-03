@@ -1,17 +1,11 @@
-{% extends "layouts/privateLayout.njk" %} {% block content %}
+<html><head></head><body>{% extends "layouts/privateLayout.njk" %} {% block content %}
 
-<div
-  id="profileContainer"
-  class="profile-container"
->
+<div id="profileContainer" class="profile-container">
   <h1>Perfil del Usuario</h1>
 
   <div class="profile-detail">
     <!-- Lista de archivos subidos -->
-    <div
-      id="uploadsList"
-      class="uploads-list"
-    >
+    <div id="uploadsList" class="uploads-list">
       <!-- Aquí se mostrarán los archivos subidos o un mensaje si no hay archivos -->
     </div>
 
@@ -32,10 +26,7 @@
   "components/custom/common/uploadItemModal.njk" %}
 
   <!-- Snackbar para notificaciones -->
-  <div
-    id="snackbar"
-    class="snackbar"
-  ></div>
+  <div id="snackbar" class="snackbar"></div>
 </div>
 
 <script type="module">
@@ -149,3 +140,4 @@
 </script>
 
 {% endblock %}
+</body></html>

@@ -63,7 +63,7 @@ exports.createUser = async (req, res) => {
 exports.getUsers = async (req, res) => {
   try {
     // Obtener todos los usuarios y popular los roles y uploads
-    const users = await User.find().populate('roles').populate('uploads');
+    const users = await User.find().populate('roles').populate('uploads'); // Esto carga los uploads relacionados
 
     // Responder dependiendo del tipo de solicitud
     if (req.xhr || req.accepts('application/json')) {

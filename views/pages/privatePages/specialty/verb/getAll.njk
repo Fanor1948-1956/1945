@@ -1,6 +1,4 @@
-{% if isAuthenticated %}
-
-{% endif %}
+{% if isAuthenticated %} {% endif %}
 
 <button
   id="addSpecialtyBtn"
@@ -8,12 +6,10 @@
   {%
   if
   not
-  isAuthenticated
+  isauthenticated
   %}
   style="display: none"
-  {%
-  endif
-  %}
+  {%endif%}
 >
   Agregar Especialidad
 </button>
@@ -32,20 +28,20 @@
     <span
       class="close-button"
       onclick="Modal.close('#addSpecialtyModal')"
-      >&times;</span
+      >×</span
     >
     <h2>Agregar Especialidad</h2>
     <label for="specialtyName">Nombre:</label>
     <input
       type="text"
       id="specialtyName"
-      required
+      required=""
     />
     <label for="specialtyDescription">Descripción:</label>
     <input
       type="text"
       id="specialtyDescription"
-      required
+      required=""
     />
     <button id="saveSpecialtyBtn">Guardar</button>
   </div>

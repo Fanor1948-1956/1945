@@ -1,64 +1,30 @@
-<!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
+<!DOCTYPE html><html lang="es"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
-    {{
+    </head><body class="show-hamburger">{{
       route.icon
     }}
 
     <script src="/js/libraries/jquery.min.js"></script>
-    <link
-      rel="stylesheet"
-      href="/css/fontawesome.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="/css/styles.css"
-    />
-    <script
-      type="module"
-      src="/js/main.js"
-      defer
-    ></script>
+    <link rel="stylesheet" href="/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <script type="module" src="/js/main.js" defer=""></script>
     {% include 'components/common/Navbar/index.njk' %} {% include
     'components/common/Sidebar/index.njk' %}
-  </head>
+  
 
-  <body class="show-hamburger">
-    <div
-      id="spinner"
-      class="spinner"
-      style="display: flex"
-    >
-      <p
-        id="countdown"
-        class="blink"
-      >
-        10
-      </p>
+  
+    <div id="spinner" class="visible spinner">
+      <p id="countdown" class="blink"></p>
 
-      <button
-        id="viewButton"
-        style="display: none"
-      >
+      <button id="viewButton" class="hidden viewButton">
         Ver
       </button>
     </div>
 
-    <div
-      id="layoutContainer"
-      class="container"
-      style="display: none"
-    >
-      <div
-        id="contentMain"
-        class="contentMain"
-      >
+    <div id="layoutContainer" class="container hidden">
+      <div id="contentMain" class="contentMain">
         {% block content %}
         <h2>Página inicial</h2>
         <p>Este es el contenido por defecto.</p>
@@ -83,5 +49,6 @@
     </script>
 
     <style></style>
-  </body>
-</html>
+  
+
+</body></html>

@@ -2,6 +2,7 @@ import './config/index.js';
 import './config/websocketConfig.js';
 import './config/navigationHandler.js';
 import './config/waitSpinner.js';
+import './components/global/contextMenu.js';
 import './components/global/sidebar.js';
 import './apiRequest/apiFetchs.js';
 import './apiRequest/ajaxRequest.js';

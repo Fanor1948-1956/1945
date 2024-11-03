@@ -6,12 +6,10 @@
     {%
     if
     not
-    isAuthenticated
+    isauthenticated
     %}
     style="display: none"
-    {%
-    endif
-    %}
+    {%endif%}
   >
     Agregar Usuario
   </button>
@@ -33,7 +31,7 @@
       <span
         class="close-button"
         onclick="Modal.close('#addUserModal')"
-        >&times;</span
+        >×</span
       >
       <h2 class="modal-title"></h2>
       <form id="userForm">
@@ -42,7 +40,7 @@
           type="text"
           id="userName"
           name="name"
-          required
+          required=""
         />
 
         <label for="userSurnames">Apellidos:</label>
@@ -50,7 +48,7 @@
           type="text"
           id="userSurnames"
           name="surnames"
-          required
+          required=""
         />
 
         <label for="userEmail">Correo:</label>
@@ -58,7 +56,7 @@
           type="email"
           id="userEmail"
           name="email"
-          required
+          required=""
         />
 
         <label for="userPassword">Contraseña:</label>
@@ -66,7 +64,7 @@
           type="password"
           id="userPassword"
           name="password"
-          required
+          required=""
         />
 
         <label for="userGender">Género:</label>
@@ -74,8 +72,8 @@
           type="text"
           id="userGender"
           name="gender"
-          required
-          readonly
+          required=""
+          readonly=""
         />
         <button
           type="button"
@@ -110,7 +108,7 @@
       <span
         class="close-button"
         onclick="closeModal('selectRolesModal')"
-        >&times;</span
+        >×</span
       >
       <h2 class="modal-title"></h2>
       <div id="genderContainer">
@@ -158,7 +156,7 @@
       <span
         class="close-button"
         onclick="Modal.close('#selectRolesModal')"
-        >&times;</span
+        >×</span
       >
       <h2 class="modal-title"></h2>
       <div id="rolesContainer"></div>
@@ -180,9 +178,14 @@
 
 {% include "components/custom/common/deleteItem.njk" %} {% include
 "components/custom/customPopover.njk" %}
+<div class="view-toggle-buttons">
+  <button id="cardViewBtn">Vista Card</button>
+  <button id="tableViewBtn">Vista Tabla</button>
+</div>
 
 <script type="module">
   import { renderTable } from '../js/components/common/table.js';
+  import { renderCards } from '../js/components/common/card.js';
   import { renderPagination } from '../js/components/common/pagination.js';
   import { fetchServices } from '../js/services/index.js';
   import { getState } from '../js/reducers/state.js';
@@ -192,47 +195,53 @@
   import { loadUsers } from '../js/reducers/userReducer.js';
 
   let currentPage = 1; // Página actual
-  const usersPerPage = 10; // Número de roles por página
-  const headers = ['Nombre', 'Apellidos', 'Correo', 'Género', 'Roles']; // Encabezados de la tabla
+  const usersPerPage = 10; // Número de usuarios por página
+  const headers = ['Nombre Completo', 'Correo', 'Género', 'Roles']; // Encabezados de la tabla
   let filteredUsers = []; // Declarar filteredUsers en el ámbito superior
+  let currentView = 'table'; // Valor inicial como "table" o "card"
 
-  // Obtener users cuando se carga la página
+  // Obtener usuarios cuando se carga la página
   const loadUsersList = async () => {
     console.log('Cargando lista de usuarios...');
     await fetchServices(userEndpoints, loadUsers);
     const { users } = getState();
     const roleAlias = '{{ roleAlias|lower }}'; // Obtén el rol desde la plantilla
 
-    // Filtra los usuarios según el rol
-    filteredUsers = users.filter((user) =>
-      user.roles.some((roleObj) => roleObj.alias.toLowerCase() === roleAlias)
-    );
+    // Filtra los usuarios según el rol solo si roleAlias está definido
+    if (roleAlias) {
+      filteredUsers = users.filter((user) =>
+        user.roles.some((roleObj) => roleObj.alias.toLowerCase() === roleAlias)
+      );
+    } else {
+      filteredUsers = users; // Si no se especifica roleAlias, mostrar todos los usuarios
+    }
 
     renderUsers();
   };
 
-  // Función para renderizar usuarios y paginación
+  // Función para renderizar usuarios según la vista seleccionada
   function renderUsers() {
-    console.log('Renderizando usuarios...');
+    console.log(`Renderizando usuarios en vista ${currentView}...`);
+    console.log('Usuarios filtrados:', filteredUsers); // Para depuración
 
-    console.log(filteredUsers); // Verifica los datos antes de procesar
-    const tableData = filteredUsers.map((user) => ({
-      _id: user._id, // Asegúrate de que el ID esté aquí
-      name: user.name,
-      surnames: user.surnames,
+    const data = filteredUsers.map((user) => ({
+      _id: user._id,
+      usuario: `${user.name} ${user.surnames}`,
       email: user.email,
       gender: user.gender,
-      roles: user.roles.map((role) => role.name).join(', '), // Convertir roles a cadena separada por comas
+      roles: user.roles.map((role) => role.name).join(', '),
+      uploads: user.uploads,
     }));
 
-    // Limpiar el contenedor antes de renderizar la tabla
     const container = document.getElementById('userTableContainer');
-    container.innerHTML = ''; // Limpia el contenido previo
+    container.innerHTML = ''; // Limpiar contenido previo
 
-    // Renderizar la tabla directamente
-    renderTable(headers, tableData, currentPage, usersPerPage, onAction);
+    if (currentView === 'table') {
+      renderTable(headers, data, currentPage, usersPerPage, onAction);
+    } else {
+      renderCards(headers, data, currentPage, usersPerPage, onAction);
+    }
 
-    // Renderizar la paginación
     const paginationHtml = renderPagination(
       currentPage,
       filteredUsers.length,
@@ -240,22 +249,42 @@
       handlePageChange
     );
 
-    // Añadir la paginación al contenedor
     container.insertAdjacentHTML('beforeend', paginationHtml);
+
+    // Inicializar listeners para botones de paginación
+    initializePaginationButtons();
   }
 
-  // Manejar el cambio de página
-  function handlePageChange(newPage) {
-    currentPage = newPage; // Actualizar la página actual
-    renderUsers(); // Renderizar roles y paginación nuevamente
-  }
-
-  // Manejar clic en botones de paginación
-  $(document).off('click', '.page-button'); // Eliminar listeners anteriores
-  $(document).on('click', '.page-button', function () {
-    const newPage = parseInt($(this).data('page'));
-    handlePageChange(newPage);
+  // Alternar entre vista de cards y tabla
+  document.getElementById('cardViewBtn').addEventListener('click', () => {
+    currentView = 'card';
+    renderUsers();
   });
+
+  document.getElementById('tableViewBtn').addEventListener('click', () => {
+    currentView = 'table';
+    renderUsers();
+  });
+
+  function handlePageChange(newPage) {
+    currentPage = newPage;
+    renderUsers();
+  }
+
+  // Función para inicializar los listeners de los botones de paginación
+  function initializePaginationButtons() {
+    const pageButtons = document.querySelectorAll('.page-button');
+    pageButtons.forEach((button) => {
+      button.removeEventListener('click', handlePageClick); // Limpiar cualquier listener previo
+      button.addEventListener('click', handlePageClick);
+    });
+  }
+
+  // Manejo del clic en los botones de paginación
+  function handlePageClick(event) {
+    const newPage = parseInt(event.currentTarget.getAttribute('data-page'));
+    handlePageChange(newPage);
+  }
 
   loadUsersList();
   setupEventListeners(loadUsersList);

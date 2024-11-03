@@ -42,7 +42,7 @@ const privateRoutes = [
   {
     path: '/users',
     title: 'Lista de',
-    view: 'pages/privatePages/users.njk',
+    view: 'pages/privatePages/users/all.njk',
     isPublic: false,
 
     icon: getIcon('user'),
@@ -98,6 +98,14 @@ const privateRoutes = [
     title: 'Disponibilidad',
     roles: ['Doctor'],
     icon: getIcon('availability'),
+    items: async () => [],
+  },
+  {
+    path: '/table',
+    title: 'tables',
+    roles: ['Administrador'],
+    icon: getIcon('settings'),
+    view: 'pages/privatePages/tables.njk',
     items: async () => [],
   },
   {

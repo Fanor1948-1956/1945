@@ -1,4 +1,3 @@
-
 <button id="addRoleBtn">Agregar Rol</button>
 <div id="roleTableContainer"></div>
 <div
@@ -16,7 +15,7 @@
     <span
       class="close-button"
       onclick="Modal.close('#addRoleModal')"
-      >&times;</span
+      >×</span
     >
     <h2 id="modalTitle">Agregadsdr Rol</h2>
     <form id="roleForm">
@@ -25,7 +24,7 @@
         type="text"
         id="roleName"
         name="name"
-        required
+        required=""
       />
 
       <label for="roleAlias">Alias:</label>
@@ -33,7 +32,7 @@
         type="text"
         id="roleAlias"
         name="alias"
-        required
+        required=""
       />
 
       <label for="roleDescription">Descripción:</label>
@@ -69,7 +68,7 @@
     <span
       class="close-button"
       onclick="Modal.close('#selectPermissionsModal')"
-      >&times;</span
+      >×</span
     >
     <h2 id="permissionsModalTitle">Seleccionar Permisos</h2>
     <div id="permissionsContainer"></div>
@@ -92,7 +91,7 @@
     <span
       class="close-button"
       onclick="Modal.close('#deleteRoleModal')"
-      >&times;</span
+      >×</span
     >
     <h2>Confirmar Eliminación</h2>
     <p>¿Estás seguro de que deseas eliminar este Rol?</p>

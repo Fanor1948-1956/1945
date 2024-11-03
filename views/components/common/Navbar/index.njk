@@ -1,42 +1,24 @@
-<header class="header">
-  <nav
-    class="navbar {% if isAuthenticated %}privateNav{% else %}publicNav{% endif %}"
-  >
-    <button
-      class="hamburger"
-      id="hamburgerBtn"
-    >
+<html><head></head><body><header class="header">
+  <nav class="navbar {% if isAuthenticated %}privateNav{% else %}publicNav{% endif %}">
+    <button class="hamburger" id="hamburgerBtn">
       ☰
     </button>
 
-    <ul
-      class="navbar__links"
-      id="navbarLinks"
-    >
+    <ul class="navbar__links" id="navbarLinks">
       {# Enlaces de rutas públicas #} {% for route in publicRoutes %}
       <div class="menu-container">
         <li class="navbar__item">
-          <a
-            href="{{ route.path }}"
-            class="navbar__link {% if route.subRoutes %}has-submenu{% endif %}"
-            >{{ route.title }}</a
-          >
+          <a href="{{ route.path }}" class="navbar__link {% if route.subRoutes %}has-submenu{% endif %}">{{ route.title }}</a>
           {% if route.subRoutes %}
           <div class="submenuContainer">
             <!-- Contenedor para el submenú -->
-            <ul
-              class="submenuNav {% if route.subRoutes|length > 1 %}horizontal{% endif %}"
-            >
+            <ul class="submenuNav {% if route.subRoutes|length > 1 %}horizontal{% endif %}">
               <!-- Clase para el submenú -->
               {% for section in route.subRoutes %}
               <li class="submenu__item">
                 {# Verifica si la subruta tiene un path y lo usa; de lo
                 contrario, usa el id #}
-                <a
-                  href="{{ section.path or (route.path ~ '#' ~ section.id) }}"
-                  class="submenuLink"
-                  >{{ section.title }}</a
-                >
+                <a href="{{ section.path or (route.path ~ '#' ~ section.id) }}" class="submenuLink">{{ section.title }}</a>
               </li>
               {% endfor %}
             </ul>
@@ -49,18 +31,12 @@
       {# Mostrar solo la ruta que tiene el título 'Perfil' #} {% if route.title
       == 'Perfil' %}
       <li class="navbar__item">
-        <a
-          href="{{ route.path }}"
-          class="{% if route.subRoutes %}has-submenu{% endif %}"
-          >{{ username }}</a
-        >
+        <a href="{{ route.path }}" class="{% if route.subRoutes %}has-submenu{% endif %}">{{ username }}</a>
         <!-- Reemplazamos "Perfil" con el nombre de usuario -->
         {% if route.subRoutes %}
         <div class="submenuContainer">
           <!-- Contenedor para el submenú -->
-          <ul
-            class="submenuNav {% if route.subRoutes|length > 2 %}horizontal{% endif %}"
-          >
+          <ul class="submenuNav {% if route.subRoutes|length > 2 %}horizontal{% endif %}">
             <!-- Clase para el submenú -->
             {% for subRoute in route.subRoutes %}
             <li class="submenu__item">
@@ -75,3 +51,4 @@
     </ul>
   </nav>
 </header>
+</body></html>

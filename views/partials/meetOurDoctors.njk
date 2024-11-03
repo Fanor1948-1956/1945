@@ -1,4 +1,4 @@
-{% set roleAlias = 'doctor' %}
+<html><head></head><body>{% set roleAlias = 'doctor' %}
  {% include "components/custom/customModal.njk" %}
 <div class="home-heading28">
   <h2 class="home-text91">Conoce a Nuestros {{ title }}s</h2>
@@ -9,33 +9,15 @@
 </div>
 <div class="home-list2">
   <div class="home-controls">
-    <img
-      alt="Anterior"
-      src="/Icons/circle-arrow.svg"
-      data-doctors="previous"
-      class="arrow"
-    />
+    <img alt="Anterior" src="/Icons/circle-arrow.svg" data-doctors="previous" class="arrow">
   </div>
   {% include "pages/privatePages/users/index.njk" %}
-  <img
-    alt="Siguiente"
-    src="/Icons/circle-arrow.svg"
-    data-doctors="next"
-    class="home-forward arrow"
-  />
+  <img alt="Siguiente" src="/Icons/circle-arrow.svg" data-doctors="next" class="home-forward arrow">
 </div>
 <div class="home-search2">
-  <input
-    type="text"
-    placeholder="Buscar por nombre"
-    class="home-textinput6 input book-input"
-  />
-      <button
-  class="open-modal"
-  data-size="medium"
-  data-title="Título del Modal Medio"
-  
->
+  <input type="text" placeholder="Buscar por nombre" class="home-textinput6 input book-input">
+      <button class="open-modal" data-size="medium" data-title="Título del Modal Medio">
 Buscar Doctor
 </button>
 </div>
+</body></html>

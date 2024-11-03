@@ -1,25 +1,63 @@
 .pagination {
   display: flex;
-  justify-content: center;
-  margin: 10px;
+  justify-content: space-between; /* Espacio entre los elementos */
+  align-items: center;
+  margin-top: 15px;
+  position: relative;
 }
 
-.page-button {
-  background-color: #00162e;
+/* Contenedor para los botones de paginación */
+.pagination-buttons {
+  display: flex;
+  align-items: center; /* Centra verticalmente los botones */
+  gap: 5px; /* Espaciado entre los botones */
+}
+
+/* Estilos para el botón de acción personalizada */
+.custom-button {
+  padding: 6px 12px;
+  font-size: 14px;
+  border: 1px solid #007bff; /* Bordes del botón personalizado */
+  background-color: #007bff;
   color: white;
-  border: none;
-  padding: 10px 15px;
+  border-radius: 4px;
   cursor: pointer;
-  border-radius: 5px;
-  margin: 0 5px;
+  transition: background-color 0.3s;
+}
+
+.custom-button:hover {
+  background-color: #0056b3; /* Color en hover */
+}
+
+/* Estilos para los botones de paginación */
+.page-button {
+  padding: 6px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+  color: #333;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .page-button:hover {
-  background-color: #000000;
+  background-color: #e0e0e0;
 }
 
+/* Estilo para el botón activo */
 .page-button.active {
-  background-color: transparent !important;
-  pointer-events: none;
-  border: 1px solid #fbfbfb;
+  background-color: #007bff;
+  color: white;
+  border: 1px solid #007bff;
+  font-weight: bold;
+}
+
+/* Estilo para los puntos suspensivos */
+.dots {
+  color: #999;
+  font-size: 16px;
+  padding: 0 8px;
+  margin: 0;
+  cursor: default;
 }

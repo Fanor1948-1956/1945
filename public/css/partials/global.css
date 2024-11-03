@@ -1,6 +1,9 @@
 body {
   font-family: Arial, sans-serif;
   margin: 0;
+  overflow: visible;
+  background-color: #f2f2f2;
+  display: flex;
   padding: 0;
 }
 .textInputHidden {
@@ -8,6 +11,50 @@ body {
   border: none;
 }
 
+.context-menu {
+  display: none;
+  position: absolute;
+  z-index: 2500;
+  color: #f1f1f1;
+  background: rgb(11, 4, 43);
+  border: 1px solid #ddd;
+  z-index: 1000;
+  border-radius: 4px;
+}
+
+.context-menu ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.context-menu li {
+  padding: 8px 12px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.context-menu li:hover {
+  background-color: #f2f2f2;
+}
+
+.container {
+  transition: margin-left 0.3s;
+  background-color: #d5d5d5;
+  width: 100%;
+  height: auto;
+  display: flex;
+}
+.contentMain {
+  background: #00162e;
+  color: rgb(239, 233, 250);
+  padding: 1.5rem;
+  min-height: 100vh;
+  width: 100%;
+
+  flex-direction: column;
+  justify-content: space-between;
+}
 .head {
   background-color: #f1f1f1;
   padding: 20px;
@@ -165,28 +212,11 @@ legend {
   color: white;
   font-size: 20px;
   cursor: pointer;
+  z-index: 6000;
 }
 
 .show-hamburger .hamburger {
   display: block;
-}
-.container {
-  transition: margin-left 0.3s;
-  background-color: #d5d5d5;
-  width: 100%;
-
-  min-height: 100vh;
-  display: flex;
-}
-.contentMain {
-  background: #00162e;
-  color: rgb(239, 233, 250);
-  padding: 1.5rem;
-  width: 100%;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 }
 
 .sidebar.active ~ .contentContainer {

@@ -1,17 +1,14 @@
-{% extends "layouts/publicLayout.njk" %} {% block content %}
+<html><head></head><body>{% extends "layouts/publicLayout.njk" %} {% block content %}
 
 <div id="cardContainer"></div>
 <!-- Contenedor para la tarjeta que contendrá el formulario -->
-<div
-  id="snackbar"
-  class="snackbar"
-></div>
+<div id="snackbar" class="snackbar"></div>
 
 <script type="module">
   import { createCustomInputs } from './js/components/custom/input.js';
   import { createCard } from './js/components/custom/card.js';
 
-  document.addEventListener('DOMContentLoaded', () => {
+
     // Crear inputs personalizados para email y contraseña
     const inputConfigs = [
       {
@@ -98,7 +95,8 @@
         showSnackbar('Error en la conexión. Inténtalo de nuevo.', false);
       }
     });
-  });
+  
 </script>
 
 {% endblock %}
+</body></html>

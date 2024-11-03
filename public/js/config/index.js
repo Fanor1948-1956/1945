@@ -1,6 +1,6 @@
 // public/config.js
 window.env = {
-  BASE_URL: 'https://7000-fanor19481956-1945-bk9qn0r0fcv.ws-us116.gitpod.io',
+  BASE_URL: 'https://7000-fanor19481956-1945-vnbd2gu8g26.ws-us116.gitpod.io',
   API_URL: 'https://api.example.com',
   DEBUG: true,
   NODE_ENV: 'development',
@@ -17,5 +17,5 @@ window.env = {
   APP_LICENSE_URL: 'https://opensource.org/licenses/MIT',
   APP_COPYRIGHT_YEAR: new Date().getFullYear(),
   BASE_URL_SOCKET:
-    'wss://7000-fanor19481956-1945-bk9qn0r0fcv.ws-us116.gitpod.io',
+    'wss://7000-fanor19481956-1945-vnbd2gu8g26.ws-us116.gitpod.io',
 };

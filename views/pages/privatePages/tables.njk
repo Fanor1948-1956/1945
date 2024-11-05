@@ -32,6 +32,12 @@
 
 <button id="addSectionButton">Agregar Sección</button>
 <button id="clearStorageButton">Limpiar Almacenamiento</button>
+<div
+  id="noResultsMessage"
+  style="display: none; color: red"
+>
+  No hay secciones que coincidan con tu búsqueda.
+</div>
 
 <script type="module">
   import { createCustomInputs } from './js/components/custom/input.js';
@@ -41,12 +47,12 @@
     clearDropdown,
   } from './js/components/common/dropdown.js';
   import { generateRandomClinicIcon } from './js/utils/icons.js';
+  let sections = [];
 
   document.addEventListener('DOMContentLoaded', () => {
     initializeDropdown('dropdown', 'settingsButton');
     initializeModalInputs();
     loadSections();
-
     const settingsIcon = generateRandomClinicIcon('Ajustes');
     document.getElementById('settingsIcon').innerHTML = settingsIcon;
 
@@ -57,6 +63,21 @@
       .getElementById('clearStorageButton')
       .addEventListener('click', clearStorage);
   });
+
+  function loadSections() {
+    sections = JSON.parse(localStorage.getItem('customSections')) || [];
+    document.getElementById('customStack').innerHTML = '';
+
+    sections.forEach((section) => {
+      createCustomSection(
+        section.title,
+        section.subtitle,
+        section.content,
+        section.id
+      );
+      addToDropdown(section.id, section.title);
+    });
+  }
 
   const inputSearch = [
     {
@@ -72,31 +93,69 @@
 
   const initializeModalInputs = () => {
     const inputContainer = document.getElementById('inputContainer');
-    inputContainer.innerHTML = ''; // Clear previous inputs
+    inputContainer.innerHTML = ''; // Limpiar inputs anteriores
     const inputs = createCustomInputs(inputSearch);
     inputContainer.appendChild(inputs);
+
+    const inputField = document.getElementById('inputSearch');
+    if (inputField) {
+      inputField.addEventListener('input', (event) => {
+        filterSections(event.target.value);
+      });
+    }
   };
 
-  function loadSections() {
+  function filterSections(query) {
     const sections = JSON.parse(localStorage.getItem('customSections')) || [];
-    document.getElementById('customStack').innerHTML = '';
+    const customStack = document.getElementById('customStack');
 
+    // Itera sobre todas las secciones y las compara con el query
     sections.forEach((section) => {
-      createCustomSection(
-        section.title,
-        section.subtitle,
-        section.content,
-        section.id
+      const sectionElement = document.querySelector(
+        `.custom-section[data-id="${section.id}"]`
       );
-      addToDropdown(section.id, section.title);
+      if (sectionElement) {
+        const matchesTitle = section.title
+          .toLowerCase()
+          .includes(query.toLowerCase());
+        const matchesSubtitle = section.subtitle
+          .toLowerCase()
+          .includes(query.toLowerCase());
+
+        // Si coincide con el título o subtítulo, muestra la sección
+        if (matchesTitle || matchesSubtitle) {
+          sectionElement.style.display = 'block'; // Muestra la sección
+        } else {
+          sectionElement.style.display = 'none'; // Oculta la sección
+        }
+      }
     });
+
+    // Verifica si hay alguna sección visible
+    const visibleSections = Array.from(customStack.children).some(
+      (child) => child.style.display !== 'none'
+    );
+
+    const noResultsMessage = document.getElementById('noResultsMessage');
+    if (!visibleSections) {
+      // Si no hay secciones visibles, muestra el mensaje
+      if (!noResultsMessage) {
+        const message = document.createElement('div');
+        message.id = 'noResultsMessage';
+        message.textContent = 'No hay resultados para la búsqueda.';
+        message.style.color = 'red'; // Asegúrate de que el mensaje sea visible
+        customStack.appendChild(message);
+      }
+    } else if (noResultsMessage) {
+      // Si hay secciones visibles, quita el mensaje de no resultados
+      noResultsMessage.remove();
+    }
   }
 
   function addNewSection() {
     const count = Date.now();
-    const title = `Sección ${count}`;
     createCustomSection(
-      title,
+      `Sección ${count}`,
       `Subtítulo ${count}`,
       `Contenido de Sección ${count}`,
       count
@@ -125,6 +184,7 @@
         <h4>${subtitle}</h4>
         <div class="textWrapper">${content}</div>
         <button class="remove-section" data-id="${sectionId}" onclick="removeSection('${sectionId}')">Eliminar</button>
+        <button class="edit-section" data-id="${sectionId}" onclick="editSection('${sectionId}')">Editar</button>
       </div>
     `;
 
@@ -170,15 +230,6 @@
     }
   };
 
-  function updateEyeButton(sectionId, isCurrentlyVisible) {
-    const eyeButton = document.querySelector(`button[data-id="${sectionId}"]`);
-    if (eyeButton) {
-      eyeButton.innerHTML = isCurrentlyVisible
-        ? generateRandomClinicIcon('Visible')
-        : generateRandomClinicIcon('No Visible');
-    }
-  }
-
   window.removeSection = function (sectionId) {
     const section = document.querySelector(
       `.custom-section[data-id="${sectionId}"]`
@@ -188,6 +239,80 @@
       saveSections();
     }
   };
+
+  window.editSection = function (sectionId) {
+    const section = document.querySelector(
+      `.custom-section[data-id="${sectionId}"]`
+    );
+    if (section) {
+      const title = section.querySelector('h2').innerText;
+      const subtitle = section.querySelector('h4').innerText;
+      const content = section.querySelector('.textWrapper').innerText;
+
+      // Crear un formulario para editar
+      const editForm = document.createElement('div');
+      editForm.innerHTML = `
+        <h3>Editar Sección</h3>
+        <label>Título:</label>
+        <input type="text" id="editTitle" value="${title}" />
+        <label>Subtítulo:</label>
+        <input type="text" id="editSubtitle" value="${subtitle}" />
+        <label>Contenido:</label>
+        <textarea id="editContent">${content}</textarea>
+        <button id="saveEditButton">Guardar</button>
+        <button id="cancelEditButton">Cancelar</button>
+      `;
+      section.innerHTML = ''; // Limpiar el contenido de la sección
+      section.appendChild(editForm);
+
+      document
+        .getElementById('saveEditButton')
+        .addEventListener('click', () => {
+          const newTitle = document.getElementById('editTitle').value;
+          const newSubtitle = document.getElementById('editSubtitle').value;
+          const newContent = document.getElementById('editContent').value;
+
+          // Verificar si la sección aún existe antes de actualizar
+          const updatedSection = document.querySelector(
+            `.custom-section[data-id="${sectionId}"]`
+          );
+          if (updatedSection) {
+            updateSection(sectionId, newTitle, newSubtitle, newContent);
+          } else {
+            console.error(`Sección con ID ${sectionId} no encontrada.`);
+          }
+        });
+
+      document
+        .getElementById('cancelEditButton')
+        .addEventListener('click', () => {
+          loadSections(); // Cargar nuevamente las secciones
+        });
+    }
+  };
+
+  function updateSection(sectionId, newTitle, newSubtitle, newContent) {
+    const section = document.querySelector(
+      `.custom-section[data-id="${sectionId}"]`
+    );
+    if (section) {
+      section.innerHTML = `
+        <div class="section-content">
+          <span class="toggle-visibility" data-id="${sectionId}" onclick="toggleSection('${sectionId}')">−</span>
+          <h2>${newTitle}</h2>
+          <h4>${newSubtitle}</h4>
+          <div class="textWrapper">${newContent}</div>
+          <button class="remove-section" data-id="${sectionId}" onclick="removeSection('${sectionId}')">Eliminar</button>
+          <button class="edit-section" data-id="${sectionId}" onclick="editSection('${sectionId}')">Editar</button>
+        </div>
+      `;
+      saveSections(); // Guarda los cambios en localStorage
+    } else {
+      console.error(
+        `No se pudo actualizar la sección con ID ${sectionId}, no se encontró.`
+      );
+    }
+  }
 
   function saveSections() {
     const sections = Array.from(
@@ -200,19 +325,6 @@
     }));
 
     localStorage.setItem('customSections', JSON.stringify(sections));
-  }
-
-  function filterSections(query) {
-    const sections = document.querySelectorAll('.custom-section');
-    sections.forEach((section) => {
-      const title = section.querySelector('h2').innerText.toLowerCase();
-      const subtitle = section.querySelector('h4').innerText.toLowerCase();
-      section.style.display =
-        title.includes(query.toLowerCase()) ||
-        subtitle.includes(query.toLowerCase())
-          ? 'block'
-          : 'none';
-    });
   }
 </script>
 

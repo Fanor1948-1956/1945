@@ -27,9 +27,26 @@ export const fillUserForm = (user) => {
 };
 
 // Validar los datos del formulario
-export const validateFormData = ({ name, surnames, email, password, gender, roles }) => {
-  if (!name || !surnames || !email || !password || !gender || roles.length === 0) {
-    showSnackbar('Por favor, complete todos los campos y seleccione al menos un rol.', false);
+export const validateFormData = ({
+  name,
+  surnames,
+  email,
+  password,
+  gender,
+  roles,
+}) => {
+  if (
+    !name ||
+    !surnames ||
+    !email ||
+    !password ||
+    !gender ||
+    roles.length === 0
+  ) {
+    showSnackbar(
+      'Por favor, complete todos los campos y seleccione al menos un rol.',
+      false
+    );
     return false;
   }
   return true;

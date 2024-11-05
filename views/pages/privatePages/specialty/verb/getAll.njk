@@ -6,18 +6,22 @@
   {%
   if
   not
-  isauthenticated
+  isAuthenticated
   %}
   style="display: none"
-  {%endif%}
+  {%
+  endif
+  %}
 >
   Agregar Especialidad
 </button>
+
 <div
   id="snackbar"
   class="snackbar"
 ></div>
-<div id="specialtyTableContainer"></div>
+<div id="tableContainer"></div>
+
 <!-- Modal para agregar especialidades -->
 <div
   class="modal"
@@ -30,69 +34,94 @@
       onclick="Modal.close('#addSpecialtyModal')"
       >×</span
     >
-    <h2>Agregar Especialidad</h2>
-    <label for="specialtyName">Nombre:</label>
-    <input
-      type="text"
-      id="specialtyName"
-      required=""
-    />
-    <label for="specialtyDescription">Descripción:</label>
-    <input
-      type="text"
-      id="specialtyDescription"
-      required=""
-    />
+    <h2 class="modal-title"></h2>
+    <div id="inputContainer"></div>
+    <!-- Contenedor dinámico para los inputs -->
     <button id="saveSpecialtyBtn">Guardar</button>
   </div>
 </div>
-{% include "components/custom/customPopover.njk" %}
+
+{% include "components/custom/customPopover.njk" %} {% include
+"components/custom/common/deleteItem.njk" %}
+
 <script type="module">
+  import { saveItem } from '../js/logic/itemLogic/index.js';
   import {
     loadSpecialties,
     addSpecialty,
     updateSpecialty,
     deleteSpecialty,
   } from '../js/reducers/index.js';
-
-  import { createService, updateService } from '../js/services/index.js';
+  import {
+    createService,
+    updateService,
+    deleteService,
+  } from '../js/services/index.js';
   import { getState } from '../js/reducers/state.js';
   import { fetchSpecialty } from '../js/services/loadFetchs.js';
-  import { renderTable } from '../js/components/global/renderTable.js';
   import { specialtyEndpoints } from '../js/config/apiEndpoints.js';
-  import { confirmDelete } from '../js/utils/confirmDelete.js';
-  console.log(specialtyEndpoints.list);
-  const specialtyHeaders = {
-    name: 'Nombre',
-    description: 'Descripción',
-    isActive: 'Estado',
+  import { createCustomInputs } from '../js/components/custom/input.js';
+  import { specialtyInputConfigs } from '../js/dinamic/input/private/pages/inputSpecialty.js';
+  import { renderItems } from '../js/renders/renderItems.js';
+  import { specialtyRenderer } from '../js/renders/itemRender.js';
+  import { openModal, closeModal } from '../js/components/custom/modal.js';
+
+  const headers = ['Nombre', 'Descripción', 'Estado'];
+  let currentEditingSpecialtyId = null;
+  let currentPage = 1;
+  const specialtyPerPage = 10;
+
+  let currentView = 'table';
+
+  // Initialize modal inputs
+  const initializeModalInputs = () => {
+    const inputContainer = document.getElementById('inputContainer');
+    inputContainer.innerHTML = ''; // Clear previous inputs
+    const inputs = createCustomInputs(specialtyInputConfigs);
+    inputContainer.appendChild(inputs);
   };
 
-  let currentEditingSpecialtyId = null;
-
-  const loadsSpecialties = async () => {
+  // Load specialties and render them
+  const loadSpecialtiesData = async () => {
     await fetchSpecialty();
-    const { specialties } = getState();
-    console.log('specialties', specialties);
-    renderTable(
+    const specialties = getState().specialties;
+    renderItems(
+      currentView,
       specialties,
-      specialtyHeaders,
-      'specialtyTableContainer',
-      onAction
+      headers,
+      currentPage,
+      specialtyPerPage,
+      document.getElementById('tableContainer'),
+      specialtyRenderer
     );
   };
 
+  // Set up event listeners
   const setupEventListeners = () => {
     document.getElementById('addSpecialtyBtn').addEventListener('click', () => {
       currentEditingSpecialtyId = null;
-      document.getElementById('specialtyName').value = '';
-      document.getElementById('specialtyDescription').value = '';
-      Modal.open('#addSpecialtyModal');
+      initializeModalInputs(); // Prepare modal inputs
+      openModal('addSpecialtyModal', 'medium', 'Registro de Especialidad');
     });
 
     document
       .getElementById('saveSpecialtyBtn')
       .addEventListener('click', saveSpecialty);
+  };
+
+  const handleDeleteItem = async (id) => {
+    try {
+      const responseMessage = await deleteService(
+        id,
+        specialtyEndpoints,
+        deleteSpecialty
+      );
+      await loadSpecialtiesData();
+      showSnackbar(responseMessage, true);
+    } catch (error) {
+      console.error('Error al eliminar:', error);
+      showSnackbar('Error al eliminar la especialidad.', false);
+    }
   };
 
   const onAction = (action, id) => {
@@ -101,23 +130,37 @@
       (specialty) => specialty._id === id
     );
 
+    if (!selectedSpecialty) {
+      showSnackbar('Especialidad no encontrada.', false);
+      return;
+    }
+
     if (action === 'edit') {
-      document.getElementById('specialtyName').value = selectedSpecialty.name;
-      document.getElementById('specialtyDescription').value =
-        selectedSpecialty.description;
-      currentEditingSpecialtyId = id;
-      Modal.open('#addSpecialtyModal');
+      initializeModalInputs();
+      const nameInput = document.getElementById('specialtyName');
+      const descriptionInput = document.getElementById('specialtyDescription');
+
+      if (nameInput && descriptionInput) {
+        nameInput.value = selectedSpecialty.name;
+        descriptionInput.value = selectedSpecialty.description;
+        currentEditingSpecialtyId = id;
+        openModal('addSpecialtyModal', 'medium', 'Editar Especialidad');
+      } else {
+        showSnackbar('Error al cargar los campos de especialidad.', false);
+      }
     } else if (action === 'delete') {
-      confirmDelete(
-        id,
-        specialtyEndpoints,
-        'especialidad',
-        loadsSpecialties,
-        deleteSpecialty
-      );
+      // Abrir el modal de confirmación
+      openModal('deleteItemModal', 'small', 'Confirmar Eliminación');
+
+      // Manejar la confirmación de eliminación
+      document.getElementById('confirmDeleteButton').onclick = async () => {
+        await handleDeleteItem(id); // Llama a la función de eliminación
+        closeModal('deleteItemModal'); // Cierra el modal después de eliminar
+      };
     }
   };
 
+  // Save or update a specialty
   const saveSpecialty = async () => {
     const name = document.getElementById('specialtyName').value.trim();
     const description = document
@@ -129,40 +172,27 @@
       return;
     }
 
-    const data = { name, description };
-    if (currentEditingSpecialtyId) {
-      data._id = currentEditingSpecialtyId;
-      const message = await updateService(
-        data,
-        specialtyEndpoints,
-        updateSpecialty
-      );
-      if (message) {
-        currentEditingSpecialtyId = null;
-        Modal.close('#addSpecialtyModal');
-        loadsSpecialties();
-        showSnackbar(message, true);
-      } else {
-        showSnackbar('Error al actualizar la especialidad.', false);
-      }
-    } else {
-      const message = await createService(
-        data,
-        specialtyEndpoints,
-        addSpecialty
-      );
-      if (message) {
-        Modal.close('#addSpecialtyModal');
-        loadsSpecialties();
-        showSnackbar(message, true);
-      } else {
-        showSnackbar('Error al agregar la especialidad.', false);
-      }
+    const data = {
+      name,
+      description,
+      ...(currentEditingSpecialtyId && { _id: currentEditingSpecialtyId }),
+    };
+
+    try {
+      const message = currentEditingSpecialtyId
+        ? await updateService(data, specialtyEndpoints, updateSpecialty)
+        : await createService(data, specialtyEndpoints, addSpecialty);
+
+      Modal.close('#addSpecialtyModal');
+      loadSpecialtiesData(); // Reload specialties after save
+      showSnackbar(message, true);
+    } catch (error) {
+      showSnackbar('Error al guardar la especialidad.', false);
     }
   };
 
-  loadsSpecialties();
+  // Initial function calls
+  loadSpecialtiesData();
   setupEventListeners();
-
   window.onAction = onAction;
 </script>

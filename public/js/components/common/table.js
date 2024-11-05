@@ -14,7 +14,7 @@ export function renderTable(
   const end = start + itemsPerPage;
   const paginatedData = data.slice(start, end);
 
-  const tableContainer = document.getElementById('userTableContainer');
+  const tableContainer = document.getElementById('tableContainer');
   tableContainer.innerHTML = ''; // Limpiar contenido previo
 
   // Encabezados de la tabla

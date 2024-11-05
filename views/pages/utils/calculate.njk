@@ -1,0 +1,102 @@
+
+<h1>Calculadora Simple</h1>
+<form id="calculatorForm">
+  <input
+    type="number"
+    id="number1"
+    placeholder="Número 1"
+    required
+  />
+  <input
+    type="number"
+    id="number2"
+    placeholder="Número 2"
+    required
+  />
+
+  <select
+    id="operation"
+    required
+  >
+    <option
+      value=""
+      disabled
+      selected
+    >
+      Selecciona una operación
+    </option>
+    <option value="add">Sumar</option>
+    <option value="subtract">Restar</option>
+    <option value="multiply">Multiplicar</option>
+    <option value="divide">Dividir</option>
+  </select>
+
+  <button type="submit">Calcular</button>
+</form>
+
+<h2>
+  Resultado: <span id="result">{{ result }}</span>
+</h2>
+
+<script type="module">
+  // Importa el hook useState
+  import useState from '../js/hooks/useState.js'; // Ajusta la ruta según tu estructura de carpetas
+
+  // Inicializa el estado para el resultado
+  const [getResult, setResult, subscribeResult] = useState(
+    'calculatorResult',
+    0
+  );
+
+  // Función para manejar el envío del formulario
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+
+    const number1 = parseFloat(document.getElementById('number1').value);
+    const number2 = parseFloat(document.getElementById('number2').value);
+    const operation = document.getElementById('operation').value;
+
+    let result;
+
+    switch (operation) {
+      case 'add':
+        result = number1 + number2;
+        break;
+      case 'subtract':
+        result = number1 - number2;
+        break;
+      case 'multiply':
+        result = number1 * number2;
+        break;
+      case 'divide':
+        result = number2 !== 0 ? number1 / number2 : 'Error: División por cero';
+        break;
+      default:
+        result = 'Operación no válida';
+    }
+
+    // Actualiza el estado con el nuevo resultado
+    setResult(result);
+    render();
+  };
+
+  // Función para renderizar el resultado en la página
+  const render = () => {
+    const result = getResult();
+    document.getElementById('result').textContent = result;
+  };
+
+  // Suscribirse a los cambios en el resultado
+  subscribeResult((newResult) => {
+    console.log('Nuevo resultado:', newResult);
+    render();
+  });
+
+  // Configura el evento de envío del formulario
+  document
+    .getElementById('calculatorForm')
+    .addEventListener('submit', handleFormSubmit);
+
+  // Renderiza la plantilla inicialmente
+  render();
+</script>

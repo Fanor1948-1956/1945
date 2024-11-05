@@ -1,53 +1,32 @@
-<!-- Plantilla hija: views/pages/privatePages/dashboard.njk --><html><head></head><body>{% extends "layouts/privateLayout.njk" %} {% block title %}Dashboard{% endblock
-%}
-<!-- Bloque de título -->
-
-{% block content %}
+<!-- Plantilla hija: views/pages/privatePages/dashboard.njk -->
+{% extends "layouts/privateLayout.njk" %} {% block title %}Dashboard{% endblock
+%} {% block content %}
 <div class="dashboard-container">
-  <!-- Título principal -->
+  <!-- Opciones del Dashboard -->
   <section class="dashboard-section">
-    {#
-    <h1 class="main-heading">{{ title }}</h1>
-    #}
-    <p class="subheading">Bienvenido al dashboard privado.</p>
-  
-  </section>
-
-  <!-- Bienvenida al usuario -->
-  <section class="dashboard-section">
-    <h2 class="section-heading">Bienvenido, {{ name }} {{ surnames }}</h2>
-    <p class="subtext">Tus roles son:</p>
-    <div class="roles-list">
-      <ul>
-        {% for role in userRoles %}
-        <li class="role-item">{{ role }}</li>
-        {% endfor %}
-      </ul>
-    </div>
-    <a href="/auth/logout" class="logout-button">Cerrar Sesión</a>
-  </section>
-
-  <!-- Información adicional -->
-  <section class="dashboard-section">
-    <h2 class="section-heading">Opciones del Dashboard</h2>
-
-    {% set contador = 1 %} {% for item in items %}
+    {% include "pages/utils/clock.njk" %} {% for item in items %}
     <section class="dashboard-subsection">
-      <h3 class="subsection-title">Opción {{ contador }}: {{ item.title }}</h3>
-      <p>
-        <a href="{{ item.link }}" class="option-link">Ir a {{ item.title }}</a>
-      </p>
-    </section>
-    {% set contador = contador + 1 %} {% endfor %}
-  </section>
+      <a
+        href="{{ item.link }}"
+        class="subsection-title"
+        >{{ item.title }}</a
+      >
+      <div class="subsection-content">
+        <p>
+          Contenido adicional o descripción de {{ item.title }} puede ir aquí.
+        </p>
+      </div>
+      <h1>Gráficos de Registros Activos e Inactivos</h1>
 
-  <!-- Información de perfil -->
-  <section class="dashboard-section">
-    <h3 class="section-heading">Información del Perfil</h3>
-    <p class="subtext">Email: {{ profile.email }}</p>
-    <p class="subtext">Roles: {{ userRoles | join(', ') }}</p>
+      <div
+        id="charts-container-{{ loop.index }}"
+        class="charts-container"
+      ></div>
+    </section>
+    {% endfor %}
   </section>
 </div>
 
+<script type="module"></script>
+
 {% endblock %}
-</body></html>

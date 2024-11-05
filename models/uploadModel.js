@@ -19,7 +19,9 @@ const uploadSchema = new mongoose.Schema({
   },
   description: { type: String }, // Descripción opcional del archivo
   isSelected: { type: Boolean, default: false },
-});
+},
+ { timestamps: true }
+);
 
 // Agregar un método para verificar si el archivo existe
 uploadSchema.statics.exists = async function (id) {

@@ -19,7 +19,7 @@ const modalHTML = `
       <h2>Confirmar Eliminación</h2>
       <p id="modalMessage"></p>
       <button id="confirmDeleteButton">Confirmar</button>
-      <button id="cancelDeleteButton">Cancelar</button>
+   
     </div>
   </div>
 `;

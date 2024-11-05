@@ -1,15 +1,14 @@
-import { getState } from "../../reducers/state.js";
-import { handleAddUser, handleDeleteModal, handleEditUser } from "./index.js";
+import { getState } from '../../reducers/state.js';
 
-export const onAction = async (action, id) => {
-  const users = getState().users;
-  const selectedUser = users.find((user) => user._id === id);
+export const onAction = async (action, id, state, handlers) => {
+  const items = getState()[state];
+  const selectedItem = items.find((item) => item._id === id);
 
   if (action === 'edit') {
-    await handleEditUser(selectedUser);
+    await handlers.handleEditItem(selectedItem);
   } else if (action === 'add') {
-    handleAddUser();
+    handlers.handleAddItem();
   } else if (action === 'delete') {
-    handleDeleteModal(id);
+    handlers.handleDeleteModalItem(id);
   }
 };

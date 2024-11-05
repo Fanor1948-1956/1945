@@ -1,0 +1,316 @@
+{% extends "layouts/privateLayout.njk" %} {% block content %}
+
+<!-- Contenedor para los controles de entrada -->
+<div class="inputContent">
+  <button
+    id="settingsButton"
+    title="Configuraciones"
+  >
+    <div id="settingsIcon"></div>
+  </button>
+  <div id="inputContainer"></div>
+</div>
+
+<!-- Contenedor para la app en general -->
+<div id="app">
+  <!-- Dropdown para lista de secciones -->
+  <div
+    id="dropdown"
+    class="dropdown"
+    style="display: none"
+  >
+    <ul
+      id="dropdownList"
+      class="dropdownList"
+    ></ul>
+  </div>
+</div>
+
+<!-- Contenedor para las secciones personalizadas -->
+<div
+  id="customStack"
+  class="custom-stack"
+>
+  <!-- Aquí se cargarán las secciones personalizadas -->
+</div>
+
+<!-- Controles para gestionar las secciones -->
+<div class="section-controls">
+  <button id="addSectionButton">Agregar Sección</button>
+  <button id="clearStorageButton">Limpiar Almacenamiento</button>
+</div>
+
+<!-- Mensaje de no resultados, envuelto para mantener el código modular -->
+<div
+  id="noResultsMessage"
+  style="display: none; color: red"
+>
+  No hay secciones que coincidan con tu búsqueda.
+</div>
+
+<script type="module">
+  import { createCustomInputs } from './js/components/custom/input.js';
+  import {
+    initializeDropdown,
+    addItemToDropdown,
+    clearDropdown,
+  } from './js/components/common/dropdown.js';
+  import { generateRandomClinicIcon } from './js/utils/icons.js';
+
+  let sections = [];
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initializeDropdown('dropdown', 'settingsButton');
+    initializeModalInputs();
+    loadSections();
+
+    const settingsIcon = generateRandomClinicIcon('Ajustes');
+    document.getElementById('settingsIcon').innerHTML = settingsIcon;
+
+    document
+      .getElementById('addSectionButton')
+      .addEventListener('click', addNewSection);
+    document
+      .getElementById('clearStorageButton')
+      .addEventListener('click', clearStorage);
+  });
+
+  function loadSections() {
+    sections = JSON.parse(localStorage.getItem('customSections')) || [];
+    document.getElementById('customStack').innerHTML = '';
+    sections.forEach((section) => {
+      createCustomSection(
+        section.title,
+        section.subtitle,
+        section.content,
+        section.id
+      );
+      addToDropdown(section.id, section.title);
+    });
+  }
+
+  const inputSearch = [
+    {
+      id: 'inputSearch',
+      name: 'inputSearch',
+      type: 'text',
+      placeholder: 'Buscar...',
+      attributes: { oninput: 'filterSections(event.target.value)' },
+    },
+  ];
+
+  const initializeModalInputs = () => {
+    const inputContainer = document.getElementById('inputContainer');
+    inputContainer.innerHTML = ''; // Limpiar inputs anteriores
+    const inputs = createCustomInputs(inputSearch);
+    inputContainer.appendChild(inputs);
+
+    const inputField = document.getElementById('inputSearch');
+    if (inputField) {
+      inputField.addEventListener('input', (event) => {
+        filterSections(event.target.value);
+      });
+    }
+  };
+
+  function filterSections(query) {
+    const sections = JSON.parse(localStorage.getItem('customSections')) || [];
+    const customStack = document.getElementById('customStack');
+    customStack.innerHTML = '';
+
+    const filteredSections = sections.filter(
+      (section) =>
+        section.title.toLowerCase().includes(query.toLowerCase()) ||
+        section.subtitle.toLowerCase().includes(query.toLowerCase())
+    );
+
+    if (filteredSections.length === 0) {
+      const noResultsMessage = document.createElement('div');
+      noResultsMessage.id = 'noResultsMessage';
+      noResultsMessage.textContent = 'No hay resultados para la búsqueda.';
+      customStack.appendChild(noResultsMessage);
+    } else {
+      filteredSections.forEach((section) => {
+        createCustomSection(
+          section.title,
+          section.subtitle,
+          section.content,
+          section.id
+        );
+      });
+    }
+  }
+
+  function addNewSection() {
+    const count = Date.now();
+    createCustomSection(
+      `Sección ${count}`,
+      `Subtítulo ${count}`,
+      `Contenido de Sección ${count}`,
+      count
+    );
+  }
+
+  function clearStorage() {
+    localStorage.removeItem('customSections');
+    loadSections();
+  }
+
+  function createCustomSection(
+    title,
+    subtitle,
+    content,
+    sectionId = Date.now()
+  ) {
+    const section = document.createElement('div');
+    section.className = 'custom-section';
+    section.dataset.id = sectionId;
+
+    section.innerHTML = `
+      <div class="section-content">
+        <span class="toggle-visibility" data-id="${sectionId}" onclick="toggleSection('${sectionId}')">−</span>
+        <h2>${title}</h2>
+        <h4>${subtitle}</h4>
+        <div class="textWrapper">${content}</div>
+        <button class="remove-section" data-id="${sectionId}" onclick="removeSection('${sectionId}')">Eliminar</button>
+        <button class="edit-section" data-id="${sectionId}" onclick="editSection('${sectionId}')">Editar</button>
+      </div>
+    `;
+    document.getElementById('customStack').appendChild(section);
+    saveSections();
+  }
+
+  function addToDropdown(sectionId, title) {
+    const li = document.createElement('li');
+    const icon = generateRandomClinicIcon(title);
+    li.innerHTML = `
+      <button data-id="${sectionId}" class="buttonIcon" onclick="toggleVisibility('${sectionId}')">
+        ${icon}
+      </button>
+      <span>${title}</span>
+    `;
+    document.getElementById('dropdownList').appendChild(li);
+  }
+
+  window.toggleSection = function (sectionId) {
+    const section = document.querySelector(
+      `.custom-section[data-id="${sectionId}"]`
+    );
+    if (section) {
+      const toggleButton = section.querySelector('.toggle-visibility');
+      const isCollapsed = section.style.display === 'none';
+      section.style.display = isCollapsed ? 'block' : 'none';
+      toggleButton.textContent = isCollapsed ? '−' : '+';
+      saveSections();
+    }
+  };
+
+  window.toggleVisibility = function (sectionId) {
+    const section = document.querySelector(
+      `.custom-section[data-id="${sectionId}"]`
+    );
+    if (section) {
+      const isCurrentlyVisible = section.style.display !== 'none';
+      section.style.display = isCurrentlyVisible ? 'none' : 'block';
+      saveSections();
+      updateEyeButton(sectionId, isCurrentlyVisible);
+    }
+  };
+
+  window.removeSection = function (sectionId) {
+    const section = document.querySelector(
+      `.custom-section[data-id="${sectionId}"]`
+    );
+    if (section) {
+      section.remove();
+      saveSections();
+    }
+  };
+
+  window.editSection = function (sectionId) {
+    const section = document.querySelector(
+      `.custom-section[data-id="${sectionId}"]`
+    );
+    if (section) {
+      const title = section.querySelector('h2').innerText;
+      const subtitle = section.querySelector('h4').innerText;
+      const content = section.querySelector('.textWrapper').innerText;
+
+      // Crear un formulario para editar
+      const editForm = document.createElement('div');
+      editForm.innerHTML = `
+        <h3>Editar Sección</h3>
+        <label>Título:</label>
+        <input type="text" id="editTitle" value="${title}" />
+        <label>Subtítulo:</label>
+        <input type="text" id="editSubtitle" value="${subtitle}" />
+        <label>Contenido:</label>
+        <textarea id="editContent">${content}</textarea>
+        <button id="saveEditButton">Guardar</button>
+        <button id="cancelEditButton">Cancelar</button>
+      `;
+      section.innerHTML = ''; // Limpiar el contenido de la sección
+      section.appendChild(editForm);
+
+      document
+        .getElementById('saveEditButton')
+        .addEventListener('click', () => {
+          const newTitle = document.getElementById('editTitle').value;
+          const newSubtitle = document.getElementById('editSubtitle').value;
+          const newContent = document.getElementById('editContent').value;
+
+          const updatedSection = document.querySelector(
+            `.custom-section[data-id="${sectionId}"]`
+          );
+          if (updatedSection) {
+            updateSection(sectionId, newTitle, newSubtitle, newContent);
+          } else {
+            console.error(`Sección con ID ${sectionId} no encontrada.`);
+          }
+        });
+
+      document
+        .getElementById('cancelEditButton')
+        .addEventListener('click', () => {
+          loadSections(); // Cargar nuevamente las secciones
+        });
+    }
+  };
+
+  function updateSection(sectionId, newTitle, newSubtitle, newContent) {
+    const section = document.querySelector(
+      `.custom-section[data-id="${sectionId}"]`
+    );
+    if (section) {
+      section.innerHTML = `
+        <div class="section-content">
+          <span class="toggle-visibility" data-id="${sectionId}" onclick="toggleSection('${sectionId}')">−</span>
+          <h2>${newTitle}</h2>
+          <h4>${newSubtitle}</h4>
+          <div class="textWrapper">${newContent}</div>
+          <button class="remove-section" data-id="${sectionId}" onclick="removeSection('${sectionId}')">Eliminar</button>
+          <button class="edit-section" data-id="${sectionId}" onclick="editSection('${sectionId}')">Editar</button>
+        </div>
+      `;
+      saveSections(); // Guarda los cambios en localStorage
+    } else {
+      console.error(
+        `No se pudo actualizar la sección con ID ${sectionId}, no se encontró.`
+      );
+    }
+  }
+
+  function saveSections() {
+    const sections = Array.from(
+      document.querySelectorAll('.custom-section')
+    ).map((section) => ({
+      id: section.dataset.id,
+      title: section.querySelector('h2').innerText,
+      subtitle: section.querySelector('h4').innerText,
+      content: section.querySelector('.textWrapper').innerText,
+    }));
+    localStorage.setItem('customSections', JSON.stringify(sections));
+  }
+</script>
+
+{% endblock %}

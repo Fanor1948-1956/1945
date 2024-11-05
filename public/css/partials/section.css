@@ -1,0 +1,75 @@
+
+.inputContent {
+  display: flex;
+  justify-content: space-between;
+  /* border: 1px solid rgb(113, 10, 10); */
+  align-items: flex-start; /* Alinear los elementos en el eje vertical */
+}
+#searchContent {
+  display: flex; /* Alinear los elementos en línea */
+  gap: 10px; /* Espacio entre los elementos */
+  justify-content: center; /* Justificar los elementos en la línea */
+  align-items: center; /* Alinear los elementos en el eje vertical */
+}
+#logoSection {
+  display: flex; /* Alinear los elementos en línea */
+  gap: 10px; /* Espacio entre los elementos */
+  justify-content: center; /* Justificar los elementos en la línea */
+  align-items: center; /* Alinear los elementos en el eje vertical */
+}
+.form-control {
+  width: 100%; /* Ancho de la caja de entrada */
+  padding: 10px; /* Espaciado en la caja de entrada */
+  border: none; /* Borde desactivado */
+  border-radius: 5px; /* Bordes redondeados */
+}
+#logo {
+  height: 2rem; /* Tamaño del logotipo */
+}
+#menu {
+  display: flex; /* Alinear los elementos en línea */
+  gap: 10px; /* Espacio entre los elementos */
+}
+#searchIcon {
+  cursor: pointer; /* Cambiar cursor al pasar el mouse */
+  padding: 10px; /* Espaciado en el icono */
+  border: none; /* Borde desactivado */
+  border-radius: 5px; /* Bordes redondeados */
+  background-color: #f1f1f1; /* Fondo del icono */
+  color: rgb(5, 5, 84); /* Color del icono */
+  font-size: 20px; /* Tamaño defuente */
+  font-weight: bold; /* Negrita */
+}
+
+#searchIcon:hover {
+  background-color: #ddd; /* Fondo del icono al pasar el mouse */
+}
+
+.custom-stack {
+  margin: 10px 0; /* Margen superior e inferior */
+}
+
+.custom-section {
+  display: block; /* Visible por defecto */
+  position: relative; /* Posición relativa para el contenido */
+  margin: 10px 0; /* Margen superior e inferior */
+  border: 1px solid #888; /* Borde */
+  border-radius: 5px; /* Bordes redondeados */
+  background-color: #f1f1f1; /* Fondo de la sección */
+}
+
+.section-content {
+  padding: 20px; /* Espaciado interno */
+  color: rgb(5, 5, 84);
+}
+
+.close {
+  cursor: pointer; /* Cambiar cursor al pasar el mouse */
+  float: right; /* Alinear a la derecha */
+  font-size: 20px; /* Tamaño de fuente */
+  font-weight: bold; /* Negrita */
+}
+
+.close:hover {
+  color: red; /* Color al pasar el mouse */
+}

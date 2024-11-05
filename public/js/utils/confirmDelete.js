@@ -39,11 +39,6 @@ export const confirmDelete = async (
       });
 
     
-    $("#cancelDeleteButton")
-      .off("click")
-      .on("click", () => {
-        Modal.close("#deleteItemModal"); 
-        resolve(); 
-      });
+   
   });
 };

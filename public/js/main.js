@@ -19,5 +19,3 @@ import './components/common/popover.js';
 import './components/custom/icons.js';
 
 import './components/custom/modal.js';
-
-import './libraries/select2.min.js';

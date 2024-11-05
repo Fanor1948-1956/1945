@@ -1,0 +1,219 @@
+{% extends "layouts/privateLayout.njk" %} {% block content %}
+
+<div class="inputContent">
+  <button
+    id="settingsButton"
+    title="Configuraciones"
+  >
+    <div id="settingsIcon"></div>
+  </button>
+  <div id="inputContainer"></div>
+</div>
+
+<div id="app">
+  <div
+    id="dropdown"
+    class="dropdown"
+    style="display: none"
+  >
+    <ul
+      id="dropdownList"
+      class="dropdownList"
+    ></ul>
+  </div>
+</div>
+
+<div
+  id="customStack"
+  class="custom-stack"
+>
+  <!-- Secciones Personalizadas se cargarán aquí -->
+</div>
+
+<button id="addSectionButton">Agregar Sección</button>
+<button id="clearStorageButton">Limpiar Almacenamiento</button>
+
+<script type="module">
+  import { createCustomInputs } from './js/components/custom/input.js';
+  import {
+    initializeDropdown,
+    addItemToDropdown,
+    clearDropdown,
+  } from './js/components/common/dropdown.js';
+  import { generateRandomClinicIcon } from './js/utils/icons.js';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initializeDropdown('dropdown', 'settingsButton');
+    initializeModalInputs();
+    loadSections();
+
+    const settingsIcon = generateRandomClinicIcon('Ajustes');
+    document.getElementById('settingsIcon').innerHTML = settingsIcon;
+
+    document
+      .getElementById('addSectionButton')
+      .addEventListener('click', addNewSection);
+    document
+      .getElementById('clearStorageButton')
+      .addEventListener('click', clearStorage);
+  });
+
+  const inputSearch = [
+    {
+      id: 'inputSearch',
+      name: 'inputSearch',
+      type: 'text',
+      placeholder: 'Buscar...',
+      attributes: {
+        oninput: 'filterSections(event.target.value)',
+      },
+    },
+  ];
+
+  const initializeModalInputs = () => {
+    const inputContainer = document.getElementById('inputContainer');
+    inputContainer.innerHTML = ''; // Clear previous inputs
+    const inputs = createCustomInputs(inputSearch);
+    inputContainer.appendChild(inputs);
+  };
+
+  function loadSections() {
+    const sections = JSON.parse(localStorage.getItem('customSections')) || [];
+    document.getElementById('customStack').innerHTML = '';
+
+    sections.forEach((section) => {
+      createCustomSection(
+        section.title,
+        section.subtitle,
+        section.content,
+        section.id
+      );
+      addToDropdown(section.id, section.title);
+    });
+  }
+
+  function addNewSection() {
+    const count = Date.now();
+    const title = `Sección ${count}`;
+    createCustomSection(
+      title,
+      `Subtítulo ${count}`,
+      `Contenido de Sección ${count}`,
+      count
+    );
+  }
+
+  function clearStorage() {
+    localStorage.removeItem('customSections');
+    loadSections();
+  }
+
+  function createCustomSection(
+    title,
+    subtitle,
+    content,
+    sectionId = Date.now()
+  ) {
+    const section = document.createElement('div');
+    section.className = 'custom-section';
+    section.dataset.id = sectionId;
+
+    section.innerHTML = `
+      <div class="section-content">
+        <span class="toggle-visibility" data-id="${sectionId}" onclick="toggleSection('${sectionId}')">−</span>
+        <h2>${title}</h2>
+        <h4>${subtitle}</h4>
+        <div class="textWrapper">${content}</div>
+        <button class="remove-section" data-id="${sectionId}" onclick="removeSection('${sectionId}')">Eliminar</button>
+      </div>
+    `;
+
+    document.getElementById('customStack').appendChild(section);
+    saveSections();
+  }
+
+  function addToDropdown(sectionId, title) {
+    const li = document.createElement('li');
+    const icon = generateRandomClinicIcon(title);
+    li.innerHTML = `
+      <button data-id="${sectionId}" class="buttonIcon" onclick="toggleVisibility('${sectionId}')">
+        ${icon}
+      </button>
+      <span>${title}</span>
+    `;
+
+    document.getElementById('dropdownList').appendChild(li);
+  }
+
+  window.toggleSection = function (sectionId) {
+    const section = document.querySelector(
+      `.custom-section[data-id="${sectionId}"]`
+    );
+    if (section) {
+      const toggleButton = section.querySelector('.toggle-visibility');
+      const isCollapsed = section.style.display === 'none';
+      section.style.display = isCollapsed ? 'block' : 'none';
+      toggleButton.textContent = isCollapsed ? '−' : '+';
+      saveSections();
+    }
+  };
+
+  window.toggleVisibility = function (sectionId) {
+    const section = document.querySelector(
+      `.custom-section[data-id="${sectionId}"]`
+    );
+    if (section) {
+      const isCurrentlyVisible = section.style.display !== 'none';
+      section.style.display = isCurrentlyVisible ? 'none' : 'block';
+      saveSections();
+      updateEyeButton(sectionId, isCurrentlyVisible);
+    }
+  };
+
+  function updateEyeButton(sectionId, isCurrentlyVisible) {
+    const eyeButton = document.querySelector(`button[data-id="${sectionId}"]`);
+    if (eyeButton) {
+      eyeButton.innerHTML = isCurrentlyVisible
+        ? generateRandomClinicIcon('Visible')
+        : generateRandomClinicIcon('No Visible');
+    }
+  }
+
+  window.removeSection = function (sectionId) {
+    const section = document.querySelector(
+      `.custom-section[data-id="${sectionId}"]`
+    );
+    if (section) {
+      section.remove();
+      saveSections();
+    }
+  };
+
+  function saveSections() {
+    const sections = Array.from(
+      document.querySelectorAll('.custom-section')
+    ).map((section) => ({
+      id: section.dataset.id,
+      title: section.querySelector('h2').innerText,
+      subtitle: section.querySelector('h4').innerText,
+      content: section.querySelector('.textWrapper').innerText,
+    }));
+
+    localStorage.setItem('customSections', JSON.stringify(sections));
+  }
+
+  function filterSections(query) {
+    const sections = document.querySelectorAll('.custom-section');
+    sections.forEach((section) => {
+      const title = section.querySelector('h2').innerText.toLowerCase();
+      const subtitle = section.querySelector('h4').innerText.toLowerCase();
+      section.style.display =
+        title.includes(query.toLowerCase()) ||
+        subtitle.includes(query.toLowerCase())
+          ? 'block'
+          : 'none';
+    });
+  }
+</script>
+
+{% endblock %}

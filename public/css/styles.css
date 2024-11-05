@@ -8,6 +8,8 @@
 @import './partials/popover.css';
 @import './partials/upload.css';
 @import './partials/snackbar.css';
+@import './partials/section.css';
+@import './partials/dropdown.css';
 /*popper*/
 @import './partials/popper.css';
 
@@ -21,7 +23,5 @@
 
 @import './pages/privatePages/dashboard.css';
 @import './pages/privatePages/auth/profile.css';
-
-@import './libraries/select2.min.css';
 
 @import './icons/style.css';

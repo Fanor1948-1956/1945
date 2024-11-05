@@ -1,0 +1,103 @@
+.dropdown {
+  position: fixed;
+  border-radius: 0.3rem;
+  z-index: 1000;
+  width: 200px;
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  background-color: white;
+  color: blue;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 0.1rem;
+}
+
+.dropdown::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dropdown::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.dropdown::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.textWrapper {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.dropdownList {
+  list-style-type: none;
+
+  margin: 0;
+  padding: 0;
+}
+.dropdownList li {
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  flex-direction: row;
+  justify-content: space-between; /* Alinea horizontalmente los elementos dentro del li */
+  align-items: center; /* Alinea verticalmente los elementos dentro del li */
+}
+.buttonIcon {
+  margin-right: 5px;
+  transition: transform 0.3s ease;
+  transform: rotate(0deg);
+  transition: transform 0.3s ease;
+  border-radius: 50%;
+  border: 1px solid white;
+}
+
+.custom-section {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 5px 0;
+  background-color: #f9f9f9;
+}
+
+.custom-section h2 {
+  margin: 5px 0;
+}
+
+.custom-section h4 {
+  margin: 5px 0;
+  color: #555;
+}
+
+.toggle-visibility {
+  cursor: pointer;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.remove-section {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#settingsButton {
+  color: rgb(3, 1, 83);
+  border: none;
+
+  border-radius: 5px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid white;
+  border-radius: 50%;
+}

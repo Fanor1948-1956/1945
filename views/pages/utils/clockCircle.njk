@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Reloj Analógico Clásico</title>
+    <style>
+      .clock {
+        position: relative;
+        width: 250px;
+        height: 250px;
+        border: 8px solid #333;
+        border-radius: 50%;
+        background: #f7f7f7;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Centro del reloj */
+      .center {
+        width: 12px;
+        height: 12px;
+        background: #333;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        z-index: 10; /* Asegura que esté por encima de las agujas */
+      }
+
+      /* Agujas del reloj */
+      .hand {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform-origin: bottom; /* Las agujas giran desde el fondo */
+      }
+
+      .hour-hand {
+        width: 6px;
+        height: 60px;
+        background: #ac0808;
+      }
+
+      .minute-hand {
+        width: 4px;
+        height: 80px;
+        background: #555;
+      }
+
+      .second-hand {
+        width: 2px;
+        height: 90px;
+        background: red;
+      }
+
+      /* Números del reloj */
+      .number {
+        position: absolute;
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+        height: 30px;
+        text-align: center;
+        line-height: 30px;
+        border-radius: 50%;
+        z-index: 10; /* Asegura que estén por encima de las agujas */
+      }
+
+      /* Marcas de segundos */
+      .second-mark {
+        position: absolute;
+        width: 2px;
+        height: 10px;
+        background: #333;
+        top: 50%;
+        left: 50%;
+        transform-origin: top; /* Las marcas giran desde la parte superior */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Reloj Analógico con Números Centrados</h1>
+    <div
+      class="clock"
+      id="clock"
+    >
+      <!-- Centro del reloj -->
+      <div class="center"></div>
+      <!-- Agujas del reloj -->
+      <div
+        class="hand hour-hand"
+        id="hourHand"
+      ></div>
+      <div
+        class="hand minute-hand"
+        id="minuteHand"
+      ></div>
+      <div
+        class="hand second-hand"
+        id="secondHand"
+      ></div>
+    </div>
+
+    <script type="module">
+      // Simulación de useState y useEffect
+      function useState(initialValue) {
+        let value = initialValue;
+        const listeners = [];
+
+        const setValue = (newValue) => {
+          value = newValue;
+          listeners.forEach((listener) => listener(value)); // Notificar a todos los listeners
+        };
+
+        const subscribe = (listener) => {
+          listeners.push(listener);
+          listener(value); // Llamar al listener con el valor actual
+        };
+
+        return [() => value, setValue, subscribe];
+      }
+
+      function useEffect(effect) {
+        effect();
+      }
+
+      // Inicializamos los estados para los ángulos de las agujas
+      const [getHourAngle, setHourAngle, subscribeHour] = useState(0);
+      const [getMinuteAngle, setMinuteAngle, subscribeMinute] = useState(0);
+      const [getSecondAngle, setSecondAngle, subscribeSecond] = useState(0);
+
+      // Función para actualizar los ángulos de cada aguja
+      const updateClock = () => {
+        const now = new Date();
+        const seconds = now.getSeconds();
+        const minutes = now.getMinutes();
+        const hours = now.getHours();
+
+        // Calculamos los ángulos
+        setSecondAngle(seconds * 6); // 6 grados por segundo
+        setMinuteAngle(minutes * 6 + seconds * 0.1); // 6 grados por minuto + ajuste por segundo
+        setHourAngle((hours % 12) * 30 + minutes * 0.5); // 30 grados por hora + ajuste por minuto
+      };
+
+      // useEffect para establecer el intervalo de actualización cada segundo
+      useEffect(() => {
+        const intervalId = setInterval(updateClock, 1000);
+        return () => clearInterval(intervalId); // Limpieza del intervalo
+      });
+
+      // Función para renderizar las posiciones de las agujas
+      const render = () => {
+        document.getElementById(
+          'hourHand'
+        ).style.transform = `rotate(${getHourAngle()}deg)`;
+        document.getElementById(
+          'minuteHand'
+        ).style.transform = `rotate(${getMinuteAngle()}deg)`;
+        document.getElementById(
+          'secondHand'
+        ).style.transform = `rotate(${getSecondAngle()}deg)`;
+      };
+
+      // Suscribirse a los cambios en los ángulos de las agujas
+      subscribeHour(render);
+      subscribeMinute(render);
+      subscribeSecond(render);
+
+      // Inicializar el reloj al cargar la página
+      updateClock();
+
+      // Función para agregar números y marcas de segundos
+      const clockElement = document.getElementById('clock');
+
+      // Agregar números
+      for (let i = 1; i <= 12; i++) {
+        const angle = i * 30; // 30 grados entre cada número
+        const number = document.createElement('div');
+        number.classList.add('number');
+        number.style.transform = `rotate(${angle}deg) translate(0, -100px) rotate(-${angle}deg)`; // Mantiene el texto vertical
+        number.textContent = i;
+        clockElement.appendChild(number);
+      }
+
+      // Agregar marcas de segundos
+      for (let i = 0; i < 60; i++) {
+        const angle = i * 6; // 6 grados entre cada marca
+        const mark = document.createElement('div');
+        mark.classList.add('second-mark');
+        mark.style.transform = `rotate(${angle}deg) translate(0, -110px)`; // Marcas alrededor del reloj
+        clockElement.appendChild(mark);
+      }
+    </script>
+  </body>
+</html>

@@ -1,16 +1,17 @@
 const permissionModel = require('../models/permissionModel');
 const roleModel = require('../models/roleModel');
-const { User, Patient } = require('../models/userModel');
+const { User } = require('../models/userModel');
 const { logout } = require('../controllers/authController');
 const { getIcon } = require('../utils/iconUtils');
-const { verifyToken } = require('../middleware/authMiddleware');
+const { generateRandomClinicIcon } = require('../dist/es6/icons.js');
 
 const privateRoutes = [
   {
     path: '/dashboard',
     title: 'Dashboard',
     view: 'pages/privatePages/dashboard.njk',
-    icon: getIcon('home'),
+    // icon: getIcon('home'),
+    icon: generateRandomClinicIcon('dashboardIcons'), // Ícono aleatorio
     isPublic: false,
     items: async (userRoles) => {
       let items = [];
@@ -45,7 +46,8 @@ const privateRoutes = [
     view: 'pages/privatePages/users/all.njk',
     isPublic: false,
 
-    icon: getIcon('user'),
+    // icon: getIcon('user'),
+    icon: generateRandomClinicIcon('userIcons'), // Ícono aleatorio
     items: async () => [],
     subRoutes: [
       {
@@ -53,7 +55,8 @@ const privateRoutes = [
         title: 'Administradores',
         view: 'pages/privatePages/users/adminUsers.njk',
         roles: ['Administrador', 'Paciente'],
-        icon: getIcon('user'),
+        // icon: getIcon('user'),
+        icon: generateRandomClinicIcon('userIcons'), // Ícono aleatorio
         isPublic: false,
         items: async () => [],
       },
@@ -63,7 +66,8 @@ const privateRoutes = [
         view: 'pages/privatePages/users/chiefMedicalUsers.njk',
         isPublic: false,
         roles: ['Administrador', 'Paciente'],
-        icon: getIcon('user'),
+        // icon: getIcon('user'),
+        icon: generateRandomClinicIcon('userIcons'), // Ícono aleatorio
         items: async () => [],
       },
       {
@@ -72,7 +76,8 @@ const privateRoutes = [
         isPublic: true,
         view: 'pages/privatePages/users/docUsers.njk',
         roles: ['Administrador', 'Paciente'],
-        icon: getIcon('user'),
+        // icon: getIcon('user'),
+        icon: generateRandomClinicIcon('userIcons'), // Ícono aleatorio
         items: async () => [],
       },
       {
@@ -81,7 +86,8 @@ const privateRoutes = [
         view: 'pages/privatePages/users/patientUsers.njk',
         roles: ['Doctor', 'Administrador'],
         isPublic: false,
-        icon: getIcon('user'),
+        // icon: getIcon('user'),
+        icon: generateRandomClinicIcon('userIcons'), // Ícono aleatorio
         items: async () => [],
       },
     ],

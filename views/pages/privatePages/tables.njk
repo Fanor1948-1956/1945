@@ -1,5 +1,6 @@
 {% extends "layouts/privateLayout.njk" %} {% block content %}
 
+<!-- Contenedor para los controles de entrada -->
 <div class="inputContent">
   <button
     id="settingsButton"
@@ -10,7 +11,9 @@
   <div id="inputContainer"></div>
 </div>
 
+<!-- Contenedor para la app en general -->
 <div id="app">
+  <!-- Dropdown para lista de secciones -->
   <div
     id="dropdown"
     class="dropdown"
@@ -23,15 +26,21 @@
   </div>
 </div>
 
+<!-- Contenedor para las secciones personalizadas -->
 <div
   id="customStack"
   class="custom-stack"
 >
-  <!-- Secciones Personalizadas se cargarán aquí -->
+  <!-- Aquí se cargarán las secciones personalizadas -->
 </div>
 
-<button id="addSectionButton">Agregar Sección</button>
-<button id="clearStorageButton">Limpiar Almacenamiento</button>
+<!-- Controles para gestionar las secciones -->
+<div class="section-controls">
+  <button id="addSectionButton">Agregar Sección</button>
+  <button id="clearStorageButton">Limpiar Almacenamiento</button>
+</div>
+
+<!-- Mensaje de no resultados, envuelto para mantener el código modular -->
 <div
   id="noResultsMessage"
   style="display: none; color: red"
@@ -47,12 +56,14 @@
     clearDropdown,
   } from './js/components/common/dropdown.js';
   import { generateRandomClinicIcon } from './js/utils/icons.js';
+
   let sections = [];
 
   document.addEventListener('DOMContentLoaded', () => {
     initializeDropdown('dropdown', 'settingsButton');
     initializeModalInputs();
     loadSections();
+
     const settingsIcon = generateRandomClinicIcon('Ajustes');
     document.getElementById('settingsIcon').innerHTML = settingsIcon;
 
@@ -67,7 +78,6 @@
   function loadSections() {
     sections = JSON.parse(localStorage.getItem('customSections')) || [];
     document.getElementById('customStack').innerHTML = '';
-
     sections.forEach((section) => {
       createCustomSection(
         section.title,
@@ -85,9 +95,7 @@
       name: 'inputSearch',
       type: 'text',
       placeholder: 'Buscar...',
-      attributes: {
-        oninput: 'filterSections(event.target.value)',
-      },
+      attributes: { oninput: 'filterSections(event.target.value)' },
     },
   ];
 
@@ -108,47 +116,28 @@
   function filterSections(query) {
     const sections = JSON.parse(localStorage.getItem('customSections')) || [];
     const customStack = document.getElementById('customStack');
+    customStack.innerHTML = '';
 
-    // Itera sobre todas las secciones y las compara con el query
-    sections.forEach((section) => {
-      const sectionElement = document.querySelector(
-        `.custom-section[data-id="${section.id}"]`
-      );
-      if (sectionElement) {
-        const matchesTitle = section.title
-          .toLowerCase()
-          .includes(query.toLowerCase());
-        const matchesSubtitle = section.subtitle
-          .toLowerCase()
-          .includes(query.toLowerCase());
-
-        // Si coincide con el título o subtítulo, muestra la sección
-        if (matchesTitle || matchesSubtitle) {
-          sectionElement.style.display = 'block'; // Muestra la sección
-        } else {
-          sectionElement.style.display = 'none'; // Oculta la sección
-        }
-      }
-    });
-
-    // Verifica si hay alguna sección visible
-    const visibleSections = Array.from(customStack.children).some(
-      (child) => child.style.display !== 'none'
+    const filteredSections = sections.filter(
+      (section) =>
+        section.title.toLowerCase().includes(query.toLowerCase()) ||
+        section.subtitle.toLowerCase().includes(query.toLowerCase())
     );
 
-    const noResultsMessage = document.getElementById('noResultsMessage');
-    if (!visibleSections) {
-      // Si no hay secciones visibles, muestra el mensaje
-      if (!noResultsMessage) {
-        const message = document.createElement('div');
-        message.id = 'noResultsMessage';
-        message.textContent = 'No hay resultados para la búsqueda.';
-        message.style.color = 'red'; // Asegúrate de que el mensaje sea visible
-        customStack.appendChild(message);
-      }
-    } else if (noResultsMessage) {
-      // Si hay secciones visibles, quita el mensaje de no resultados
-      noResultsMessage.remove();
+    if (filteredSections.length === 0) {
+      const noResultsMessage = document.createElement('div');
+      noResultsMessage.id = 'noResultsMessage';
+      noResultsMessage.textContent = 'No hay resultados para la búsqueda.';
+      customStack.appendChild(noResultsMessage);
+    } else {
+      filteredSections.forEach((section) => {
+        createCustomSection(
+          section.title,
+          section.subtitle,
+          section.content,
+          section.id
+        );
+      });
     }
   }
 
@@ -187,7 +176,6 @@
         <button class="edit-section" data-id="${sectionId}" onclick="editSection('${sectionId}')">Editar</button>
       </div>
     `;
-
     document.getElementById('customStack').appendChild(section);
     saveSections();
   }
@@ -201,7 +189,6 @@
       </button>
       <span>${title}</span>
     `;
-
     document.getElementById('dropdownList').appendChild(li);
   }
 
@@ -272,7 +259,6 @@
           const newSubtitle = document.getElementById('editSubtitle').value;
           const newContent = document.getElementById('editContent').value;
 
-          // Verificar si la sección aún existe antes de actualizar
           const updatedSection = document.querySelector(
             `.custom-section[data-id="${sectionId}"]`
           );
@@ -323,7 +309,6 @@
       subtitle: section.querySelector('h4').innerText,
       content: section.querySelector('.textWrapper').innerText,
     }));
-
     localStorage.setItem('customSections', JSON.stringify(sections));
   }
 </script>

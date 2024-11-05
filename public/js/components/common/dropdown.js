@@ -54,3 +54,18 @@ export function clearDropdown(dropdownId) {
 
   dropdown.innerHTML = ''; // Limpia todos los elementos
 }
+
+export function updateDropdown(dropdownId, sections) {
+  //actualizar lista de dropdowns
+  const dropdown = document.getElementById(dropdownId);
+  if (!dropdown) {
+    console.error('Dropdown element not found.');
+    return;
+  }
+
+  clearDropdown(dropdownId);
+
+  sections.forEach((section) => {
+    addItemToDropdown(dropdownId, section.content);
+  });
+}

@@ -101,3 +101,43 @@
   border: 1px solid white;
   border-radius: 50%;
 }
+.custom-section {
+  border: 1px solid transparent; /* Por defecto sin borde */
+  margin: 5px;
+  padding: 10px;
+  cursor: move; /* Cambia el cursor para indicar que se puede arrastrar */
+}
+
+.custom-section:hover {
+  border: 1px dashed #aaa; /* Borde al pasar el ratón */
+}
+
+.custom-section.ondragover {
+  border: 2px dashed #007bff; /* Borde azul al arrastrar sobre él */
+}
+.line {
+  position: absolute;
+  background-color: rgba(0, 255, 0, 0.5); /* Color verde con transparencia */
+  width: 2px; /* Ancho de la línea */
+  display: none; /* Oculta por defecto */
+  z-index: 999; /* Asegúrate de que esté sobre otros elementos */
+}
+
+.custom-section {
+  position: relative;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.section-content {
+  position: relative; /* Necesario para el posicionamiento absoluto de los elementos arrastrados */
+}
+
+.draggable-item {
+  cursor: move; /* Cambia el cursor para indicar que se puede arrastrar */
+}
+
+.highlight {
+  border: 2px dashed blue; /* Resalta el área de drop */
+}

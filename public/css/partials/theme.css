@@ -1,0 +1,49 @@
+/* styles.css */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  overflow: visible;
+
+  padding: 0;
+}
+body.light {
+    background-color: #001f3f;
+
+    color:white
+ 
+    
+}
+
+body.light h2, body.light p {
+    color: white
+}
+
+body.dark {
+     background-color: #001f3f;
+  color: white;
+  
+}
+
+body.dark h2, body.dark p {
+    color: white; /* Asegúrate de que los textos sean visibles */
+}
+body.dark .navbar, body.dark .sidebar ul,
+
+
+
+
+body.dark .container,
+body.dark .contentMain,
+body.dark .table-container,
+body.dark .table
+{
+
+
+    background-color: #370dce; /* Ejemplo de color para un navbar oscuro */
+ 
+    color: white; /* Asegúrate de que el texto sea visible */
+}
+
+/* Agrega más estilos para otros componentes aquí */
+
+

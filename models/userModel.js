@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema(
   {
@@ -9,49 +9,52 @@ const userSchema = new mongoose.Schema(
     gender: {
       type: String,
       enum: ['masculino', 'femenino', 'otro'],
-      required: true,
+      required: true
     },
     roles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Role' }],
     uploads: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Upload' }], // Referencia a los uploads
+    charts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Chart' }], // Referencia a los uploads
     isActive: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
   { timestamps: true }
-);
+)
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema)
 
 const Admin = User.discriminator(
   'Admin',
   new mongoose.Schema({
-    adminLevel: { type: String },
+    adminLevel: { type: String }
   })
-);
+)
 const ChiefMedical = User.discriminator(
   'ChiefMedical',
   new mongoose.Schema({
     department: { type: String },
-    specialties: { type: mongoose.Schema.Types.ObjectId, ref: 'Speciality' },
+    specialties: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Speciality' }]
   })
-);
+)
 const Doctor = User.discriminator(
   'Doctor',
   new mongoose.Schema({
-    specialties: { type: mongoose.Schema.Types.ObjectId, ref: 'Speciality' },
-    schedule: { type: mongoose.Schema.Types.ObjectId, ref: 'Schedule' },
-    city: { type: String },
+    specialties: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Speciality' }],
+    schedule: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Schedule' }],
+    city: { type: String }
   })
-);
+)
 const Patient = User.discriminator(
   'Patient',
   new mongoose.Schema({
-    appointments: { type: mongoose.Schema.Types.ObjectId, ref: 'Appointment' },
-    medicalHistory: [
-      { type: mongoose.Schema.Types.ObjectId, ref: 'historyClinic' },
+    appointments: [
+      { type: mongoose.Schema.Types.ObjectId, ref: 'Appointment' }
     ],
+    medicalHistory: [
+      { type: mongoose.Schema.Types.ObjectId, ref: 'historyClinic' }
+    ]
   })
-);
+)
 
-module.exports = { User, Patient, Doctor, Admin, ChiefMedical };
+module.exports = { User, Patient, Doctor, Admin, ChiefMedical }

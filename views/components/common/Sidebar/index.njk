@@ -1,31 +1,31 @@
-<html><head></head><body><aside id="sidebar" class="sidebar">
-  <div class="logo">
+<html isEditable="true"><head isEditable="true"></head><body isEditable="true"><aside id="sidebar" class="sidebar" isEditable="true">
+  <div class="logo" isEditable="true">
     Empresa
   </div>
-  <ul>
+  <ul isEditable="true">
     {% for route in publicRoutes %}
-    <li>
-      <a href="{{ route.path }}" class="{% if route.subRoutes %}has-submenu{% endif %}" data-route="{{ route.path }}">
-        <div class="icon">
+    <li isEditable="true">
+      <a href="{{ route.path }}" class="{% if route.subRoutes %}has-submenu{% endif %}" data-route="{{ route.path }}" isEditable="true">
+        <div class="icon" isEditable="true">
           {{ route.icon | safe }}
         </div>
         {{ route.title }}
       </a>
       {% if route.subRoutes %}
-      <ul class="submenu">
+      <ul class="submenu" isEditable="true">
         {% for subRoute in route.subRoutes %}
-        <li class="submenu__item">
+        <li class="submenu__item" isEditable="true">
           {# Verificar si subRoute.path está definido, si no usar el id #} {% if
           subRoute.path %}
-          <a href="{{ subRoute.path }}" class="submenuLink" data-route="{{ subRoute.path }}">
-            <div class="icon">
+          <a href="{{ subRoute.path }}" class="submenuLink" data-route="{{ subRoute.path }}" isEditable="true">
+            <div class="icon" isEditable="true">
               {{ subRoute.icon | safe }}
             </div>
             {{ subRoute.title }}
           </a>
           {% else %}
-          <a href="{{ route.path }}#{{ subRoute.id }}" class="submenuLink" data-route="{{ route.path }}#{{ subRoute.id }}">
-            <div class="icon">
+          <a href="{{ route.path }}#{{ subRoute.id }}" class="submenuLink" data-route="{{ route.path }}#{{ subRoute.id }}" isEditable="true">
+            <div class="icon" isEditable="true">
               {{ subRoute.icon | safe }}
             </div>
             {{ subRoute.title }}
@@ -39,30 +39,30 @@
     {% endfor %} {% if isAuthenticated %} {% for route in privateRoutes %} {% if
     hasAccess(userRoles, route) and route.path != '/logout' and route.title !=
     'Perfil' %}
-    <li>
-      <a href="{{ route.path }}" class="menu-item" data-route="{{ route.path }}">
-        <div class="icon">
+    <li isEditable="true">
+      <a href="{{ route.path }}" class="menu-item" data-route="{{ route.path }}" isEditable="true">
+        <div class="icon" isEditable="true">
           {{ route.icon | safe }}
         </div>
         {{ route.title }}
       </a>
       {% if route.subRoutes %}
-      <ul class="submenu">
+      <ul class="submenu" isEditable="true">
         {% for subRoute in route.subRoutes %} {% if hasAccess(userRoles,
         subRoute) %}
-        <li>
-          <a href="{{ subRoute.path }}" class="submenuLink" data-route="{{ subRoute.path }}">
-            <div class="icon">
+        <li isEditable="true">
+          <a href="{{ subRoute.path }}" class="submenuLink" data-route="{{ subRoute.path }}" isEditable="true">
+            <div class="icon" isEditable="true">
               {{ subRoute.icon | safe }}
             </div>
             {{ subRoute.title }}
           </a>
           {% if subRoute.subRoutes %}
-          <ul class="submenu">
+          <ul class="submenu" isEditable="true">
             {% for subSubRoute in subRoute.subRoutes %}
-            <li>
-              <a href="{{ subSubRoute.path }}" class="submenuLink" data-route="{{ subSubRoute.path }}">
-                <div class="icon">
+            <li isEditable="true">
+              <a href="{{ subSubRoute.path }}" class="submenuLink" data-route="{{ subSubRoute.path }}" isEditable="true">
+                <div class="icon" isEditable="true">
                   {{ subSubRoute.icon | safe }}
                 </div>
                 {{ subSubRoute.title }}
@@ -80,10 +80,10 @@
   </ul>
 
   {% if isAuthenticated %}
-  <div class="logout-container">
+  <div class="logout-container" isEditable="true">
     {% for route in privateRoutes %} {% if route.path == '/logout' %}
-    <a href="{{ route.path }}" data-route="{{ route.path }}" class="logout-link">
-      <div class="icon">
+    <a href="{{ route.path }}" data-route="{{ route.path }}" class="logout-link" isEditable="true">
+      <div class="icon" isEditable="true">
         {{ route.icon | safe }}
       </div>
       {{ route.title }}

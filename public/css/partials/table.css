@@ -1,6 +1,5 @@
 .table-container {
-  background-color: #001f3f;
-  color: white;
+ width: 100%;
   min-height: 70vh;
   border-radius: 8px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave */
@@ -16,6 +15,7 @@ table {
   margin-top: 1rem;
   overflow-y: auto;
 }
+
 
 th,
 td {

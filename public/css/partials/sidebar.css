@@ -5,40 +5,52 @@
   width: 250px;
   height: 100%;
   border-radius: 5px;
-  background-color: #001f3f; /* Color del fondo del sidebar */
+  background-color: #001f3f;
   transition: 0.3s;
   display: flex;
   flex-direction: column;
   z-index: 1500;
-  overflow-y: auto; /* Habilita el desplazamiento vertical */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave */
 }
 
-/* Estilos para la barra de desplazamiento */
-.sidebar::-webkit-scrollbar {
+/* Habilita el desplazamiento vertical en el ul */
+.sidebar ul {
+  list-style-type: none;
+ 
+  padding: 0;
+  margin: 0; /* Eliminar márgenes para un mejor control del scroll */
+  flex-grow: 1; /* Permitir que el ul use todo el espacio disponible */
+  overflow-y: auto; /* Habilitar el desplazamiento vertical aquí */
+  height: calc(100% - 60px); /* Ajustar la altura para dejar espacio para el logo */
+}
+
+/* Estilos para la barra de desplazamiento del ul */
+.sidebar ul::-webkit-scrollbar {
   width: 8px; /* Ancho de la barra de desplazamiento */
 }
 
-.sidebar::-webkit-scrollbar-track {
+.sidebar ul::-webkit-scrollbar-track {
   background: #001f3f; /* Color del track igual al fondo del sidebar */
   border-radius: 10px; /* Esquinas redondeadas del track */
 }
 
-.sidebar::-webkit-scrollbar-thumb {
+.sidebar ul::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.5); /* Color del thumb con opacidad */
   border-radius: 10px; /* Esquinas redondeadas del thumb */
   transition: background 0.3s; /* Suaviza la transición del color */
 }
 
-.sidebar::-webkit-scrollbar-thumb:hover {
+.sidebar ul::-webkit-scrollbar-thumb:hover {
   background: white; /* Color del thumb al pasar el ratón */
 }
 
 .logo {
   border: 1px solid #ffffff;
-  margin: 10px;
+
   padding: 20px;
   display: flex;
   justify-content: center;
+  background-color: #001f3f;
   color: #ffffff;
   align-items: center;
 }
@@ -104,6 +116,7 @@
   align-items: center;
   color: white;
   text-decoration: none;
+  width: 100%;
   padding: 10px 0;
   background-color: #001f3f;
   transition: background-color 0.3s ease;

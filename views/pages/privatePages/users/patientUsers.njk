@@ -1,4 +1,4 @@
-<!-- Plantilla hija: views/pages/privatePages/dashboard.njk --><html><head></head><body>{% extends "layouts/privateLayout.njk" %}
+{% extends "layouts/privateLayout.njk" %}
 <!-- Bloque de título -->
 {% block content %}
 
@@ -6,6 +6,14 @@
 {% set roleAlias = 'patient' %}
 
 <section>{% include "pages/privatePages/users/index.njk" %}</section>
+<script type="module">
+  // Importa la lógica desde el archivo JS
+  import { initializeSection } from '../js/api/sections/initializeSection.js';
 
+    // El valor de keyNamearchive es único para cada archivo y lo pasamos como parámetro
+    const keyNamearchive = 'patient'; // Este es el identificador único para este archivo
+
+    // Aquí pasamos solo el keyNamearchive, sin definir cuántas secciones
+    initializeSection(keyNamearchive)
+</script>
 {% endblock %}
-</body></html>

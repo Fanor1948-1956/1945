@@ -1,324 +1,369 @@
-// Funciones para guardar y aplicar el tema
-function saveTheme(theme) {
-  localStorage.setItem('theme', theme);
+// Verificar si el usuario está autenticado y tiene un token válido
+const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'
+const token = localStorage.getItem('token')
+
+function saveTheme (theme) {
+  localStorage.setItem('theme', theme)
 }
 
-function applyTheme() {
-  const theme = localStorage.getItem('theme');
+function applyTheme () {
+  const theme = localStorage.getItem('theme')
   if (theme) {
-    document.body.classList.add(theme);
+    document.body.classList.add(theme)
   }
 }
 
-document.addEventListener('DOMContentLoaded', applyTheme);
+document.addEventListener('DOMContentLoaded', applyTheme)
 
 // Variables globales
-let currentElement;
-let isDragging = false;
+let currentElement
+let isDragging = false
 let initialX = 0,
-  initialY = 0;
+  initialY = 0
 let currentX = 0,
-  currentY = 0;
+  currentY = 0
 
 // Crear elemento para mostrar coordenadas
-const coordinatesDisplay = document.createElement('div');
-coordinatesDisplay.style.position = 'fixed';
-coordinatesDisplay.style.bottom = '10px';
-coordinatesDisplay.style.right = '10px';
-coordinatesDisplay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-coordinatesDisplay.style.color = 'white';
-coordinatesDisplay.style.padding = '5px';
-coordinatesDisplay.style.borderRadius = '5px';
-document.body.appendChild(coordinatesDisplay);
+const coordinatesDisplay = document.createElement('div')
+coordinatesDisplay.style.position = 'fixed'
+coordinatesDisplay.style.bottom = '10px'
+coordinatesDisplay.style.right = '10px'
+coordinatesDisplay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)'
+coordinatesDisplay.style.color = 'white'
+coordinatesDisplay.style.padding = '5px'
+coordinatesDisplay.style.borderRadius = '5px'
+document.body.appendChild(coordinatesDisplay)
 
 // Crear menú contextual y opciones
-const contextMenu = document.createElement('div');
-contextMenu.className = 'context-menu';
-document.body.appendChild(contextMenu);
+const contextMenu = document.createElement('div')
+contextMenu.className = 'context-menu'
+document.body.appendChild(contextMenu)
 
 // Opciones del menú
 const options = [
-  { label: 'Copiar', action: copyElement },
+  { label: 'Copiar', action: copyElement, authRequired: true },
   {
     label: 'Alinear',
+    authRequired: true,
     subOptions: [
       { label: 'Izquierda', action: () => setTextAlign('left') },
       { label: 'Centro', action: () => setTextAlign('center') },
-      { label: 'Derecha', action: () => setTextAlign('right') },
-    ],
+      { label: 'Derecha', action: () => setTextAlign('right') }
+    ]
   },
   {
     label: 'Distribución',
+    authRequired: true,
     subOptions: [
       { label: 'Inicio', action: () => setJustifyContent('flex-start') },
       { label: 'Centrado', action: () => setJustifyContent('center') },
       { label: 'Final', action: () => setJustifyContent('flex-end') },
       {
         label: 'Espaciado Entre',
-        action: () => setJustifyContent('space-between'),
-      },
-    ],
+        action: () => setJustifyContent('space-between')
+      }
+    ]
   },
   {
     label: 'Color',
+    authRequired: true,
     subOptions: [
       { label: 'Fondo', action: () => changeColor('backgroundColor') },
-      { label: 'Texto', action: () => changeColor('color') },
-    ],
+      { label: 'Texto', action: () => changeColor('color') }
+    ]
   },
   {
     label: 'Ver',
+    authRequired: true,
     subOptions: [
       {
         label: 'PDF',
-        action: () => openLink('http://ejemplo.com/document.pdf'),
+        action: () => openLink('http://ejemplo.com/document.pdf')
       },
       {
         label: 'Imagen',
-        action: () => openLink('http://ejemplo.com/image.png'),
-      },
-    ],
+        action: () => openLink('http://ejemplo.com/image.png')
+      }
+    ]
   },
   {
     label: 'Descargar',
+    authRequired: true,
     subOptions: [
       { label: 'Imagen', action: downloadImage },
       { label: 'PDF', action: downloadPDF },
       { label: 'Word', action: downloadWord },
-      { label: 'Excel', action: downloadExcel },
-    ],
+      { label: 'Excel', action: downloadExcel }
+    ]
   },
   { label: 'Subir', action: uploadFile },
   { label: 'Mover/Reacomodar', action: enableDragMode },
   { label: 'Eliminar', action: removeElement },
   {
     label: 'Abrir Enlace',
+    authRequired: true,
     subOptions: [
       {
         label: ' en nueva pestaña',
-        action: () => openLink(getCurrentPath()),
+        action: () => openLink(getCurrentPath())
       },
       {
         label: ' en nueva ventana',
-        action: () => openLink(getCurrentPath(), true),
-      },
-    ],
+        action: () => openLink(getCurrentPath(), true)
+      }
+    ]
   },
-  { label: 'Actualizar', action: () => location.reload() },
-];
+  { label: 'Actualizar', action: () => location.reload() }
+]
 
 // Crear los elementos del menú con submenús
-function createMenu(options, parent) {
-  options.forEach((option) => {
-    const item = document.createElement('div');
-    item.innerText = option.label;
-    item.style.padding = '8px 12px';
-    item.style.cursor = 'pointer';
-    item.style.color = '#fff';
-    item.style.position = 'relative'; // Para permitir el posicionamiento de submenús
+function createMenu (options, parent) {
+  options.forEach(option => {
+    const item = document.createElement('div')
+    item.innerText = option.label
+    item.style.padding = '8px 12px'
+    item.style.cursor = 'pointer'
+    item.style.color = '#fff'
+    item.style.position = 'relative' // Para permitir el posicionamiento de submenús
 
     // Añadir flecha para submenús
     if (option.subOptions) {
-      const arrow = document.createElement('span');
-      arrow.innerText = ' ▶'; // Puedes cambiar esto por un icono si prefieres
-      arrow.style.fontSize = '0.8em';
-      arrow.style.marginLeft = '5px'; // Espacio entre texto y flecha
-      item.appendChild(arrow);
+      const arrow = document.createElement('span')
+      arrow.innerText = ' ▶' // Puedes cambiar esto por un icono si prefieres
+      arrow.style.fontSize = '0.8em'
+      arrow.style.marginLeft = '5px' // Espacio entre texto y flecha
+      item.appendChild(arrow)
 
-      const subMenu = document.createElement('div');
-      subMenu.className = 'sub-menu';
-      subMenu.style.display = 'none';
-      subMenu.style.position = 'absolute';
-      subMenu.style.left = '100%'; // Mover submenú a la derecha
-      subMenu.style.top = '0';
-      subMenu.style.backgroundColor = '#333';
-      subMenu.style.zIndex = '1000'; // Asegurarse que esté por encima
-      subMenu.style.minWidth = '150px'; // Ancho mínimo del submenú
-      subMenu.style.borderRadius = '5px'; // Bordes redondeados
+      const subMenu = document.createElement('div')
+      subMenu.className = 'sub-menu'
+      subMenu.style.display = 'none'
+      subMenu.style.position = 'absolute'
+      subMenu.style.left = '100%' // Mover submenú a la derecha
+      subMenu.style.top = '0'
+      subMenu.style.backgroundColor = '#333'
+      subMenu.style.zIndex = '1000' // Asegurarse que esté por encima
+      subMenu.style.minWidth = '150px' // Ancho mínimo del submenú
+      subMenu.style.borderRadius = '5px' // Bordes redondeados
 
-      option.subOptions.forEach((subOption) => {
-        const subItem = document.createElement('div');
-        subItem.innerText = subOption.label;
-        subItem.style.padding = '8px 12px';
-        subItem.style.cursor = 'pointer';
-        subItem.style.color = '#fff';
-        subItem.style.display = 'flex'; // Usar flex para aplicar justify-between
-        item.style.justifyContent = 'space-between';
-        item.style.alignItems = 'center';
+      option.subOptions.forEach(subOption => {
+        const subItem = document.createElement('div')
+        subItem.innerText = subOption.label
+        subItem.style.padding = '8px 12px'
+        subItem.style.cursor = 'pointer'
+        subItem.style.color = '#fff'
+        subItem.style.display = 'flex' // Usar flex para aplicar justify-between
+        item.style.justifyContent = 'space-between'
+        item.style.alignItems = 'center'
 
-        item.style.whiteSpace = 'nowrap';
-        ertb;
-        item.style.textOverflow = 'ellipsis';
+        item.style.whiteSpace = 'nowrap'
 
-        subItem.addEventListener('click', (event) => {
-          event.stopPropagation(); // Para evitar que se cierre el menú principal
-          contextMenu.style.display = 'none';
-          subOption.action();
-        });
+        item.style.textOverflow = 'ellipsis'
 
-        subMenu.appendChild(subItem);
-      });
+        subItem.addEventListener('click', event => {
+          event.stopPropagation() // Para evitar que se cierre el menú principal
+          contextMenu.style.display = 'none'
+          subOption.action()
+        })
 
-      item.appendChild(subMenu);
+        subMenu.appendChild(subItem)
+      })
+
+      item.appendChild(subMenu)
       item.addEventListener('mouseenter', () => {
-        subMenu.style.display = 'block';
-      });
+        subMenu.style.display = 'block'
+      })
       item.addEventListener('mouseleave', () => {
-        subMenu.style.display = 'none';
-      });
+        subMenu.style.display = 'none'
+      })
     } else {
       item.addEventListener('click', () => {
-        contextMenu.style.display = 'none';
-        option.action();
-      });
+        contextMenu.style.display = 'none'
+        option.action()
+      })
     }
 
-    parent.appendChild(item);
-  });
+    parent.appendChild(item)
+  })
 }
 
-createMenu(options, contextMenu);
+createMenu(options, contextMenu)
 
 // Mostrar menú contextual
-document.addEventListener('contextmenu', (event) => {
-  event.preventDefault();
-  currentElement = event.target;
+document.addEventListener('contextmenu', event => {
+  event.preventDefault()
+  currentElement = event.target
   if (currentElement) {
-    contextMenu.style.display = 'block';
-    contextMenu.style.left = `${event.pageX}px`;
-    contextMenu.style.top = `${event.pageY}px`;
+    contextMenu.style.display = 'block'
+    contextMenu.style.left = `${event.pageX}px`
+    contextMenu.style.top = `${event.pageY}px`
   }
-});
+})
 
 window.addEventListener('click', () => {
-  contextMenu.style.display = 'none';
-});
+  contextMenu.style.display = 'none'
+})
 
 // Funciones de acciones
-function copyElement() {
+function copyElement () {
   if (currentElement) {
-    const clone = currentElement.cloneNode(true);
-    document.body.appendChild(clone);
-    clone.style.position = 'absolute';
-    clone.style.left = `${parseInt(currentElement.style.left || 0) + 10}px`;
-    clone.style.top = `${parseInt(currentElement.style.top || 0) + 10}px`;
+    const clone = currentElement.cloneNode(true)
+    document.body.appendChild(clone)
+    clone.style.position = 'absolute'
+    clone.style.left = `${parseInt(currentElement.style.left || 0) + 10}px`
+    clone.style.top = `${parseInt(currentElement.style.top || 0) + 10}px`
   }
 }
 
-function setTextAlign(alignment) {
+function setTextAlign (alignment) {
   if (currentElement) {
-    currentElement.style.textAlign = alignment;
+    currentElement.style.textAlign = alignment
   }
 }
 
-function setJustifyContent(value) {
+function setJustifyContent (value) {
   if (currentElement && currentElement.style.display === 'flex') {
-    currentElement.style.justifyContent = value;
+    currentElement.style.justifyContent = value
   }
 }
-
-function changeColor(type) {
-  const colorPicker = document.createElement('input');
-  colorPicker.type = 'color';
-  colorPicker.value = localStorage.getItem(type) || '#ffffff';
+// Funciones para cambiar colores
+function changeBackgroundColor () {
+  const colorPicker = document.createElement('input')
+  colorPicker.type = 'color'
+  colorPicker.value = localStorage.getItem('bgColor') || '#ffffff' // Establecer el color por defecto
 
   colorPicker.addEventListener('input', () => {
     if (currentElement) {
-      currentElement.style[type] = colorPicker.value;
-      localStorage.setItem(type, colorPicker.value);
+      currentElement.style.backgroundColor = colorPicker.value // Aplicar color de fondo
+      localStorage.setItem('bgColor', colorPicker.value) // Guardar en localStorage
+      applyStoredColors() // Aplica el color a todos los elementos editables
     }
-  });
-  colorPicker.click();
+  })
+  colorPicker.click()
 }
 
+// Función para cambiar color de texto
+function changeTextColor () {
+  const colorPicker = document.createElement('input')
+  colorPicker.type = 'color'
+  colorPicker.value = localStorage.getItem('textColor') || '#000000' // Establecer el color por defecto
+
+  colorPicker.addEventListener('input', () => {
+    if (currentElement) {
+      currentElement.style.color = colorPicker.value // Aplicar color de texto
+      localStorage.setItem('textColor', colorPicker.value) // Guardar en localStorage
+      applyStoredColors() // Aplica el color a todos los elementos editables
+    }
+  })
+  colorPicker.click()
+}
+
+// Aplicar colores almacenados al cargar
+function applyStoredColors () {
+  const editableElements = document.querySelectorAll('[contenteditable="true"]') // Selecciona todos los elementos editables
+  const bgColor = localStorage.getItem('bgColor')
+  const textColor = localStorage.getItem('textColor')
+
+  editableElements.forEach(element => {
+    if (bgColor) {
+      element.style.backgroundColor = bgColor // Aplica el color de fondo
+    }
+    if (textColor) {
+      element.style.color = textColor // Aplica el color de texto
+    }
+  })
+}
+
+// Llamar a applyStoredColors al cargar la página
+document.addEventListener('DOMContentLoaded', applyStoredColors)
+
 // Función para obtener el enlace actual del localStorage
-function getCurrentPath() {
-  return localStorage.getItem('currentPath') || 'http://ejemplo.com';
+function getCurrentPath () {
+  return localStorage.getItem('currentPath') || 'http://ejemplo.com'
 }
 
 // Función para abrir enlaces
-function openLink(url, newTab = false) {
+function openLink (url, newTab = false) {
   if (newTab) {
-    window.open(url, '_blank');
+    window.open(url, '_blank')
   } else {
-    window.location.href = url;
+    window.location.href = url
   }
 }
 
 // Funciones para descargar diferentes formatos
-function downloadImage() {
-  console.log('Descargar Imagen');
+function downloadImage () {
+  console.log('Descargar Imagen')
   // Implementar lógica para descargar imagen
 }
 
-function downloadPDF() {
-  console.log('Descargar PDF');
+function downloadPDF () {
+  console.log('Descargar PDF')
   // Implementar lógica para descargar PDF
 }
 
-function downloadWord() {
-  console.log('Descargar Word');
+function downloadWord () {
+  console.log('Descargar Word')
   // Implementar lógica para descargar Word
 }
 
-function downloadExcel() {
-  console.log('Descargar Excel');
+function downloadExcel () {
+  console.log('Descargar Excel')
   // Implementar lógica para descargar Excel
 }
 
-function uploadFile() {
-  console.log('Subir Archivo');
+function uploadFile () {
+  console.log('Subir Archivo')
   // Implementar lógica para subir archivo
 }
 
-function removeElement() {
+function removeElement () {
   if (currentElement) {
-    currentElement.remove();
-    currentElement = null;
+    currentElement.remove()
+    currentElement = null
   }
 }
 
 // Funciones de arrastre
-function enableDragMode() {
+function enableDragMode () {
   if (currentElement) {
-    isDragging = true;
-    initialX = event.clientX;
-    initialY = event.clientY;
+    isDragging = true
+    initialX = event.clientX
+    initialY = event.clientY
 
     if (
       !currentElement.style.position ||
       currentElement.style.position === 'static'
     ) {
-      currentElement.style.position = 'relative';
+      currentElement.style.position = 'relative'
     }
 
-    currentElement.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
-    currentElement.style.zIndex = '1000';
+    currentElement.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)'
+    currentElement.style.zIndex = '1000'
 
-    document.addEventListener('mousemove', dragElement);
-    document.addEventListener('mouseup', stopDrag);
+    document.addEventListener('mousemove', dragElement)
+    document.addEventListener('mouseup', stopDrag)
   }
 }
 
-function dragElement(event) {
+function dragElement (event) {
   if (isDragging && currentElement) {
-    const deltaX = event.clientX - initialX;
-    const deltaY = event.clientY - initialY;
-    currentX += deltaX;
-    currentY += deltaY;
-    currentElement.style.transform = `translate(${currentX}px, ${currentY}px)`;
-    coordinatesDisplay.innerText = `X: ${currentX}px, Y: ${currentY}px`;
-    initialX = event.clientX;
-    initialY = event.clientY;
+    const deltaX = event.clientX - initialX
+    const deltaY = event.clientY - initialY
+    currentX += deltaX
+    currentY += deltaY
+    currentElement.style.transform = `translate(${currentX}px, ${currentY}px)`
+    coordinatesDisplay.innerText = `X: ${currentX}px, Y: ${currentY}px`
+    initialX = event.clientX
+    initialY = event.clientY
   }
 }
 
-function stopDrag() {
+function stopDrag () {
   if (isDragging) {
-    isDragging = false;
-    currentElement.style.boxShadow = '';
-    currentElement.style.zIndex = '';
-    document.removeEventListener('mousemove', dragElement);
-    document.removeEventListener('mouseup', stopDrag);
+    isDragging = false
+    currentElement.style.boxShadow = ''
+    currentElement.style.zIndex = ''
+    document.removeEventListener('mousemove', dragElement)
+    document.removeEventListener('mouseup', stopDrag)
   }
 }

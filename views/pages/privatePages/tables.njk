@@ -1,316 +1,435 @@
-{% extends "layouts/privateLayout.njk" %} {% block content %}
+{# {% extends "layouts/privateLayout.njk" %}
 
-<!-- Contenedor para los controles de entrada -->
-<div class="inputContent">
-  <button
-    id="settingsButton"
-    title="Configuraciones"
-  >
-    <div id="settingsIcon"></div>
-  </button>
-  <div id="inputContainer"></div>
-</div>
+{% block content %}
+<h1>Gráfico Generado</h1>
 
-<!-- Contenedor para la app en general -->
-<div id="app">
-  <!-- Dropdown para lista de secciones -->
-  <div
-    id="dropdown"
-    class="dropdown"
-    style="display: none"
-  >
-    <ul
-      id="dropdownList"
-      class="dropdownList"
-    ></ul>
-  </div>
-</div>
+<!-- Selección de modelo -->
+<label for="modelNameSelect">Selecciona un modelo:</label>
+<select id="modelNameSelect">
+  <option value="User">Usuario</option>
+  <option value="Role">Rol</option>
+  <option value="Permission">Permiso</option>
+  <option value="Specialty">Especialidades</option>
+  <option value="Chart">Estadísticas</option>
+</select>
 
-<!-- Contenedor para las secciones personalizadas -->
-<div
-  id="customStack"
-  class="custom-stack"
->
-  <!-- Aquí se cargarán las secciones personalizadas -->
-</div>
+<!-- Botón para generar el gráfico -->
+<button id="generateChartBtn">Generar Gráfico</button>
 
-<!-- Controles para gestionar las secciones -->
-<div class="section-controls">
-  <button id="addSectionButton">Agregar Sección</button>
-  <button id="clearStorageButton">Limpiar Almacenamiento</button>
-</div>
+<!-- Contenedor para mostrar el gráfico -->
+<div id="chartContainer"></div>
 
-<!-- Mensaje de no resultados, envuelto para mantener el código modular -->
-<div
-  id="noResultsMessage"
-  style="display: none; color: red"
->
-  No hay secciones que coincidan con tu búsqueda.
-</div>
+<script>
+  // Función para crear el popover y los gráficos
+  function createChartElement(chart) {
+    const chartDiv = document.createElement('div');
+    chartDiv.classList.add('chart-item');
 
-<script type="module">
-  import { createCustomInputs } from './js/components/custom/input.js';
-  import {
-    initializeDropdown,
-    addItemToDropdown,
-    clearDropdown,
-  } from './js/components/common/dropdown.js';
-  import { generateRandomClinicIcon } from './js/utils/icons.js';
+    const img = document.createElement('img');
+    img.src = chart.imageData;
+    img.alt = chart.title;
 
-  let sections = [];
+    const title = document.createElement('h3');
+    title.textContent = chart.title;
 
-  document.addEventListener('DOMContentLoaded', () => {
-    initializeDropdown('dropdown', 'settingsButton');
-    initializeModalInputs();
-    loadSections();
+    const optionsIcon = document.createElement('span');
+    optionsIcon.classList.add('options-icon');
+    optionsIcon.innerHTML = '⋮'; // Icono de opciones
+    optionsIcon.onclick = () => togglePopover(chart);
 
-    const settingsIcon = generateRandomClinicIcon('Ajustes');
-    document.getElementById('settingsIcon').innerHTML = settingsIcon;
+    const popover = createPopover(chart);
 
-    document
-      .getElementById('addSectionButton')
-      .addEventListener('click', addNewSection);
-    document
-      .getElementById('clearStorageButton')
-      .addEventListener('click', clearStorage);
+    chartDiv.appendChild(title);
+    chartDiv.appendChild(img);
+    chartDiv.appendChild(optionsIcon); // Añadir el icono de opciones
+    chartDiv.appendChild(popover); // Añadir el popover
+
+    return chartDiv;
+  }
+
+  // Función para crear el popover
+  function createPopover(chart) {
+    const popover = document.createElement('div');
+    popover.id = `popover-${chart._id}`;
+    popover.classList.add('popover');
+    popover.innerHTML = `
+      <button onclick="downloadChart('${chart.imageData}')">Descargar</button>
+      <button onclick="copyChart('${chart.imageData}')">Copiar</button>
+      <button onclick="deleteObject('${chart._id}')">Eliminar</button>
+      <button onclick="deactivateObject('${chart._id}')">Desactivar</button>
+    `;
+    return popover;
+  }
+
+  // Función para alternar la visibilidad del popover
+  function togglePopover(chart) {
+    const popover = document.querySelector(`#popover-${chart._id}`);
+    if (popover) {
+      popover.style.display = popover.style.display === 'block' ? 'none' : 'block';
+    }
+  }
+
+  // Función para cargar los gráficos existentes
+  async function loadChartImages() {
+    try {
+      const response = await fetch('/chart/charts');
+      const data = await response.json();
+      console.log('data', data);
+
+      const chartContainer = document.getElementById('chartContainer');
+      chartContainer.innerHTML = ''; // Limpiar el contenedor
+
+      data.forEach(chart => {
+        const chartElement = createChartElement(chart);
+        chartContainer.appendChild(chartElement);
+      });
+    } catch (error) {
+      console.error('Error al cargar las imágenes:', error);
+    }
+  }
+
+  // Evento para generar el gráfico
+  document.getElementById('generateChartBtn').addEventListener('click', async function () {
+    const modelName = document.getElementById('modelNameSelect').value;
+
+    try {
+      const response = await fetch(`/chart/generate-charts?modelName=${modelName}`);
+      const data = await response.json();
+
+      if (data.charts) {
+        const chartContainer = document.getElementById('chartContainer');
+        chartContainer.innerHTML = ''; // Limpiar el contenedor
+
+        data.charts.forEach(chart => {
+          const chartElement = createChartElement(chart);
+          chartContainer.appendChild(chartElement);
+        });
+        
+      }
+            loadChartImages(); // Recargar los gráficos después de la eliminación
+    } catch (error) {
+      console.error('Error al obtener los gráficos:', error);
+    }
   });
 
-  function loadSections() {
-    sections = JSON.parse(localStorage.getItem('customSections')) || [];
-    document.getElementById('customStack').innerHTML = '';
-    sections.forEach((section) => {
-      createCustomSection(
-        section.title,
-        section.subtitle,
-        section.content,
-        section.id
-      );
-      addToDropdown(section.id, section.title);
-    });
-  }
+  // Función para eliminar un gráfico
+  async function deleteObject(objectId) {
+    const modelName = document.getElementById('modelNameSelect').value;
 
-  const inputSearch = [
-    {
-      id: 'inputSearch',
-      name: 'inputSearch',
-      type: 'text',
-      placeholder: 'Buscar...',
-      attributes: { oninput: 'filterSections(event.target.value)' },
-    },
-  ];
-
-  const initializeModalInputs = () => {
-    const inputContainer = document.getElementById('inputContainer');
-    inputContainer.innerHTML = ''; // Limpiar inputs anteriores
-    const inputs = createCustomInputs(inputSearch);
-    inputContainer.appendChild(inputs);
-
-    const inputField = document.getElementById('inputSearch');
-    if (inputField) {
-      inputField.addEventListener('input', (event) => {
-        filterSections(event.target.value);
+    try {
+      const response = await fetch(`/chart/delete-object?modelName=${modelName}&modelNameSubObject=chartModel&subObjectId=${objectId}`, {
+        method: 'DELETE',
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error al eliminar:', errorData.message || 'Error desconocido');
+        return;
+      }
+
+      const data = await response.json();
+      console.log('Eliminación:', data);
+      loadChartImages(); // Recargar los gráficos después de la eliminación
+    } catch (error) {
+      console.error('Error al eliminar el gráfico:', error);
     }
-  };
+  }
 
-  function filterSections(query) {
-    const sections = JSON.parse(localStorage.getItem('customSections')) || [];
-    const customStack = document.getElementById('customStack');
-    customStack.innerHTML = '';
+  // Cargar los gráficos cuando la página se cargue
+  window.onload = loadChartImages;
+</script>
 
-    const filteredSections = sections.filter(
-      (section) =>
-        section.title.toLowerCase().includes(query.toLowerCase()) ||
-        section.subtitle.toLowerCase().includes(query.toLowerCase())
-    );
+<style>
+  .chart-item {
+    position: relative;
+    display: inline-block;
+    margin: 10px;
+  }
 
-    if (filteredSections.length === 0) {
-      const noResultsMessage = document.createElement('div');
-      noResultsMessage.id = 'noResultsMessage';
-      noResultsMessage.textContent = 'No hay resultados para la búsqueda.';
-      customStack.appendChild(noResultsMessage);
-    } else {
-      filteredSections.forEach((section) => {
-        createCustomSection(
-          section.title,
-          section.subtitle,
-          section.content,
-          section.id
-        );
+  .popover {
+    display: none;
+    position: absolute;
+    top: 30px;
+    left: 100%;
+    background-color: blue;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    z-index: 100;
+  }
+
+  .popover button {
+    display: block;
+    padding: 8px 12px;
+    width: 100%;
+    border: none;
+    background: none;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .popover button:hover {
+    background-color: #f5f5f5;
+  }
+
+  .options-icon {
+    position: absolute;
+    top: 24px;
+    right: 10px;
+    cursor: pointer;
+    background-color: blue;
+    border-radius: 4px;
+    font-size: 24px;
+    z-index: 200;
+  }
+
+  .options-icon:hover {
+    color: green;
+  }
+</style>
+
+{% endblock %} #}
+
+{% extends "layouts/privateLayout.njk" %}
+
+{% block content %}
+<h1>Gráfico Chart en Tiempo Real</h1>
+
+<!-- Selección de modelo -->
+<label for="modelNameSelect">Selecciona un modelo:</label>
+<select id="modelNameSelect">
+  <option value="User">Usuario</option>
+  <option value="Role">Rol</option>
+  <option value="Permission">Permiso</option>
+  <option value="Specialty">Especialidades</option>
+  <option value="Chart">Estadísticas</option>
+</select>
+
+<!-- Selección de Año -->
+<label for="yearSelect">Selecciona un año:</label>
+<select id="yearSelect">
+  <!-- Los años serán cargados dinámicamente aquí -->
+</select>
+
+<!-- Opciones de vista de gráficos (incluye "quick" y "particular") -->
+<label for="viewOption">Selecciona cómo ver los gráficos:</label>
+<select id="viewOption">
+  <option value="quick" selected>Visualización Rápida</option>
+  <option value="particular">Visualización Particular</option>
+</select>
+
+<!-- Contenedor para el botón de generar gráfico -->
+<div id="buttonContainer">
+  <button id="generateChartBtn" style="display: none;">Generar Gráfico</button>
+  <button id="generateReportBtn">Generar Reporte PDF</button>
+</div>
+
+<!-- Selección de tipo de gráfico -->
+<label for="chartTypeSelect">Selecciona el tipo de gráfico:</label>
+<select id="chartTypeSelect">
+  <option value="line" selected>Línea</option>
+  <option value="bar">Barras</option>
+  <option value="radar">Radar</option>
+  <option value="pie">Tarta</option>
+</select>
+
+<!-- Contenedor para mostrar los gráficos -->
+<div id="chartContainer"></div>
+
+<!-- Agregar Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  // Función para cargar los años disponibles en el select
+  async function loadYears(modelName) {
+    try {
+      const response = await fetch(`/chart/generate-charts?modelName=${modelName}`);
+      const data = await response.json();
+
+      // Limpiar el select de años
+      const yearSelect = document.getElementById('yearSelect');
+      yearSelect.innerHTML = ''; // Limpiar años anteriores
+
+      // Añadir las opciones de año
+      data.availableYears.forEach(yearObj => {
+        const option = document.createElement('option');
+        option.value = yearObj.year;
+        option.textContent = yearObj.year;
+        yearSelect.appendChild(option);
       });
+
+      // Llamar a la función para actualizar los gráficos con el año y modelo seleccionados
+      handleChartChange();
+    } catch (error) {
+      console.error('Error al cargar los años:', error);
     }
   }
 
-  function addNewSection() {
-    const count = Date.now();
-    createCustomSection(
-      `Sección ${count}`,
-      `Subtítulo ${count}`,
-      `Contenido de Sección ${count}`,
-      count
-    );
-  }
-
-  function clearStorage() {
-    localStorage.removeItem('customSections');
-    loadSections();
-  }
-
-  function createCustomSection(
-    title,
-    subtitle,
-    content,
-    sectionId = Date.now()
-  ) {
-    const section = document.createElement('div');
-    section.className = 'custom-section';
-    section.dataset.id = sectionId;
-
-    section.innerHTML = `
-      <div class="section-content">
-        <span class="toggle-visibility" data-id="${sectionId}" onclick="toggleSection('${sectionId}')">−</span>
-        <h2>${title}</h2>
-        <h4>${subtitle}</h4>
-        <div class="textWrapper">${content}</div>
-        <button class="remove-section" data-id="${sectionId}" onclick="removeSection('${sectionId}')">Eliminar</button>
-        <button class="edit-section" data-id="${sectionId}" onclick="editSection('${sectionId}')">Editar</button>
-      </div>
-    `;
-    document.getElementById('customStack').appendChild(section);
-    saveSections();
-  }
-
-  function addToDropdown(sectionId, title) {
-    const li = document.createElement('li');
-    const icon = generateRandomClinicIcon(title);
-    li.innerHTML = `
-      <button data-id="${sectionId}" class="buttonIcon" onclick="toggleVisibility('${sectionId}')">
-        ${icon}
-      </button>
-      <span>${title}</span>
-    `;
-    document.getElementById('dropdownList').appendChild(li);
-  }
-
-  window.toggleSection = function (sectionId) {
-    const section = document.querySelector(
-      `.custom-section[data-id="${sectionId}"]`
-    );
-    if (section) {
-      const toggleButton = section.querySelector('.toggle-visibility');
-      const isCollapsed = section.style.display === 'none';
-      section.style.display = isCollapsed ? 'block' : 'none';
-      toggleButton.textContent = isCollapsed ? '−' : '+';
-      saveSections();
-    }
-  };
-
-  window.toggleVisibility = function (sectionId) {
-    const section = document.querySelector(
-      `.custom-section[data-id="${sectionId}"]`
-    );
-    if (section) {
-      const isCurrentlyVisible = section.style.display !== 'none';
-      section.style.display = isCurrentlyVisible ? 'none' : 'block';
-      saveSections();
-      updateEyeButton(sectionId, isCurrentlyVisible);
-    }
-  };
-
-  window.removeSection = function (sectionId) {
-    const section = document.querySelector(
-      `.custom-section[data-id="${sectionId}"]`
-    );
-    if (section) {
-      section.remove();
-      saveSections();
-    }
-  };
-
-  window.editSection = function (sectionId) {
-    const section = document.querySelector(
-      `.custom-section[data-id="${sectionId}"]`
-    );
-    if (section) {
-      const title = section.querySelector('h2').innerText;
-      const subtitle = section.querySelector('h4').innerText;
-      const content = section.querySelector('.textWrapper').innerText;
-
-      // Crear un formulario para editar
-      const editForm = document.createElement('div');
-      editForm.innerHTML = `
-        <h3>Editar Sección</h3>
-        <label>Título:</label>
-        <input type="text" id="editTitle" value="${title}" />
-        <label>Subtítulo:</label>
-        <input type="text" id="editSubtitle" value="${subtitle}" />
-        <label>Contenido:</label>
-        <textarea id="editContent">${content}</textarea>
-        <button id="saveEditButton">Guardar</button>
-        <button id="cancelEditButton">Cancelar</button>
-      `;
-      section.innerHTML = ''; // Limpiar el contenido de la sección
-      section.appendChild(editForm);
-
-      document
-        .getElementById('saveEditButton')
-        .addEventListener('click', () => {
-          const newTitle = document.getElementById('editTitle').value;
-          const newSubtitle = document.getElementById('editSubtitle').value;
-          const newContent = document.getElementById('editContent').value;
-
-          const updatedSection = document.querySelector(
-            `.custom-section[data-id="${sectionId}"]`
-          );
-          if (updatedSection) {
-            updateSection(sectionId, newTitle, newSubtitle, newContent);
-          } else {
-            console.error(`Sección con ID ${sectionId} no encontrada.`);
+  // Función para crear el gráfico en tiempo real
+  function createChart(chartData, modelName, chartType, viewOption) {
+    const chartOptions = {
+      responsive: true,
+      backgroundColor: 'black',
+      plugins: {
+        legend: {
+          labels: {
+            color: 'white'
           }
-        });
+        }
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Meses',
+            color: 'white'
+          },
+          grid: {
+            color: 'gray'
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Número de Registros',
+            color: 'white'
+          },
+          grid: {
+            color: 'gray'
+          }
+        }
+      }
+    };
 
-      document
-        .getElementById('cancelEditButton')
-        .addEventListener('click', () => {
-          loadSections(); // Cargar nuevamente las secciones
-        });
+    // Si la opción seleccionada es "particular", crear gráficos en contenedores separados
+    if (viewOption === 'particular') {
+      // Crear un nuevo contenedor para el gráfico
+      const chartDiv = document.createElement('div');
+      chartDiv.className = 'chart-div';
+      chartDiv.style.marginBottom = '20px'; // Espacio entre gráficos
+
+      const ctx = document.createElement('canvas');
+      ctx.id = `chart-${modelName}-${Date.now()}`;
+      chartDiv.appendChild(ctx);
+      document.getElementById('chartContainer').appendChild(chartDiv);
+
+      // Crear el gráfico
+      new Chart(ctx, {
+        type: chartType,
+        data: chartData.data,
+        options: chartOptions
+      });
+    } 
+    // Si es "quick", reemplazar el gráfico en el mismo contenedor
+    else {
+      // Limpiar el contenedor de gráficos antes de crear uno nuevo
+      const chartContainer = document.getElementById('chartContainer');
+      chartContainer.innerHTML = '';  // Eliminar los gráficos anteriores
+
+      // Crear el gráfico en el mismo contenedor
+      const ctx = document.createElement('canvas');
+      ctx.id = `chart-${modelName}`;
+      chartContainer.appendChild(ctx);
+
+      // Crear el gráfico
+      new Chart(ctx, {
+        type: chartType,
+        data: chartData.data,
+        options: chartOptions
+      });
     }
-  };
+  }
 
-  function updateSection(sectionId, newTitle, newSubtitle, newContent) {
-    const section = document.querySelector(
-      `.custom-section[data-id="${sectionId}"]`
-    );
-    if (section) {
-      section.innerHTML = `
-        <div class="section-content">
-          <span class="toggle-visibility" data-id="${sectionId}" onclick="toggleSection('${sectionId}')">−</span>
-          <h2>${newTitle}</h2>
-          <h4>${newSubtitle}</h4>
-          <div class="textWrapper">${newContent}</div>
-          <button class="remove-section" data-id="${sectionId}" onclick="removeSection('${sectionId}')">Eliminar</button>
-          <button class="edit-section" data-id="${sectionId}" onclick="editSection('${sectionId}')">Editar</button>
-        </div>
-      `;
-      saveSections(); // Guarda los cambios en localStorage
+  // Función para manejar los cambios en el tipo de gráfico o año
+  async function handleChartChange() {
+    const modelName = document.getElementById('modelNameSelect').value;
+    const viewOption = document.getElementById('viewOption').value;
+    const chartType = document.getElementById('chartTypeSelect').value;
+    const year = document.getElementById('yearSelect').value;  // Obtener el año seleccionado
+
+    try {
+      const response = await fetch(`/chart/generate-charts?modelName=${modelName}&year=${year}`);
+      const data = await response.json();
+
+      if (data.charts) {
+        // Filtrar los gráficos por el modelo seleccionado
+        const filteredCharts = data.charts.filter(chart => chart.modelName === modelName);
+
+        // Crear gráficos según la opción de vista seleccionada
+        filteredCharts.forEach(chart => {
+          createChart({
+            data: {
+              labels: chart.months.map(month => `Mes ${month.month}`),
+              datasets: [
+                {
+                  label: `${chart.modelName} - Registros Activos`,
+                  data: chart.months.map(month => month.activeRecords),
+                  borderColor: 'rgba(75, 192, 192, 1)',
+                  backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                  fill: false
+                },
+                {
+                  label: `${chart.modelName} - Registros Inactivos`,
+                  data: chart.months.map(month => month.inactiveRecords),
+                  borderColor: 'rgba(255, 99, 132, 1)',
+                  backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                  fill: false
+                }
+              ]
+            }
+          }, modelName, chartType, viewOption);
+        });
+      }
+    } catch (error) {
+      console.error('Error al obtener los gráficos:', error);
+    }
+  }
+
+  // Evento para manejar el cambio de tipo de gráfico o año
+  document.getElementById('chartTypeSelect').addEventListener('change', handleChartChange);
+  document.getElementById('yearSelect').addEventListener('change', handleChartChange);
+  document.getElementById('modelNameSelect').addEventListener('change', function() {
+    loadYears(this.value); // Cargar años cuando el modelo cambia
+  });
+
+  // Función para ocultar o mostrar el botón de generar gráfico según la vista seleccionada
+  function toggleGenerateChartButton() {
+    const viewOption = document.getElementById('viewOption').value;
+    const generateChartBtn = document.getElementById('generateChartBtn');
+    
+    // Mostrar solo si la opción seleccionada es 'particular'
+    if (viewOption === 'particular') {
+      generateChartBtn.style.display = 'inline-block';
     } else {
-      console.error(
-        `No se pudo actualizar la sección con ID ${sectionId}, no se encontró.`
-      );
+      generateChartBtn.style.display = 'none';
     }
   }
 
-  function saveSections() {
-    const sections = Array.from(
-      document.querySelectorAll('.custom-section')
-    ).map((section) => ({
-      id: section.dataset.id,
-      title: section.querySelector('h2').innerText,
-      subtitle: section.querySelector('h4').innerText,
-      content: section.querySelector('.textWrapper').innerText,
-    }));
-    localStorage.setItem('customSections', JSON.stringify(sections));
-  }
+  // Detectar cambios en la opción de vista
+  document.getElementById('viewOption').addEventListener('change', toggleGenerateChartButton);
+
+  // Llamar a la función cuando la página cargue para generar el gráfico por defecto
+  document.addEventListener('DOMContentLoaded', function() {
+    const modelName = document.getElementById('modelNameSelect').value;
+    loadYears(modelName);  // Cargar los años para el modelo por defecto
+    handleChartChange();
+    toggleGenerateChartButton(); // Asegurarse de que el botón esté correctamente mostrado u oculto
+  });
+
+  document.getElementById('generateReportBtn').addEventListener('click', function() {
+    const modelName = document.getElementById('modelNameSelect').value;
+    const year = document.getElementById('yearSelect').value;
+    const chartType = document.getElementById('chartTypeSelect').value; // Obtener el tipo de gráfico seleccionado
+
+    if (!modelName || !year) {
+      alert('Por favor selecciona un modelo y un año');
+      return;
+    }
+
+    // Hacer la petición para generar el reporte, incluyendo el tipo de gráfico
+    window.location.href = `/chart/generate-report?modelName=${modelName}&year=${year}&chartType=${chartType}`;
+  });
+
 </script>
 
 {% endblock %}

@@ -1,27 +1,27 @@
-<html><head></head><body><h1>Lista de Usuarios</h1>
-<hr>
+<html isEditable="true"><head isEditable="true"></head><body isEditable="true"><h1 isEditable="true">Lista de Usuarios</h1>
+<hr isEditable="true">
 
 <!-- Botón para agregar un nuevo usuario -->
-<button id="addUserButton">Agregar Usuario</button>
+<button id="addUserButton" isEditable="true">Agregar Usuario</button>
 
-<section>
-    <div id="userTableContainer"></div>
+<section isEditable="true">
+    <div id="userTableContainer" isEditable="true"></div>
 </section>
 
-<div id="snackbar" class="snackbar"></div>
+<div id="snackbar" class="snackbar" isEditable="true"></div>
 
 <!-- Modal para editar usuarios -->
-<div id="editUserModal" class="modal">
-    <div class="modal-content">
-        <span class="close-button">×</span>
-        <h2>Editar Usuario</h2>
-        <div id="modalFormContainer"></div> <!-- Contenedor para el formulario -->
+<div id="editUserModal" class="modal" isEditable="true">
+    <div class="modal-content" isEditable="true">
+        <span class="close-button" isEditable="true">×</span>
+        <h2 isEditable="true">Editar Usuario</h2>
+        <div id="modalFormContainer" isEditable="true"></div> <!-- Contenedor para el formulario -->
     </div>
 </div>
 
 
 
-<script>
+<script isEditable="true">
 $(document).ready(function() {
     
     fetchUsers();

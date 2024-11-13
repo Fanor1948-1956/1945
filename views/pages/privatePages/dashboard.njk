@@ -1,32 +1,22 @@
-<!-- Plantilla hija: views/pages/privatePages/dashboard.njk -->
-{% extends "layouts/privateLayout.njk" %} {% block title %}Dashboard{% endblock
-%} {% block content %}
-<div class="dashboard-container">
-  <!-- Opciones del Dashboard -->
-  <section class="dashboard-section">
-    {% include "pages/utils/clock.njk" %} {% for item in items %}
-    <section class="dashboard-subsection">
-      <a
-        href="{{ item.link }}"
-        class="subsection-title"
-        >{{ item.title }}</a
-      >
-      <div class="subsection-content">
-        <p>
-          Contenido adicional o descripción de {{ item.title }} puede ir aquí.
-        </p>
-      </div>
-      <h1>Gráficos de Registros Activos e Inactivos</h1>
+{% extends "layouts/privateLayout.njk" %}
 
-      <div
-        id="charts-container-{{ loop.index }}"
-        class="charts-container"
-      ></div>
-    </section>
-    {% endfor %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+  <section class="dashboard-section" id="items-container">
+    <!-- Aquí se generarán dinámicamente los elementos -->
   </section>
 </div>
 
-<script type="module"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="module">
+  import { renderCharts } from './js/chart/charts.js';  // Asegúrate de que la ruta sea correcta
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const items = JSON.parse('{{ items | safe }}');  // Convertir los items a un objeto JavaScript
+    renderCharts(items);  // Llamar a la función que genera los gráficos
+  });
+</script>
 
 {% endblock %}

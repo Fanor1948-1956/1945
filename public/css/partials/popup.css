@@ -1,0 +1,37 @@
+/* Estilo del Modal */
+.pupup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+  background-color: white;
+  padding: 20px;
+  border: 2px solid #4CAF50;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.popup button {
+  margin: 10px;
+  padding: 5px 15px;
+}
+
+/* Estilo del Popper */
+.popperCustom {
+  position: fixed;
+  background-color: #333;
+  color: #fff;
+  padding: 5px;
+  border-radius: 3px;
+  font-size: 12px;
+  z-index: 1000;
+  pointer-events: none;
+  display: none;
+}

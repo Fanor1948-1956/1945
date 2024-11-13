@@ -17,8 +17,8 @@
 .custom-button {
   padding: 6px 12px;
   font-size: 14px;
-  border: 1px solid #007bff; /* Bordes del botón personalizado */
-  background-color: #007bff;
+  border: 1px solid #180234; /* Bordes del botón personalizado */
+   background-color: #888;
   color: white;
   border-radius: 4px;
   cursor: pointer;

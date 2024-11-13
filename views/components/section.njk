@@ -1,1 +1,52 @@
-<html><head></head><body></body></html>
+<!-- Contenedor para los controles de entrada -->
+<div class="inputContent" isEditable="true">
+  <button
+    id="settingsButton"
+    title="Configuraciones"
+    isEditable="true"
+  >
+    <div id="settingsIcon" isEditable="true"></div>
+  </button>
+  <div id="inputContainer" isEditable="true"></div>
+</div>
+
+<!-- Contenedor para la app en general -->
+<div id="app" isEditable="true">
+  <!-- Dropdown para lista de secciones -->
+  <div
+    id="dropdown"
+    class="dropdown"
+    style="display: none"
+    isEditable="true"
+  >
+    <ul
+      id="dropdownList"
+      class="dropdownList"
+      isEditable="true"
+    ></ul>
+  </div>
+</div>
+
+<!-- Contenedor para las secciones personalizadas -->
+<div
+  id="customStack"
+  class="custom-stack"
+  isEditable="true"
+>
+  <!-- Aquí se cargarán las secciones personalizadas -->
+</div>
+
+<!-- Controles para gestionar las secciones -->
+<div class="section-controls" isEditable="true">
+  <button id="addSectionButton" isEditable="true">Agregar Sección</button>
+  <button id="clearStorageButton" isEditable="true">Limpiar Almacenamiento</button>
+</div>
+
+<!-- Mensaje de no resultados, envuelto para mantener el código modular -->
+<div
+  id="noResultsMessage"
+  style="display: none; color: red"
+  isEditable="true"
+>
+  No hay secciones que coincidan con tu búsqueda.
+</div>

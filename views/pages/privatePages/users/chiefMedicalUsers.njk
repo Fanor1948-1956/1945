@@ -6,6 +6,13 @@
 {% set roleAlias = 'chiefMedical' %}
 
 <section>{% include "pages/privatePages/users/index.njk" %}</section>
+<script type="module">
+  import { initializeSection } from '../js/api/sections/initializeSection.js';
 
+    // El valor de keyNamearchive es único para cada archivo y lo pasamos como parámetro
+    const keyNamearchive = 'chiefMedical'; // Este es el identificador único para este archivo
+
+    // Aquí pasamos solo el keyNamearchive, sin definir cuántas secciones
+    initializeSection(keyNamearchive)
+</script>
 {% endblock %}
-</body></html>

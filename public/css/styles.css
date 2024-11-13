@@ -1,3 +1,4 @@
+@import './partials/theme.css';
 @import './partials/navbar.css';
 @import './partials/sidebar.css';
 @import './partials/table.css';
@@ -10,6 +11,7 @@
 @import './partials/snackbar.css';
 @import './partials/section.css';
 @import './partials/dropdown.css';
+@import './partials/popup.css';
 /*popper*/
 @import './partials/popper.css';
 

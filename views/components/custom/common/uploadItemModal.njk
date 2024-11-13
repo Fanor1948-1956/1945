@@ -1,21 +1,21 @@
-<html><head></head><body><div id="genericModal" class="modal" style="display: none">
-  <div class="modal-content">
-    <div class="modal-head">
-      <h2 class="modal-title">Editar Archivo</h2>
-      <span class="close-button" onclick="Modal.close('#deleteUserModal')">×</span>
+<html isEditable="true"><head isEditable="true"></head><body isEditable="true"><div id="genericModal" class="modal" style="display: none" isEditable="true">
+  <div class="modal-content" isEditable="true">
+    <div class="modal-head" isEditable="true">
+      <h2 class="modal-title" isEditable="true">Editar Archivo</h2>
+      <span class="close-button" onclick="Modal.close('#deleteUserModal')" isEditable="true">×</span>
     </div>
 
-    <input type="text" id="genericDescriptionInput" class="textInputHidden">
+    <input type="text" id="genericDescriptionInput" class="textInputHidden" isEditable="true">
 
     <!-- Imagen seleccionada actual -->
-    <div class="image-container">
-      <img id="genericCurrentImage" alt="Imagen actual" class="uploaded-image-edit">
+    <div class="image-container" isEditable="true">
+      <img id="genericCurrentImage" alt="Imagen actual" class="uploaded-image-edit" isEditable="true">
     </div>
 
     <!-- Input de archivo oculto -->
-    <input type="file" id="hiddenFileInput" style="display: none">
+    <input type="file" id="hiddenFileInput" style="display: none" isEditable="true">
 
-    <button id="genericSaveButton">Confirmar</button>
+    <button id="genericSaveButton" isEditable="true">Confirmar</button>
   </div>
 </div>
 </body></html>

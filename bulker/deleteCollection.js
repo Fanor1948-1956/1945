@@ -1,18 +1,20 @@
-const mongoose = require('mongoose');
-const connectDB = require('./database');
-const roleModel = require('../models/roleModel');
-const uploadModel = require('../models/uploadModel');
-
+const mongoose = require('mongoose')
+const connectDB = require('./database')
+// const roleModel = require('../models/roleModel');
+// const uploadModel = require('../models/uploadModel');
+const chartModel = require('../models/chartModel')
+const Schedule = require('../models/scheduleModel')
+const { Doctor } = require('../models/userModel')
 const eliminarTodosLosPermisos = async () => {
   try {
-    await connectDB();
-    const result = await uploadModel.deleteMany({});
-    console.log('Todos los permisos eliminados:', result);
+    await connectDB()
+    const result = await Doctor.deleteMany({})
+    console.log('Todos los permisos eliminados:', result)
   } catch (error) {
-    console.error('Error al eliminar los permisos:', error);
+    console.error('Error al eliminar los permisos:', error)
   } finally {
-    mongoose.connection.close();
+    mongoose.connection.close()
   }
-};
+}
 
-eliminarTodosLosPermisos();
+eliminarTodosLosPermisos()

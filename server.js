@@ -1,4 +1,6 @@
 const express = require('express')
+const fs = require('fs')
+
 const path = require('path')
 const WebSocket = require('ws')
 const chokidar = require('chokidar')
@@ -13,13 +15,15 @@ const permissionRoutes = require('./routes/permissionRoutes')
 const roleRoutes = require('./routes/roleRoutes')
 const userRoutes = require('./routes/userRoutes')
 const uploadRoutes = require('./routes/uploadRoutes')
+const schedulesRoutes = require('./routes/scheduleRoutes')
+
 const serviceRoutes = require('./routes/serviceRoutes')
 const profileRoutes = require('./routes/profileRoutes')
 const registerPublicRoutes = require('./routes/publicRoutes')
 const registerPrivateRoutes = require('./routes/privateRoutes')
 const { verifyToken } = require('./middleware/authMiddleware')
 const specialtyRoutes = require('./routes/specialtyRoutes')
-
+const chartRoutes = require('./scripts/generateGrafics.js')
 const app = express()
 const port = process.env.PORT || 3000
 console.log(`port ${port}`)
@@ -64,6 +68,8 @@ app.get('/', (req, res) => {
     return res.redirect('/home')
   }
 })
+app.use(express.static('statics'))
+
 //session revisar get req.session.authenticated
 app.use(express.static('public'))
 
@@ -73,6 +79,10 @@ registerPrivateRoutes(app)
 app.use('/users/uploads', express.static(path.join(__dirname, 'uploads')))
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 //controlar retroceso entre sesiones login y dashboard
+app.use('/chart', chartRoutes)
+
+// Servir la imagen generada (si lo necesitas)
+// Ruta para servir la imagen generada en formato base64
 
 app.use('/permissions', permissionRoutes)
 app.use('/roles', roleRoutes)
@@ -80,6 +90,8 @@ app.use('/users', userRoutes)
 app.use('/upload', verifyToken, uploadRoutes)
 app.use('/services', verifyToken, serviceRoutes)
 app.use('/api', profileRoutes)
+app.use('/schedules', verifyToken, schedulesRoutes)
+
 app.use('/auth', authRoutes)
 app.use('/specialties', specialtyRoutes)
 

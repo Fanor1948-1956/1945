@@ -7,11 +7,7 @@
       content="width=device-width, initial-scale=1.0"
     />
     <title>{{ title }}</title>
-  </head>
-  <body class="show-hamburger">
-    {{ route.icon }}
-
-    <script src="/js/libraries/jquery.min.js"></script>
+      <script src="/js/libraries/jquery.min.js"></script>
 
     <link
       rel="stylesheet"
@@ -22,21 +18,30 @@
       src="/js/main.js"
       defer=""
     ></script>
+  </head>
+
+   
     {% include 'components/common/Navbar/index.njk' %} {% include
-    'components/common/Sidebar/index.njk' %}
+    'components/common/Sidebar/index.njk' %} 
+    
+  <body isEditable="true">
+    {{ route.icon }}
 
     <div
       id="spinner"
       class="visible spinner"
+      isEditable="true"
     >
       <p
         id="countdown"
         class="blink"
+        isEditable="true"
       ></p>
 
       <button
         id="viewButton"
         class="hidden viewButton"
+        isEditable="true"
       >
         Ver
       </button>
@@ -45,14 +50,18 @@
     <div
       id="layoutContainer"
       class="container hidden"
+      isEditable="true"
     >
+    <div id="coordinatesDisplay"></div>
       <div
         id="contentMain"
         class="contentMain"
+        isEditable="true"
       >
         <div
           id="contenToolbar"
           class="toolbar"
+          isEditable="true"
         ></div>
         {% block content %}
         <h2>Página inicial</h2>

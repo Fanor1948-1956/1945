@@ -52,14 +52,14 @@ export function renderCharts (items) {
         `chart_${index + 1}`,
         chartTitle
       )
-    } else if (item.link === '/permissions/api') {
+    } else if (item.link === '/permissions') {
       chartTitle = 'Permisos Activos/Inactivos por Mes'
       fetchDataAndRenderChart(
         endpointChart.getPermissions,
         `chart_${index + 1}`,
         chartTitle
       )
-    } else if (item.link === '/specialty') {
+    } else if (item.link === '/specialties') {
       chartTitle = 'Especialidades Activos/Inactivos por Mes'
       fetchDataAndRenderChart(
         endpointChart.getSpecialties,
@@ -74,7 +74,7 @@ async function fetchDataAndRenderChart (endpoint, canvasId, chartTitle) {
   try {
     const response = await fetch(endpoint)
     if (!response.ok) throw new Error('Error al obtener los datos')
-
+    console.log('response', response)
     const data = await response.json()
     renderChart(data, canvasId, chartTitle)
   } catch (error) {

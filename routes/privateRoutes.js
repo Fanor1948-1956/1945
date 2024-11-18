@@ -18,7 +18,7 @@ const privateRoutes = [
 
       if (userRoles.includes('Doctor')) {
         items.push({ title: 'Gestión de Usuarios', link: '/users' })
-        items.push({ title: 'Mis Especialidades', link: '/speciality' })
+        items.push({ title: 'Mis Especialidades', link: '/specialties' })
         items.push({ title: 'Mis Horarios de Atención', link: '/schedule' })
         items.push({ title: 'Mis Dispinibilidad', link: '/availability' })
         items.push({ title: 'Mis Citas', link: '/appointment' })
@@ -32,10 +32,8 @@ const privateRoutes = [
       if (userRoles.includes('Administrador')) {
         items.push({ title: 'Gestión de Usuarios', link: '/users' })
         items.push({ title: 'Roles', link: '/roles' })
-        items.push({ title: 'Permisos', link: '/permissions/api' })
+        items.push({ title: 'Permisos', link: '/permissions' })
       }
-
-      items.push({ title: 'Configuración', link: '/dashboard/configuracion' })
 
       return items
     }
@@ -117,7 +115,7 @@ const privateRoutes = [
     items: async () => []
   },
   {
-    path: '/speciality',
+    path: '/specialties',
     title: 'Especialidad',
     view: 'pages/privatePages/specialty/index.njk',
     isPublic: true,

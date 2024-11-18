@@ -9,6 +9,6 @@ router.get('/api', specialtyController.getAllSpecialties)
 router.get('/:id', specialtyController.getSpecialtyById)
 router.put('/update-specialty/:id', specialtyController.updateSpecialty)
 router.delete('/delete/:id', specialtyController.deleteSpecialty)
-router.get('/data-chart', getDataChart(Specialty))
+router.get('/api/data-chart', getDataChart(Specialty))
 
 module.exports = router

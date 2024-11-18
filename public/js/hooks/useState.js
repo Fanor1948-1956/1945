@@ -1,25 +1,30 @@
-// state.js
+// useState.js
 const useState = (key, initialValue) => {
-  // Intenta recuperar el valor desde localStorage
+  // Recupera el valor del `localStorage` si existe
   const storedValue = localStorage.getItem(key);
   let value = storedValue !== null ? JSON.parse(storedValue) : initialValue;
-  const listeners = [];
+  const listeners = new Set(); // Usamos un Set para evitar duplicados en los listeners
 
   const setValue = (newValue) => {
-    value = newValue;
-    // Almacena el nuevo valor en localStorage
-    localStorage.setItem(key, JSON.stringify(value));
-    listeners.forEach((listener) => listener(value));
+    // Solo actualiza si el valor es diferente
+    if (JSON.stringify(value) !== JSON.stringify(newValue)) {
+      value = newValue;
+      // Almacenar el nuevo valor en `localStorage`
+      localStorage.setItem(key, JSON.stringify(value));
+      // Notificar a todos los listeners registrados
+      listeners.forEach((listener) => listener(value));
+    }
   };
 
   const getValue = () => value;
 
   const subscribe = (listener) => {
-    listeners.push(listener);
+    listeners.add(listener);
+    // Devolver una función para cancelar la suscripción
+    return () => listeners.delete(listener);
   };
 
   return [getValue, setValue, subscribe];
 };
 
-// Exporta la función para que puedas usarla en otros archivos
 export default useState;

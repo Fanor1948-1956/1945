@@ -3,132 +3,244 @@
 {% block title %}Lista de Horarios de Atención{% endblock %}
 
 {% block content %}
-  <h1 id="pageTitle">Lista de Horarios de Atención</h1>
+<h1 id="pageTitle">Lista de Horarios de Atención</h1>
 
-  <div id="message"></div>
+<!-- Mensaje de éxito o error -->
+<div id="message"></div>
 
-  <table id="scheduleTable" border="1" style="display:none; width:100%; border-collapse: collapse;">
-    <thead>
-      <tr>
-     
-        <th id="doctorHeader" style="display:none;">Doctor</th>
-        <th>Especialidad</th>
-        <th>Lunes</th>
-        <th>Martes</th>
-        <th>Miércoles</th>
-        <th>Jueves</th>
-        <th>Viernes</th>
-        <th>Sábado</th>
-        <th>Domingo</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
 
-  <script>
-    async function loadSchedules() {
-      try {
-        const user = JSON.parse(localStorage.getItem('user'));
 
-        // Verificar si el usuario tiene uno de los roles permitidos
-        if (!user || (!user.roles.includes('Doctor') && !user.roles.includes('Administrador') && !user.roles.includes('Jefe Técnico'))) {
-          document.getElementById('message').textContent = 'Acceso denegado: Solo administradores, jefes técnicos o doctores pueden ver los horarios.';
-          return;
+<button id="addScheduleBtn" class="add-button" style="display: flex">
+  Crear Horario
+</button>
+<!-- Contenedor de la tabla donde el menú contextual debe activarse -->
+<div id="tableContainer" class="table-container">
+  <!-- Aquí se generará la tabla con la función createTable -->
+</div>
+
+<!-- Menú contextual específico para la tabla -->
+<div id="tableContextMenu" class="table-context-menu" style="display:none;">
+  <ul>
+    <li id="tableViewDetails">Ver Detalles</li>
+    <li id="tableEditSchedule">Editar Horario</li>
+    <li id="tableDeleteSchedule">Eliminar Horario</li>
+        <li id="ViewMoreOptions">Ver más opciones</li>
+
+  </ul>
+</div>
+
+<!-- Modal para agregar horarios -->
+<div class="modal" id="addScheduleModal" style="display: none">
+  <div class="modal-content">
+    <span class="close-button" onclick="Modal.close('#addScheduleModal')">×</span>
+    <h2 class="modal-title">Crear Horario</h2>
+    <div id="inputContainer">
+      <label for="doctor">Doctor ID:</label>
+      <input type="text" id="doctor" required />
+      <label for="dayOfWeek">Día de la Semana:</label>
+      <select id="dayOfWeek" required>
+        <option value="Lunes">Lunes</option>
+        <option value="Martes">Martes</option>
+        <option value="Miércoles">Miércoles</option>
+        <option value="Jueves">Jueves</option>
+        <option value="Viernes">Viernes</option>
+        <option value="Sábado">Sábado</option>
+        <option value="Domingo">Domingo</option>
+      </select>
+      <label for="startTime">Hora de Inicio:</label>
+      <input type="time" id="startTime" required />
+      <label for="endTime">Hora de Fin:</label>
+      <input type="time" id="endTime" required />
+    </div>
+    <button id="saveScheduleBtn">Guardar Horario</button>
+  </div>
+</div>
+
+<script type="module">
+  import { createTable } from './js/generate/genericTable.js';
+  import useState from './js/hooks/useState.js';
+  import useEffect from './js/hooks/useEffect.js';
+  import { checkUserAccess, setPageTitle } from './js/helpers.js';
+
+  // Hook para almacenar el estado del usuario
+  const [getUser, setUser] = useState('user', null);
+
+  // Función para agrupar los horarios por doctor y especialidad
+  function groupSchedules(data, user) {
+    return Object.keys(data).reduce((acc, doctorName) => {
+      const doctorSchedules = data[doctorName]; // Accedemos al arreglo de horarios para cada doctor
+
+      // Filtrar por doctor si el usuario tiene el rol 'Doctor' y no es el doctor actual
+      if (user.roles.includes('Doctor') && user.name !== doctorName) return acc;
+
+      // Agrupar los horarios de cada doctor por especialidad
+      doctorSchedules.forEach((schedule) => {
+        const specialtyName = schedule.Especialidad;
+
+        // Si no existe la especialidad para ese doctor, la agregamos
+        if (!acc[doctorName]) {
+          acc[doctorName] = [];
         }
 
-        // Cambiar el título de la página si el usuario es un doctor
-        if (user.roles.includes('Doctor')) {
-          document.getElementById('pageTitle').textContent = 'Mis Horarios de Atención';
+        let specialtyExists = acc[doctorName].find(
+          (s) => s.Especialidad === specialtyName
+        );
+        if (!specialtyExists) {
+          specialtyExists = {
+            Especialidad: specialtyName,
+            Lunes: 'No disponible',
+            Martes: 'No disponible',
+            Miércoles: 'No disponible',
+            Jueves: 'No disponible',
+            Viernes: 'No disponible',
+            Sábado: 'No disponible',
+            Domingo: 'No disponible',
+          };
+          acc[doctorName].push(specialtyExists);
+        }
+
+        // Verificar si schedule.horarios existe y es un array
+        if (schedule.horarios && Array.isArray(schedule.horarios)) {
+          // Agregar horarios al día correspondiente
+          schedule.horarios.forEach((horario) => {
+            specialtyExists[horario.dayOfWeek] = `${horario.startTime} - ${horario.endTime}`;
+          });
         } else {
-          // Mostrar el encabezado de Doctor solo si el usuario no es "Doctor"
-          document.getElementById('doctorHeader').style.display = 'table-cell';
+          console.warn(
+            'El horario no tiene la propiedad "horarios" o no es un array:',
+            schedule
+          );
         }
+      });
 
-        // Obtener los horarios
-        const response = await fetch('/schedules/all'); 
-        const data = await response.json();
+      return acc;
+    }, {});
+  }
 
-        if (data.message) {
-          document.getElementById('message').textContent = data.message;
+  // Función para generar las filas de la tabla
+  function generateTableRows(doctorSchedules) {
+    const schedulesData = [];
+
+    Object.keys(doctorSchedules).forEach((doctorName) => {
+      doctorSchedules[doctorName].forEach((schedule, index) => {
+        if (
+          Object.values(schedule).every(
+            (val) => val === 'No disponible' || val === 'Especialidad'
+          )
+        ) {
           return;
         }
 
-        // Estructura para agrupar horarios por doctor
-        const doctorSchedules = {};
-
-        // Recorremos los horarios y los agrupamos por doctor y especialidad
-        data.forEach(schedule => {
-          const doctorName = schedule.doctor.name;
-
-          // Si el usuario es un doctor, filtramos por su nombre
-          if (user.roles.includes('Doctor') && user.name !== doctorName) {
-            return;  // Solo mostrar horarios del doctor correspondiente
-          }
-
-          const specialties = schedule.doctor.specialties || [];
-          const day = schedule.dayOfWeek;
-
-          if (!doctorSchedules[doctorName]) {
-            doctorSchedules[doctorName] = [];
-          }
-
-          specialties.forEach(specialty => {
-            let specialtyExists = doctorSchedules[doctorName].find(s => s.Especialidad === specialty.name);
-
-            if (!specialtyExists) {
-              specialtyExists = {
-                Especialidad: specialty.name,
-                Lunes: 'No disponible',
-                Martes: 'No disponible',
-                Miércoles: 'No disponible',
-                Jueves: 'No disponible',
-                Viernes: 'No disponible',
-                Sábado: 'No disponible',
-                Domingo: 'No disponible'
-              };
-              doctorSchedules[doctorName].push(specialtyExists);
-            }
-
-            // Actualizar el horario del día correspondiente
-            if (specialtyExists.Especialidad === specialty.name) {
-              specialtyExists[day] = `${schedule.startTime} - ${schedule.endTime}`;
-            }
-          });
+        schedulesData.push({
+          Doctor: index === 0 ? doctorName : '', // Solo muestra el nombre del doctor en la primera fila
+          Especialidad: schedule.Especialidad,
+          Lunes: schedule.Lunes,
+          Martes: schedule.Martes,
+          Miércoles: schedule.Miércoles,
+          Jueves: schedule.Jueves,
+          Viernes: schedule.Viernes,
+          Sábado: schedule.Sábado,
+          Domingo: schedule.Domingo,
+          Colspan: 1,
         });
+      });
+    });
 
-        // Agregar las filas de la tabla de horarios
-        const tableBody = document.querySelector('#scheduleTable tbody');
-        Object.keys(doctorSchedules).forEach(doctorName => {
-          const schedules = doctorSchedules[doctorName];
-          
-          // Crear una fila por cada especialidad
-          schedules.forEach((schedule, index) => {
-            const row = document.createElement('tr');
-            
-            // Si el usuario no es "Doctor", muestra la celda con el nombre del doctor
-            row.innerHTML = `
-              ${user.roles.includes('Doctor') ? '' : `<td>${index === 0 ? doctorName : ''}</td>`}  
-              <td>${schedule.Especialidad}</td>
-              <td>${schedule.Lunes !== 'No disponible' ? schedule.Lunes : 'No disponible'}</td>
-              <td>${schedule.Martes !== 'No disponible' ? schedule.Martes : 'No disponible'}</td>
-              <td>${schedule.Miércoles !== 'No disponible' ? schedule.Miércoles : 'No disponible'}</td>
-              <td>${schedule.Jueves !== 'No disponible' ? schedule.Jueves : 'No disponible'}</td>
-              <td>${schedule.Viernes !== 'No disponible' ? schedule.Viernes : 'No disponible'}</td>
-              <td>${schedule.Sábado !== 'No disponible' ? schedule.Sábado : 'No disponible'}</td>
-              <td>${schedule.Domingo !== 'No disponible' ? schedule.Domingo : 'No disponible'}</td>
-            `;
-            tableBody.appendChild(row);
-          });
-        });
+    return schedulesData;
+  }
 
-        // Mostrar la tabla
-        document.getElementById('scheduleTable').style.display = 'table';
-      } catch (error) {
-        document.getElementById('message').textContent = 'Error al obtener los horarios.';
-        console.error('Error al hacer fetch de los horarios:', error);
+  // Función para cargar los horarios
+  async function loadSchedules() {
+    try {
+      const user = getUser();
+      if (!checkUserAccess(user)) return;
+
+      setPageTitle(user);
+
+      const response = await fetch('/schedules/all');
+      const data = await response.json();
+console.log(data);
+      if (data.message) {
+        document.getElementById('message').textContent = data.message;
+        return;
       }
+
+      const doctorSchedules = groupSchedules(data, user);
+      const schedulesData = generateTableRows(doctorSchedules);
+
+      const headers = [
+        'Doctor',
+        'Especialidad',
+        'Lunes',
+        'Martes',
+        'Miércoles',
+        'Jueves',
+        'Viernes',
+        'Sábado',
+        'Domingo',
+      ];
+
+      createTable(
+        headers,
+        schedulesData,
+        document.getElementById('tableContainer'),
+        { hideDoctorColumn: user.roles.includes('Doctor') }
+      );
+    } catch (error) {
+      document.getElementById('message').textContent = 'Error al obtener los horarios.';
+      console.error('Error al obtener los horarios:', error);
+    }
+  }
+
+  // Cargar los horarios cuando se carga la página
+  useEffect(() => {
+    loadSchedules();
+  }, [getUser()]);
+
+  // Función para manejar la creación del horario
+  document.getElementById('saveScheduleBtn').addEventListener('click', async () => {
+    const doctor = document.getElementById('doctor').value;
+    const dayOfWeek = document.getElementById('dayOfWeek').value;
+    const startTime = document.getElementById('startTime').value;
+    const endTime = document.getElementById('endTime').value;
+
+    if (!doctor || !dayOfWeek || !startTime || !endTime) {
+      alert('Por favor, complete todos los campos.');
+      return;
     }
 
-    window.onload = loadSchedules;
-  </script>
+    const scheduleData = { doctor, dayOfWeek, startTime, endTime };
+
+    try {
+      const response = await fetch('/schedules', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(scheduleData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Mostrar mensaje de éxito
+        document.getElementById('message').textContent = 'Horario creado exitosamente.';
+        document.getElementById('message').classList.add('success');
+        Modal.close('#addScheduleModal'); // Cerrar el modal
+        loadSchedules(); // Recargar la lista de horarios
+      } else {
+        // Mostrar mensaje de error
+        document.getElementById('message').textContent = data.message || 'Error al crear el horario.';
+        document.getElementById('message').classList.add('error');
+      }
+    } catch (error) {
+      console.error('Error al crear el horario:', error);
+      document.getElementById('message').textContent = 'Error al crear el horario.';
+      document.getElementById('message').classList.add('error');
+    }
+  });
+
+  // Mostrar el modal al hacer clic en "Crear Horario"
+  document.getElementById('addScheduleBtn').addEventListener('click', () => {
+    document.getElementById('addScheduleModal').style.display = 'flex';
+  });
+</script>
 {% endblock %}

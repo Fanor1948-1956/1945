@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const PermissionSchema = new mongoose.Schema(
   {
@@ -6,9 +6,14 @@ const PermissionSchema = new mongoose.Schema(
     description: { type: String, required: true },
 
     charts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Chart' }], // Referencia a los uploads
-    isActive: { type: Boolean, default: true }
+    isActive: { type: Boolean, default: true },
   },
   { timestamps: true }
-)
+);
 
-module.exports = mongoose.model('Permission', PermissionSchema)
+PermissionSchema.pre('save', function (next) {
+  this.updatedAt = Date.now();
+  next();
+});
+
+module.exports = mongoose.model('Permission', PermissionSchema);

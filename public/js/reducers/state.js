@@ -5,6 +5,7 @@ let state = {
   profile: {},
   specialties: [],
   uploads: [],
+  schedules: [],
   tems: [],
 };
 
@@ -22,6 +23,7 @@ export const resetState = () => {
     roles: [],
     profile: {},
     specialties: [],
+    schedules: [],
     uploads: [],
     tems: [],
   };

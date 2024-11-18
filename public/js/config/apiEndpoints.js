@@ -44,5 +44,12 @@ export const endpointChart = {
   getUsers: `${BASE_URL}/users/data-chart`,
   getRoles: `${BASE_URL}/roles/data-chart`,
   getPermissions: `${BASE_URL}/permissions/api/data-chart`,
-  getSpecialties: `${BASE_URL}/specialty/data-chart`
+  getSpecialties: `${BASE_URL}/specialties/api/data-chart`
+}
+
+export const scheduleEndpoints = {
+  list: `${BASE_URL}/schedules/all`,
+  get: `${BASE_URL}/upload`, // Si es necesario
+
+  delete: `${BASE_URL}/upload/delete` // Si es necesario
 }

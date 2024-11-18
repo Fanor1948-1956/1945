@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const scheduleSchema = new mongoose.Schema(
   {
@@ -12,24 +12,24 @@ const scheduleSchema = new mongoose.Schema(
         'Jueves',
         'Viernes',
         'Sábado',
-        'Domingo'
+        'Domingo',
       ],
-      required: true
+      required: true,
     },
     startTime: {
       type: String,
       required: true,
-      match: /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/ // Formato de hora válido
+      match: /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/, // Formato de hora válido
     },
     endTime: {
       type: String,
       required: true,
-      match: /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/ // Formato de hora válido
-    }
+      match: /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/, // Formato de hora válido
+    },
   },
   { timestamps: true }
-)
+);
 
-const Schedule = mongoose.model('Schedule', scheduleSchema)
+const Schedule = mongoose.model('Schedule', scheduleSchema);
 
-module.exports = Schedule
+module.exports = Schedule;

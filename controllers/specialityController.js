@@ -1,4 +1,4 @@
-const Specialty = require('../models/Specialty')
+const Specialty = require('../models/Specialty.js')
 
 exports.createSpecialty = async (req, res) => {
   const { name, description } = req.body

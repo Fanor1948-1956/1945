@@ -1,31 +1,31 @@
 // useEffect.js
 const useEffect = (() => {
-  let previousDependencies = []
-  let cleanupFunction
+  let previousDependencies = [];
+  let cleanupFunction;
 
   return (callback, dependencies = []) => {
-    // Revisamos si hay cambios en las dependencias
+    // Comprobar si alguna de las dependencias ha cambiado
     const hasChanged = dependencies.some(
       (dep, i) => dep !== previousDependencies[i]
-    )
+    );
 
-    // Si ha cambiado alguna dependencia o es la primera vez
+    // Si hay cambios en las dependencias o es la primera vez
     if (hasChanged || previousDependencies.length === 0) {
-      // Ejecutamos la limpieza del efecto anterior, si existe
-      if (typeof cleanupFunction === 'function') cleanupFunction()
+      // Ejecutar la función de limpieza previa si existe
+      if (typeof cleanupFunction === 'function') cleanupFunction();
 
-      // Guardamos el resultado del callback (la función de limpieza)
-      cleanupFunction = callback()
+      // Ejecutamos el callback y guardamos su función de limpieza
+      cleanupFunction = callback();
 
       // Actualizamos las dependencias previas
-      previousDependencies = dependencies
+      previousDependencies = dependencies;
     }
 
-    // Retornamos la función de limpieza para ejecutar cuando el efecto cambie o se desmonte
+    // Devolvemos la función de limpieza para que se ejecute cuando el efecto cambie
     return () => {
-      if (typeof cleanupFunction === 'function') cleanupFunction()
-    }
-  }
-})()
+      if (typeof cleanupFunction === 'function') cleanupFunction();
+    };
+  };
+})();
 
-export default useEffect
+export default useEffect;

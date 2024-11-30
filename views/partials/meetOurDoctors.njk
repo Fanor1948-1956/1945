@@ -1,56 +1,23 @@
-<!-- views/home.njk -->
-
-{% extends "layouts/publicLayout.njk" %}
-
-{% block content %}
-<section class='home-meet'>
-  <div class='home-heading28'>
-    <h2 class='home-text91'>Conoce a Nuestros {{title}}s</h2>
-    <p class='home-text92'>
-      Aquí puedes encontrar a nuestros médicos altamente calificados, listos
-      para atenderte.
-    </p>
+<html><head></head><body>{% set roleAlias = 'doctor' %}
+ {% include "components/custom/customModal.njk" %}
+<div class="home-heading28">
+  <h2 class="home-text91">Conoce a Nuestros {{ title }}s</h2>
+  <p class="home-text92">
+    Aquí puedes encontrar a nuestros médicos altamente calificados, listos para
+    atenderte.
+  </p>
+</div>
+<div class="home-list2">
+  <div class="home-controls">
+    <img alt="Anterior" src="/Icons/circle-arrow.svg" data-doctors="previous" class="arrow">
   </div>
-  <div class='home-list2'>
-    <div class='home-controls'>
-      <img
-        alt='Anterior'
-        src='/Icons/circle-arrow.svg'
-        data-doctors='previous'
-        class='arrow'
-      />
-    </div>
-          {% for user in items %}
-    <div class='home-doctors1'>
-
-        <div class="doctor-card">
-          <img 
-          class="doctor-image"
-            alt="Imagen de {{ user.name }} {{ user.surnames }}"
-     src="https://picsum.photos/150/150?random={{ loop.index }}"
-
-          />
-          <h3>{{ user.name }}</h3>
-          <h3>{{ user.surnames }}</h3>
-        </div>
-
-    </div>      {% endfor %}
-    <img
-      alt='Siguiente'
-      src='/Icons/circle-arrow.svg'
-      data-doctors='next'
-      class='home-forward arrow'
-    />
-  </div>
-  <div class='home-search2'>
-    <input
-      type='text'
-      placeholder='Buscar por nombre'
-      class='home-textinput6 input book-input'
-    />
-    <button class='button button-main home-book8'>
-      <span>Buscar doctor</span>
-    </button>
-  </div>
-</section>
-{% endblock %}
+  {% include "pages/privatePages/users/index.njk" %}
+  <img alt="Siguiente" src="/Icons/circle-arrow.svg" data-doctors="next" class="home-forward arrow">
+</div>
+<div class="home-search2">
+  <input type="text" placeholder="Buscar por nombre" class="home-textinput6 input book-input">
+      <button class="open-modal" data-size="medium" data-title="Título del Modal Medio">
+Buscar Doctor
+</button>
+</div>
+</body></html>

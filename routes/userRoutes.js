@@ -1,14 +1,18 @@
-// routes/userRoutes.js
+const express = require('express')
+const router = express.Router()
+const userController = require('../controllers/userController')
+const getDataChart = require('../middleware/getChartData.js')
+const { User } = require('../models/userModel.js')
+// Rutas para el manejo de usuarios
+router.post('/create', userController.createUser) // Crear un nuevo usuario
+router.get('/getUsers', userController.getUsers) // Obtener todos los usuarios
+router.get('/showInfo/:id', userController.showUserInfo) // Mostrar información de un usuario
+router.put('/update/:id', userController.updateUser) // Actualizar un usuario
+router.delete('/delete/:id', userController.deleteUser) // Eliminar un usuario
 
-const express = require('express');
-const router = express.Router();
-const userController = require('../controllers/userController');
+// Rutas para activar y desactivar usuarios
+router.put('/activate/:id', userController.activateById)
+router.put('/deactivate/:id', userController.deactivateById)
+router.get('/data-chart', getDataChart(User))
 
-// Rutas de usuarios
-router.get('/createUser', userController.createUser); // Obtener todos los usuarios
-router.get('/getUsers', userController.getUsers); // Obtener todos los usuarios
-router.get('/showInfo/:id', userController.showUserInfo); // Obtener formulario de edición de un usuario
-router.put('/update/:id', userController.updateUser); // Actualizar un usuario
-router.delete('/:id', userController.deleteUser); // Eliminar un usuario
-
-module.exports = router;
+module.exports = router

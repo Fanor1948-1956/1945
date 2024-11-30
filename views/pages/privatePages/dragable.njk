@@ -1,0 +1,159 @@
+
+  <style>
+    .draggable {
+      width: 100px;
+      height: 100px;
+      background-color: lightblue;
+      margin: 10px;
+      text-align: center;
+      line-height: 100px;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+    #coordinateDisplay {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 5px;
+      border-radius: 5px;
+    }
+  </style>
+
+
+
+  <button id="addElementBtn">Agregar Elemento</button>
+  <div id="container"></div>
+
+  <script type="module">
+    let isDragging = false;
+    let initialX = 0, initialY = 0;
+    let currentX = 0, currentY = 0;
+    let elementIdCounter = 0; // Contador para generar IDs dinámicos
+
+    const coordinatesDisplay = document.getElementById('coordinateDisplay');
+    const addElementBtn = document.getElementById('addElementBtn');
+    const container = document.getElementById('container');
+
+    // Recuperar los elementos guardados en localStorage
+    function loadElements() {
+      const savedElements = JSON.parse(localStorage.getItem('draggableElements')) || [];
+
+      savedElements.forEach((elementData) => {
+        elementIdCounter++;
+        const newDiv = document.createElement('div');
+        newDiv.classList.add('draggable');
+        newDiv.id = elementData.id;
+        newDiv.innerText = elementData.text;
+
+        // Cargar la posición guardada
+        currentX = elementData.x || 0;
+        currentY = elementData.y || 0;
+        newDiv.style.transform = `translate(${currentX}px, ${currentY}px)`;
+
+        container.appendChild(newDiv);
+        enableDragMode(newDiv);
+      });
+    }
+
+    // Cargar los elementos al cargar la página
+    window.addEventListener('load', loadElements);
+
+    // Función para habilitar el modo de arrastre en un elemento específico
+    function enableDragMode(currentElement) {
+      if (currentElement) {
+        currentElement.addEventListener('mousedown', (event) => startDrag(event, currentElement));
+      }
+    }
+
+    // Función para iniciar el arrastre
+    function startDrag(event, currentElement) {
+      isDragging = true;
+      initialX = event.clientX;
+      initialY = event.clientY;
+
+      if (!currentElement.style.position || currentElement.style.position === 'static') {
+        currentElement.style.position = 'relative';
+      }
+
+      currentElement.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+      currentElement.style.zIndex = '1000';
+
+      document.addEventListener('mousemove', (event) => dragElement(event, currentElement));
+      document.addEventListener('mouseup', () => stopDrag(currentElement));
+    }
+
+    // Función para mover el elemento mientras se arrastra
+    function dragElement(event, currentElement) {
+      if (isDragging && currentElement) {
+        const deltaX = event.clientX - initialX;
+        const deltaY = event.clientY - initialY;
+        currentX += deltaX;
+        currentY += deltaY;
+        currentElement.style.transform = `translate(${currentX}px, ${currentY}px)`;
+
+        if (coordinatesDisplay) {
+          coordinatesDisplay.innerText = `X: ${currentX}px, Y: ${currentY}px`;
+        }
+
+        initialX = event.clientX;
+        initialY = event.clientY;
+      }
+    }
+
+    // Función para detener el arrastre
+    function stopDrag(currentElement) {
+      if (isDragging) {
+        isDragging = false;
+        currentElement.style.boxShadow = '';
+        currentElement.style.zIndex = '';
+
+        savePosition(currentElement);
+
+        document.removeEventListener('mousemove', dragElement);
+        document.removeEventListener('mouseup', stopDrag);
+      }
+    }
+
+    // Función para guardar la posición en localStorage usando el ID del elemento
+    function savePosition(element) {
+      const position = {
+        id: element.id,
+        text: element.innerText,
+        x: currentX,
+        y: currentY
+      };
+
+      const savedElements = JSON.parse(localStorage.getItem('draggableElements')) || [];
+      const index = savedElements.findIndex(item => item.id === element.id);
+
+      if (index !== -1) {
+        // Si el elemento ya existe, lo actualizamos
+        savedElements[index] = position;
+      } else {
+        // Si no existe, lo agregamos
+        savedElements.push(position);
+      }
+
+      // Guardamos el arreglo actualizado en localStorage
+      localStorage.setItem('draggableElements', JSON.stringify(savedElements));
+    }
+
+    // Agregar un nuevo elemento al hacer clic en el botón
+    addElementBtn.addEventListener('click', () => {
+      elementIdCounter++;
+      const newDiv = document.createElement('div');
+      newDiv.classList.add('draggable');
+      newDiv.id = `draggableElement${elementIdCounter}`;
+      newDiv.innerText = `Elemento ${elementIdCounter}`;
+      container.appendChild(newDiv);
+
+      currentX = 0;
+      currentY = 0;
+      newDiv.style.transform = `translate(${currentX}px, ${currentY}px)`;
+
+      enableDragMode(newDiv);
+      savePosition(newDiv); // Guardamos el nuevo elemento en localStorage
+    });
+  </script>
+

@@ -1,0 +1,27 @@
+<!DOCTYPE html><html lang="es"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Page</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  {% include "section.njk" with {
+      title: "Bienvenidos",
+      content: "<p>Este es el contenido de bienvenida de nuestra página.</p>",
+      extraClasses: "highlighted-section"
+  } %}
+
+  {% include "section.njk" %}
+  {% block script %}
+    <script>
+      // Lógica JavaScript específica para la sección "Información"
+      document.querySelector('.info-section').onclick = () => {
+        alert("Esta es la sección de información");
+      };
+    </script>
+  {% endblock %}
+
+
+
+</body></html>

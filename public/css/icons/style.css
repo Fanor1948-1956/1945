@@ -1,0 +1,17 @@
+  .icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .icon:hover {
+            filter: brightness(1.2);
+            cursor: pointer;
+        }
+
+        #icon-container {
+            display: flex;
+            gap: 10px;
+        }

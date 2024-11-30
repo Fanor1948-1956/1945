@@ -1,0 +1,211 @@
+<html isEditable="true"><head isEditable="true"></head><body isEditable="true"><hr isEditable="true">
+
+<!-- Botón para agregar un nuevo usuario -->
+<div isEditable="true">
+    <h1 isEditable="true">Lista de Usuarios Con ajaxRequest</h1>
+    <button id="addUserButton" isEditable="true">Agregar Usuario</button>
+</div>
+<section isEditable="true">
+    <div id="userTableContainer" isEditable="true"></div>
+</section>
+
+<div id="snackbar" class="snackbar" isEditable="true"></div>
+
+   <div id="editUserModal" class="modal" isEditable="true">
+        <div class="modal-content" isEditable="true">
+            <span class="close-button" isEditable="true">×</span>
+            <h2 isEditable="true">Editar Usuario</h2>
+            <div id="modalFormContainer" isEditable="true"></div> <!-- Contenedor para el formulario -->
+        </div>
+    </div>
+
+    <div id="deleteUserModal" class="modal" isEditable="true">
+        <div class="modal-content" isEditable="true">
+            <span class="close-button" isEditable="true">×</span>
+            <h2 isEditable="true">Confirmar Eliminación</h2>
+            <p isEditable="true">¿Estás seguro de que deseas eliminar este usuario?</p>
+            <button id="confirmDeleteButton" isEditable="true">Confirmar</button>
+            <button id="cancelDeleteButton" isEditable="true">Cancelar</button>
+        </div>
+    </div>
+
+<script src="https:
+<script>
+
+
+$(document).ready(function() {
+    let userIdToDelete; 
+
+    
+    fetchUsers();
+
+    
+    $(document).on('click', '.edit-button', function(e) {
+        e.preventDefault();
+        const userId = $(this).data('user-id');
+        getUserInfo(userId); 
+    });
+
+    
+    $(document).on('click', '.delete-button', function() {
+        userIdToDelete = $(this).data('user-id'); 
+        Modal.open('#deleteUserModal'); 
+    });
+
+    
+    $('#confirmDeleteButton').on('click', function() {
+        deleteUser(userIdToDelete); 
+        Modal.close('#deleteUserModal'); 
+    });
+
+    
+    $('#cancelDeleteButton').on('click', function() {
+        Modal.close('#deleteUserModal'); 
+    });
+
+    
+    function fetchUsers() {
+        ajaxRequest('/users/getUsers', 'GET')
+            .then(renderUserTable)
+            .catch(function(xhr) {
+                console.error('Error al obtener los usuarios:', xhr);
+            });
+    }
+
+    
+    function renderUserTable(users) {
+        let tableHtml = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellidos</th>
+                        <th>Email</th>
+                        <th>Género</th>
+                        <th>Roles</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        users.forEach(user => {
+            let rolesHtml = '<ul>';
+            user.roles.forEach(role => {
+                rolesHtml += `<li>${role.name}</li>`;
+            });
+            rolesHtml += '</ul>';
+
+            tableHtml += `
+                <tr data-user-id=" ${user._id}"="" isEditable="true">
+                    <td>${user.name}</td>
+                    <td>${user.surnames}</td>
+                    <td>${user.email}</td>
+                    <td>${user.gender}</td>
+                    <td>${rolesHtml}</td>
+                    <td>
+                        <button class="edit-button" data-user-id="${user._id}">Editar</button>
+                        <button class="delete-button" data-user-id="${user._id}">Eliminar</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tableHtml += '</tbody></table>';
+        $('#userTableContainer').html(tableHtml);
+    }
+
+    
+    function getUserInfo(userId) {
+        ajaxRequest(`/users/showInfo/${userId}`, 'GET')
+            .then(({ user, allRoles, isPasswordHashed }) => {
+                renderEditForm(user, allRoles, userId, isPasswordHashed);
+                Modal.open('#editUserModal'); 
+            })
+            .catch(() => {
+                showSnackbar('Error al obtener el formulario de edición', false);
+            });
+    }
+
+    
+    function renderEditForm(user, allRoles, userId, isPasswordHashed) {
+        const rolesHtml = allRoles.map(role => `
+            <label>
+                <input type="checkbox" name="roles" value="${role._id}" 
+                    ${user.roles.some(userRole => userRole.name === role.name) ? 'checked' : ''}>
+                ${role.name}
+            </label>
+        `).join('');
+
+        $('#modalFormContainer').html(`
+            <form id="userUpdateForm" data-user-id="${userId}">
+                <label for="name">Nombre:</label>
+                <input type="text" id="name" name="name" value="${user.name}" required ${isPasswordHashed ? 'disabled' : ''}>
+                <label for="surnames">Apellidos:</label>
+                <input type="text" id="surnames" name="surnames" value="${user.surnames}" required ${isPasswordHashed ? 'disabled' : ''}>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="${user.email}" required ${isPasswordHashed ? 'disabled' : ''}>
+                <label for="gender">Género:</label>
+                <select id="gender" name="gender" required ${isPasswordHashed ? 'disabled' : ''}>
+                    <option value="masculino" ${user.gender === 'masculino' ? 'selected' : ''}>Masculino</option>
+                    <option value="femenino" ${user.gender === 'femenino' ? 'selected' : ''}>Femenino</option>
+                    <option value="otro" ${user.gender === 'otro' ? 'selected' : ''}>Otro</option>
+                </select>
+                <fieldset>
+                    <legend>Roles:</legend>
+                    ${rolesHtml}
+                </fieldset>
+                <button type="submit">Actualizar Usuario</button>
+            </form>
+        `);
+    }
+
+    
+    $(document).on('submit', '#userUpdateForm', function(e) {
+        e.preventDefault();
+        const userId = $(this).data('user-id');
+
+        const userData = {
+            name: $('#name').val(),
+            surnames: $('#surnames').val(),
+            email: $('#email').val(),
+            gender: $('#gender').val(),
+            roles: $('input[name="roles"]:checked').map(function() {
+                return this.value;
+            }).get()
+        };
+
+        ajaxRequest(`/users/update/${userId}`, 'PUT', userData)
+            .then(response => {
+                showSnackbar(response.message, true);
+                fetchUsers(); 
+                setTimeout(() => {
+                    Modal.close('#editUserModal'); 
+                }, 2000);
+            })
+            .catch(xhr => {
+                const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al actualizar el usuario';
+                showSnackbar(errorMessage, false);
+            });
+    });
+
+    
+    function deleteUser(userId) {
+        $.ajax({
+            url: `/users/${userId}`,
+            type: 'DELETE',
+            success: function(response) {
+                showSnackbar(response.message, true); 
+                fetchUsers(); 
+            },
+            error: function(xhr) {
+                const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Error al eliminar el usuario';
+                showSnackbar(errorMessage, false); 
+            }
+        });
+    }
+});
+
+</script>
+
+</body></html>

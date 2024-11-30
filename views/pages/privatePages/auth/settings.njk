@@ -1,8 +1,48 @@
-{% extends "layouts/privateLayout.njk" %}
+<html><head></head><body>{% extends "layouts/privateLayout.njk" %}
 
 {% block content %}
-  
-          <h1>Página Pública</h1>
-        <p>Bienvenido a la condifg.</p>
-            {% include 'pages/privatePages/auth/profile.njk' %}
+<main>
+    <section id="welcome-section">
+        <h2>Bienvenido a nuestro sistema de gestión</h2>
+        <p>Aquí podrás gestionar tus datos y acceder a toda la información que necesites.</p>
+        <button id="fetchProfileButton">Cargar Perfil</button>
+    </section>
+
+    <section id="profile-info" style="display:none;">
+        <h2>Información del Perfil</h2>
+        <div id="userProfile"></div>
+    </section>
+</main>
+
+<footer>
+    <p>© 2024 Mi Aplicación. Todos los derechos reservados.</p>
+</footer>
+
+<script>
+    $(document).ready(function() {
+        $('#fetchProfileButton').on('click', function() {
+            const profileUrl = '/api/profile'; 
+            ajaxRequest(profileUrl)
+                .then(response => {
+                    console.log("Perfil del usuario:", response.user);
+
+                    
+                    const roles = response.user.roles.map(role => role.name).join(', ');
+
+                    $('#userProfile').html(`
+                        <p>Nombre: ${response.user.name}</p>
+                        <p>Email: ${response.user.email}</p>
+                        <p>Roles: ${roles}</p>
+                    `);
+                    $('#profile-info').show();
+                })
+                .catch(error => {
+                    console.error("Error al obtener el perfil:", error);
+                    alert("No se pudo obtener el perfil. Intenta de nuevo más tarde.");
+                });
+        });
+    });
+</script>
+
 {% endblock %}
+</body></html>

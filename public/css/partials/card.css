@@ -1,0 +1,45 @@
+/* Estilos para el contenedor de la tarjeta */
+#cardContainer {
+  display: flex;
+  padding: 1rem;
+  justify-content: center; /* Centra la tarjeta horizontalmente */
+  align-items: center; /* Centra la tarjeta verticalmente */
+  min-height: 100vh; /* Altura mínima para centrar en la página */
+  background-color: #f4f4f4; /* Color de fondo de la página */
+  border-radius: 1rem;
+}
+
+/* Estilos de la tarjeta */
+.card {
+  background-color: #091526; /* Color de fondo de la tarjeta */
+  border-radius: 0.5rem; /* Bordes redondeados */
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1); /* Añade sombra */
+  transition: box-shadow 0.3s ease; /* Efecto de transición para la sombra */
+
+  width: 20rem; /* Ancho de la tarjeta (300px) */
+  overflow: hidden; /* Evita que el contenido se desborde */
+  margin: 1.25rem; /* Margen alrededor de la tarjeta (20px) */
+}
+
+/* Estilos del encabezado de la tarjeta */
+.card-header {
+  background-color: #091526; /* Color de fondo de la tarjeta */
+  color: #ffffff; /* Color del texto */
+
+  padding: 0.9375rem; /* Espaciado interno (5px 15px) */
+  text-align: center; /* Centrar el texto */
+}
+
+.card-header h5 {
+  font-size: 1.25rem; /* Tamaño de la fuente (20px) */
+  margin: 0; /* Elimina el margen */
+}
+
+/* Estilos del cuerpo de la tarjeta */
+.card-body {
+  padding: 0.3125rem 0.9375rem; /* Espaciado interno (5px 15px) */
+  text-align: center; /* Centrar el texto */
+  font-size: 1.125rem; /* Tamaño de la fuente (18px) */
+  color: #060843; /* Color del texto */
+  overflow-y: auto; /* Ajustar la altura del cuerpo para mostrar scrollbar */
+}

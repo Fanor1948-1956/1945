@@ -1,10 +1,10 @@
-// models/accountModel.js
+
 const mongoose = require('mongoose');
 
 const accountSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Referencia al modelo de usuario
+    ref: 'User', 
     required: true,
   },
   accountType: {
@@ -14,11 +14,11 @@ const accountSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now, // Fecha de creación por defecto
+    default: Date.now, 
   },
 });
 
-// Crea el modelo de cuenta
+
 const Account = mongoose.model('Account', accountSchema);
 
 module.exports = Account;

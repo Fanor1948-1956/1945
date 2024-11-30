@@ -1,0 +1,176 @@
+<section isEditable="true">
+  {% include "components/section.njk" %} 
+  <div id="tableContainer" isEditable="true"></div>
+
+  <div id="snackbar" class="snackbar" isEditable="true"></div>
+
+  <!-- Modal para agregar/editar usuarios -->
+  <div class="modal" id="addUserModal" style="display: none" isEditable="true">
+    <div class="modal-content" isEditable="true">
+      <span class="close-button" onclick="Modal.close('#addUserModal')" isEditable="true">×</span>
+      <h2 class="modal-title" isEditable="true"></h2>
+      <form id="userForm" isEditable="true">
+        <label for="userName" isEditable="true">Nombre:</label>
+        <input type="text" id="userName" name="name" isEditable="true" />
+
+        <label for="userSurnames" isEditable="true">Apellidos:</label>
+        <input type="text" id="userSurnames" name="surnames" isEditable="true" />
+
+        <label for="userEmail" isEditable="true">Correo:</label>
+        <input type="email" id="userEmail" name="email" isEditable="true" />
+
+        <label for="userPassword" isEditable="true">Contraseña:</label>
+        <input type="password" id="userPassword" name="password" isEditable="true" />
+
+        <label for="userGender" isEditable="true">Género:</label>
+        <input type="text" id="userGender" name="gender" isEditable="true" />
+        <button type="button" id="selectGenderBtn" isEditable="true">Seleccionar Género</button>
+        <br />
+        <button type="button" id="selectRolesBtn" isEditable="true">Seleccionar Roles</button>
+        <button type="submit" id="saveItemBtn" isEditable="true">Guardar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal para seleccionar género -->
+  <div class="modal" id="selectGenderModal" style="display: none" isEditable="true">
+    <div class="modal-content" isEditable="true">
+      <span class="close-button" onclick="Modal.close('selectRolesModal')" isEditable="true">×</span>
+      <h2 class="modal-title" isEditable="true"></h2>
+      <div id="genderContainer" isEditable="true">
+        <label isEditable="true">
+          <input type="radio" name="gender" value="masculino" isEditable="true" />
+          Masculino
+        </label>
+        <label isEditable="true">
+          <input type="radio" name="gender" value="femenino" isEditable="true" />
+          Femenino
+        </label>
+        <label isEditable="true">
+          <input type="radio" name="gender" value="otro" isEditable="true" />
+          Otro
+        </label>
+      </div>
+      <button type="button" id="saveGenderBtn" isEditable="true">Guardar Género</button>
+    </div>
+  </div>
+
+  <!-- Modal para seleccionar roles -->
+  <div class="modal" id="selectRolesModal" style="display: none" isEditable="true">
+    <div class="modal-content" isEditable="true">
+      <span class="close-button" onclick="Modal.close('#selectRolesModal')" isEditable="true">×</span>
+      <h2 class="modal-title" isEditable="true"></h2>
+      <div id="rolesContainer" isEditable="true"></div>
+      <button type="button" id="saveRolesBtn" isEditable="true">Guardar</button>
+    </div>
+  </div>
+</section>
+
+<!-- Snackbar para mostrar mensajes -->
+<div id="snackbar" class="snackbar" isEditable="true"></div>
+
+{% include "components/custom/common/deleteItem.njk" %} {% include "components/custom/customPopover.njk" %}
+
+<div class="view-toggle-buttons" isEditable="true">
+  <button id="addUserBtn" class="add-button" data-size="medium" isEditable="true" {% if not isAuthenticated %} style="display: none" {% endif %}>Agregar Usuario</button>
+  <button id="cardViewBtn" isEditable="true">Vista Card</button>
+  <button id="tableViewBtn" isEditable="true">Vista Tabla</button>
+</div>
+
+<script type="module">
+  import { fetchServices } from '../js/services/index.js';
+  import { getState } from '../js/reducers/state.js';
+  import { setupEventListeners } from '../js/logic/users/index.js';
+  import { renderItems } from '../js/renders/renderItems.js';
+  import { userRenderer, adminRenderer, doctorRenderer, chiefmedicalRenderer, patientRenderer, getHeadersForRole } from '../js/renders/itemRender.js';
+  import { userEndpoints } from '../js/config/apiEndpoints.js';
+  import { loadUsers } from '../js/reducers/userReducer.js';
+  import { onAction } from '../js/logic/users/actions.js';
+  import {
+    handleAddItem,
+    handleEditItem,
+    handleDeleteModalItem,
+  } from '../js/logic/users/index.js';
+  import { setupViewToggle } from '../js/utils/setupViewToggle.js';
+
+  let currentPage = 1;
+  const usersPerPage = 10;
+  let filteredUsers = [];
+  let currentView = 'table';
+
+  // Obtén el valor de `roleAlias` antes de usarlo
+  const roleAlias = '{{ roleAlias|lower }}'; // Obtén el valor desde el backend o contexto
+
+  // Función para elegir el renderizador según el rol
+  const getRendererForRole = (roleAlias) => {
+    switch (roleAlias) {
+      case 'admin':
+        return adminRenderer;
+      case 'doctor':
+        return doctorRenderer;
+      case 'chiefmedical':
+        return chiefmedicalRenderer;
+      case 'patient':
+        return patientRenderer;
+      default:
+        return userRenderer; // Por defecto, usamos el renderizador de usuario
+    }
+  };
+
+  const loadUsersList = async () => {
+    console.log('Cargando lista de usuarios...');
+    await fetchServices(userEndpoints, loadUsers);
+    const { users } = getState();
+
+    // Filtramos los usuarios según el rol
+    if (roleAlias) {
+      filteredUsers = users.filter((user) =>
+        user.roles.some((roleObj) => roleObj.alias.toLowerCase() === roleAlias)
+      );
+    } else {
+      filteredUsers = users;
+    }
+
+    // Obtenemos los encabezados según el rol
+    const headers = getHeadersForRole(roleAlias);
+
+    // Elegimos el renderizador adecuado según el rol
+    const renderer = getRendererForRole(roleAlias);
+
+    // Renderizamos los elementos
+    renderItems(
+      currentView,
+      filteredUsers,
+      headers,
+      currentPage,
+      usersPerPage,
+      document.getElementById('tableContainer'),
+      renderer
+    );
+  };
+
+  // Set up view toggle functionality
+  setupViewToggle(
+    document.getElementById('cardViewBtn'),
+    document.getElementById('tableViewBtn'),
+    renderItems,
+    currentView,
+    filteredUsers,
+    getHeadersForRole(roleAlias), // Los encabezados también deben ser dinámicos
+    currentPage,
+    usersPerPage,
+    document.getElementById('tableContainer'),
+    getRendererForRole(roleAlias) // Se elige dinámicamente el renderizador
+  );
+
+  // Asigna los handlers
+  const handlers = {
+    handleAddItem,
+    handleEditItem,
+    handleDeleteModalItem,
+  };
+
+  loadUsersList();
+  setupEventListeners(loadUsersList);
+  window.onAction = (action, id) => onAction(action, id, 'users', handlers); // Aquí se pasa 'users' como argumento
+</script>

@@ -1,48 +1,35 @@
-{% extends "layouts/publicLayout.njk" %}
+<html><head></head><body>{% extends "layouts/publicLayout.njk" %} {% block content %}
 
-{% block content %}
-    <h1>Registro de Paciente</h1>
-
-    <section>
-        <div class="form-container">
-            <h2>Agregar Nuevo Paciente</h2>
-            <form action="/auth/register" method="POST">
-                <label for="name">Nombre:</label>
-                <input type="text" id="name" name="name" required />
-
-                <label for="surnames">Apellidos:</label>
-                <input type="text" id="surnames" name="surnames" required />
-
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required />
-
-                <label for="password">Contraseña:</label>
-                <input type="password" id="password" name="password" required />
-
-                <label for="gender">Género:</label>
-                <select name="gender" id="gender" required>
-                    <option value="">Seleccionar género</option>
-                    <option value="masculino">Masculino</option>
-                    <option value="femenino">Femenino</option>
-                    <option value="otro">Otro</option>
-                </select>
-
-                <button class="send" type="submit">Registrar Paciente</button>
-            </form>
-        </div>
-    </section>
-
-    <hr />
+<div class="main">
+<div class="form-container-signup">
+  <h2>Registro</h2>
+  <form action="/auth/register" method="POST">
+    <input type="text" id="name" name="name" placeholder="Ingresaas tu nombre" required="">
 
 
-    <section>
-        {% if user %}
-            <div class="table-container">
-                <h2>Pacientes Registrados</h2>
-                {% include "components/userTable.njk" %}
-            </div>
-        {% else %}
-            <p>No tienes permisos para ver la lista de pacientes. Por favor, <a href="/login">inicia sesión</a>.</p>
-        {% endif %}
-    </section>
+    <input type="text" id="surnames" name="surnames" placeholder="Ingresa tus apellidos" required="">
+
+    <input type="email" id="email" name="email" placeholder="Ingresa tu correo electrónico" required="">
+
+
+    <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" required="">
+
+
+    <select name="gender" id="gender" required="">
+      <option value="">Seleccionar género</option>
+      <option value="masculino">Masculino</option>
+      <option value="femenino">Femenino</option>
+      <option value="otro">Otro</option>
+    </select>
+
+      <button class="send" type="submit">
+        Registrar Paciente
+      </button>
+  
+  </form>
+</div>
+</div>
+<hr>
+
 {% endblock %}
+</body></html>

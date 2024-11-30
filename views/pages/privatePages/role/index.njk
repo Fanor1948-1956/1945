@@ -1,0 +1,13 @@
+<!-- Plantilla hija: views/pages/privatePages/dashboard.njk --><html><head></head><body>{% extends "layouts/privateLayout.njk" %}
+<!-- Bloque de título -->
+
+{% block content %}
+
+<section>
+  <!-- Aquí se incluiría el componente de fetch para obtener los Roles -->
+  <!-- Aquí se incluiría el componente de renderizar los Roles -->
+  {% include "pages/privatePages/role/verb/getAll.njk" %}
+</section>
+
+{% endblock %}
+</body></html>

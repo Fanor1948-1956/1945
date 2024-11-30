@@ -1,114 +1,143 @@
-{% extends "pages/privatePages/auth/settings.njk" %}
+<html><head></head><body>{% extends "layouts/privateLayout.njk" %} {% block content %}
 
-{% block content %}
-    <div class="profile-container">
-        <h1>Perfil del Usuario</h1>
-        
-        <div class="profile-details">
-            <h2>Información Personal</h2>
-            <form id="profileForm" method="POST" action="/profile/update">
-                <label for="name">Nombre:</label>
-                <input type="text" name="name" value="{{ user.name }}" required disabled id="nameInput" class="transparent-input">
-                
-                <label for="surnames">Apellido:</label>
-                <input type="text" name="surnames" value="{{ user.surnames }}" required disabled id="surnamesInput" class="transparent-input">
-                
-                <label for="email">Email:</label>
-                <input type="email" name="email" value="{{ user.email }}" required disabled id="emailInput" class="transparent-input">
-                
-                <label for="gender">Género:</label>
-                <select name="gender" disabled id="genderSelect" class="transparent-input">
-                    <option value="masculino" {% if user.gender == 'masculino' %}selected{% endif %}>Masculino</option>
-                    <option value="femenino" {% if user.gender == 'femenino' %}selected{% endif %}>Femenino</option>
-                    <option value="otro" {% if user.gender == 'otro' %}selected{% endif %}>Otro</option>
-                </select>
+<div id="profileContainer" class="profile-container">
+  <h1>Perfil del Usuario</h1>
 
-                <label for="createdAt">Fecha de Registro:</label>
-                <input type="text" name="createdAt" value="{{ user.createdAt | date }}" disabled id="createdAtInput" class="transparent-input"> <!-- Asegúrate de que el filtro 'date' esté configurado -->
-                
-                <div class="profile-actions">
-                    <button type="button" class="button" id="editButton">Modificar</button>
-                    <button type="button" class="button" style="display:none;" id="cancelButton">Cancelar</button>
-                    <button type="submit" class="button" style="display:none;" id="updateButton">Actualizar Perfil</button>
-                </div>
-            </form>
-        </div>
-
-        
+  <div class="profile-detail">
+    <!-- Lista de archivos subidos -->
+    <div id="uploadsList" class="uploads-list">
+      <!-- Aquí se mostrarán los archivos subidos o un mensaje si no hay archivos -->
     </div>
 
-    <style>
-        .transparent-input {
-            background-color: transparent;
-            border: none;
-            border-bottom: 1px solid #ccc; /* Línea inferior visible */
-            color: #000; /* Color del texto */
-            width: 100%;
-            padding: 5px;
-            transition: border-bottom-color 0.3s ease; /* Animación suave para el cambio de color */
+    <!-- Formulario de perfil -->
+    <form id="profileForm">
+      <h2>Información Personal</h2>
+      <div class="input-container">
+        <div id="inputsContainer"></div>
+        {% include "components/common/actions/buttonActions.njk" %}
+      </div>
+    </form>
+  </div>
+
+  <!-- Componentes adicionales y modales -->
+  {% include "components/custom/common/deleteItem.njk" %} {% include
+  "components/custom/customPopover.njk" %} {% include
+  "components/common/deleteItem.njk" %} {% include
+  "components/custom/common/uploadItemModal.njk" %}
+
+  <!-- Snackbar para notificaciones -->
+  <div id="snackbar" class="snackbar"></div>
+</div>
+
+<script type="module">
+  import { loadUserProfile } from '../js/services/profileService.js';
+  import { handleProfileUpdate } from '../js/logic/auth/profileLogic.js';
+  import {
+    enableEditMode,
+    cancelEditMode,
+  } from '../js/logic/common/editItem.js';
+  import { displayUploads } from '../js/logic/upload/uploadLogic.js';
+  import { createCustomInputs } from '../js/components/custom/input.js';
+  import { createCustomDropdown } from '../js/components/custom/dropdown.js';
+  import { initializeModelAndUploads } from '../js/logic/common/uploadItem.js';
+  import { setState } from '../js/reducers/state.js';
+
+  const inputConfigs = [
+    {
+      id: 'nameInput',
+      name: 'name',
+      placeholder: 'Nombre',
+      type: 'text',
+      isDisabled: true,
+    },
+    {
+      id: 'surnamesInput',
+      name: 'surnames',
+      placeholder: 'Apellidos',
+      type: 'text',
+      isDisabled: true,
+    },
+    {
+      id: 'emailInput',
+      name: 'email',
+      placeholder: 'Correo electrónico',
+      type: 'email',
+      isDisabled: true,
+    },
+    {
+      id: 'createdAtInput',
+      name: 'createdAt',
+      placeholder: 'Fecha de Registro',
+      type: 'text',
+      isDisabled: true,
+    },
+  ];
+
+  const genderConfig = {
+    id: 'genderSelect',
+    name: 'gender',
+    options: [
+      { label: 'Masculino', value: 'masculino' },
+      { label: 'Femenino', value: 'femenino' },
+      { label: 'Otro', value: 'otro' },
+    ],
+    isDisabled: true,
+  };
+
+  const inputsContainer = document.getElementById('inputsContainer');
+
+  // Generar e insertar inputs y dropdown
+  inputsContainer.appendChild(createCustomInputs(inputConfigs));
+  inputsContainer.appendChild(createCustomDropdown(genderConfig));
+
+  async function fetchUserProfile() {
+    try {
+      // Cargar el perfil del usuario con el modelo y ID
+      const user = await loadUserProfile();
+      console.log('user', user);
+
+      // Configurar los datos del perfil
+      document.getElementById('nameInput').value = user.name || '';
+      document.getElementById('surnamesInput').value = user.surnames || '';
+      document.getElementById('emailInput').value = user.email || '';
+      document.getElementById('genderSelect').value =
+        user.gender || 'masculino';
+      document.getElementById('createdAtInput').value = new Date(
+        user.createdAt
+      ).toLocaleDateString();
+
+      // Mostrar archivos subidos
+      if (user.uploads && user.uploads.length > 0) {
+        displayUploads(user.uploads, user.name);
+      } else {
+        // Extraer ownerModel y ownerId de los uploads
+        const uploads = user.uploads || [];
+        if (uploads.length === 0) {
+          const ownerModel = 'User'; // Definido como 'User' por defecto
+          const ownerId = user._id; // ID del usuario
+
+          // Llamar a initializeModelAndUploads con los parámetros recuperados
+          initializeModelAndUploads(ownerModel, ownerId);
         }
+      }
+    } catch (error) {
+      console.error('Error al obtener el perfil del usuario:', error);
+      alert('No se pudo obtener el perfil. Intenta de nuevo más tarde.');
+    }
+  }
 
-        .transparent-input:disabled {
-            opacity: 0.5; /* Reducir la opacidad cuando está deshabilitado */
-        }
+  document
+    .getElementById('editButton')
+    .addEventListener('click', enableEditMode);
+  document
+    .getElementById('cancelButton')
+    .addEventListener('click', cancelEditMode);
+  document
+    .getElementById('profileForm')
+    .addEventListener('submit', handleProfileUpdate);
 
-        .transparent-input:enabled {
-            opacity: 1; /* Restaurar opacidad cuando está habilitado */
-        }
+  document.addEventListener('DOMContentLoaded', fetchUserProfile);
+</script>
 
-        .button {
-            margin-top: 10px; /* Espacio entre botones */
-            cursor: pointer;
-        }
-
-        .button:hover {
-            background-color: #f0f0f0; /* Color al pasar el ratón por encima */
-            color: #000; /* Color al pasar el
-        }
-    </style>
-
-    <script>
-        const editButton = document.getElementById('editButton');
-        const updateButton = document.getElementById('updateButton');
-        const cancelButton = document.getElementById('cancelButton');
-        const nameInput = document.getElementById('nameInput');
-        const surnamesInput = document.getElementById('surnamesInput');
-        const emailInput = document.getElementById('emailInput');
-        const genderSelect = document.getElementById('genderSelect');
-        const createdAtInput = document.getElementById('createdAtInput');
-
-        editButton.addEventListener('click', () => {
-            nameInput.disabled = false;
-            surnamesInput.disabled = false;
-            emailInput.disabled = false;
-            genderSelect.disabled = false;
-            createdAtInput.disabled = true; // No permitir editar la fecha de registro
-            
-            // Mostrar los botones de actualizar y cancelar
-            updateButton.style.display = 'inline-block';
-            cancelButton.style.display = 'inline-block';
-            editButton.style.display = 'none'; // Ocultar el botón de editar
-        });
-
-        cancelButton.addEventListener('click', () => {
-            // Reiniciar los campos a su estado original
-            nameInput.value = "{{ user.name }}";
-            surnamesInput.value = "{{ user.surnames }}";
-            emailInput.value = "{{ user.email }}";
-            genderSelect.value = "{{ user.gender }}";
-            createdAtInput.value = "{{ user.createdAt | date }}"; // Asegúrate de que el filtro 'date' esté configurado
-
-            // Deshabilitar los campos
-            nameInput.disabled = true;
-            surnamesInput.disabled = true;
-            emailInput.disabled = true;
-            genderSelect.disabled = true;
-            createdAtInput.disabled = true;
-
-            // Ocultar botones de actualizar y cancelar
-            updateButton.style.display = 'none';
-            cancelButton.style.display = 'none';
-            editButton.style.display = 'inline-block'; // Mostrar nuevamente el botón de editar
-        });
-    </script>
 {% endblock %}
+</body></html>

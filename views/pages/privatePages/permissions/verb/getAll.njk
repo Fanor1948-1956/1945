@@ -1,0 +1,145 @@
+
+
+<button id="addPermissionBtn" class="add-button">
+  Agregar Permiso
+</button>
+
+<!-- conditionaly isAutenticated user snackbar -->
+
+<div id="permissionTableContainer"></div>
+<div id="snackbar" class="snackbar"></div>
+
+<!-- Modal para agregar permisos -->
+<div class="modal" id="addPermissionModal" style="display: none">
+  <div class="modal-content">
+    <span class="close-button" onclick="Modal.close('#addPermissionModal')">×</span>
+    <h2>Agregar Permiso</h2>
+    <label for="permissionName">Nombre:</label>
+    <input type="text" id="permissionName" required="">
+    <label for="permissionDescription">Descripción:</label>
+    <input type="text" id="permissionDescription" required="">
+    <button id="savePermissionBtn">Guardar</button>
+  </div>
+</div>
+{% include "components/custom/customPopover.njk" %}
+<script type="module">
+  import {
+    loadPermissions,
+    addPermission,
+    updatePermission,
+    deletePermission,
+  } from '../../js/reducers/permissionReducer.js';
+
+  import { createService, updateService } from '../../js/services/index.js';
+  import { fetchPermissions } from '../../js/services/loadFetchs.js';
+  import { getState } from '../../js/reducers/state.js';
+  import { renderTable } from '../../js/components/global/renderTable.js';
+  import { permissionEndpoints } from '../../js/config/apiEndpoints.js';
+  import { confirmDelete } from '../../js/utils/confirmDelete.js';
+
+  const permissionHeaders = {
+    name: 'Nombre',
+    description: 'Descripción',
+    isActive: 'Estado',
+  };
+
+  let currentEditingPermissionId = null;
+
+  const loadsPermissions = async () => {
+    await fetchPermissions();
+    const { permissions } = getState();
+    console.log('permissions', permissions);
+    renderTable(
+      permissions,
+      permissionHeaders,
+      'permissionTableContainer',
+      onAction
+    );
+  };
+
+  const setupEventListeners = () => {
+    document
+      .getElementById('addPermissionBtn')
+      .addEventListener('click', () => {
+        currentEditingPermissionId = null;
+        document.getElementById('permissionName').value = '';
+        document.getElementById('permissionDescription').value = '';
+        Modal.open('#addPermissionModal');
+      });
+
+    document
+      .getElementById('savePermissionBtn')
+      .addEventListener('click', savePermission);
+  };
+
+  const onAction = (action, id) => {
+    const permissions = getState().permissions;
+    const selectedPermission = permissions.find(
+      (permission) => permission._id === id
+    );
+
+    if (action === 'edit') {
+      document.getElementById('permissionName').value = selectedPermission.name;
+      document.getElementById('permissionDescription').value =
+        selectedPermission.description;
+      currentEditingPermissionId = id;
+      Modal.open('#addPermissionModal');
+    } else if (action === 'delete') {
+      confirmDelete(
+        id,
+        permissionEndpoints,
+        'permiso',
+        loadsPermissions,
+        deletePermission
+      );
+    }
+  };
+
+  const savePermission = async () => {
+    const name = document.getElementById('permissionName').value.trim();
+    const description = document
+      .getElementById('permissionDescription')
+      .value.trim();
+
+    if (!name || !description) {
+      showSnackbar('Por favor, complete todos los campos.', false);
+      return;
+    }
+
+    const data = { name, description };
+    if (currentEditingPermissionId) {
+      data._id = currentEditingPermissionId;
+      const message = await updateService(
+        data,
+        permissionEndpoints,
+        updatePermission
+      );
+      if (message) {
+        currentEditingPermissionId = null;
+        Modal.close('#addPermissionModal');
+        loadsPermissions();
+        showSnackbar(message, true);
+      } else {
+        showSnackbar('Error al actualizar el permiso.', false);
+      }
+    } else {
+      const message = await createService(
+        data,
+        permissionEndpoints,
+        addPermission
+      );
+      if (message) {
+        Modal.close('#addPermissionModal');
+        loadsPermissions();
+        showSnackbar(message, true);
+      } else {
+        showSnackbar('Error al agregar el permiso.', false);
+      }
+    }
+  };
+
+  loadsPermissions();
+  setupEventListeners();
+
+  window.onAction = onAction;
+</script>

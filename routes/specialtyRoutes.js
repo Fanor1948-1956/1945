@@ -1,14 +1,14 @@
-// routes/specialtyRoutes.js
-const express = require('express');
-const router = express.Router();
-const specialtyController = require('../controllers/specialityController');
+const express = require('express')
+const router = express.Router()
+const specialtyController = require('../controllers/specialityController')
+const Specialty = require('../models/Specialty.js')
+const getDataChart = require('../middleware/getChartData.js')
 
-// Ruta para crear una nueva especialidad
-router.post('/', specialtyController.createSpecialty);
+router.post('/create-specialty', specialtyController.createSpecialty)
+router.get('/api', specialtyController.getAllSpecialties)
+router.get('/:id', specialtyController.getSpecialtyById)
+router.put('/update-specialty/:id', specialtyController.updateSpecialty)
+router.delete('/delete/:id', specialtyController.deleteSpecialty)
+router.get('/api/data-chart', getDataChart(Specialty))
 
-// Ruta para obtener todas las especialidades
-router.get('/', specialtyController.getAllSpecialties);
-
-// Puedes agregar rutas para actualizar y eliminar especialidades si es necesario
-
-module.exports = router;
+module.exports = router

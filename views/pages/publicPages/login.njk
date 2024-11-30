@@ -1,77 +1,93 @@
-{% extends "layouts/publicLayout.njk" %}
+<html>
+  <head></head>
+  <body>
+    {% extends "layouts/publicLayout.njk" %} {% block content %}
 
-{% block content %}
-    <style>
-        .main {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 80vh;
-        }
+    <div id="cardContainer"></div>
+    <!-- Contenedor para la tarjeta que contendrá el formulario -->
+    <div
+      id="snackbar"
+      class="snackbar"
+    ></div>
 
-        h2 {
-            text-align: center;
-            color: white;
-        }
-
-        .error-message {
-            color: red;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        label {
-            margin: 2px;
-            display: block;
-            color: white;
-        }
-
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px 0px;
-            margin: 10px 0px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        button {
-            width: 100%;
-            position: relative;
-            background-color: white;
-            color: #161616;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #1616160;
-            color: white !important;
-            border: 1px solid white !important;
-        }
-    </style>
-    <div class="main">
-        <div class="form-container">
-            <h2>Iniciar Sesión</h2>
-
-            <form class="form-action" action="/auth/login" method="POST">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-                
-                <label for="password">Contraseña:</label>
-                <input type="password" id="password" name="password" required>
-                
-                <!-- Mueve el bloque de error aquí -->
-                {% if query.error %}
-                    <div class="error-message">{{ query.error }}</div>
-                {% endif %}
-                
-                <button type="submit">Iniciar Sesión</button>
-            </form>
+    <script type="module">
+      import { createCustomInputs } from './js/components/custom/input.js';
+      import { createCard } from './js/components/custom/card.js';
+      import { inputLogin } from './js/dinamic/input/public/pages/inputLogin.js';
+      // Crear la tarjeta que contendrá el formulario
+      createCard(
+        'cardContainer',
+        'Inicio de Sesión',
+        ` 
+      <div class="logo-container">
+        <div class="circle">
+          <div class="rotating-text">
+            <span>C</span>
+            <span>L</span>
+            <span>Í</span>
+            <span>N</span>
+            <span>I</span>
+            <span>C</span>
+            <span>A</span>
+            <span>1</span>
+            <span>G</span>
+            <span>R</span>
+            <span>A</span>
+            <span>N</span>
+          </div>
+          <div class="inner-border"></div>
+          <div class="center-text">Potosí</div>
         </div>
-    </div>
-{% endblock %}
+      </div>
+      <form id="loginForm">
+        <div class="input-content">
+          <div id="dynamicInputs"></div>
+          <button type="submit">Ingresar</button>
+        </div>
+      </form>
+      `
+      );
+
+      // Agregar los inputs al formulario
+      const dynamicInputs = document.getElementById('dynamicInputs');
+      dynamicInputs.appendChild(
+        createCustomInputs(inputLogin, 'column', 'center', 'center')
+      );
+
+      const form = document.querySelector('#loginForm');
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const email = document.querySelector('#email').value;
+        const password = document.querySelector('#password').value;
+
+        try {
+          const response = await fetch('/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user));
+            localStorage.setItem('isAuthenticated', data.isAuthenticated);
+            window.location.href = '/dashboard';
+          } else {
+            const errorData = await response.json();
+            // Mostrar mensaje de error usando el snackbar
+            showSnackbar(errorData.message, false); // Mensaje de error
+          }
+        } catch (error) {
+          console.error('Error en la solicitud de inicio de sesión:', error);
+          // Mostrar mensaje de error genérico
+          showSnackbar('Error en la conexión. Inténtalo de nuevo.', false);
+        }
+      });
+    </script>
+
+    {% endblock %}
+  </body>
+</html>

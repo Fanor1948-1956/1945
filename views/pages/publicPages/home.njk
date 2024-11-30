@@ -1,62 +1,73 @@
-{% extends "layouts/publicLayout.njk" %}
+{% extends "layouts/publicLayout.njk" %} {% block content %}
+<div class="home-container">
+  {#
+  <section
+    id="hero"
+    class="home-hero"
+  >
+    {% include "pages/privatePages/permission/index.njk" %}
+  </section>
+  <section
+    id="hero"
+    class="home-hero"
+  >
+    {% include "pages/privatePages/role/index.njk" %}
+  </section>
+  <section
+    id="hero"
+    class="home-hero"
+  >
+    {% include "pages/privatePages/specialities.njk" %}
+  </section>
+  <section
+    id="hero"
+    class="home-hero"
+  >
+    {% include "pages/privatePages/services.njk" %}
+  </section>
+  #}
 
-{% block content %}
-  <div class='home-container1'>
-    <select id="user-filter">
-      <option value="all">Todos</option>
-      <option value="doctor">Doctores</option>
-      <option value="patient">Pacientes</option>
-      <!-- Agregar más opciones si es necesario -->
-    </select>
+  <section
+    id="hero"
+    class="home-hero"
+  >
+    {% include "partials/heroAndFeatures.njk" %}
+  </section>
 
-    <div id="users-list" class='home-doctors1'>
-      <!-- Los usuarios se mostrarán aquí -->
-    </div>
-  </div>
+  <section
+    id="practices"
+    class="home-practices"
+  >
+    {% include "partials/practicesAndWhyChooseUs.njk" %}
+  </section>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      const filterSelect = document.getElementById('user-filter');
-      const usersList = document.getElementById('users-list');
+  <section
+    id="doctors"
+    class="home-doctors"
+  >
+    {% include "partials/meetOurDoctors.njk" %}
+  </section>
 
-      // Función para cargar usuarios
-      async function loadUsers(filter) {
-        try {
-          const response = await fetch('/api/users');
-          const users = await response.json();
+  <section
+    id="schedule"
+    class="home-schedule"
+  >
+    {% include "partials/scheduleAppointment.njk" %}
+  </section>
 
-          // Limpiar la lista de usuarios
-          usersList.innerHTML = '';
+  <section
+    id="features"
+    class="home-features"
+  >
+    {% include "partials/featuresSection.njk" %}
+  </section>
 
-          // Filtrar usuarios si es necesario
-          const filteredUsers = filter === 'all' ? users : users.filter(user => {
-            return user.roles.some(role => role.name.toLowerCase() === filter);
-          });
+  <section
+    id="news"
+    class="home-news"
+  >
+    {% include "partials/latestNews.njk" %}
+  </section>
+</div>
 
-          // Insertar los usuarios en el HTML
-          filteredUsers.forEach(user => {
-            const userCard = `
-              <div class="doctor-card">
-                <img class="doctor-image" alt="Imagen de ${user.name} ${user.surnames}" src="https://picsum.photos/150/150?random=${user._id}" />
-                <h3>${user.name}</h3>
-                <h3>${user.surnames}</h3>
-              </div>
-            `;
-            usersList.insertAdjacentHTML('beforeend', userCard);
-          });
-        } catch (error) {
-          console.error('Error al cargar usuarios:', error);
-        }
-      }
-
-      // Cargar usuarios al inicio
-      await loadUsers('all');
-
-      // Cargar usuarios según el filtro seleccionado
-      filterSelect.addEventListener('change', () => {
-        const filterValue = filterSelect.value;
-        loadUsers(filterValue);
-      });
-    });
-  </script>
 {% endblock %}

@@ -1,263 +1,129 @@
-.sign-in-container1 {
-  gap: var(--dl-space-space-unit);
-  width: 100%;
+.error-message {
+  color: red;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.logo-container {
   display: flex;
+
+  align-items: center;
+  justify-content: center;
+}
+
+.circle {
+  width: 10rem;
+  height: 10rem;
   position: relative;
-  align-items: flex-start;
-  flex-direction: row;
-  justify-content: center;
+  overflow: hidden; /* Asegúrate de que nada sobresalga */
+
+  border-radius: 50%;
 }
-.sign-in-max-width {
-  gap: var(--dl-space-space-oneandhalfunits);
-  height: 100%;
-  display: flex;
-  align-items: flex-start;
-  flex-direction: row;
-  justify-content: center;
+
+.rotating-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Centrar el texto */
+  display: flex; /* Usar flexbox para organizar el texto */
+  justify-content: center; /* Centrar el texto horizontalmente */
+  align-items: center; /* Centrar el texto verticalmente */
+  width: 100%; /* Asegura que ocupe todo el ancho del círculo */
+  height: 100%; /* Asegura que ocupe todo el alto del círculo */
+  animation: spin-text 10s linear infinite; /* Hacer girar solo el texto */
 }
-.sign-in-container2 {
-  gap: var(--dl-space-space-twounits);
-  flex: 1;
-  width: auto;
-  height: 100%;
-  display: flex;
-  z-index: 100;
-  max-width: 600px;
-  align-items: center;
-  border-radius: var(--dl-radius-radius-cardradius);
-  flex-direction: column;
-  justify-content: center;
-  background-color: var(--dl-color-theme-accent1);
+
+/* Cada letra se posiciona en el borde del círculo */
+.rotating-text span {
+  position: absolute;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin: auto;
+  font-size: 10px;
+  color: #b6b3dc;
+  transform-origin: 0 1rem; /* Cambiar el origen de la transformación */
 }
-.sign-in-form1 {
-  gap: var(--dl-space-space-oneandhalfunits);
-  width: 100%;
-  display: flex;
-  max-width: 500px;
-  align-items: flex-start;
-  flex-direction: column;
-  justify-content: flex-end;
+
+/* Posiciones de las letras en un círculo */
+.rotating-text span:nth-child(1) {
+  transform: rotate(0deg) translate(4rem) rotate(0deg);
 }
-.sign-in-container3 {
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
-  justify-content: flex-end;
+.rotating-text span:nth-child(2) {
+  transform: rotate(30deg) translate(4rem) rotate(-30deg);
 }
-.sign-in-form2 {
-  gap: var(--dl-space-space-unit);
-  width: 100%;
-  height: auto;
-  display: flex;
-  flex-direction: column;
+.rotating-text span:nth-child(3) {
+  transform: rotate(60deg) translate(4rem) rotate(-60deg);
 }
-.sign-in-email {
-  gap: 4px;
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  flex-shrink: 0;
-  flex-direction: column;
+.rotating-text span:nth-child(4) {
+  transform: rotate(90deg) translate(4rem) rotate(-90deg);
 }
-.sign-in-textinput1 {
-  width: 100%;
-  border-color: var(--dl-color-theme-primary1);
-  background-color: transparent;
+.rotating-text span:nth-child(5) {
+  transform: rotate(120deg) translate(4rem) rotate(-120deg);
 }
-.sign-in-password {
-  gap: var(--dl-space-space-halfunit);
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
+.rotating-text span:nth-child(6) {
+  transform: rotate(150deg) translate(4rem) rotate(-150deg);
 }
-.sign-in-textfield {
-  gap: 4px;
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  flex-shrink: 0;
-  flex-direction: column;
+.rotating-text span:nth-child(7) {
+  transform: rotate(180deg) translate(4rem) rotate(-180deg);
 }
-.sign-in-container4 {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  justify-content: space-between;
+.rotating-text span:nth-child(8) {
+  transform: rotate(210deg) translate(4rem) rotate(-210deg);
 }
-.sign-in-hide-password {
-  gap: var(--dl-space-space-halfunit);
-  width: auto;
-  height: auto;
-  display: flex;
-  align-items: center;
-  flex-shrink: 1;
-  justify-content: center;
+.rotating-text span:nth-child(9) {
+  transform: rotate(240deg) translate(4rem) rotate(-240deg);
 }
-.sign-in-icon1 {
-  fill: var(--dl-color-theme-neutral-dark);
-  width: 24px;
-  height: 24px;
+.rotating-text span:nth-child(10) {
+  transform: rotate(270deg) translate(4rem) rotate(-270deg);
 }
-.sign-in-textinput2 {
-  width: 100%;
-  border-color: var(--dl-color-theme-primary1);
-  background-color: transparent;
+.rotating-text span:nth-child(11) {
+  transform: rotate(300deg) translate(4rem) rotate(-300deg);
 }
-.sign-in-link {
-  align-self: flex-end;
-  text-decoration: underline none;
+.rotating-text span:nth-child(12) {
+  transform: rotate(330deg) translate(4rem) rotate(-330deg);
 }
-.sign-in-button1 {
-  width: 100%;
+
+.inner-border {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 90%; /* Ajusta según el tamaño deseado */
+  height: 90%; /* Ajusta según el tamaño deseado */
+  border: 2px solid #b6b3dc; /* Estilo del borde */
+  border-radius: 50%;
+  transform: translate(-50%, -50%); /* Centra el borde interno */
+  animation: spin-border 10s linear infinite; /* Animación de rotación */
+  box-sizing: border-box; /* Asegura que el borde se cuente dentro del tamaño total */
 }
-.sign-in-divider1 {
-  gap: var(--dl-space-space-oneandhalfunits);
-  width: 100%;
-  height: auto;
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  justify-content: center;
-}
-.sign-in-divider2 {
-  flex: 1;
-  width: var(--dl-size-size-medium);
-  height: 1px;
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
-  background-color: var(--dl-color-theme-primary1);
-}
-.sign-in-divider3 {
-  flex: 1;
-  width: auto;
-  height: 1px;
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
-  background-color: var(--dl-color-theme-primary1);
-}
-.sign-in-container5 {
-  gap: var(--dl-space-space-unit);
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  flex-direction: row;
-  justify-content: flex-end;
-}
-.sign-in-button2 {
-  gap: var(--dl-space-space-halfunit);
-  width: 100%;
-  display: flex;
-  box-sizing: border-box;
-  align-items: center;
-  border-color: var(--dl-color-theme-primary1);
-  border-style: solid;
-  border-width: 1px;
-  justify-content: center;
-}
-.sign-in-icon3 {
-  width: 24px;
-  height: 24px;
-}
-.sign-in-button3 {
-  gap: var(--dl-space-space-halfunit);
-  width: 100%;
-  display: flex;
-  box-sizing: border-box;
-  align-items: center;
-  border-color: var(--dl-color-theme-primary1);
-  border-style: solid;
-  border-width: 1px;
-  justify-content: center;
-}
-.sign-in-icon5 {
-  width: 24px;
-  height: 24px;
-}
-.sign-in-container6 {
-  gap: var(--dl-space-space-unit);
-  flex: 1;
-  width: auto;
-  height: auto;
-  display: flex;
-  max-width: 500px;
-  align-items: flex-start;
-  border-radius: var(--dl-radius-radius-cardradius);
-  flex-direction: column;
-  background-color: var(--dl-color-theme-accent2);
-}
-.sign-in-container7 {
-  display: flex;
-  align-items: flex-start;
-  flex-direction: column;
-}
-.sign-in-button4 {
-  width: 100%;
-}
-.sign-in-text22 {
-  display: inline-block;
-}
-.sign-in-text23 {
-  display: inline-block;
+
+.center-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: #fefefe;
   text-align: center;
+  z-index: 1; /* Asegura que el texto central esté en el frente */
 }
-.sign-in-text24 {
-  display: inline-block;
-}
-.sign-in-text25 {
-  display: inline-block;
-  text-align: center;
-}
-.sign-in-text26 {
-  display: inline-block;
-}
-.sign-in-text27 {
-  display: inline-block;
-}
-@media (max-width: 991px) {
-  .sign-in-container1 {
-    gap: var(--dl-space-space-twounits);
-    height: auto;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
+
+@keyframes spin-text {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
   }
-  .sign-in-max-width {
-    align-items: center;
-    flex-direction: column;
-  }
-  .sign-in-container2 {
-    width: 100%;
-  }
-  .sign-in-container6 {
-    max-width: 600px;
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
   }
 }
-@media (max-width: 767px) {
-  .sign-in-container1 {
-    padding: var(--dl-space-space-threeunits);
+
+@keyframes spin-border {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
   }
-}
-@media (max-width: 479px) {
-  .sign-in-container1 {
-    padding: var(--dl-space-space-oneandhalfunits);
-  }
-  .sign-in-button1 {
-    width: 100%;
-  }
-  .sign-in-button2 {
-    width: 100%;
-  }
-  .sign-in-button3 {
-    width: 100%;
-  }
-  .sign-in-button4 {
-    width: 100%;
-  }
-  .sign-in-text26 {
-    text-align: center;
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
   }
 }

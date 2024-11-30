@@ -1,0 +1,130 @@
+<style>
+  .clock {
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    transition: background-color 0.3s ease;
+  }
+
+  .clock:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .time {
+    font-size: 48px;
+    font-weight: bold;
+    letter-spacing: 2px;
+  }
+
+  .date {
+    font-size: 24px;
+    margin-top: 10px;
+    opacity: 0.8;
+  }
+
+  h1 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+</style>
+
+<h1>Bienvenido a tu Sistema Web de Información Clinica Gran Potosí</h1>
+<div
+  id="clock"
+  class="clock"
+>
+  <div
+    class="time"
+    id="currentTime"
+  ></div>
+  <div
+    class="date"
+    id="currentDate"
+  ></div>
+</div>
+
+<script type="module">
+  // useEffect.js
+  const useEffect = (callback, dependencies) => {
+    let isMounted = true;
+
+    const executeEffect = () => {
+      if (isMounted) {
+        const cleanup = callback();
+        if (typeof cleanup === 'function') {
+          return cleanup;
+        }
+      }
+    };
+
+    const cleanup = executeEffect();
+
+    const cleanupEffect = () => {
+      isMounted = false;
+      if (cleanup) cleanup();
+    };
+
+    return cleanupEffect;
+  };
+
+  // state.js
+  const useState = (key, initialValue) => {
+    // Intenta recuperar el valor desde localStorage
+    const storedValue = localStorage.getItem(key);
+    let value = storedValue !== null ? JSON.parse(storedValue) : initialValue;
+    const listeners = [];
+
+    const setValue = (newValue) => {
+      value = newValue;
+      // Almacena el nuevo valor en localStorage
+      localStorage.setItem(key, JSON.stringify(value));
+      listeners.forEach((listener) => listener(value));
+    };
+
+    const getValue = () => value;
+
+    const subscribe = (listener) => {
+      listeners.push(listener);
+    };
+
+    return [getValue, setValue, subscribe];
+  };
+
+  // Inicializa el estado para la hora y la fecha actual
+  const [getCurrentTime, setCurrentTime, subscribeTime] = useState(
+    'currentTime',
+    new Date().toLocaleTimeString()
+  );
+  const [getCurrentDate, setCurrentDate, subscribeDate] = useState(
+    'currentDate',
+    new Date().toLocaleDateString()
+  );
+
+  // Función para actualizar la hora y la fecha cada segundo
+  const updateClock = () => {
+    const now = new Date();
+    setCurrentTime(now.toLocaleTimeString());
+    setCurrentDate(now.toLocaleDateString());
+  };
+
+  // Usar useEffect para establecer el intervalo
+  useEffect(() => {
+    const intervalId = setInterval(updateClock, 1000); // Actualiza cada segundo
+    return () => clearInterval(intervalId); // Limpieza al desmontar
+  }, []); // Dependencias vacías para que solo se ejecute al montar
+
+  // Función para renderizar la hora y la fecha en la página
+  const render = () => {
+    document.getElementById('currentTime').textContent = getCurrentTime();
+    document.getElementById('currentDate').textContent = getCurrentDate();
+  };
+
+  // Suscribirse a los cambios en la hora y fecha actual
+  subscribeTime(render);
+  subscribeDate(render);
+
+  // Renderiza la plantilla inicialmente
+  render();
+</script>

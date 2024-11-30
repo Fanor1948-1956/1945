@@ -1,4 +1,4 @@
-// services/rolesService.js
+
 const {
   Patient,
   Doctor,
@@ -10,7 +10,7 @@ const {
 const resolveRole = (rolesFound) => {
   const roleNames = rolesFound.map((role) => role.name);
   if (roleNames.includes('Paciente')) {
-    return Patient; // Retorna el modelo Patient si se encuentra
+    return Patient; 
   } else if (roleNames.includes('Doctor')) {
     return Doctor;
   } else if (roleNames.includes('Admin')) {
@@ -18,7 +18,7 @@ const resolveRole = (rolesFound) => {
   } else if (roleNames.includes('ChiefMedical')) {
     return ChiefMedical;
   } else {
-    return User; // Rol por defecto si no se encuentra ninguno específico
+    return User; 
   }
 };
 

@@ -1,18 +1,93 @@
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
-// middleware/authMiddleware.js
+const SECRET_KEY = process.env.SECRET_KEY;
+
+// Middleware combinado para verificar JWT o sesión
 const verifyToken = (req, res, next) => {
+  // Verifica si existe una sesión activa
   if (req.session && req.session.authenticated) {
-    return next(); // Si el usuario está autenticado, continuar
+    return next(); // Continuar si el usuario está autenticado por sesión
   }
-  return res.redirect('/login'); // Si no, redirigir a la página de inicio de sesión
+
+  // Si no hay sesión, verificamos el token JWT
+  let token;
+
+  if (req.cookies && req.cookies.token) {
+    token = req.cookies.token; // Busca el token en las cookies
+  } else if (req.headers['authorization']) {
+    token = req.headers['authorization'].split(' ')[1]; // O en los headers (Bearer token)
+  }
+
+  // Si no hay token, redirige al login
+  if (!token) {
+    return res.status(401).redirect('/login');
+  }
+
+  // Verifica el token JWT
+  jwt.verify(token, SECRET_KEY, (err, decoded) => {
+    if (err) {
+      return res.status(403).redirect('/login'); // Token inválido, redirigir
+    }
+
+    // Si es válido, guarda el ID del usuario en la request
+    req.userId = decoded.id;
+    next(); // Continúa con la siguiente función
+  });
 };
-// middleware/auth.js
+
+// Middleware para usuarios no autenticados
 const isNotAuthenticated = (req, res, next) => {
   if (!req.session || !req.session.authenticated) {
-    return next(); // Si no está autenticado, continuar
-  } else {
-    return res.redirect('/dashboard'); // Redirigir a dashboard si ya está autenticado
+    return next(); // Continuar si no está autenticado
   }
+  return res.redirect('/dashboard'); // Redirigir si ya está autenticado
 };
 
 module.exports = { verifyToken, isNotAuthenticated };
+
+// const jwt = require('jsonwebtoken');
+// require('dotenv').config();
+
+// const SECRET_KEY = process.env.SECRET_KEY;
+
+// // Middleware combinado para verificar JWT y sesión
+// const verifyToken = (req, res, next) => {
+//   // Primero verifica si existe una sesión activa
+//   if (req.session && req.session.authenticated) {
+//     // Si hay sesión activa, verifica el token JWT también
+//     let token;
+
+//     // Busca el token en las cookies
+//     if (req.cookies && req.cookies.token) {
+//       token = req.cookies.token;
+//     }
+//     // Busca el token en los headers (Bearer token)
+//     else if (req.headers['authorization']) {
+//       token = req.headers['authorization'].split(' ')[1];
+//     }
+
+//     // Si hay sesión pero no hay token, retorna error
+//     if (!token) {
+//       return res
+//         .status(401)
+//         .json({ message: 'Se requiere un token, pero no se encontró.' });
+//     }
+
+//     // Verifica el token JWT
+//     jwt.verify(token, SECRET_KEY, (err, decoded) => {
+//       if (err) {
+//         return res.status(403).json({ message: 'Token inválido.' });
+//       }
+
+//       // Si el token es válido, guarda el ID del usuario en la request
+//       req.userId = decoded.id;
+//       next(); // Continúa con la siguiente función
+//     });
+//   } else {
+//     // Si no hay sesión, retorna un error
+//     return res.status(401).json({ message: 'No hay sesión activa.' });
+//   }
+// };
+
+// module.exports = { verifyToken };

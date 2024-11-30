@@ -1,53 +1,95 @@
-<aside id="sidebar" class="sidebar">
-    <div class='logo'>Empresa</div>
-    <ul>
-        {# Enlaces de rutas públicas #}
-        {% for route in publicRoutes %}
-            <li>
-                <a href="{{ route.path }}">
-                    <i class="fas fa-hospital-alt"></i> <!-- Icono de hospital -->
-                    {{ route.title }}
-                </a>
-                {% if route.subRoutes %}
-                    <ul class="submenu"> <!-- Asegúrate de que el submenú tenga la clase 'submenu' -->
-                        {% for subRoute in route.subRoutes %}
-                            <li>
-                                <a href="{{ subRoute.path }}">
-                                    <i class="fas fa-notes-medical"></i> <!-- Icono de nota médica -->
-                                    {{ subRoute.title }}
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </li>
+<html isEditable="true"><head isEditable="true"></head><body isEditable="true"><aside id="sidebar" class="sidebar" isEditable="true">
+  <div class="logo" isEditable="true">
+    Empresa
+  </div>
+  <ul isEditable="true">
+    {% for route in publicRoutes %}
+    <li isEditable="true">
+      <a href="{{ route.path }}" class="{% if route.subRoutes %}has-submenu{% endif %}" data-route="{{ route.path }}" isEditable="true">
+        <div class="icon" isEditable="true">
+          {{ route.icon | safe }}
+        </div>
+        {{ route.title }}
+      </a>
+      {% if route.subRoutes %}
+      <ul class="submenu" isEditable="true">
+        {% for subRoute in route.subRoutes %}
+        <li class="submenu__item" isEditable="true">
+          {# Verificar si subRoute.path está definido, si no usar el id #} {% if
+          subRoute.path %}
+          <a href="{{ subRoute.path }}" class="submenuLink" data-route="{{ subRoute.path }}" isEditable="true">
+            <div class="icon" isEditable="true">
+              {{ subRoute.icon | safe }}
+            </div>
+            {{ subRoute.title }}
+          </a>
+          {% else %}
+          <a href="{{ route.path }}#{{ subRoute.id }}" class="submenuLink" data-route="{{ route.path }}#{{ subRoute.id }}" isEditable="true">
+            <div class="icon" isEditable="true">
+              {{ subRoute.icon | safe }}
+            </div>
+            {{ subRoute.title }}
+          </a>
+          {% endif %}
+        </li>
         {% endfor %}
-        {# Enlaces de rutas privadas #}
-        {% if isAuthenticated %}
-            {% for route in privateRoutes %}
-                {% if route.roles is not defined or route.roles|length == 0 or (userRoles | intersect(route.roles)|length > 0) %}
-                    <li>
-                        <a href="{{ route.path }}">
-                            <i class="fas fa-hospital-alt"></i> <!-- Icono de hospital -->
-                            {{ route.title }}
-                        </a>
-                        {% if route.subRoutes %}
-                            <ul class="submenu"> <!-- Asegúrate de que el submenú tenga la clase 'submenu' -->
-                                {% for subRoute in route.subRoutes %}
-                                    {% if subRoute.roles is not defined or subRoute.roles|length == 0 or (userRoles | intersect(subRoute.roles)|length > 0) %}
-                                        <li>
-                                            <a href="{{ subRoute.path }}">
-                                                <i class="fas fa-notes-medical"></i> <!-- Icono de nota médica -->
-                                                {{ subRoute.title }}
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
-                    </li>
-                {% endif %}
+      </ul>
+      {% endif %}
+    </li>
+    {% endfor %} {% if isAuthenticated %} {% for route in privateRoutes %} {% if
+    hasAccess(userRoles, route) and route.path != '/logout' and route.title !=
+    'Perfil' %}
+    <li isEditable="true">
+      <a href="{{ route.path }}" class="menu-item" data-route="{{ route.path }}" isEditable="true">
+        <div class="icon" isEditable="true">
+          {{ route.icon | safe }}
+        </div>
+        {{ route.title }}
+      </a>
+      {% if route.subRoutes %}
+      <ul class="submenu" isEditable="true">
+        {% for subRoute in route.subRoutes %} {% if hasAccess(userRoles,
+        subRoute) %}
+        <li isEditable="true">
+          <a href="{{ subRoute.path }}" class="submenuLink" data-route="{{ subRoute.path }}" isEditable="true">
+            <div class="icon" isEditable="true">
+              {{ subRoute.icon | safe }}
+            </div>
+            {{ subRoute.title }}
+          </a>
+          {% if subRoute.subRoutes %}
+          <ul class="submenu" isEditable="true">
+            {% for subSubRoute in subRoute.subRoutes %}
+            <li isEditable="true">
+              <a href="{{ subSubRoute.path }}" class="submenuLink" data-route="{{ subSubRoute.path }}" isEditable="true">
+                <div class="icon" isEditable="true">
+                  {{ subSubRoute.icon | safe }}
+                </div>
+                {{ subSubRoute.title }}
+              </a>
+            </li>
             {% endfor %}
-        {% endif %}
-    </ul>
+          </ul>
+          {% endif %}
+        </li>
+        {% endif %} {% endfor %}
+      </ul>
+      {% endif %}
+    </li>
+    {% endif %} {% endfor %} {% endif %}
+  </ul>
+
+  {% if isAuthenticated %}
+  <div class="logout-container" isEditable="true">
+    {% for route in privateRoutes %} {% if route.path == '/logout' %}
+    <a href="{{ route.path }}" data-route="{{ route.path }}" class="logout-link" isEditable="true">
+      <div class="icon" isEditable="true">
+        {{ route.icon | safe }}
+      </div>
+      {{ route.title }}
+    </a>
+    {% endif %} {% endfor %}
+  </div>
+  {% endif %}
 </aside>
+</body></html>

@@ -1,27 +1,32 @@
-/* buttons.css */
 button {
-  background-color: #141414; /* Color por defecto para botones */
-  color: white; /* Color de texto blanco */
+  background-color: #021830;
+  color: white;
+  font-weight: bold;
   border: 1px solid white;
   padding: 10px 15px;
+  margin-left: 0.3rem;
   cursor: pointer;
-  border-radius: 5px; /* Bordes redondeados para botones */
+  border-radius: 5px;
 }
 
 button:hover {
-  background-color: #090909; /* Color más oscuro en hover */
+  background-color: #cbd4dd;
+  color: #050505;
 }
 
 button.send {
   background-color: #021830;
+
   color: white;
   padding: 10px 15px;
-  border: none;
+  margin: 0px 100px;
+  border: 1px solid white;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 button.send:hover {
-  background-color: #132232; /* Color más oscuro al pasar el ratón */
+  background-color: #cbd4dd;
+  color: #050505;
 }

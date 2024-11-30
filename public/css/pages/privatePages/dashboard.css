@@ -1,0 +1,152 @@
+/* .dashboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f0f4f8;
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.dashboard-section {
+  background-color: #ffffff;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  width: 85%;
+  text-align: center;
+}
+
+.main-heading,
+.section-heading {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.subtext {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.roles-list,
+.dashboard-options {
+  list-style-type: none;
+  padding: 0;
+}
+
+.role-item,
+.option-item {
+  background-color: #f7f9fc;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 5px 0;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logout-button {
+  background-color: #030910;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 10px;
+  text-decoration: none;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.logout-button:hover {
+  background-color: #0056b3;
+}
+
+.option-link {
+  color: #0056b3;
+  text-decoration: none;
+  font-size: 1.2rem;
+}
+
+.option-link:hover {
+  color: #003d80;
+} */
+
+.dashboard-container {
+  display: flex;
+  padding: 20px;
+  background-color: #f8f9fa;
+  gap: 20px; /* Espacio entre columnas */
+}
+
+/* Columna Izquierda para el Calendario */
+.left-column {
+  flex: 1;
+  max-width: 300px;
+}
+
+/* Columna Derecha para las Sub-secciones */
+.right-column {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.dashboard-section {
+  margin-top: 20px;
+}
+
+.dashboard-subsection {
+  background: #f9f9f9; /* Color de fondo de la subsección */
+  border: 1px solid #e0e0e0; /* Borde para separar subsecciones */
+  border-radius: 8px; /* Bordes redondeados */
+  padding: 15px; /* Espaciado interno */
+  margin-bottom: 15px; /* Espacio entre subsecciones */
+  transition: background 0.3s; /* Efecto de transición */
+}
+
+.year-buttons {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.year-btn {
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.year-btn:hover {
+  background-color: #0056b3;
+}
+
+.dashboard-subsection:hover {
+  background: #f1f1f1; /* Color al pasar el mouse */
+}
+.icon-placeholder {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  margin-right: 8px;
+  vertical-align: middle; /* Centra el ícono verticalmente */
+}
+.subsection-title {
+  font-size: 20px; /* Tamaño del texto del título */
+  font-weight: bold; /* Negrita para el título */
+  color: #007bff; /* Color del enlace */
+  text-decoration: none;
+}
+
+.option-link:hover {
+  text-decoration: none;
+}
+.subsection-title:hover {
+  text-decoration: none;
+}
+
+.subsection-content {
+  margin-top: 10px; /* Espaciado arriba del contenido adicional */
+  color: #555; /* Color del texto adicional */
+}

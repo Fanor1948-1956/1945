@@ -1,25 +1,25 @@
-<!-- views/components/rolesTable.njk -->
-<div class="table-container">
-    <table>
-        <thead>
-            <tr>
-                <th>Nombre del Rol</th>
-                <th>Permisos</th>
+<!-- views/components/rolesTable.njk --><html isEditable="true"><head isEditable="true"></head><body isEditable="true"><div class="table-container" isEditable="true">
+    
+            {% for role in items.roles %}
+            
+            {% endfor %}
+        <table isEditable="true">
+        <thead isEditable="true">
+            <tr isEditable="true">
+                <th isEditable="true">Nombre del Rol</th>
+                <th isEditable="true">Permisos</th>
             </tr>
         </thead>
-        <tbody>
-            {% for role in items.roles %}
-            <tr>
-                <td>{{ role.name }}</td>
-                <td>
-                    <ul>
+        <tbody isEditable="true"><tr isEditable="true">
+                <td isEditable="true">{{ role.name }}</td>
+                <td isEditable="true">
+                    <ul isEditable="true">
                         {% for permission in role.permissions %}
-                        <li>{{ permission.name }}</li>
+                        <li isEditable="true">{{ permission.name }}</li>
                         {% endfor %}
                     </ul>
                 </td>
-            </tr>
-            {% endfor %}
-        </tbody>
+            </tr></tbody>
     </table>
 </div>
+</body></html>

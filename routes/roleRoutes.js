@@ -1,32 +1,16 @@
-const express = require('express');
-const router = express.Router();
-const roleController = require('../controllers/roleController');
-const Role = require('../models/roleModel'); // Importa el modelo de roles
-const Permission = require('../models/permissionModel'); // Importa el modelo de permisos
+const express = require('express')
+const router = express.Router()
+const roleController = require('../controllers/roleController')
+const roleModel = require('../models/roleModel.js')
+const getDataChart = require('../middleware/getChartData.js')
 
+router.post('/create-role', roleController.createRole)
+router.get('/api', roleController.getAllRoles)
+router.get('/detail-role/:id', roleController.getRoleById)
+router.put('/update-role/:id', roleController.updateRole)
+router.patch('/:id/deactivate', roleController.deactivateRole)
+router.patch('/:id/activate', roleController.activateRole)
+router.delete('/delete/:id', roleController.deleteRole)
+router.get('/data-chart', getDataChart(roleModel))
 
-// Ruta para ver todos los roles en formato JSON
-router.get('/api/all-roles', roleController.getAllRoles);
-
-// Ruta para renderizar la vista de roles
-router.get('/all-roles', async (req, res) => {
-  try {
-    const roles = await Role.find().populate('permissions'); // Obtener roles
-    const permissions = await Permission.find(); // Obtener permisos
-
-    res.render('pages/privatePages/roles.njk', {
-      title: 'Lista de Roles',
-      roles,
-      permissions, // Envía los permisos a la vista
-      isAuthenticated: req.session.authenticated,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Error al obtener roles');
-  }
-});
-
-// Ruta para crear un nuevo rol
-router.post('/create-role', roleController.createRole); // Ruta privada
-
-module.exports = router;
+module.exports = router

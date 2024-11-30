@@ -8,9 +8,7 @@ const {
 const { verifyToken } = require('../middleware/authMiddleware'); // Asegúrate de importar el middleware
 
 // Ruta para ver el perfil (protegida)
-router.get('/', verifyToken, viewProfile);
-
-// Ruta para actualizar el perfil (protegida)
-router.post('/update', verifyToken, updateProfile);
+router.get('/profile', verifyToken, viewProfile);
+router.post('/update-profile', verifyToken, updateProfile);
 
 module.exports = router;

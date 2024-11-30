@@ -1,0 +1,110 @@
+.profile-container {
+  background-color: #0d0238;
+  border-radius: 8px;
+  padding: 20px 0px;
+  box-shadow: 0 4px 10px rgba(7, 0, 74, 0.2);
+  width: 100%;
+
+  h1 {
+    color: white;
+    font-size: 24px;
+    margin-right: 10px;
+  }
+  h2 {
+    color: rgb(17, 0, 77);
+    font-size: 20px;
+    margin-left: 10px;
+  }
+  p {
+    color: white;
+    font-size: 18px;
+  }
+}
+
+.profile-detail {
+  margin: 0;
+  border-radius: 8px;
+  display: flex;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  padding: 2rem;
+  background-color: #f0f0f0;
+}
+
+.file-item {
+  display: inline-block;
+  margin: 10px;
+  text-align: center;
+}
+
+.uploaded-image {
+  width: 10rem; /* Ajusta el tamaño según lo que necesites */
+  height: 10rem;
+  border-radius: 50%;
+  border: 1px solid rgb(7, 2, 78);
+
+  margin: 0 auto;
+}
+.upload {
+  display: inline-block;
+  border: 1px solid rgb(11, 4, 91);
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: transparent;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+/* Estilos aquí */
+.transparent-input {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  color: #000;
+  width: 100%;
+  padding: 5px;
+  transition: border-bottom-color 0.3s ease;
+}
+
+.transparent-input:disabled {
+  opacity: 0.5;
+}
+
+.button {
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #f0f0f0;
+  color: #000;
+}
+
+/* Estilos para el avatar */
+.avatar-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 10px;
+}
+
+.default-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #ccc; /* Color de fondo del avatar */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px; /* Tamaño de la letra */
+  color: #fff; /* Color del texto */
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Estilos para el avatar cuando hay una imagen */
+.avatar {
+  background-size: cover;
+  background-position: center;
+}
+

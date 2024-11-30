@@ -1,0 +1,12 @@
+{% extends "layouts/privateLayout.njk" %}
+<!-- Bloque de título -->
+
+{% block content %}
+
+<section>
+  <!-- Aquí se incluiría el componente de fetch para obtener los permisos -->
+  <!-- Aquí se incluiría el componente de renderizar los permisos -->
+  {% include "pages/privatePages/permission/verb/getAll.njk" %}
+</section>
+
+{% endblock %}

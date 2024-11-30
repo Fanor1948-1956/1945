@@ -1,32 +1,22 @@
-<!-- Plantilla hija: views/pages/privatePages/dashboard.njk -->
 {% extends "layouts/privateLayout.njk" %}
 
-{% block title %}Dashboard{% endblock %} <!-- Bloque de título -->
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-  <h1>{{ title }}</h1>
-  <p>Bienvenido al dashboard privado.</p>
-
-<div>
-  <h1>Bienvenido, {{ name }} {{ surnames }}</h1>
-  <p>Tus roles son:</p>
-  <ul>
-    {% for role in userRoles %}
-      <li>{{ role }}</li>
-    {% endfor %}
-  </ul>
+<div class="dashboard-container">
+  <section class="dashboard-section" id="items-container">
+    <!-- Aquí se generarán dinámicamente los elementos -->
+  </section>
 </div>
 
-<h2>    {{isAuthenticated}}</h2>
-  <div class="cards-container">
-   
-    <section>
-        {% include "components/common/Card/index.njk" %}
-    </section>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="module">
+  import { renderCharts } from './js/chart/charts.js';  // Asegúrate de que la ruta sea correcta
 
-
-        {% include "components/common/Table/index.njk" %}
-  </div>
-   
+  document.addEventListener("DOMContentLoaded", () => {
+    const items = JSON.parse('{{ items | safe }}');  // Convertir los items a un objeto JavaScript
+    renderCharts(items);  // Llamar a la función que genera los gráficos
+  });
+</script>
 
 {% endblock %}

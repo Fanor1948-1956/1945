@@ -1,0 +1,6 @@
+.vscode
+node_modules/
+.env
+public/js/config/index.js
+uploads
+codeDraft

@@ -1,91 +1,82 @@
 const roleModel = require('../models/roleModel');
-const { User } = require('../models/userModel');
+const { validateIcon, generateIdFromPath } = require('../utils/iconUtils');
 
-// Definir las rutas públicas
 const publicRoutes = [
   {
     path: '/home',
+    icon: validateIcon('hospital'),
     title: 'Inicio',
     view: 'pages/publicPages/home.njk',
-    items: async () => [], // Cargar datos si es necesario
-  },
-  {
-    path: '/about',
-    title: 'Sobre Nosotros',
-    view: 'pages/publicPages/about.njk',
-    items: async () => [], // Cargar datos si es necesario
-  },
-  {
-    title: 'Contacto', // Sin path ni view
+    isPublic: true,
+    items: async () => [],
     subRoutes: [
+      { id: 'practices', title: 'Prácticas', icon: validateIcon('practices') },
+      { id: 'doctors', title: 'Médicos', icon: validateIcon('doctors') },
+      { id: 'schedule', title: 'Agendar Cita', icon: validateIcon('agendar') },
       {
-        path: '/settings',
-        title: 'Configuraciones',
-        view: 'pages/publicPages/contact.njk',
-        items: async () => [
-          {
-            title: 'Configuración 1',
-            description: 'Descripción de configuración 1',
-          },
-          {
-            title: 'Configuración 2',
-            description: 'Descripción de configuración 2',
-          },
-        ],
+        id: 'features',
+        title: 'Características',
+        icon: validateIcon('features'),
       },
+      { id: 'news', title: 'Noticias', icon: validateIcon('news') },
     ],
   },
   {
+    path: '/about',
+    icon: validateIcon('stethoscope'),
+    id: generateIdFromPath('/about'),
+    title: 'Sobre Nosotros',
+    view: 'pages/publicPages/about.njk',
+    isPublic: true,
+    subRoutes: [
+      { id: 'mission', title: 'Nuestra Misión', icon: validateIcon('mission') },
+      { id: 'vision', title: 'Nuestra Visión', icon: validateIcon('vision') },
+    ],
+    items: async () => [],
+  },
+  {
+    path: '/contact',
+    icon: validateIcon('contact'),
+    id: generateIdFromPath('/contact'),
+    title: 'Contacto',
+    view: 'pages/publicPages/contact.njk',
+    isPublic: true,
+    items: async () => [],
+  },
+  {
     path: '/register',
+    icon: validateIcon('register'),
+    id: generateIdFromPath('/register'),
     title: 'Registro',
     view: 'pages/publicPages/register.njk',
+    isPublic: true,
     items: async () => await roleModel.find(),
   },
   {
     path: '/login',
-    title: 'Iniciar Sesión',
+    icon: validateIcon('login'),
+    id: generateIdFromPath('/login'),
+    title: 'Iniciar Sessión',
     view: 'pages/publicPages/login.njk',
     items: async () => [],
-  },
-
-  {
-    title: 'Usuarios', // Sin path ni view
-    subRoutes: [
-      {
-        path: '/dosadctor',
-        title: 'Médicos',
-        view: 'pages/publicPages/home.njk', // Cambiar vista si es necesario
-        items: async () => {
-          const doctorRole = await roleModel.findOne({ name: 'Doctor' });
-          return await User.find({ roles: doctorRole._id }).populate('roles');
-        },
-      },
-    ],
+    isPublic: true,
   },
 ];
-
 const registerPublicRoutes = (app) => {
   publicRoutes.forEach((route) => {
-    // Registrar la ruta principal solo si tiene un path
     if (route.path) {
       app.get(route.path, async (req, res) => {
-        if (
-          req.session.authenticated &&
-          (route.path === '/home' || route.path === '/register')
-        ) {
-          return res.redirect('/dashboard'); // Redirigir si ya está autenticado
+        if (req.session.authenticated) {
+          return res.redirect('/dashboard');
         }
 
         try {
-          const items = await route.items(); // Obtener los items
-
+          const items = await route.items();
           res.render(route.view, {
             title: route.title,
             items: items,
-            publicRoutes, // Rutas públicas
-
-            isAuthenticated: req.session.authenticated,
-            username: req.session.name,
+            publicRoutes,
+            currentPath: route.path,
           });
         } catch (error) {
           console.error(`Error al cargar los datos para ${route.path}:`, error);
@@ -94,30 +85,33 @@ const registerPublicRoutes = (app) => {
       });
     }
 
-    // Registrar las subrutas dinámicamente
-    if (route.subRoutes && route.subRoutes.length > 0) {
+    // Manejo de subrutas
+    if (route.subRoutes) {
       route.subRoutes.forEach((subRoute) => {
-        const fullSubRoutePath = `${subRoute.path}`; // Concatenar la ruta principal y la subruta
+        // const subRoutePath = `${route.path}/${subRoute.id}`;
+        if (subRoute.path) {
+          app.get(subRoute.path, async (req, res) => {
+            if (req.session.authenticated) {
+              return res.redirect('/dashboard');
+            }
 
-        // Registrar subrutas con middleware de acceso
-        app.get(fullSubRoutePath, async (req, res) => {
-          try {
-            const items = await subRoute.items(); // Obtener los items
-            res.render(subRoute.view, {
-              title: subRoute.title,
-              items: items,
-              publicRoutes, // Rutas públicas
-              isAuthenticated: req.session.authenticated,
-              username: req.session.name,
-            });
-          } catch (error) {
-            console.error(
-              `Error al cargar los datos para ${subRoute.path}:`,
-              error
-            );
-            res.status(500).send('Error al cargar los datos');
-          }
-        });
+            try {
+              const items = subRoute.items ? await subRoute.items() : [];
+              res.render(route.view, {
+                title: subRoute.title,
+                items: items,
+                publicRoutes,
+                currentPath: subRoutePath,
+              });
+            } catch (error) {
+              console.error(
+                `Error al cargar los datos para ${subRoute.path}:`,
+                error
+              );
+              res.status(500).send('Error al cargar los datos');
+            }
+          });
+        }
       });
     }
   });

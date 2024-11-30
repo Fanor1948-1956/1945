@@ -1,44 +1,150 @@
+const permissionModel = require('../models/permissionModel');
 const Role = require('../models/roleModel');
-const Permission = require('../models/permissionModel');
 
-// Controlador para obtener roles en formato JSON
-exports.getAllRoles = async (req, res) => {
+
+exports.createRole = async (req, res) => {
   try {
-    const roles = await Role.find().populate('permissions'); // Obtén roles con sus permisos
-    res.json(roles); // Devuelve los roles como JSON
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Error obteniendo roles' });
-  }
-};
-
-// Controlador para renderizar la página de roles con roles y permisos
-exports.getRoles = async (req, res) => {
-  try {
-    const roles = await Role.find().populate('permissions'); // Obtener roles con permisos
-    const permissions = await Permission.find(); // Obtener todos los permisos
-
-    // Renderiza la página de roles con los datos obtenidos
-    res.render('pages/privatePages/roles.njk', {
-      title: 'Lista de Roles',
-      roles, // Enviar roles a la vista
-      permissions, // Enviar permisos a la vista
+    const role = new Role(req.body);
+    await role.save();
+    res.status(201).json({
+      success: true,
+      message: 'Role created successfully',
+      role,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Error al obtener roles');
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Error creating role',
+    });
   }
 };
 
-// Controlador para crear un nuevo rol
-exports.createRole = async (req, res) => {
-  const { name, alias, description, permissions } = req.body; // Obtener los datos del cuerpo de la solicitud
+
+exports.getAllRoles = async (req, res) => {
   try {
-    const newRole = new Role({ name, alias, description, permissions }); // Crear un nuevo rol
-    await newRole.save(); // Guardar el nuevo rol en la base de datos
-    res.redirect('/roles'); // Redirigir a la página de todos los roles
-  } catch (err) {
-    console.log(err);
-    res.status(500).send('Error creando el rol');
+    const roles = await Role.find().populate('permissions');
+    res.status(200).json({
+      success: true,
+      message: 'Roles retrieved successfully',
+      roles,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error retrieving roles',
+    });
+  }
+};
+
+
+exports.getRoleById = async (req, res) => {
+  const roleId = req.params.id;
+  try {
+    const role = await Role.findById(roleId).populate('permissions');
+    const allPermissions = await permissionModel.find(); 
+
+    if (!role) {
+      return res.status(404).json({ message: 'Rol no encontrado' });
+    }
+
+    res.json({ role, allPermissions }); 
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener el Rol' });
+  }
+};
+
+
+exports.updateRole = async (req, res) => {
+  try {
+    const role = await Role.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!role) {
+      return res.status(404).json({
+        success: false,
+        message: 'Role not found',
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: 'Role updated successfully',
+      role,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Error updating role',
+    });
+  }
+};
+
+
+exports.deactivateRole = async (req, res) => {
+  try {
+    const role = await Role.findByIdAndUpdate(
+      req.params.id,
+      { isActive: false },
+      { new: true }
+    );
+    if (!role) {
+      return res.status(404).json({
+        success: false,
+        message: 'Role not found',
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: 'Role deactivated successfully',
+      role,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Error deactivating role',
+    });
+  }
+};
+
+
+exports.activateRole = async (req, res) => {
+  try {
+    const role = await Role.findByIdAndUpdate(
+      req.params.id,
+      { isActive: true },
+      { new: true }
+    );
+    if (!role) {
+      return res.status(404).json({
+        success: false,
+        message: 'Role not found',
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: 'Role activated successfully',
+      role,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Error activating role',
+    });
+  }
+};
+
+exports.deleteRole = async (req, res) => {
+  try {
+    const roleId = req.params.id; 
+    const deletedRole = await Role.findByIdAndDelete(roleId); 
+
+    if (!deletedRole) {
+      return res.status(404).json({ message: 'Rol no encontrado' }); 
+    }
+
+    res.json({ success: true, message: 'Rol eliminado exitosamente' }); 
+  } catch (error) {
+    console.error('Error al eliminar el rol:', error);
+    res.status(500).json({ message: 'Error al eliminar el rol' }); 
   }
 };

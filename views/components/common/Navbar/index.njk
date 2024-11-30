@@ -1,35 +1,62 @@
-<header class="header">
-    <nav class="navbar">
-        <button class="hamburger" id="hamburgerBtn">☰</button>
-        <ul class="navbar__links">
-            {# Enlaces de rutas públicas #}
-            {% for route in publicRoutes %}
-                <li>
-                    <a href="{{ route.path }}">{{ route.title }}</a>
-                    {% if route.subRoutes %}
-                        <ul class="submenuNav">  <!-- Clase para el submenú -->
-                            {% for subRoute in route.subRoutes %}
-                                <li><a href="{{ subRoute.path }}">{{ subRoute.title }}</a></li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </li>
+<html isEditable="true"><head isEditable="true"></head><body isEditable="true"><header class="header" isEditable="true">
+  
+  <nav class="navbar {% if isAuthenticated %}privateNav {% else %}publicNav{% endif %}" isEditable="true">
+    <button class="hamburger" id="hamburgerBtn" isEditable="true">
+      ☰
+    </button>
+   <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Cambiar tema" isEditable="true">
+      <span id="themeIcon" isEditable="true">
+        <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24" isEditable="true">
+          <circle cx="12" cy="12" r="5" fill="#FFC107" isEditable="true"></circle>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.41 1.41M17.36 17.36l1.41 1.41M1 12h2M21 12h2M4.22 19.78l1.41-1.41M17.36 6.64l1.41-1.41" isEditable="true"></path>
+        </svg>
+      </span>
+    </button>
+    <ul class="navbar__links" id="navbarLinks" isEditable="true">
+      {# Enlaces de rutas públicas #} {% for route in publicRoutes %}
+      <div class="menu-container" isEditable="true">
+        <li class="navbar__item" isEditable="true">
+          <a href="{{ route.path }}" class="navbar__link {% if route.subRoutes %}has-submenu{% endif %}" isEditable="true">{{ route.title }}</a>
+          {% if route.subRoutes %}
+          <div class="submenuContainer" isEditable="true">
+            <!-- Contenedor para el submenú -->
+            <ul class="submenuNav {% if route.subRoutes|length > 1 %}horizontal{% endif %}" isEditable="true">
+              <!-- Clase para el submenú -->
+              {% for section in route.subRoutes %}
+              <li class="submenu__item" isEditable="true">
+                {# Verifica si la subruta tiene un path y lo usa; de lo
+                contrario, usa el id #}
+                <a href="{{ section.path or (route.path ~ '#' ~ section.id) }}" class="submenuLink" isEditable="true">{{ section.title }}</a>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+        </li>
+      </div>
+      {% endfor %} {# Enlaces de rutas privadas (solo si el usuario está
+      autenticado) #} {% if isAuthenticated %} {% for route in privateRoutes %}
+      {# Mostrar solo la ruta que tiene el título 'Perfil' #} {% if route.title
+      == 'Perfil' %}
+      <li class="navbar__item" isEditable="true">
+        <a href="{{ route.path }}" class="{% if route.subRoutes %}has-submenu{% endif %}" isEditable="true">{{ username }}</a>
+        <!-- Reemplazamos "Perfil" con el nombre de usuario -->
+        {% if route.subRoutes %}
+        <div class="submenuContainer" isEditable="true">
+          <!-- Contenedor para el submenú -->
+          <ul class="submenuNav {% if route.subRoutes|length > 2 %}horizontal{% endif %}" isEditable="true">
+            <!-- Clase para el submenú -->
+            {% for subRoute in route.subRoutes %}
+            <li class="submenu__item" isEditable="true">
+              <a href="{{ subRoute.path }}" isEditable="true">{{ subRoute.title }}</a>
+            </li>
             {% endfor %}
-            {# Enlaces de rutas privadas (solo si el usuario está autenticado) #}
-            {% if isAuthenticated %}
-                {% for route in privateRoutes %}
-                    <li>
-                        <a href="{{ route.path }}">{{ route.title }}</a>
-                        {% if route.subRoutes %}
-                            <ul class="submenu">  <!-- Clase para el submenú -->
-                                {% for subRoute in route.subRoutes %}
-                                    <li><a href="{{ subRoute.path }}">{{ subRoute.title }}</a></li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            {% endif %}
-        </ul>
-    </nav>
+          </ul>
+        </div>
+        {% endif %}
+      </li>
+      {% endif %} {% endfor %} {% endif %}
+    </ul>
+  </nav>
 </header>
+</body></html>

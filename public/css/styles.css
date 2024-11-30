@@ -18,7 +18,9 @@
 @import './partials/modal.css';
 @import './partials/global.css';
 @import './partials/pagination.css';
+/*custom*/
 
+@import './components/custom/customTable.css';
 @import './pages/publicPages/home.css';
 @import './pages/publicPages/sign-in.css';
 @import './pages/publicPages/sign-up.css';

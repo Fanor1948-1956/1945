@@ -1,77 +1,9 @@
-/* .dashboard-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #f0f4f8;
-  padding: 20px;
-  border-radius: 20px;
-}
 
-.dashboard-section {
-  background-color: #ffffff;
-  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
-  border-radius: 15px;
-  padding: 20px;
-  margin-bottom: 20px;
-  width: 85%;
-  text-align: center;
-}
-
-.main-heading,
-.section-heading {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10px;
-}
-
-.subtext {
-  font-size: 1.2rem;
-  color: #666;
-}
-
-.roles-list,
-.dashboard-options {
-  list-style-type: none;
-  padding: 0;
-}
-
-.role-item,
-.option-item {
-  background-color: #f7f9fc;
-  padding: 10px;
-  border-radius: 10px;
-  margin: 5px 0;
-  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
-}
-
-.logout-button {
-  background-color: #030910;
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 10px;
-  text-decoration: none;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.logout-button:hover {
-  background-color: #0056b3;
-}
-
-.option-link {
-  color: #0056b3;
-  text-decoration: none;
-  font-size: 1.2rem;
-}
-
-.option-link:hover {
-  color: #003d80;
-} */
 
 .dashboard-container {
   display: flex;
   padding: 20px;
-  background-color: #f8f9fa;
+  background-color: #01044f;
   gap: 20px; /* Espacio entre columnas */
 }
 
@@ -94,7 +26,6 @@
 }
 
 .dashboard-subsection {
-  background: #f9f9f9; /* Color de fondo de la subsección */
   border: 1px solid #e0e0e0; /* Borde para separar subsecciones */
   border-radius: 8px; /* Bordes redondeados */
   padding: 15px; /* Espaciado interno */

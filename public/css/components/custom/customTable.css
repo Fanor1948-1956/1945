@@ -1,0 +1,68 @@
+/* Estilo para el menú contextual de la tabla */
+.table-context-menu {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 9999; /* Asegura que el menú se muestre encima de otros elementos */
+  display: none;
+}
+
+.table-context-menu ul {
+  color: rgb(2, 2, 61);
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.table-context-menu li {
+  padding: 8px 15px;
+  cursor: pointer;
+}
+
+.table-context-menu li:hover {
+  background-color: #05085f;
+  color: #ffffff;
+}
+
+.context-cell {
+  position: relative; /* Necesario para posicionar el ícono dentro de la celda */
+}
+
+/* Contenedor del ícono de tres puntos */
+.more-icon {
+  position: absolute;
+  right: 5px; /* Colocar a la derecha */
+  bottom: 5px; /* Colocar en la parte inferior */
+  cursor: pointer;
+  display: flex;
+  flex-direction: column; /* Alinear los puntos en columna */
+  align-items: center;
+  justify-content: space-between;
+  width: 10px; /* Ancho para ajustar el tamaño del ícono */
+  height: 20px; /* Alto para distribuir los puntos */
+}
+
+/* Estilo de cada punto */
+.dot {
+  width: 5px; /* Tamaño del punto */
+  height: 3px;
+  background-color: transparent; /* Color de los puntos */
+  border-radius: 50%; /* Forma circular */
+}
+
+/* Efecto cuando el ratón pasa sobre los puntos */
+.more-icon:hover {
+  background-color: transparent; /* Cambiar el color al pasar el ratón */
+  border-radius: 10px;
+}
+
+.more-icon:hover .dot {
+  background-color: white; /* Cambiar el color al pasar el ratón */
+}
+
+/* Efecto cuando se hace clic en el ícono */
+.more-icon:active .dot {
+  background-color: #ffffff; /* Cambiar el color cuando se hace clic */
+}

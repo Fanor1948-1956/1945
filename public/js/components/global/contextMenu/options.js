@@ -2,23 +2,24 @@ import {
   copyElement,
   setTextAlign,
   openLink,
-  removeElement
-} from './actions.js'
-import { changeBackgroundColor, changeTextColor } from './colorBaground.js'
-import { enableDragMode } from './dragDrop.js'
+  removeElement,
+} from './actions.js';
+import { changeBackgroundColor, changeTextColor } from './colorBaground.js';
+import { enableDragMode } from './dragDrop.js';
 
 export const isAuthenticated =
-  localStorage.getItem('isAuthenticated') === 'true'
-export const token = localStorage.getItem('token')
+  localStorage.getItem('isAuthenticated') === 'true';
+export const token = localStorage.getItem('token');
 
-export const options = currentElement => {
+export const options = (currentElement) => {
   const authOptions =
     isAuthenticated && token
       ? [
+          { label: 'Actualizar', action: () => location.reload() },
           {
-            label: 'Copiar',
+            label: 'Copiar ',
             action: () => copyElement(currentElement),
-            authRequired: true
+            authRequired: true,
           },
           {
             label: 'Alinear',
@@ -26,17 +27,17 @@ export const options = currentElement => {
             subOptions: [
               {
                 label: 'Izquierda',
-                action: () => setTextAlign(currentElement, 'left')
+                action: () => setTextAlign(currentElement, 'left'),
               },
               {
                 label: 'Centro',
-                action: () => setTextAlign(currentElement, 'center')
+                action: () => setTextAlign(currentElement, 'center'),
               },
               {
                 label: 'Derecha',
-                action: () => setTextAlign(currentElement, 'right')
-              }
-            ]
+                action: () => setTextAlign(currentElement, 'right'),
+              },
+            ],
           },
           {
             label: 'Color',
@@ -44,34 +45,31 @@ export const options = currentElement => {
             subOptions: [
               {
                 label: 'Fondo',
-                action: () => changeBackgroundColor(currentElement)
+                action: () => changeBackgroundColor(currentElement),
               },
               {
                 label: 'Texto',
-                action: () => changeTextColor(currentElement)
-              }
-            ]
+                action: () => changeTextColor(currentElement),
+              },
+            ],
           },
           {
             label: 'Mover',
             action: () => enableDragMode(currentElement),
-            authRequired: true
+            authRequired: true,
           },
           {
             label: 'Eliminar',
             action: () => removeElement(currentElement),
-            authRequired: true
+            authRequired: true,
           },
           {
             label: 'Abrir Enlace',
             authRequired: true,
-            action: () => openLink('http://ejemplo.com')
-          }
+            action: () => openLink('http://ejemplo.com'),
+          },
         ]
-      : []
+      : [];
 
-  return [
-    ...authOptions,
-    { label: 'Actualizar', action: () => location.reload() }
-  ]
-}
+  return [...authOptions];
+};

@@ -7,7 +7,7 @@
       content="width=device-width, initial-scale=1.0"
     />
     <title>{{ title }}</title>
-      <script src="/js/libraries/jquery.min.js"></script>
+    <script src="/js/libraries/jquery.min.js"></script>
 
     <link
       rel="stylesheet"
@@ -20,12 +20,18 @@
     ></script>
   </head>
 
-   
-    {% include 'components/common/Navbar/index.njk' %} {% include
-    'components/common/Sidebar/index.njk' %} 
-    
+  {% include 'components/common/Navbar/index.njk' %} {% include
+  'components/common/Sidebar/index.njk' %}
+
   <body isEditable="true">
     {{ route.icon }}
+    {# <!-- HTML para mostrar el precio de Bitcoin -->
+    <div
+      id="bitcoin-price"
+      class="floating-price"
+    >
+      Cargando...
+    </div> #}
 
     <div
       id="spinner"
@@ -52,7 +58,7 @@
       class="container hidden"
       isEditable="true"
     >
-    <div id="coordinatesDisplay"></div>
+      <div id="coordinatesDisplay"></div>
       <div
         id="contentMain"
         class="contentMain"

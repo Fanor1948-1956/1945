@@ -19,12 +19,12 @@ const scheduleSchema = new mongoose.Schema(
     startTime: {
       type: String,
       required: true,
-      match: /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/, // Formato de hora válido
+      match: /^(0?[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/, // Acepta 8:00 y 08:00
     },
     endTime: {
       type: String,
       required: true,
-      match: /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/, // Formato de hora válido
+      match: /^(0?[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/, // Acepta 8:00 y 08:00
     },
   },
   { timestamps: true }

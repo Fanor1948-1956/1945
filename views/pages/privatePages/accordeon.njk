@@ -1,0 +1,175 @@
+{% extends "layouts/privateLayout.njk" %} {% block title %}Lista de Horarios de
+Atención{% endblock %} {% block content %}
+
+<style>
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  th,
+  td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #000655;
+  }
+
+  .accordion-header {
+    cursor: pointer;
+    background-color: #384278;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+  }
+
+  .accordion-icon {
+    margin-left: 10px;
+    font-size: 18px;
+    transition: transform 0.3s;
+  }
+
+  .accordion-content {
+    display: none;
+    padding-left: 20px;
+    background-color: #f9f9f9;
+  }
+
+  .accordion-content .horario {
+    padding: 5px 0;
+  }
+
+  .active {
+    background-color: #a3a3a3;
+  }
+</style>
+
+<h2>Horarios de Doctores</h2>
+<table id="scheduleTable">
+  <thead>
+    <tr>
+      <th>Doctor</th>
+      <th>Especialidad</th>
+      <th>Horarios</th>
+    </tr>
+  </thead>
+  <tbody id="tableBody">
+    <!-- Las filas de la tabla se generarán aquí -->
+  </tbody>
+</table>
+
+<script>
+  // Tu data
+  const doctorData = {
+    Ada: [
+      { Especialidad: 'Cardiología', horarios: [] },
+      { Especialidad: 'Neurología', horarios: [] },
+      { Especialidad: 'Pediatría', horarios: [] },
+    ],
+    Ambrose: [
+      { Especialidad: 'Oftalmología', horarios: [] },
+      { Especialidad: 'Pediatría', horarios: [] },
+    ],
+    Carson: [
+      { Especialidad: 'Oftalmología', horarios: [] },
+      { Especialidad: 'Pediatría', horarios: [] },
+    ],
+    Cecelia: [
+      {
+        Especialidad: 'Endocrinología',
+        horarios: [
+          { dayOfWeek: 'Viernes', startTime: '10:57', endTime: '12:28' },
+          { dayOfWeek: 'Domingo', startTime: '10:26', endTime: '15:19' },
+          { dayOfWeek: 'Jueves', startTime: '12:52', endTime: '16:06' },
+        ],
+      },
+      {
+        Especialidad: 'Reumatología',
+        horarios: [
+          { dayOfWeek: 'Lunes', startTime: '09:00', endTime: '11:00' },
+          { dayOfWeek: 'Martes', startTime: '08:30', endTime: '10:30' },
+        ],
+      },
+    ],
+  };
+
+  // Función para generar las filas de la tabla
+  function generateTableRows() {
+    const tableBody = document.getElementById('tableBody');
+    tableBody.innerHTML = ''; // Limpiar el contenido previo
+
+    // Iterar sobre los doctores
+    Object.keys(doctorData).forEach((doctorName) => {
+      const specialties = doctorData[doctorName];
+
+      // Fila para el nombre del doctor
+      const doctorRow = document.createElement('tr');
+      const doctorCell = document.createElement('td');
+      doctorCell.colSpan = 3; // Ocupa las 3 columnas
+      doctorCell.classList.add('accordion-header');
+      doctorCell.textContent = doctorName;
+
+      // Crear y agregar el ícono de acordeón si el doctor tiene más de una especialidad
+      if (specialties.length > 1) {
+        const accordionIcon = document.createElement('span');
+        accordionIcon.classList.add('accordion-icon');
+        accordionIcon.textContent = '▼'; // Icono de expandir (flecha hacia abajo)
+        doctorCell.appendChild(accordionIcon);
+
+        // Evento de clic para alternar el acordeón
+        doctorRow.addEventListener('click', function () {
+          const accordionContent = doctorRow.nextElementSibling;
+          if (accordionContent.style.display === 'block') {
+            accordionContent.style.display = 'none';
+            accordionIcon.textContent = '▼'; // Flecha hacia abajo cuando está colapsado
+          } else {
+            accordionContent.style.display = 'block';
+            accordionIcon.textContent = '▲'; // Flecha hacia arriba cuando está expandido
+          }
+
+          // Cambiar el color del encabezado de especialidad al hacer clic
+          doctorRow.classList.toggle('active');
+        });
+      }
+
+      tableBody.appendChild(doctorRow);
+
+      // Filas para las especialidades
+      specialties.forEach((specialty) => {
+        const specialtyRow = document.createElement('tr');
+        specialtyRow.classList.add('accordion-content');
+        const specialtyCell = document.createElement('td');
+        specialtyCell.textContent = specialty.Especialidad;
+        specialtyRow.appendChild(specialtyCell);
+
+        // Celda para los horarios
+        const horariosCell = document.createElement('td');
+        const horarioList = document.createElement('ul');
+
+        if (specialty.horarios.length > 0) {
+          specialty.horarios.forEach((horario) => {
+            const horarioItem = document.createElement('li');
+            horarioItem.classList.add('horario');
+            horarioItem.textContent = `${horario.dayOfWeek}: ${horario.startTime} - ${horario.endTime}`;
+            horarioList.appendChild(horarioItem);
+          });
+        } else {
+          horarioList.textContent = 'Sin horarios disponibles';
+        }
+
+        horariosCell.appendChild(horarioList);
+        specialtyRow.appendChild(horariosCell);
+        tableBody.appendChild(specialtyRow);
+      });
+    });
+  }
+
+  // Llamar a la función para generar la tabla
+  generateTableRows();
+</script>
+
+{% endblock %}

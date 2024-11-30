@@ -56,11 +56,6 @@
       </button>
     </form>
   </div>
-  const loadsRoles = async () => {
-    await fetchServices(roleEndpoints, loadRoles);
-    const { roles } = getState();
-    renderTable(roles, roleHeaders, 'roleTableContainer', onAction);
-  };
 </div>
 {% include "components/custom/customPopover.njk" %}
 <!-- Modal para seleccionar permisos -->
@@ -144,6 +139,11 @@
   let currentEditingRoleId = null; // Variable para almacenar el ID del rol en edición
   let selectedPermissions = []; // Array para almacenar permisos seleccionados
 
+  const loadsRoles = async () => {
+    await fetchServices(roleEndpoints, loadRoles);
+    const { roles } = getState();
+    renderTable(roles, roleHeaders, 'roleTableContainer', onAction);
+  };
   //menaj guardo d eroles
   const setupEventListeners = () => {
     document.getElementById('addRoleBtn').addEventListener('click', () => {

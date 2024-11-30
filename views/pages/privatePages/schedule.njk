@@ -1,58 +1,43 @@
-{% extends "layouts/privateLayout.njk" %}
-
-{% block title %}Lista de Horarios de Atención{% endblock %}
-
-{% block content %}
+{% extends "layouts/privateLayout.njk" %} {% block title %}Lista de Horarios de
+Atención{% endblock %} {% block content %}
 <h1 id="pageTitle">Lista de Horarios de Atención</h1>
 
 <!-- Mensaje de éxito o error -->
 <div id="message"></div>
 
-
-
-<button id="addScheduleBtn" class="add-button" style="display: flex">
-  Crear Horario
-</button>
 <!-- Contenedor de la tabla donde el menú contextual debe activarse -->
-<div id="tableContainer" class="table-container">
+<div id="tableContainer">
   <!-- Aquí se generará la tabla con la función createTable -->
 </div>
 
 <!-- Menú contextual específico para la tabla -->
-<div id="tableContextMenu" class="table-context-menu" style="display:none;">
+<div
+  id="tableContextMenu"
+  class="table-context-menu"
+  style="display: none"
+>
   <ul>
+    <li id="tableAddSchedule">Añadir Horario</li>
     <li id="tableViewDetails">Ver Detalles</li>
     <li id="tableEditSchedule">Editar Horario</li>
     <li id="tableDeleteSchedule">Eliminar Horario</li>
-        <li id="ViewMoreOptions">Ver más opciones</li>
-
   </ul>
 </div>
 
-<!-- Modal para agregar horarios -->
-<div class="modal" id="addScheduleModal" style="display: none">
+<!-- Modal para agregar especialidades -->
+<div
+  class="modal"
+  id="scheduleModal"
+  style="display: none"
+>
   <div class="modal-content">
-    <span class="close-button" onclick="Modal.close('#addScheduleModal')">×</span>
-    <h2 class="modal-title">Crear Horario</h2>
-    <div id="inputContainer">
-      <label for="doctor">Doctor ID:</label>
-      <input type="text" id="doctor" required />
-      <label for="dayOfWeek">Día de la Semana:</label>
-      <select id="dayOfWeek" required>
-        <option value="Lunes">Lunes</option>
-        <option value="Martes">Martes</option>
-        <option value="Miércoles">Miércoles</option>
-        <option value="Jueves">Jueves</option>
-        <option value="Viernes">Viernes</option>
-        <option value="Sábado">Sábado</option>
-        <option value="Domingo">Domingo</option>
-      </select>
-      <label for="startTime">Hora de Inicio:</label>
-      <input type="time" id="startTime" required />
-      <label for="endTime">Hora de Fin:</label>
-      <input type="time" id="endTime" required />
-    </div>
-    <button id="saveScheduleBtn">Guardar Horario</button>
+    <span
+      class="close-button"
+      onclick="Modal.close('#addSpecialtyModal')"
+      >×</span
+    >
+    <h2 class="modal-title"></h2>
+    <div id="modalContent"></div>
   </div>
 </div>
 
@@ -68,20 +53,12 @@
   // Función para agrupar los horarios por doctor y especialidad
   function groupSchedules(data, user) {
     return Object.keys(data).reduce((acc, doctorName) => {
-      const doctorSchedules = data[doctorName]; // Accedemos al arreglo de horarios para cada doctor
-
-      // Filtrar por doctor si el usuario tiene el rol 'Doctor' y no es el doctor actual
+      const doctorSchedules = data[doctorName];
       if (user.roles.includes('Doctor') && user.name !== doctorName) return acc;
 
-      // Agrupar los horarios de cada doctor por especialidad
       doctorSchedules.forEach((schedule) => {
         const specialtyName = schedule.Especialidad;
-
-        // Si no existe la especialidad para ese doctor, la agregamos
-        if (!acc[doctorName]) {
-          acc[doctorName] = [];
-        }
-
+        if (!acc[doctorName]) acc[doctorName] = [];
         let specialtyExists = acc[doctorName].find(
           (s) => s.Especialidad === specialtyName
         );
@@ -99,11 +76,11 @@
           acc[doctorName].push(specialtyExists);
         }
 
-        // Verificar si schedule.horarios existe y es un array
         if (schedule.horarios && Array.isArray(schedule.horarios)) {
-          // Agregar horarios al día correspondiente
           schedule.horarios.forEach((horario) => {
-            specialtyExists[horario.dayOfWeek] = `${horario.startTime} - ${horario.endTime}`;
+            specialtyExists[
+              horario.dayOfWeek
+            ] = `${horario.startTime} - ${horario.endTime}`;
           });
         } else {
           console.warn(
@@ -112,7 +89,6 @@
           );
         }
       });
-
       return acc;
     }, {});
   }
@@ -120,19 +96,16 @@
   // Función para generar las filas de la tabla
   function generateTableRows(doctorSchedules) {
     const schedulesData = [];
-
     Object.keys(doctorSchedules).forEach((doctorName) => {
       doctorSchedules[doctorName].forEach((schedule, index) => {
         if (
           Object.values(schedule).every(
             (val) => val === 'No disponible' || val === 'Especialidad'
           )
-        ) {
+        )
           return;
-        }
-
         schedulesData.push({
-          Doctor: index === 0 ? doctorName : '', // Solo muestra el nombre del doctor en la primera fila
+          Doctor: index === 0 ? doctorName : '',
           Especialidad: schedule.Especialidad,
           Lunes: schedule.Lunes,
           Martes: schedule.Martes,
@@ -145,7 +118,6 @@
         });
       });
     });
-
     return schedulesData;
   }
 
@@ -154,12 +126,11 @@
     try {
       const user = getUser();
       if (!checkUserAccess(user)) return;
-
       setPageTitle(user);
 
       const response = await fetch('/schedules/all');
       const data = await response.json();
-console.log(data);
+      console.log(data);
       if (data.message) {
         document.getElementById('message').textContent = data.message;
         return;
@@ -187,7 +158,8 @@ console.log(data);
         { hideDoctorColumn: user.roles.includes('Doctor') }
       );
     } catch (error) {
-      document.getElementById('message').textContent = 'Error al obtener los horarios.';
+      document.getElementById('message').textContent =
+        'Error al obtener los horarios.';
       console.error('Error al obtener los horarios:', error);
     }
   }
@@ -198,49 +170,48 @@ console.log(data);
   }, [getUser()]);
 
   // Función para manejar la creación del horario
-  document.getElementById('saveScheduleBtn').addEventListener('click', async () => {
-    const doctor = document.getElementById('doctor').value;
-    const dayOfWeek = document.getElementById('dayOfWeek').value;
-    const startTime = document.getElementById('startTime').value;
-    const endTime = document.getElementById('endTime').value;
+  document.addEventListener('click', async (event) => {
+    if (event.target && event.target.id === 'submitAddSchedule') {
+      const doctor = document.getElementById('doctor').value;
+      const dayOfWeek = document.getElementById('dayOfWeek').value;
+      const startTime = document.getElementById('startTime').value;
+      const endTime = document.getElementById('endTime').value;
 
-    if (!doctor || !dayOfWeek || !startTime || !endTime) {
-      alert('Por favor, complete todos los campos.');
-      return;
-    }
+      if (!doctor || !dayOfWeek || !startTime || !endTime) {
+        alert('Por favor, complete todos los campos.');
+        return;
+      }
 
-    const scheduleData = { doctor, dayOfWeek, startTime, endTime };
+      const scheduleData = { doctor, dayOfWeek, startTime, endTime };
 
-    try {
-      const response = await fetch('/schedules', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(scheduleData),
-      });
+      try {
+        const response = await fetch('/schedules', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(scheduleData),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (response.ok) {
-        // Mostrar mensaje de éxito
-        document.getElementById('message').textContent = 'Horario creado exitosamente.';
-        document.getElementById('message').classList.add('success');
-        Modal.close('#addScheduleModal'); // Cerrar el modal
-        loadSchedules(); // Recargar la lista de horarios
-      } else {
-        // Mostrar mensaje de error
-        document.getElementById('message').textContent = data.message || 'Error al crear el horario.';
+        if (response.ok) {
+          document.getElementById('message').textContent =
+            'Horario creado exitosamente.';
+          document.getElementById('message').classList.add('success');
+          Modal.close('#addScheduleModal'); // Cerrar el modal
+          loadSchedules(); // Recargar la lista de horarios
+        } else {
+          document.getElementById('message').textContent =
+            data.message || 'Error al crear el horario.';
+          document.getElementById('message').classList.add('error');
+        }
+      } catch (error) {
+        console.error('Error al crear el horario:', error);
+        document.getElementById('message').textContent =
+          'Error al crear el horario.';
         document.getElementById('message').classList.add('error');
       }
-    } catch (error) {
-      console.error('Error al crear el horario:', error);
-      document.getElementById('message').textContent = 'Error al crear el horario.';
-      document.getElementById('message').classList.add('error');
     }
   });
-
-  // Mostrar el modal al hacer clic en "Crear Horario"
-  document.getElementById('addScheduleBtn').addEventListener('click', () => {
-    document.getElementById('addScheduleModal').style.display = 'flex';
-  });
 </script>
+
 {% endblock %}

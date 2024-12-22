@@ -1,0 +1,133 @@
+/* Estilo general del acordeón */
+.accordion {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin: 10px 0;
+  padding: 0;
+  background-color: #021148;
+}
+
+/* Estilo del encabezado de cada acordeón (botón para abrir/cerrar) */
+.accordeon-button {
+  background-color: #0055cc; /* Color de fondo */
+  color: white; /* Color del texto */
+  padding: 10px; /* Espaciado interno */
+  border-radius: 5px; /* Bordes redondeados */
+  border: none;
+  width: 100%; /* Asegura que ocupe todo el ancho */
+  text-align: left;
+  cursor: pointer; /* Cambiar el cursor al pasar el ratón */
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.accordeon-button:hover {
+  background-color: #003a8c; /* Color cuando el mouse está sobre el botón */
+}
+
+/* Estilo de contenido que se muestra/oculta en el acordeón */
+/* Estilo para la fila activa */
+.doctor-row.active {
+  background-color: #323375; /* Fondo amarillo para la fila activa */
+  color: #0a0153;
+}
+
+.accordion-content {
+  border-top: 1px solid #0a0153; /* Línea divisoria */
+  display: none; /* Inicialmente oculto */
+  padding: 10px;
+  background-color: #07011c; /* Fondo claro */
+  border-radius: 0 0 5px 5px; /* Bordes redondeados en la parte inferior */
+}
+
+/* Estilo para la lista de especialidades con overflow */
+.specialties-list {
+  max-height: 400px; /* Definir una altura máxima */
+  overflow-y: auto; /* Habilitar desplazamiento vertical */
+  padding-right: 15px; /* Espacio para la barra de desplazamiento */
+  scrollbar-width: thin; /* Para navegadores compatibles */
+  scrollbar-color: transparent #1c0357; /* Color de la barra y fondo */
+}
+/* Hover sobre el scrollbar para cambiar a blanco */
+.specialties-list:hover {
+  scrollbar-color: white #1c0357; /* Color de la barra y fondo */
+  border-color: #1c0357; /* Agregar un borde opcional */
+}
+
+/* Para navegadores basados en WebKit (como Chrome y Edge) */
+.specialties-list::-webkit-scrollbar {
+  width: 8px; /* Ancho de la barra */
+}
+
+.specialties-list::-webkit-scrollbar-track {
+  background: #1c0357; /* Fondo de la barra */
+  border-radius: 5px;
+}
+
+.specialties-list::-webkit-scrollbar-thumb {
+  background-color: #0055cc; /* Color del "dedo" */
+  border-radius: 5px; /* Bordes redondeados */
+  border: 2px solid #1c0357; /* Espacio entre la barra y el contenido */
+}
+
+/* Para añadir transición suave al desplazamiento */
+.specialties-list {
+  scroll-behavior: smooth;
+}
+
+/* Estilo de cada especialidad dentro del acordeón */
+.specialty {
+  margin-bottom: 20px; /* Separación entre especialidades */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #1c0357; /* Fondo blanco para cada especialidad */
+}
+
+/* Estilo de las tablas de horarios */
+.schedule-table {
+  width: 100%; /* Asegura que la tabla ocupe todo el ancho */
+  border-collapse: collapse; /* Fusiona las celdas de la tabla */
+  margin-top: 10px;
+}
+
+.schedule-table th,
+.schedule-table td {
+  border: 1px solid #dddddd; /* Bordes suaves */
+  padding: 8px;
+  text-align: center;
+}
+
+.schedule-table th {
+  background-color: #0055cc; /* Color de fondo para las cabeceras */
+  color: white; /* Color de texto en las cabeceras */
+  font-weight: bold;
+}
+
+.schedule-table td {
+  background-color: #180151; /* Fondo suave para las celdas */
+}
+
+/* Ajuste visual para los números en la tabla de los doctores */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th,
+table td {
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+table th {
+  background-color: #0055cc;
+  color: white;
+  font-weight: bold;
+}
+
+.doctor-info span {
+  margin-right: 15px;
+}

@@ -16,12 +16,14 @@
 /* Habilita el desplazamiento vertical en el ul */
 .sidebar ul {
   list-style-type: none;
- 
+
   padding: 0;
   margin: 0; /* Eliminar márgenes para un mejor control del scroll */
   flex-grow: 1; /* Permitir que el ul use todo el espacio disponible */
   overflow-y: auto; /* Habilitar el desplazamiento vertical aquí */
-  height: calc(100% - 60px); /* Ajustar la altura para dejar espacio para el logo */
+  height: calc(
+    100% - 60px
+  ); /* Ajustar la altura para dejar espacio para el logo */
 }
 
 /* Estilos para la barra de desplazamiento del ul */

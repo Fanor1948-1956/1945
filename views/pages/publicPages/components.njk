@@ -1,0 +1,57 @@
+{% extends "layouts/publicLayout.njk" %} {% block content %}
+
+<div id="content"></div>
+
+<script type="module">
+  import { createContainer } from './js/components/common/container.js';
+
+  const sections = [
+    {
+      contentId: 'content1',
+      backgroundColor: '#f0f0f0',
+      width: '50%',
+      height: '300px',
+      contentBgColor: '#ffffff',
+    },
+    {
+      contentId: 'content2',
+      backgroundColor: '#ffcccc',
+      width: '25%',
+      height: '400px',
+      contentBgColor: '#ffe6e6',
+    },
+    {
+      contentId: 'content3',
+      backgroundColor: '#ccffcc',
+      width: '25%',
+      height: '400px',
+      contentBgColor: '#e6ffe6',
+    },
+    {
+      contentId: 'content4',
+      backgroundColor: '#cceeff',
+      width: '100%',
+      height: '200px',
+      contentBgColor: '#e6f7ff',
+    },
+    {
+      contentId: 'content5',
+      backgroundColor: '#f0e68c',
+      width: '100%',
+      height: '100px',
+      contentBgColor: '#fffacd',
+    },
+  ];
+
+  sections.forEach((section) =>
+    createContainer(
+      section.contentId,
+      section.backgroundColor,
+      section.width,
+      section.height,
+      section.contentBgColor
+    )
+  );
+</script>
+
+{% endblock %}

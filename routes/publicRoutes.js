@@ -44,6 +44,15 @@ const publicRoutes = [
     items: async () => [],
   },
   {
+    path: '/components',
+    icon: validateIcon('contact'),
+    id: generateIdFromPath('/contact'),
+    title: 'Components',
+    view: 'pages/publicPages/components.njk',
+    isPublic: true,
+    items: async () => [],
+  },
+  {
     path: '/register',
     icon: validateIcon('register'),
     id: generateIdFromPath('/register'),

@@ -13,20 +13,82 @@
 @import './partials/section.css';
 @import './partials/dropdown.css';
 @import './partials/popup.css';
+@import './partials/cardMedia.css';
+@import './partials/container.css';
 /*popper*/
 @import './partials/popper.css';
 
 @import './partials/modal.css';
 @import './partials/global.css';
 @import './partials/pagination.css';
+@import './partials/component.css';
 /*custom*/
 
 @import './components/custom/customTable.css';
 @import './pages/publicPages/home.css';
 @import './pages/publicPages/sign-in.css';
 @import './pages/publicPages/sign-up.css';
-
 @import './pages/privatePages/dashboard.css';
 @import './pages/privatePages/auth/profile.css';
 
 @import './icons/style.css';
+
+/* Botones */
+.btn-success {
+  background-color: green;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
+.btn-warning {
+  background-color: orange;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
+.btn-danger {
+  background-color: red;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
+.btn-primary {
+  background-color: blue;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+/* Tarjetas */
+.card {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 8px;
+}
+.user-card {
+  background-color: #f9f9f9;
+}
+.product-card {
+  background-color: #e3f2fd;
+}
+.news-card {
+  background-color: #fce4ec;
+}
+
+/* Inputs */
+.form-control {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+  border: 1px solid #ddd;
+}
+.email-input {
+  border-color: blue;
+}
+.password-input {
+  border-color: red;
+}
+.search-input {
+  border-color: green;
+}

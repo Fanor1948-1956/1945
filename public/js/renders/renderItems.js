@@ -10,10 +10,10 @@ export const renderItems = (
   headers,
   currentPage,
   itemsPerPage,
-
   container,
   itemRenderer
 ) => {
+  console.log('currentView', currentView);
   const data = items.map(itemRenderer); // Usa itemRenderer para convertir items en el formato adecuado
   container.innerHTML = ''; // Limpiar contenido previo
 

@@ -1,6 +1,5 @@
 const express = require('express');
 const fs = require('fs');
-
 const path = require('path');
 const WebSocket = require('ws');
 const chokidar = require('chokidar');
@@ -10,6 +9,7 @@ const nunjucks = require('nunjucks');
 const cookieParser = require('cookie-parser');
 const sessionConfig = require('./config/session');
 const { connectDB } = require('./config/database');
+const componentRoutes = require('./routes/components/componentRoutes.js');
 const authRoutes = require('./routes/authRoutes');
 const permissionRoutes = require('./routes/permissionRoutes');
 const roleRoutes = require('./routes/roleRoutes');
@@ -83,6 +83,9 @@ app.use('/chart', chartRoutes);
 
 // Servir la imagen generada (si lo necesitas)
 // Ruta para servir la imagen generada en formato base64
+
+//frontend
+app.use('/components', componentRoutes);
 
 app.use('/permissions', permissionRoutes);
 app.use('/roles', roleRoutes);

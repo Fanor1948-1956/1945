@@ -1,24 +1,21 @@
-<html>
-  <head></head>
-  <body>
-    {% extends "layouts/publicLayout.njk" %} {% block content %}
+{% extends "layouts/publicLayout.njk" %} {% block content %}
 
-    <div id="cardContainer"></div>
-    <!-- Contenedor para la tarjeta que contendrá el formulario -->
-    <div
-      id="snackbar"
-      class="snackbar"
-    ></div>
+<div id="cardContainer"></div>
+<!-- Contenedor para la tarjeta que contendrá el formulario -->
+<div
+  id="snackbar"
+  class="snackbar"
+></div>
 
-    <script type="module">
-      import { createCustomInputs } from './js/components/custom/input.js';
-      import { createCard } from './js/components/custom/card.js';
-      import { inputLogin } from './js/dinamic/input/public/pages/inputLogin.js';
-      // Crear la tarjeta que contendrá el formulario
-      createCard(
-        'cardContainer',
-        'Inicio de Sesión',
-        ` 
+<script type="module">
+  import { createCustomInputs } from './js/components/custom/input.js';
+  import { createCard } from './js/components/custom/card.js';
+  import { inputLogin } from './js/dinamic/input/public/pages/inputLogin.js';
+  // Crear la tarjeta que contendrá el formulario
+  createCard(
+    'cardContainer',
+    'Inicio de Sesión',
+    ` 
       <div class="logo-container">
         <div class="circle">
           <div class="rotating-text">
@@ -46,48 +43,46 @@
         </div>
       </form>
       `
-      );
+  );
 
-      // Agregar los inputs al formulario
-      const dynamicInputs = document.getElementById('dynamicInputs');
-      dynamicInputs.appendChild(
-        createCustomInputs(inputLogin, 'column', 'center', 'center')
-      );
+  // Agregar los inputs al formulario
+  const dynamicInputs = document.getElementById('dynamicInputs');
+  dynamicInputs.appendChild(
+    createCustomInputs(inputLogin, 'column', 'center', 'center')
+  );
 
-      const form = document.querySelector('#loginForm');
+  const form = document.querySelector('#loginForm');
 
-      form.addEventListener('submit', async (event) => {
-        event.preventDefault();
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-        const email = document.querySelector('#email').value;
-        const password = document.querySelector('#password').value;
+    const email = document.querySelector('#email').value;
+    const password = document.querySelector('#password').value;
 
-        try {
-          const response = await fetch('/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data.user));
-            localStorage.setItem('isAuthenticated', data.isAuthenticated);
-            window.location.href = '/dashboard';
-          } else {
-            const errorData = await response.json();
-            // Mostrar mensaje de error usando el snackbar
-            showSnackbar(errorData.message, false); // Mensaje de error
-          }
-        } catch (error) {
-          console.error('Error en la solicitud de inicio de sesión:', error);
-          // Mostrar mensaje de error genérico
-          showSnackbar('Error en la conexión. Inténtalo de nuevo.', false);
-        }
+    try {
+      const response = await fetch('/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       });
-    </script>
 
-    {% endblock %}
-  </body>
-</html>
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        localStorage.setItem('isAuthenticated', data.isAuthenticated);
+        window.location.href = '/dashboard';
+      } else {
+        const errorData = await response.json();
+        // Mostrar mensaje de error usando el snackbar
+        showSnackbar(errorData.message, false); // Mensaje de error
+      }
+    } catch (error) {
+      console.error('Error en la solicitud de inicio de sesión:', error);
+      // Mostrar mensaje de error genérico
+      showSnackbar('Error en la conexión. Inténtalo de nuevo.', false);
+    }
+  });
+</script>
+
+{% endblock %}

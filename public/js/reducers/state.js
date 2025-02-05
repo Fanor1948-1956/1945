@@ -7,6 +7,7 @@ let state = {
   uploads: [],
   schedules: [],
   tems: [],
+  currentView: 'card', // Vista predeterminada
 };
 
 export const getState = () => state;

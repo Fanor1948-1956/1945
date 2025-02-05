@@ -1,0 +1,93 @@
+/* Contenedor del componente */
+#containers-wrapper {
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #343a40;
+  color: #ffffff;
+  border-radius: 8px;
+}
+
+#containerComponent {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Ícono para seleccionar todos */
+.select-all-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.icon.check-all::before {
+  content: '✔'; /* Símbolo de selección */
+  font-size: 24px;
+  color: #4caf50;
+  cursor: pointer;
+}
+
+/* Contenedor de los componentes */
+.component-container {
+  position: relative;
+  display: inline-block;
+  margin: 10px;
+  border: 1px solid transparent;
+  padding: 10px;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.component-container:hover {
+  transform: scale(1.05);
+}
+
+/* Footer para acciones en masa */
+.footer-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #f1f1f1;
+  border-top: 2px solid #ddd;
+}
+
+.footer-actions .icon {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  background-color: #ccc;
+  border-radius: 50%;
+}
+
+.footer-actions .icon:hover {
+  background-color: #b3b3b3;
+}
+
+/* Estilo de los iconos de acción */
+.icon.cancel::before {
+  content: '❌'; /* Icono de cancelar */
+}
+
+.icon.edit::before {
+  content: '✎'; /* Icono de editar */
+}
+
+.icon.delete::before {
+  content: '🗑'; /* Icono de eliminar */
+}
+
+.icon.archive::before {
+  content: '📦'; /* Icono de archivar */
+}
+
+/* Contador de seleccionados */
+#selected-count {
+  font-size: 16px;
+  font-weight: bold;
+}

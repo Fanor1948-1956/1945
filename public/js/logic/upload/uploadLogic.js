@@ -2,7 +2,7 @@
 
 import { getUploads } from '../../services/uploadService.js';
 import { getActions } from './actions.js';
-import { generateEmptyAvatars } from '../../generate/generateEmptyAvatars.js';
+import { generateEmptyComponents } from '../../generate/generateEmptyComponents.js';
 const defaultAvatarCount = 1;
 import { handleGenericClick, initializeListeners } from './utils.js';
 
@@ -32,7 +32,7 @@ export const loadUploads = async (ownerModel, ownerId, index) => {
     console.log(remainingSpaces);
 
     // Generar avatares vacíos si es necesario, incluso si no hay uploads
-    const emptyAvatars = generateEmptyAvatars(
+    const emptyAvatars = generateEmptyComponents(
       remainingSpaces,
       ownerModel,
       ownerId,
@@ -53,7 +53,7 @@ export const loadUploads = async (ownerModel, ownerId, index) => {
     showSnackbar(error.message || 'Error al cargar los archivos.', false); // Muestra el mensaje de error
 
     // Generar avatares vacíos también en caso de error
-    generateEmptyAvatars(defaultAvatarCount, ownerModel);
+    generateEmptyComponents(defaultAvatarCount, ownerModel);
   }
 };
 

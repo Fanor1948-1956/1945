@@ -1,22 +1,291 @@
-<!-- Plantilla hija: views/pages/privatePages/dashboard.njk --><html><head></head><body>{% extends "layouts/privateLayout.njk" %}
+{% extends "layouts/privateLayout.njk" %}  {% block content %}
+<h1>Servicios Disponibles</h1>
 
-{% block title %}Dashboard{% endblock %} <!-- Bloque de título -->
+<!-- Contenedor de las tarjetas -->
+<div id="cardMediaContainer"></div>
 
-{% block content %}
-  <h1>{{ title }}</h1>
-  <p>Serviciosprivado.</p>
-
-  {% if username %}
-    <h1 class="user-info">Bienvenido, {{ username }}</h1>
-  {% else %}
-    <h1 class="user-info">Bienvenido, invitado.</h1>
-  {% endif %}
-
-  <div class="cards-container">
-    <section>
-        {% include "components/common/Card/index.njk" %}
-    </section>
-
+<div id="containerComponent">
+  <!-- Dropdown para seleccionar acciones -->
+  <div class="select-actions-container">
+    <button class="dropdown-toggle">Seleccionar componentes</button>
+    <div class="dropdown-menu">
+      <button class="check-all">Seleccionar todos</button>
+      <button class="cancel">Cancelar selección</button>
+    </div>
+    <span id="selected-count">0 seleccionados</span>
   </div>
-{% endblock %}
-</body></html>
+
+  <h1>Lista de Componentes desde MongoDB</h1>
+  <ul id="component-list"></ul>
+
+  <!-- Footer con opciones en masa, inicialmente oculto -->
+  <div
+    id="footer-actions"
+    style="display: none"
+  >
+    <button class="edit">Editar</button>
+    <button class="delete">Eliminar</button>
+    <button class="archive">Archivar</button>
+  </div>
+</div>
+
+<!-- Script para generar las tarjetas dinámicas y obtener componentes desde MongoDB -->
+<script type="module">
+  import { cardMedia } from './js/components/custom/cardMedia.js';
+  import { cardsDataMedia } from './js/data/index.js'; // Datos de las tarjetas
+  import { componentsEndpoints } from './js/config/apiEndpoints.js';
+
+  let selectedComponents = []; // Array para almacenar los IDs de los componentes seleccionados
+  let checkboxesVisible = false; // Para controlar la visibilidad de los checkboxes
+
+  // Generar tarjetas con datos predefinidos
+  cardMedia('cardMediaContainer', cardsDataMedia);
+
+  async function fetchComponents() {
+    try {
+      const response = await fetch(componentsEndpoints.list); // Llamada a la API
+      const components = await response.json();
+
+      const list = document.getElementById('component-list');
+      list.innerHTML = ''; // Limpiar lista antes de agregar datos
+
+      components.forEach((component) => {
+        let element; // Variable para almacenar el componente HTML
+        const container = document.createElement('div');
+        container.className = 'component-container'; // Contenedor principal para cada componente
+        container.dataset.id = component._id; // Agregar ID del componente al contenedor
+
+        // Agregar checkbox al contenedor de cada componente
+        const checkboxContainer = document.createElement('div');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'select-component';
+        checkbox.dataset.id = component._id; // Agregar el ID del componente al checkbox
+        checkbox.style.display = 'none'; // Inicialmente ocultar el checkbox
+
+        checkbox.addEventListener('change', (e) =>
+          handleComponentSelection(e, component._id)
+        ); // Manejar selección de componente
+
+        checkboxContainer.appendChild(checkbox);
+        container.appendChild(checkboxContainer); // Agregar el checkbox al contenedor del componente
+
+        if (component.type === 'button') {
+          element = document.createElement('button');
+          element.textContent = component.properties.text || 'Botón';
+          element.className =
+            component.styles || component.properties.class || 'btn-default';
+        } else if (component.type === 'input') {
+          element = document.createElement('input');
+          element.placeholder = component.properties.placeholder || '';
+          element.type = component.properties.type || 'text';
+          element.required = component.properties.required || false;
+          element.className = component.styles || 'form-control';
+        } else if (component.type === 'card') {
+          element = document.createElement('div');
+          element.className = `card ${component.styles || ''}`;
+          element.innerHTML = `
+              <h3>${component.properties.title || 'Título'}</h3>
+              <p>${component.properties.content || 'Contenido'}</p>
+              <img src="${
+                component.properties.image || 'default.jpg'
+              }" alt="Imagen">
+            `;
+        } else {
+          element = document.createElement('li');
+          element.textContent = `${component.name} - ${component.type}`;
+          element.className = component.styles || '';
+        }
+
+        // Crear el contenedor para los íconos de acción
+        const actions = document.createElement('div');
+        actions.className = 'component-actions';
+
+        // Icono de Editar
+        const editIcon = document.createElement('div');
+        editIcon.className = 'icon edit'; // Usar la clase edit para el ícono de editar
+        editIcon.title = 'Editar';
+        editIcon.addEventListener('click', () => handleEdit(component._id)); // Función de editar
+
+        // Icono de Eliminar
+        const deleteIcon = document.createElement('div');
+        deleteIcon.className = 'icon delete'; // Usar la clase delete para el ícono de eliminar
+        deleteIcon.title = 'Eliminar';
+        deleteIcon.addEventListener('click', () => handleDelete(component._id)); // Función de eliminar
+
+        // Agregar los íconos al contenedor de acciones
+        actions.appendChild(editIcon);
+        actions.appendChild(deleteIcon);
+
+        // Agregar el componente y los íconos al contenedor principal
+        container.appendChild(element);
+        container.appendChild(actions);
+        list.appendChild(container); // Agregar al contenedor principal
+      });
+    } catch (error) {
+      console.error('Error al obtener los componentes:', error);
+    }
+  }
+
+  // Función para manejar la edición del componente
+  function handleEdit(componentId) {
+    console.log('Editando componente con ID:', componentId);
+  }
+
+  // Función para manejar la eliminación del componente
+  async function handleDelete(componentId) {
+    if (confirm('¿Seguro que deseas eliminar este componente?')) {
+      try {
+        const response = await fetch(
+          `${componentsEndpoints.delete}/${componentId}`,
+          {
+            method: 'DELETE',
+          }
+        );
+
+        if (response.ok) {
+          alert('Componente eliminado');
+          fetchComponents(); // Volver a cargar los componentes
+        } else {
+          alert('Error al eliminar el componente');
+        }
+      } catch (error) {
+        console.error('Error al eliminar el componente:', error);
+      }
+    }
+  }
+
+  // Actualiza el contador de componentes seleccionados
+  function updateSelectedCount() {
+    document.getElementById(
+      'selected-count'
+    ).textContent = `${selectedComponents.length} seleccionados`;
+
+    // Mostrar u ocultar el footer dependiendo de si hay elementos seleccionados
+    if (selectedComponents.length > 0) {
+      document.getElementById('footer-actions').style.display = 'block'; // Mostrar el footer cuando hay selección
+    } else {
+      document.getElementById('footer-actions').style.display = 'none'; // Ocultar el footer cuando no hay selección
+    }
+  }
+
+  // Función para manejar la selección de un componente
+  function handleComponentSelection(e, componentId) {
+    if (e.target.checked) {
+      selectedComponents.push(componentId); // Agregar ID si está seleccionado
+    } else {
+      selectedComponents = selectedComponents.filter(
+        (id) => id !== componentId
+      ); // Eliminar ID si está desmarcado
+    }
+    updateSelectedCount(); // Actualizar el contador
+  }
+
+  // Mostrar/ocultar el dropdown de acciones
+  document.querySelector('.dropdown-toggle').addEventListener('click', () => {
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+    dropdownMenu.classList.toggle('show');
+    // Alternar visibilidad de los checkboxes
+    checkboxesVisible = !checkboxesVisible;
+    const checkboxes = document.querySelectorAll('.select-component');
+    checkboxes.forEach((checkbox) => {
+      checkbox.style.display = checkboxesVisible ? 'block' : 'none'; // Mostrar o ocultar checkboxes
+    });
+  });
+
+  // Manejar "Seleccionar todos"
+  document.querySelector('.check-all').addEventListener('click', () => {
+    const checkboxes = document.querySelectorAll('.select-component');
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = true; // Marcar todos los checkboxes
+      if (!selectedComponents.includes(checkbox.dataset.id)) {
+        selectedComponents.push(checkbox.dataset.id); // Agregar el ID del componente al array
+      }
+    });
+    updateSelectedCount();
+  });
+
+  // Función de cancelar selección
+  document.querySelector('.cancel').addEventListener('click', () => {
+    selectedComponents = []; // Limpiar la lista de componentes seleccionados
+    const checkboxes = document.querySelectorAll('.select-component');
+    checkboxes.forEach((checkbox) => (checkbox.checked = false)); // Desmarcar todos los checkboxes
+    updateSelectedCount(); // Actualizar el contador
+    checkboxesVisible = false;
+    checkboxes.forEach((checkbox) => (checkbox.style.display = 'none')); // Ocultar los checkboxes
+  });
+  document
+    .getElementById('footer-actions')
+    .addEventListener('click', (event) => {
+      if (event.target.classList.contains('edit')) handleUpdateMultiple();
+      if (event.target.classList.contains('delete')) handleDeleteMultiple();
+      if (event.target.classList.contains('archive')) handleArchiveMultiple();
+    });
+
+  async function handleDeleteMultiple() {
+    if (!selectedComponents.length)
+      return alert('No hay componentes seleccionados');
+    if (!confirm('¿Seguro que deseas eliminar estos componentes?')) return;
+    try {
+      const response = await fetch(`${componentsEndpoints.deleteMultiple}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: selectedComponents }),
+      });
+
+      if (response.ok) {
+        alert('Componentes eliminados');
+        fetchComponents();
+      } else {
+        alert('Error al eliminar los componentes');
+      }
+    } catch (error) {
+      console.error('Error al eliminar componentes:', error);
+    }
+  }
+
+  async function handleUpdateMultiple() {
+    if (!selectedComponents.length)
+      return alert('No hay componentes seleccionados');
+    try {
+      const updateData = {};
+      const response = await fetch('/api/components/update-multiple', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: selectedComponents, updateData }),
+      });
+      if (response.ok) {
+        alert('Componentes actualizados');
+        fetchComponents();
+      } else {
+        alert('Error al actualizar los componentes');
+      }
+    } catch (error) {
+      console.error('Error al actualizar componentes:', error);
+    }
+  }
+
+  async function handleArchiveMultiple() {
+    if (!selectedComponents.length)
+      return alert('No hay componentes seleccionados');
+    try {
+      const response = await fetch('/api/components/archive-multiple', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: selectedComponents }),
+      });
+      if (response.ok) {
+        alert('Componentes archivados');
+        fetchComponents();
+      } else {
+        alert('Error al archivar los componentes');
+      }
+    } catch (error) {
+      console.error('Error al archivar componentes:', error);
+    }
+  }
+  // Ejecutar al cargar la página
+  fetchComponents();
+</script>
+
+{% endblock %} 

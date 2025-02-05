@@ -1,4 +1,5 @@
 import { actions } from '../utils/index.js';
+import { createAvatar } from './avatar.js';
 import { showPopover } from './popover.js';
 
 export function renderCards(
@@ -8,56 +9,52 @@ export function renderCards(
   itemsPerPage,
   onAction
 ) {
-  // Calcular el inicio y el final de los datos paginados
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
   const paginatedData = data.slice(start, end);
 
-  const cardContainer = document.getElementById('userTableContainer');
+  const cardContainer = document.getElementById('contentContainer');
   cardContainer.innerHTML = ''; // Limpia el contenido anterior
 
   let cardHtml = '<div class="card-container">';
 
-  // Generar el HTML para cada tarjeta
   paginatedData.forEach((item, index) => {
     const cardNumber = start + index + 1; // Número de la tarjeta
+    const avatarElement = createAvatar(item); // Generar avatar
+    const avatarHtml = avatarElement.outerHTML; // Convertir a HTML
+
     cardHtml += `
-      <div class="card" data-id="${
-        item._id
-      }"> <!-- Usamos data-id en lugar de id -->
-        <div class="card-header">
-          <span class="card-number">#${cardNumber}</span>
+      <div class="cardContent" data-id="${item._id}">
+        <div class="card-main">
+          <div class="card-avatar">${avatarHtml}</div>
+          <div class="card-body">
+            ${headers
+              .filter((header) => header !== '_id')
+              .map(
+                (header, idx) => `
+              <div class="card-field">
+       
+                <span class="field-value">${
+                  Object.values(item).filter((_, i) => i !== 0)[idx]
+                }</span>
+              </div>`
+              )
+              .join('')}
+          </div>
+        </div>
+        <div class="cardFooter">
+          <span class="card-number">${cardNumber}</span>
           <button class="more-button" data-id="${item._id}">
             <i class="icon-three-dots">⋮</i>
           </button>
-        </div>
-        <div class="card-body">
-          ${headers
-            .filter((header) => header !== '_id') // Filtra el campo _id
-            .map(
-              (header, idx) => `
-            <div class="card-field">
-              <span class="field-name">${header}:</span>
-              <span class="field-value">${
-                Object.values(item).filter((_, i) => i !== 0)[idx]
-              }</span>
-            </div>`
-            )
-            .join('')}
-        </div>
-        <div class="card-footer">
-          <span class="footer-text">Más detalles...</span>
         </div>
       </div>
     `;
   });
 
-  cardHtml += '</div>'; // Cierra el contenedor de tarjetas
-
-  // Inserta el HTML generado en el contenedor del DOM
+  cardHtml += '</div>';
   cardContainer.innerHTML = cardHtml;
 
-  // Configurar los tooltips y listeners
   initializeListeners(paginatedData, onAction);
 }
 

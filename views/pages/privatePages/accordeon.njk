@@ -18,6 +18,31 @@
   </tbody>
 </table>
 
+<!-- Menú contextual -->
+<div
+  id="tableContextMenu"
+  style="
+    display: none;
+    position: absolute;
+    background: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  "
+>
+  <ul>
+    <li id="tableAddSchedule">Añadir Horario</li>
+    <li id="tableViewDetails">Ver Detalles</li>
+    <li id="tableEditSchedule">Editar</li>
+    <li id="tableDeleteSchedule">Eliminar</li>
+    <li
+      id="tableDeactivateSchedule"
+      style="display: none"
+    >
+      Desactivar
+    </li>
+    <!-- Nueva opción -->
+  </ul>
+</div>
 <script type="module">
   // Función para cargar los datos de los doctores desde el endpoint
   async function fetchDoctorData() {
@@ -52,18 +77,21 @@
         let totalHours = 0;
 
         specialties.forEach((specialty) => {
-          totalHours += Object.keys(specialty.horarios).length;
+          // Solo contar los días que tienen un horario disponible
+          totalHours += Object.values(specialty.horarios).filter(
+            (horario) => horario !== 'No disponible'
+          ).length;
         });
 
         // Crear fila principal del doctor
         const row = document.createElement('tr');
         row.classList.add('doctor-row');
         row.innerHTML = `
-        <td>${doctorIndex + 1}</td>
-        <td>${doctorName}</td>
-        <td>${specialties.length}</td>
-        <td>${totalHours}</td>
-      `;
+          <td>${doctorIndex + 1}</td>
+          <td>${doctorName}</td>
+          <td>${specialties.length}</td>
+          <td>${totalHours}</td>
+        `;
 
         // Crear el acordeón para especialidades
         const accordionContent = document.createElement('tr');
@@ -92,14 +120,14 @@
 
           const thead = document.createElement('thead');
           thead.innerHTML = `
-          <tr>
-            <th>Lunes</th>
-            <th>Martes</th>
-            <th>Miércoles</th>
-            <th>Jueves</th>
-            <th>Viernes</th>
-          </tr>
-        `;
+            <tr>
+              <th>Lunes</th>
+              <th>Martes</th>
+              <th>Miércoles</th>
+              <th>Jueves</th>
+              <th>Viernes</th>
+            </tr>
+          `;
           scheduleTable.appendChild(thead);
 
           const tbody = document.createElement('tbody');
@@ -108,6 +136,26 @@
             (day) => {
               const cell = document.createElement('td');
               cell.textContent = specialty.horarios[day] || 'No disponible';
+
+              // Añadir ícono de tres puntos en cada celda de horario, alineado a la derecha
+              const icon = document.createElement('span');
+              icon.className = 'more-icon';
+              icon.innerHTML =
+                '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+
+              icon.addEventListener('click', (event) => {
+                event.stopPropagation(); // Evitar que el clic se propague al documento global
+                openContextMenu(event, specialty, doctorName, day); // Llamar al menú contextual
+              });
+
+              // Establecer el estilo para que el icono se ubique en el extremo derecho
+              icon.style.position = 'absolute';
+              icon.style.right = '5px';
+              icon.style.top = '50%';
+              icon.style.transform = 'translateY(-50%)';
+
+              cell.style.position = 'relative'; // Habilitar posición relativa para que el icono se ubique correctamente
+              cell.appendChild(icon);
               row.appendChild(cell);
             }
           );
@@ -142,10 +190,10 @@
     );
   }
 
-  // Función para agrupar horarios por doctor
   function groupSchedules(data) {
     return Object.keys(data).reduce((acc, doctorName) => {
       acc[doctorName] = data[doctorName].map((schedule) => {
+        // Inicializamos la estructura de horarios con "No disponible" por defecto
         const specialty = {
           Especialidad: schedule.Especialidad,
           horarios: {
@@ -156,18 +204,104 @@
             Viernes: 'No disponible',
           },
         };
-        if (schedule.horarios) {
+
+        // Asignamos los horarios si existen
+        if (schedule.horarios && Array.isArray(schedule.horarios)) {
           schedule.horarios.forEach((horario) => {
-            specialty.horarios[
-              horario.dayOfWeek
-            ] = `${horario.startTime} - ${horario.endTime}`;
+            // Verifica si el día de la semana está en el objeto de horarios
+            if (specialty.horarios[horario.dayOfWeek]) {
+              specialty.horarios[
+                horario.dayOfWeek
+              ] = `${horario.startTime} - ${horario.endTime}`;
+            }
           });
         }
+
         return specialty;
       });
       return acc;
     }, {});
   }
+
+  // Función para abrir el menú contextual
+  function openContextMenu(event, specialty, doctorName, day) {
+    const menu = document.getElementById('tableContextMenu');
+    menu.style.left = `${event.pageX}px`;
+    menu.style.top = `${event.pageY}px`;
+    menu.style.display = 'block';
+
+    // Determinar el estado del horario para personalizar las opciones
+    const scheduleStatus = specialty.horarios[day];
+
+    // Mostrar u ocultar las opciones según el estado del horario
+    if (scheduleStatus === 'No disponible') {
+      document.getElementById('tableAddSchedule').style.display = 'block';
+      document.getElementById('tableEditSchedule').style.display = 'none';
+      document.getElementById('tableViewDetails').style.display = 'none';
+      document.getElementById('tableDeleteSchedule').style.display = 'none';
+      document.getElementById('tableDeactivateSchedule').style.display = 'none';
+    } else {
+      document.getElementById('tableAddSchedule').style.display = 'none';
+      document.getElementById('tableEditSchedule').style.display = 'block';
+      document.getElementById('tableViewDetails').style.display = 'block';
+      document.getElementById('tableDeleteSchedule').style.display = 'block';
+      document.getElementById('tableDeactivateSchedule').style.display =
+        'block';
+    }
+
+    // Asignar acciones a los elementos del menú
+    document.getElementById('tableAddSchedule').onclick = () => {
+      closeContextMenu();
+      alert(
+        `Añadir horario para: ${doctorName} en ${specialty.Especialidad} - ${day}`
+      );
+    };
+
+    document.getElementById('tableViewDetails').onclick = () => {
+      closeContextMenu();
+      alert(
+        `Ver detalles de: ${doctorName} en ${specialty.Especialidad} - ${day}`
+      );
+    };
+
+    document.getElementById('tableEditSchedule').onclick = () => {
+      closeContextMenu();
+      alert(
+        `Editar horario de: ${doctorName} en ${specialty.Especialidad} - ${day}`
+      );
+    };
+
+    document.getElementById('tableDeleteSchedule').onclick = () => {
+      closeContextMenu();
+      alert(
+        `Eliminar horario de: ${doctorName} en ${specialty.Especialidad} - ${day}`
+      );
+    };
+
+    document.getElementById('tableDeactivateSchedule').onclick = () => {
+      closeContextMenu();
+      alert(
+        `Desactivar horario de: ${doctorName} en ${specialty.Especialidad} - ${day}`
+      );
+    };
+  }
+
+  // Función para cerrar el menú contextual
+  function closeContextMenu() {
+    const menu = document.getElementById('tableContextMenu');
+    menu.style.display = 'none';
+  }
+
+  // Cerrar el menú si se hace clic fuera de la tabla
+  document.addEventListener('click', (event) => {
+    const menu = document.getElementById('tableContextMenu');
+    if (
+      !menu.contains(event.target) &&
+      !event.target.closest('.doctorTableBody')
+    ) {
+      closeContextMenu();
+    }
+  });
 
   // Ejecutar la función al cargar la página
   renderDoctorTable();

@@ -41,6 +41,53 @@
   border-radius: 0 0 5px 5px; /* Bordes redondeados en la parte inferior */
 }
 
+.more-icon {
+  cursor: pointer;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 18px;
+  width: 10px;
+  opacity: 0; /* Hacer el ícono transparente inicialmente */
+  transition: opacity 0.3s ease; /* Transición suave cuando cambia la opacidad */
+}
+
+.more-icon:hover {
+  opacity: 1; /* Hacer visible el ícono al pasar el mouse */
+}
+
+.more-icon .dot {
+  height: 4px;
+  width: 4px;
+  border-radius: 50%;
+  background-color: transparent; /* Íconos transparentes por defecto */
+  transition: background-color 0.3s ease;
+}
+
+.more-icon:hover .dot {
+  background-color: white; /* Cambiar color de los puntos al pasar el mouse */
+}
+
+#tableContextMenu ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+#tableContextMenu ul li {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #070258;
+  border-bottom: 1px solid #ddd;
+}
+
+#tableContextMenu ul li:hover {
+  background-color: #ddd;
+}
+
 /* Estilo para la lista de especialidades con overflow */
 .specialties-list {
   max-height: 400px; /* Definir una altura máxima */

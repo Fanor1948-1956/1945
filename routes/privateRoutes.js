@@ -127,14 +127,17 @@ const privateRoutes = [
     title: 'Especialidad',
     view: 'pages/privatePages/specialty/index.njk',
     isPublic: true,
+    roles: ['Administrador', 'Paciente', 'Doctor'],
     icon: getIcon('speciality'),
     items: async () => [],
   },
   {
     path: '/services',
     title: 'Servicio',
-    roles: ['Jefe Médico'],
-    icon: getIcon('service'),
+
+    view: 'pages/privatePages/services.njk',
+    // icon: getIcon('user'),
+    icon: generateRandomClinicIcon('serviceIcons'), // Ícono aleatorio
     items: async () => [],
   },
   {
@@ -179,7 +182,8 @@ const privateRoutes = [
     path: '/roles',
     title: 'Roles',
     view: 'pages/privatePages/role/index.njk',
-    roles: ['Administrador', 'Paciente', 'Doctor'],
+    // roles: ['Administrador', 'Paciente', 'Doctor'],
+    isPublic: true,
     icon: getIcon('roles'),
     items: async () => [],
   },

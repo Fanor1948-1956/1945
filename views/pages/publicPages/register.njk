@@ -1,35 +1,77 @@
-<html><head></head><body>{% extends "layouts/publicLayout.njk" %} {% block content %}
+{% extends "layouts/publicLayout.njk" %} {% block content %}
 
 <div class="main">
-<div class="form-container-signup">
-  <h2>Registro</h2>
-  <form action="/auth/register" method="POST">
-    <input type="text" id="name" name="name" placeholder="Ingresaas tu nombre" required="">
+  <div class="form-container-signup">
+    <h2>Registro</h2>
+    <form
+      action="/auth/register"
+      method="POST"
+    >
+      <input
+        type="text"
+        id="name"
+        name="name"
+        placeholder="Ingresaas tu nombre"
+        required=""
+      />
 
+      <input
+        type="text"
+        id="surnames"
+        name="surnames"
+        placeholder="Ingresa tus apellidos"
+        required=""
+      />
 
-    <input type="text" id="surnames" name="surnames" placeholder="Ingresa tus apellidos" required="">
+      <input
+        type="email"
+        id="email"
+        name="email"
+        placeholder="Ingresa tu correo electrónico"
+        required=""
+      />
 
-    <input type="email" id="email" name="email" placeholder="Ingresa tu correo electrónico" required="">
+      <input
+        type="password"
+        id="password"
+        name="password"
+        placeholder="Ingresa tu contraseña"
+        required=""
+      />
 
+      <select
+        name="gender"
+        id="gender"
+        required=""
+      >
+        <option value="">Seleccionar género</option>
+        <option value="masculino">Masculino</option>
+        <option value="femenino">Femenino</option>
+        <option value="otro">Otro</option>
+      </select>
 
-    <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" required="">
-
-
-    <select name="gender" id="gender" required="">
-      <option value="">Seleccionar género</option>
-      <option value="masculino">Masculino</option>
-      <option value="femenino">Femenino</option>
-      <option value="otro">Otro</option>
-    </select>
-
-      <button class="send" type="submit">
+      <button
+        class="send"
+        type="submit"
+      >
         Registrar Paciente
       </button>
-  
-  </form>
+    </form>
+  </div>
 </div>
-</div>
-<hr>
+<hr />
+<!-- contenedores.html -->
+<div id="container1">asdsdsad</div>
+<div id="container2"></div>
+<div id="container3">asdsad</div>
+<div id="container4"></div>
+<script type="module">
+  import { createContainer } from './js/components/common/container.js';
 
+  // Llamada a la función para crear los 4 contenedores con contenido
+  createContainer('container1', 'content1');
+  createContainer('container2', 'content2');
+  createContainer('container3', 'content3');
+  createContainer('container4', 'content4');
+</script>
 {% endblock %}
-</body></html>

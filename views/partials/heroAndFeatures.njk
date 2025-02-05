@@ -1,30 +1,104 @@
-<html><head></head><body>{# heroAndFeatures.njk #}
-
-<div class="home-main1">
+<div
+  id="homeMain"
+  class="home-main1"
+>
+  <!-- Sección de héroe -->
   <div class="home-content10">
     <div class="home-heading17">
-      <h1 class="home-header18">
-        Médicos generales experimentados que cuidan de ti
-      </h1>
-      <p class="home-caption7">
-        Nos dedicamos a brindarte la mejor atención médica posible.
-      </p>
+      <h1
+        class="home-header18"
+        id="hero-title"
+      ></h1>
+      <p
+        class="home-caption7"
+        id="hero-description"
+      ></p>
     </div>
     <button class="button button-main home-book3">
-      <img alt="calendar icon" src="/Icons/calendar.svg" class="home-image20">
-      <span>Reservar una cita</span>
+      <img
+        alt="calendar icon"
+        src=""
+        class="home-image20"
+        id="hero-button-icon"
+      />
+      <span id="hero-button-text"></span>
     </button>
   </div>
   <div class="home-image21">
-    <img alt="doctor image" src="/News/doctor-image-1500w.png" class="home-image22">
+    <img
+      alt="doctor image"
+      src=""
+      class="home-image22"
+      id="hero-image"
+    />
   </div>
 </div>
-<div id="features" class="home-features1">
-  <div class="home-content11">
-    <features></features>
-    <features title="Clínica Virtual"></features>
-    <features title="Resultados Clínicos"></features>
-  </div>
+
+<!-- Sección de características -->
+<div
+  id="features"
+  class="home-features1"
+>
+  <div
+    class="home-content11"
+    id="features-list"
+  ></div>
 </div>
+
 <div class="home-background"></div>
-</body></html>
+
+<script>
+  // Cargar datos desde el mockup JSON
+  const data = {
+    heroSection: {
+      title: 'Médicos generales experimentados que cuidan de ti',
+      description:
+        'Nos dedicamos a brindarte laadadasdds mejor atención médica posible.',
+      buttonText: 'Reservar una cita',
+      buttonIcon: '/Icons/calendar.svg',
+      buttonAltText: 'calendar icon',
+      image: '/News/doctor-image-1500w.png',
+      imageAltText: 'doctor image',
+    },
+    featuresSection: [
+      {
+        title: 'Clínica Virtual',
+        description: 'Consulta médica desde la comodidad de tu hogar.',
+      },
+      {
+        title: 'Resultados Clínicos',
+        description: 'Accede a los resultados de tus exámenes rápidamente.',
+      },
+    ],
+  };
+
+  // Función para renderizar la sección hero
+  function renderHeroSection(data) {
+    document.getElementById('hero-title').textContent = data.title;
+    document.getElementById('hero-description').textContent = data.description;
+    document.getElementById('hero-button-text').textContent = data.buttonText;
+    document.getElementById('hero-button-icon').src = data.buttonIcon;
+    document.getElementById('hero-button-icon').alt = data.buttonAltText;
+    document.getElementById('hero-image').src = data.image;
+    document.getElementById('hero-image').alt = data.imageAltText;
+  }
+
+  // Función para renderizar las características
+  function renderFeaturesSection(features) {
+    const featuresContainer = document.getElementById('features-list');
+    featuresContainer.innerHTML = ''; // Limpiar contenido anterior
+    features.forEach((feature) => {
+      const featureElement = document.createElement('div');
+      featureElement.className = 'feature';
+      featureElement.innerHTML = `
+      <h3 class="feature-title">${feature.title}</h3>
+      <p class="feature-description">${feature.description}</p>
+    `;
+      featuresContainer.appendChild(featureElement);
+    });
+  }
+
+  // Llamada para renderizar ambas secciones
+  renderHeroSection(data.heroSection);
+  renderFeaturesSection(data.featuresSection);
+</script>

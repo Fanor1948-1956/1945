@@ -1,6 +1,6 @@
 import { createAvatar } from './avatar.js';
 
-import { initializeListeners } from './table.js';
+import { initializeListeners, initializeModalPublic } from './table.js';
 
 export function renderCards(
   headers,
@@ -88,6 +88,7 @@ export function renderCards(
 
   cardContainer.innerHTML = cardHtml;
   initializeListeners(paginatedData, onAction);
+  initializeModalPublic(paginatedData, onAction, isPublic);
   if (displayType === 'carousel') {
     initializeCarousel();
   }

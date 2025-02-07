@@ -93,3 +93,15 @@ export function initializeListeners(paginatedData, onAction) {
     event.stopPropagation();
   }
 }
+
+export function initializeModalPublic(paginatedData, onAction, isPublic) {
+  document.querySelectorAll('.public-button').forEach((button) => {
+    button.addEventListener('click', (event) => {
+      const itemId = event.target
+        .closest('.public-button')
+        .getAttribute('data-id');
+      console.log('Ver más sobre el item:', itemId);
+      // Aquí puedes redirigir o mostrar más información
+    });
+  });
+}

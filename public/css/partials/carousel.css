@@ -1,0 +1,52 @@
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+  z-index: 1; /* Asegura que el contenedor esté debajo de los botones */
+}
+
+.carousel-wrapper {
+  display: flex;
+  transition: transform 0.3s ease;
+}
+
+.carousel-cards {
+  display: flex;
+}
+
+.card {
+  margin-right: 16px; /* Margen entre tarjetas */
+}
+
+.carousel-prev,
+.carousel-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  font-size: 24px;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 10; /* Asegura que los botones estén encima de las tarjetas */
+}
+
+.carousel-prev {
+  left: 10px;
+}
+
+.carousel-next {
+  right: 10px;
+}
+
+/* Estilo cuando el botón está desactivado */
+.carousel-prev.disabled,
+.carousel-next.disabled {
+  background: rgba(
+    0,
+    0,
+    0,
+    0.2
+  ); /* Color más claro para los botones desactivados */
+  cursor: not-allowed; /* Indicador de cursor 'no permitido' */
+}

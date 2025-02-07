@@ -1,9 +1,4 @@
-export function renderPagination(
-  currentPage,
-  totalItems,
-  itemsPerPage,
-  
-) {
+export function renderPagination(currentPage, totalItems, itemsPerPage) {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   let paginationHtml = '';
 
@@ -18,7 +13,9 @@ export function renderPagination(
 
   // Botón para la página anterior
   if (currentPage > 1) {
-    paginationHtml += `<button class="page-button" data-page="${currentPage - 1}">Anterior</button>`;
+    paginationHtml += `<button class="page-button" data-page="${
+      currentPage - 1
+    }">Anterior</button>`;
   }
 
   // Mostrar siempre las primeras páginas y las últimas
@@ -38,25 +35,28 @@ export function renderPagination(
 
   // Agregar las páginas visibles en el rango
   for (let i = startPage; i <= endPage; i++) {
-    paginationHtml += `<button class="page-button ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+    paginationHtml += `<button class="page-button ${
+      i === currentPage ? 'active' : ''
+    }" data-page="${i}">${i}</button>`;
   }
 
   // Mostrar el último grupo de páginas
   if (endPage < totalPages) {
-    if (endPage < totalPages - 1) paginationHtml += `<span class="dots">...</span>`;
+    if (endPage < totalPages - 1)
+      paginationHtml += `<span class="dots">...</span>`;
     paginationHtml += `<button class="page-button" data-page="${totalPages}">${totalPages}</button>`;
   }
 
   // Botón para la página siguiente
   if (currentPage < totalPages) {
-    paginationHtml += `<button class="page-button" data-page="${currentPage + 1}">Siguiente</button>`;
+    paginationHtml += `<button class="page-button" data-page="${
+      currentPage + 1
+    }">Siguiente</button>`;
   }
 
   paginationHtml += `</div></div>`; // Cierra el contenedor de los botones de paginación
 
   // Agregar event listeners
-  
 
   return paginationHtml;
 }
-

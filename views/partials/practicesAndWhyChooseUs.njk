@@ -1,62 +1,114 @@
-{% include "components/custom/customModal.njk" %}
+{% set currentView = 'carousel' %}
 
-<div id="container1">
-  <div class="home-heading18">
-    <h2 class="home-text24">Nuestras Especialaides</h2>
-    <p class="home-text25">
-      Nos dedicamos a ofrecerte los mejores servicios en diversas áreas de la
-      salud.
-    </p>
-  </div>
-  <div class="home-content12">
-    {#
-    <div id="cardMediaContainer"></div>
-    #}
-    <button
-      class="open-modal"
-      data-size="medium"
-      data-title="Especialidades"
+<div class="home-heading18">
+  <h2 class="home-text24">Nuestras Especialidades</h2>
+  <p class="home-text25">
+    Nos dedicamos a ofrecerte los mejores servicios en diversas áreas de la
+    salud.
+  </p>
+</div>
+
+<!-- Usamos un contenedor general para almacenar currentView -->
+
+<!-- El contenido de la página va aquí -->
+<div
+  class="home-docs"
+  id="docsContent"
+>
+  {% include "pages/privatePages/specialty/verb/getAll.njk" %}
+</div>
+
+<!-- Botón para abrir el modal -->
+<button
+  id="openModal"
+  class="open-modal-btn"
+>
+  Ver más especialidades
+</button>
+
+<!-- Modal -->
+<div
+  id="specialtiesModal"
+  class="modal"
+>
+  <div class="modal-content">
+    <span
+      class="close-btn"
+      id="closeModal"
+      >&times;</span
     >
-      Nuestras Especialiades
-    </button>
-  </div>
-
-  <div class="home-heading19">
-    <h2 class="home-header19">¿Por qué elegirnos?</h2>
-    <p class="home-header20">
-      Estamos comprometidos a brindarte la mejor atención médica posible.
-    </p>
-  </div>
-  <div class="home-content13">
-    <div class="home-video1">
-      <video
-        src=""
-        poster="/News/video-1500w.png"
-        class="home-video2"
-      ></video>
-      <div class="home-play">
-        <img
-          alt="image"
-          src="/Icons/play.svg"
-          class="home-image23"
-        />
-      </div>
-    </div>
-    <div class="home-caption8">
-      <h3 class="home-header21">
-        Comprometidos a la excelencia en atención médica
-      </h3>
-      <p class="home-header22">
-        Nuestro objetivo es proporcionar un servicio excepcional a cada
-        paciente.
-      </p>
-    </div>
+    <h3 class="modal-title"></h3>
+    <div
+      class="modal-body"
+      id="modalContent"
+    ></div>
   </div>
 </div>
-<script type="module">
-  import { cardMedia } from './js/components/custom/cardMedia.js';
-  import { cardsDataMediaSpeciality } from './js/data/index.js'; // Datos de las tarjetas
 
-  // Generar tarjetas con datos predefinidos
-  cardMedia('cardMediaContainer', cardsDataMediaSpeciality);
+<div class="home-heading19">
+  <h2 class="home-header19">¿Por qué elegirnos?</h2>
+  <p class="home-header20">
+    Estamos comprometidos a brindarte la mejor atención médica posible.
+  </p>
+</div>
+<div class="home-content13">
+  <div class="home-video1">
+    <video
+      src=""
+      poster="/News/video-1500w.png"
+      class="home-video2"
+    ></video>
+    <div class="home-play">
+      <img
+        alt="image"
+        src="/Icons/play.svg"
+        class="home-image23"
+      />
+    </div>
+  </div>
+  <div class="home-caption8">
+    <h3 class="home-header21">
+      Comprometidos a la excelencia en atención médica
+    </h3>
+    <p class="home-header22">
+      Nuestro objetivo es proporcionar un servicio excepcional a cada paciente.
+    </p>
+  </div>
+</div>
+
+<script type="module">
+  import { openModal, closeModal } from './js/components/custom/modal.js';
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // Abre el modal cuando se haga clic en el botón
+    document.getElementById('openModal').addEventListener('click', function () {
+      const docsContent = document.getElementById('docsContent').innerHTML;
+      const modalContent = document.getElementById('modalContent');
+
+      // Cargar el contenido dinámico en el modal
+      modalContent.innerHTML = docsContent;
+
+      // Usar la función openModal que definimos en modalFunctions.js
+      openModal(
+        'specialtiesModal',
+        'fullscreen',
+        'Especialidades Médicas',
+        '#f8f8f8'
+      );
+    });
+
+    // Cerrar el modal cuando se haga clic en el botón de cerrar
+    document
+      .getElementById('closeModal')
+      .addEventListener('click', function () {
+        closeModal('specialtiesModal');
+      });
+
+    // Cerrar el modal si el usuario hace clic fuera del modal
+    window.addEventListener('click', function (event) {
+      if (event.target === document.getElementById('specialtiesModal')) {
+        closeModal('specialtiesModal');
+      }
+    });
+  });
 </script>

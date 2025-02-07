@@ -36,6 +36,7 @@ const env = nunjucks.configure('views', {
   watch: true,
 });
 app.set('view engine', 'njk');
+app.set('view cache', false); // Esto desactiva el caché en Express
 
 app.use(sessionConfig());
 app.use(cookieParser());
@@ -85,6 +86,7 @@ app.use('/chart', chartRoutes);
 // Ruta para servir la imagen generada en formato base64
 
 //frontend
+
 app.use('/components', componentRoutes);
 
 app.use('/permissions', permissionRoutes);

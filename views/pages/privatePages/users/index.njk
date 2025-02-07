@@ -1,218 +1,217 @@
-<section isEditable="true">
-  <div
-    id="contentContainer"
-    isEditable="true"
-  ></div>
+<div
+  class="contentContainer"
+  id="contentContainer"
+  isEditable="true"
+></div>
 
-  <div
-    id="snackbar"
-    class="snackbar"
-    isEditable="true"
-  ></div>
+<div
+  id="snackbar"
+  class="snackbar"
+  isEditable="true"
+></div>
 
-  <!-- Modal para agregar/editar usuarios -->
+<!-- Modal para agregar/editar usuarios -->
+<div
+  class="modal"
+  id="addUserModal"
+  style="display: none"
+  isEditable="true"
+>
   <div
-    class="modal"
-    id="addUserModal"
-    style="display: none"
+    class="modal-content"
     isEditable="true"
   >
-    <div
-      class="modal-content"
+    <span
+      class="close-button"
+      onclick="Modal.close('#addUserModal')"
+      isEditable="true"
+      >×</span
+    >
+    <h2
+      class="modal-title"
+      isEditable="true"
+    ></h2>
+    <form
+      id="userForm"
       isEditable="true"
     >
-      <span
-        class="close-button"
-        onclick="Modal.close('#addUserModal')"
+      <label
+        for="userName"
         isEditable="true"
-        >×</span
+        >Nombre:</label
       >
-      <h2
-        class="modal-title"
+      <input
+        type="text"
+        id="userName"
+        name="name"
         isEditable="true"
-      ></h2>
-      <form
-        id="userForm"
+      />
+      <label
+        for="userSurnames"
         isEditable="true"
+        >Apellidos:</label
       >
-        <label
-          for="userName"
-          isEditable="true"
-          >Nombre:</label
-        >
-        <input
-          type="text"
-          id="userName"
-          name="name"
-          isEditable="true"
-        />
-        <label
-          for="userSurnames"
-          isEditable="true"
-          >Apellidos:</label
-        >
-        <input
-          type="text"
-          id="userSurnames"
-          name="surnames"
-          isEditable="true"
-        />
-        <label
-          for="userEmail"
-          isEditable="true"
-          >Correo:</label
-        >
-        <input
-          type="email"
-          id="userEmail"
-          name="email"
-          isEditable="true"
-        />
-        <label
-          for="userPassword"
-          isEditable="true"
-          >Contraseña:</label
-        >
-        <input
-          type="password"
-          id="userPassword"
-          name="password"
-          isEditable="true"
-        />
-        <label
-          for="userGender"
-          isEditable="true"
-          >Género:</label
-        >
-        <input
-          type="text"
-          id="userGender"
-          name="gender"
-          isEditable="true"
-        />
-        <button
-          type="button"
-          id="selectGenderBtn"
-          isEditable="true"
-        >
-          Seleccionar Género</button
-        ><br />
-        <button
-          type="button"
-          id="selectRolesBtn"
-          isEditable="true"
-        >
-          Seleccionar Roles
-        </button>
-        <button
-          type="submit"
-          id="saveItemBtn"
-          isEditable="true"
-        >
-          Guardar
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal para seleccionar género -->
-  <div
-    class="modal"
-    id="selectGenderModal"
-    style="display: none"
-    isEditable="true"
-  >
-    <div
-      class="modal-content"
-      isEditable="true"
-    >
-      <span
-        class="close-button"
-        onclick="Modal.close('selectRolesModal')"
+      <input
+        type="text"
+        id="userSurnames"
+        name="surnames"
         isEditable="true"
-        >×</span
+      />
+      <label
+        for="userEmail"
+        isEditable="true"
+        >Correo:</label
       >
-      <h2
-        class="modal-title"
+      <input
+        type="email"
+        id="userEmail"
+        name="email"
         isEditable="true"
-      ></h2>
-      <div
-        id="genderContainer"
+      />
+      <label
+        for="userPassword"
         isEditable="true"
+        >Contraseña:</label
       >
-        <label isEditable="true">
-          <input
-            type="radio"
-            name="gender"
-            value="masculino"
-            isEditable="true"
-          />
-          Masculino
-        </label>
-        <label isEditable="true">
-          <input
-            type="radio"
-            name="gender"
-            value="femenino"
-            isEditable="true"
-          />
-          Femenino
-        </label>
-        <label isEditable="true">
-          <input
-            type="radio"
-            name="gender"
-            value="otro"
-            isEditable="true"
-          />
-          Otro
-        </label>
-      </div>
+      <input
+        type="password"
+        id="userPassword"
+        name="password"
+        isEditable="true"
+      />
+      <label
+        for="userGender"
+        isEditable="true"
+        >Género:</label
+      >
+      <input
+        type="text"
+        id="userGender"
+        name="gender"
+        isEditable="true"
+      />
       <button
         type="button"
-        id="saveGenderBtn"
+        id="selectGenderBtn"
         isEditable="true"
       >
-        Guardar Género
+        Seleccionar Género</button
+      ><br />
+      <button
+        type="button"
+        id="selectRolesBtn"
+        isEditable="true"
+      >
+        Seleccionar Roles
       </button>
-    </div>
-  </div>
-
-  <!-- Modal para seleccionar roles -->
-  <div
-    class="modal"
-    id="selectRolesModal"
-    style="display: none"
-    isEditable="true"
-  >
-    <div
-      class="modal-content"
-      isEditable="true"
-    >
-      <span
-        class="close-button"
-        onclick="Modal.close('#selectRolesModal')"
-        isEditable="true"
-        >×</span
-      >
-      <h2
-        class="modal-title"
-        isEditable="true"
-      ></h2>
-      <div
-        id="rolesContainer"
-        isEditable="true"
-      ></div>
       <button
-        type="button"
-        id="saveRolesBtn"
+        type="submit"
+        id="saveItemBtn"
         isEditable="true"
       >
         Guardar
       </button>
-    </div>
+    </form>
   </div>
-</section>
+</div>
+
+<!-- Modal para seleccionar género -->
+<div
+  class="modal"
+  id="selectGenderModal"
+  style="display: none"
+  isEditable="true"
+>
+  <div
+    class="modal-content"
+    isEditable="true"
+  >
+    <span
+      class="close-button"
+      onclick="Modal.close('selectRolesModal')"
+      isEditable="true"
+      >×</span
+    >
+    <h2
+      class="modal-title"
+      isEditable="true"
+    ></h2>
+    <div
+      id="genderContainer"
+      isEditable="true"
+    >
+      <label isEditable="true">
+        <input
+          type="radio"
+          name="gender"
+          value="masculino"
+          isEditable="true"
+        />
+        Masculino
+      </label>
+      <label isEditable="true">
+        <input
+          type="radio"
+          name="gender"
+          value="femenino"
+          isEditable="true"
+        />
+        Femenino
+      </label>
+      <label isEditable="true">
+        <input
+          type="radio"
+          name="gender"
+          value="otro"
+          isEditable="true"
+        />
+        Otro
+      </label>
+    </div>
+    <button
+      type="button"
+      id="saveGenderBtn"
+      isEditable="true"
+    >
+      Guardar Género
+    </button>
+  </div>
+</div>
+
+<!-- Modal para seleccionar roles -->
+<div
+  class="modal"
+  id="selectRolesModal"
+  style="display: none"
+  isEditable="true"
+>
+  <div
+    class="modal-content"
+    isEditable="true"
+  >
+    <span
+      class="close-button"
+      onclick="Modal.close('#selectRolesModal')"
+      isEditable="true"
+      >×</span
+    >
+    <h2
+      class="modal-title"
+      isEditable="true"
+    ></h2>
+    <div
+      id="rolesContainer"
+      isEditable="true"
+    ></div>
+    <button
+      type="button"
+      id="saveRolesBtn"
+      isEditable="true"
+    >
+      Guardar
+    </button>
+  </div>
+</div>
 
 <!-- Snackbar para mostrar mensajes -->
 <div
@@ -301,12 +300,19 @@
   import { setupViewToggle } from '../js/utils/setupViewToggle.js';
 
   let currentPage = 1;
-  let currentView = localStorage.getItem('currentView') || 'table'; // Recupera la vista guardada
+  let currentView = localStorage.getItem('currentView') || 'card'; // Recupera la vista guardada
   let usersPerPage = currentView === 'card' ? 9 : 10;
   let filteredUsers = [];
 
-  // Obtén el valor de `roleAlias` y `currentView` desde el backend
-  const roleAlias = '{{ roleAlias|lower }}';
+  // Recuperamos el valor cifrado de `localStorage`
+  const encryptedRoleAlias = localStorage.getItem('roleAlias');
+
+  // Desencriptamos el valor con la misma clave de cifrado
+  const bytes = CryptoJS.AES.decrypt(encryptedRoleAlias, 'secret-key');
+  const roleAlias = bytes.toString(CryptoJS.enc.Utf8);
+
+  // Imprimimos el valor desencriptado
+  console.log(roleAlias); // Debería mostrar "doctor"
 
   // Función para elegir el renderizador según el rol
   const getRendererForRole = (roleAlias) => {
@@ -339,7 +345,7 @@
     }
 
     // Obtenemos los encabezados según el rol
-    const headers = getHeadersForRole(roleAlias);
+    const headers = getHeadersForRole(roleAlias, currentView);
 
     // Elegimos el renderizador adecuado según el rol
     const renderer = getRendererForRole(roleAlias);
@@ -351,7 +357,7 @@
       headers,
       currentPage,
       usersPerPage,
-      document.getElementById('contentContainer'),
+      'contentContainer',
       renderer
     );
   };
@@ -365,10 +371,10 @@
     renderItems(
       currentView,
       filteredUsers,
-      getHeadersForRole(roleAlias),
+      getHeadersForRole(roleAlias, currentView),
       currentPage,
       usersPerPage,
-      document.getElementById('contentContainer'),
+      'contentContainer',
       getRendererForRole(roleAlias)
     );
   };

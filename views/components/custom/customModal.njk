@@ -1,21 +1,68 @@
-<html isEditable="true"><head isEditable="true"></head><body isEditable="true"><div id="customModal" class="modal" style="display: none; opacity: 0;" isEditable="true">
-  <div class="modal-content" id="modalContent" isEditable="true">
-    <div class="modal-head" isEditable="true">
-      <h3 class="modal-title" isEditable="true"></h3>
-      <span class="close-button" id="closeButton" isEditable="true">×</span>
+<div
+  id="customModal"
+  class="modal"
+  style="display: none; opacity: 0"
+  isEditable="true"
+>
+  <div
+    class="modal-content"
+    id="modalContent"
+    isEditable="true"
+  >
+    <div
+      class="modal-head"
+      isEditable="true"
+    >
+      <h3
+        class="modal-title"
+        isEditable="true"
+      ></h3>
+      <span
+        class="close-button"
+        id="closeButton"
+        isEditable="true"
+        >×</span
+      >
     </div>
-    <div class="modal-body" isEditable="true">
-      <p isEditable="true">Este es un modal con un tamaño ajustable según la configuración elegida.</p>
+    <!-- Aquí va el spinner que será mostrado cuando el modal esté en fullscreen -->
+    <div
+      class="modal-spinner"
+      style="display: none"
+    >
+      <div class="spinner"></div>
     </div>
-    <div class="modal-actions" style="display: none;" isEditable="true">
-      <button id="saveButton" isEditable="true">Guardar</button>
-      <button id="cancelButton" isEditable="true">Cancelar</button>
+    <div
+      class="modal-body"
+      isEditable="true"
+    >
+      {{ standardModal | safe }}
+    </div>
+    <div
+      class="modal-actions"
+      style="display: none"
+      isEditable="true"
+    >
+      <button
+        id="saveButton"
+        isEditable="true"
+      >
+        Guardar
+      </button>
+      <button
+        id="cancelButton"
+        isEditable="true"
+      >
+        Cancelar
+      </button>
     </div>
   </div>
 </div>
 
 <!-- Incluir el archivo de JavaScript como un módulo -->
-<script type="module" isEditable="true">
+<script
+  type="module"
+  isEditable="true"
+>
   import { openModal, closeModal } from '../../js/components/custom/modal.js';
 
   // Manejo del cierre del modal al hacer clic fuera del contenido
@@ -46,4 +93,3 @@
     closeModal('customModal');
   });
 </script>
-</body></html>

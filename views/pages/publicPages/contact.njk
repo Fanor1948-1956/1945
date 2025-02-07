@@ -1,43 +1,113 @@
-{% extends "layouts/publicLayout.njk" %} {% block content %} {% include
-"components/custom/customModal.njk" %}
-<!-- modalButtons.html -->
-<button
-  class="open-modal"
-  data-size="medium"
-  data-title="Título del Modal Medio"
-  data-show-actions="true"
->
-  Abrir Modal (Medium) con Acciones
-</button>
-<button
-  class="open-modal"
-  data-size="fullwidth"
-  data-title="Título del Modal Fullwidth"
-  data-show-actions="false"
->
-  Abrir Modal (Fullwidth) sin Acciones
-</button>
-<button
-  class="open-modal"
-  data-size="maxwidth"
-  data-title="Título del Modal Maxwidth"
->
-  Abrir Modal (Maxwidth) con Acciones
-</button>
-<button
-  class="open-modal"
-  data-size="fullscreen"
-  data-title="Título del Modal Fullscreen"
->
-  Abrir Modal (Fullscreen) con Acciones
-</button>
-<button
-  class="open-modal"
-  data-size="minheight"
-  data-title="Título del Modal minheight"
-  data-show-actions="true"
->
-  Abrir Modal (minheight) con Acciones
-</button>
+{# {% extends "layouts/publicLayout.njk" %} {% block content %}
+    <style>
+      .container {
+        margin-bottom: 20px;
+      }
+      .container ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      .container li {
+        margin: 5px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="container"
+      id="firstContainer"
+    >
+      <h2>Primer Contenedor</h2>
+      <ul id="firstList"></ul>
+    </div>
+
+    <div
+      class="container"
+      id="secondContainer"
+    >
+      <h2>Segundo Contenedor</h2>
+      <ul id="secondList"></ul>
+    </div>
+
+    <script>
+      // Simulamos la lista de usuarios
+      const users = [
+        { name: 'Usuario 1' },
+        { name: 'Usuario 2' },
+        { name: 'Usuario 3' },
+        { name: 'Usuario 4' },
+        { name: 'Usuario 5' },
+        { name: 'Usuario 6' },
+        { name: 'Usuario 7' },
+        { name: 'Usuario 8' },
+        { name: 'Usuario 9' },
+        { name: 'Usuario 10' },
+      ];
+
+      // Función para renderizar los usuarios en un contenedor
+      const renderUsers = (container, userList) => {
+        userList.forEach((user) => {
+          const li = document.createElement('li');
+          li.textContent = user.name;
+          container.appendChild(li);
+        });
+      };
+
+      // Asignar los contenedores donde se mostrarán los usuarios
+      const firstContainer = document.getElementById('firstList');
+      const secondContainer = document.getElementById('secondList');
+
+      // Renderizar los mismos usuarios en ambos contenedores
+      renderUsers(firstContainer, users); // Primer contenedor con la lista de usuarios
+      renderUsers(secondContainer, users); // Segundo contenedor con la misma lista
+    </script>
+
+{% endblock %} #}
+
+
+{% extends "layouts/publicLayout.njk" %}
+
+{% block content %}
+  <style>
+    .container {
+      margin-bottom: 20px;
+    }
+    .container ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    .container li {
+      margin: 5px 0;
+    }
+  </style>
+  
+  <div class="container" id="firstContainer">
+    <h2>Primer Contenedor</h2>
+    <!-- Este es el contenido original que se va a clonar -->
+{% include
+"pages/privatePages/specialty/verb/getAll.njk" %}
+  </div>
+
+  <div class="container" id="secondContainer">
+    <h2>Segundo Contenedor</h2>
+    <!-- Este es el segundo contenedor vacío donde clonaremos el contenido -->
+  </div>
+
+  <script>
+    // Función para clonar el contenido del primer contenedor en el segundo
+    function cloneSpecialties() {
+      const firstContainer = document.getElementById('firstContainer');
+      const secondContainer = document.getElementById('secondContainer');
+      
+      // Clonamos el contenido del primer contenedor
+      const clonedContent = firstContainer.innerHTML;
+      
+      // Insertamos el contenido clonado en el segundo contenedor
+      secondContainer.innerHTML = clonedContent;
+    }
+    
+    // Llamamos a la función para clonar el contenido
+    cloneSpecialties();
+  </script>
 
 {% endblock %}

@@ -1,4 +1,4 @@
-{% set roleAlias = 'doctor' %} {% include "components/custom/customModal.njk" %}
+{% include "components/custom/customModal.njk" %}
 
 <div id="container1">
   <div class="home-heading28">
@@ -9,14 +9,7 @@
     </p>
   </div>
 </div>
-<div class="home-docs">{% include "pages/privatePages/users/index.njk" %}</div>
-<script type="module">
-  import { cardMedia } from './js/components/custom/cardMedia.js';
-  import { cardsDataMediaSpeciality } from './js/data/index.js'; // Datos de las tarjetas
-
-  // Generar tarjetas con datos predefinidos
-  cardMedia('cardMediaContainer', cardsDataMediaSpeciality);
-</script>
+{% include "pages/privatePages/users/index.njk" %}
 
 <div class="home-search2">
   <input
@@ -32,3 +25,22 @@
     Buscar Doctor
   </button>
 </div>
+
+<!-- Enviar roleAlias con JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/crypto-js@3.1.9-1/crypto-js.js"></script>
+<script>
+  // Declaramos el valor de `roleAlias` en JavaScript
+  const roleAlias = 'doctor';
+
+  // Cifrar el valor de `roleAlias` antes de almacenarlo
+  const encryptedRoleAlias = CryptoJS.AES.encrypt(
+    roleAlias,
+    'secret-key'
+  ).toString();
+
+  // Almacenamos `encryptedRoleAlias` en localStorage
+  localStorage.setItem('roleAlias', encryptedRoleAlias);
+
+  // Verificamos que se ha almacenado correctamente el valor cifrado
+  console.log(localStorage.getItem('roleAlias')); // Mostrará el valor cifrado
+</script>

@@ -8,13 +8,14 @@ export function renderTable(
   data,
   currentPage,
   itemsPerPage,
+  containerId,
   onAction
 ) {
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
   const paginatedData = data.slice(start, end);
 
-  const tableContainer = document.getElementById('contentContainer');
+  const tableContainer = document.getElementById(containerId);
   tableContainer.innerHTML = ''; // Limpiar contenido previo
 
   // Encabezados de la tabla

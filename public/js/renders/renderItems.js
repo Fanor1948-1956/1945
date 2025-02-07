@@ -10,46 +10,71 @@ export const renderItems = (
   headers,
   currentPage,
   itemsPerPage,
-  container,
+  containerId, // Esto es un string, no un nodo.
   itemRenderer
 ) => {
   console.log('currentView', currentView);
   const data = items.map(itemRenderer); // Usa itemRenderer para convertir items en el formato adecuado
-  container.innerHTML = ''; // Limpiar contenido previo
 
   if (currentView === 'table') {
-    renderTable(headers, data, currentPage, itemsPerPage, onAction);
+    renderTable(
+      headers,
+      data,
+      currentPage,
+      itemsPerPage,
+      containerId,
+      onAction,
+      currentView
+    );
   } else {
-    renderCards(headers, data, currentPage, itemsPerPage, onAction);
+    renderCards(
+      headers,
+      data,
+      currentPage,
+      itemsPerPage,
+      containerId,
+      onAction,
+      currentView
+    );
   }
 
-  const paginationHtml = renderPagination(
-    currentPage,
-    items.length,
-    itemsPerPage,
-    (newPage) =>
-      handlePageChange(
-        newPage,
-        currentView,
-        items,
-        headers,
-        itemsPerPage,
-        container,
-        itemRenderer
-      ) // Pasar currentView y otros argumentos
-  );
+  // Solo renderiza la paginación si no es un 'carousel'
+  if (currentView !== 'carousel') {
+    const paginationHtml = renderPagination(
+      currentPage,
+      items.length,
+      itemsPerPage,
+      (newPage) =>
+        handlePageChange(
+          newPage,
+          currentView,
+          items,
+          headers,
+          itemsPerPage,
+          containerId,
+          itemRenderer
+        ) // Pasar currentView y otros argumentos
+    );
 
-  container.insertAdjacentHTML('beforeend', paginationHtml);
+    // Convertir containerId en un nodo real del DOM si es solo una cadena
+    const containerElement = document.getElementById(containerId);
 
-  // Inicializar listeners para botones de paginación
-  initializePaginationButtons(
-    currentView,
-    items,
-    headers,
-    itemsPerPage,
-    container,
-    itemRenderer
-  );
+    if (containerElement) {
+      containerElement.insertAdjacentHTML('beforeend', paginationHtml);
+    } else {
+      console.error('No se encontró el contenedor con id: ', containerId);
+    }
+
+    // Inicializar listeners para botones de paginación
+    initializePaginationButtons(
+      currentView,
+      items,
+      headers,
+      itemsPerPage,
+      containerId,
+      itemRenderer
+    );
+  }
 };
 
 // Función para manejar el cambio de página
@@ -59,7 +84,7 @@ function handlePageChange(
   items,
   headers,
   itemsPerPage,
-  container,
+  containerId,
   itemRenderer
 ) {
   renderItems(
@@ -68,7 +93,7 @@ function handlePageChange(
     headers,
     newPage,
     itemsPerPage,
-    container,
+    containerId,
     itemRenderer
   );
 }
@@ -79,7 +104,7 @@ function initializePaginationButtons(
   items,
   headers,
   itemsPerPage,
-  container,
+  containerId,
   itemRenderer
 ) {
   const pageButtons = document.querySelectorAll('.page-button');
@@ -93,7 +118,7 @@ function initializePaginationButtons(
         items,
         headers,
         itemsPerPage,
-        container,
+        containerId,
         itemRenderer
       );
     });
@@ -105,4 +130,3 @@ function handlePageClick(event) {
   const newPage = parseInt(event.currentTarget.getAttribute('data-page'));
   handlePageChange(newPage);
 }
-// Función de renderizado de usuario

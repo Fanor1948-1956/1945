@@ -23,6 +23,7 @@
   color: rgb(239, 233, 250);
   padding: 5rem 1rem 1rem 1rem;
   min-height: 100vh;
+  border: 1px solid #ddd;
   width: 100%;
   flex-direction: column;
   justify-content: space-between;

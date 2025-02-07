@@ -3,6 +3,14 @@
   flex-direction: column;
   gap: 20px;
 }
+.contentContainer {
+  width: 100%;
+  min-height: 100vh;
+  border: 1px solid red;
+  justify-content: space-between;
+  display: flex;
+  flex-direction: column;
+}
 
 .container-general {
   display: flex;

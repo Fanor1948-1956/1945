@@ -92,18 +92,14 @@
 
   const headers = ['Nombre', 'Descripción', 'Estado'];
   let currentEditingSpecialtyId = null;
-  let currentPage = 1;
+  let currentPage = 2;
   const selectedSpecialties = [];
   let filteredSpecialties = [];
   const specialtyPerPage = 9;
   const isPublic = '{{ isPublic|dump}}';
   let user;
-  // Recuperamos el valor cifrado de `localStorage`
-  const encryptedcurrentView = localStorage.getItem('currentView');
 
-  // Desencriptamos el valor con la misma clave de cifrado
-  const bytes = CryptoJS.AES.decrypt(encryptedcurrentView, 'secret-key');
-  const currentView = bytes.toString(CryptoJS.enc.Utf8);
+  const currentView = '{{currentView|lower}}';
 
   const loadProfile = async () => {
     user = await loadUserProfile();

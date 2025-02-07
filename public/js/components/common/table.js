@@ -16,7 +16,6 @@ export function renderTable(
   const paginatedData = data.slice(start, end);
 
   const tableContainer = document.getElementById(containerId);
-  tableContainer.innerHTML = ''; // Limpiar contenido previo
 
   // Encabezados de la tabla
   let tableHtml = `
@@ -80,7 +79,7 @@ export function renderTable(
   initializeListeners(paginatedData, onAction);
 }
 
-function initializeListeners(paginatedData, onAction) {
+export function initializeListeners(paginatedData, onAction) {
   const actionButtons = document.querySelectorAll('.more-button');
   actionButtons.forEach((button) => {
     button.removeEventListener('click', handleActionClick); // Remover listeners previos

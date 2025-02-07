@@ -286,12 +286,8 @@
   let usersPerPage = currentView === 'card' ? 9 : 10;
   let filteredUsers = [];
   const isPublic = '{{ isPublic|dump}}'; // Obtén el rol desde la plantilla
-  // Recuperamos el valor cifrado de `localStorage`
-  const encryptedRoleAlias = localStorage.getItem('roleAlias');
 
-  // Desencriptamos el valor con la misma clave de cifrado
-  const bytes = CryptoJS.AES.decrypt(encryptedRoleAlias, 'secret-key');
-  const roleAlias = bytes.toString(CryptoJS.enc.Utf8);
+  const roleAlias = '{{roleAlias|lower}}';
 
   // Imprimimos el valor desencriptado
   console.log(roleAlias); // Debería mostrar "doctor"

@@ -1,5 +1,4 @@
-{% set isPublic=true %}
-
+{% set isPublic=true %} {%set currentView='carousel'%}
 <div class="home-heading18">
   <h2 class="home-text24">Nuestras Especialidades</h2>
   <p class="home-text25">
@@ -16,12 +15,11 @@
   {% include "pages/privatePages/specialty/verb/getAll.njk" %}
 </div>
 
-<!-- Botón para abrir el modal -->
 <button
-  id="openModal"
-  class="open-modal-btn"
+  id="openModalBtn"
+  class="add-button"
 >
-  Ver más especialidades
+  Ver Especialidades
 </button>
 
 <!-- Modal -->
@@ -29,100 +27,74 @@
   id="specialtiesModal"
   class="modal"
   style="display: none; opacity: 0"
-  isEditable="true"
 >
   <div
     class="modal-content"
     id="modalContent"
-    isEditable="true"
   >
-    <div
-      class="modal-head"
-      isEditable="true"
-    >
-      <h3
-        class="modal-title"
-        isEditable="true"
-      ></h3>
+    <div class="modal-head">
+      <h3 class="modal-title"></h3>
       <span
         class="close-button"
         id="closeButton"
-        isEditable="true"
         >×</span
       >
     </div>
-    <!-- Aquí va el spinner que será mostrado cuando el modal esté en fullscreen -->
-    <div
-      class="modal-spinner"
-      style="display: none"
-    >
-      <div class="spinner"></div>
-    </div>
     <div
       class="modal-body"
-      isEditable="true"
-      id="modalContent"
+      id="modalBody"
     ></div>
-    <div
-      class="modal-actions"
-      style="display: none"
-      isEditable="true"
-    >
-      <button
-        id="saveButton"
-        isEditable="true"
-      >
-        Guardar
-      </button>
-      <button
-        id="cancelButton"
-        isEditable="true"
-      >
-        Cancelar
-      </button>
-    </div>
   </div>
 </div>
 
-<!-- Script para manejar el modal -->
-<!-- Enviar currentView con JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/crypto-js@3.1.9-1/crypto-js.js"></script>
+<div
+  id="specialityContaine"
+  class="contentContainer"
+></div>
 <script type="module">
+  import { fetchSpecialty } from './js/services/loadFetchs.js';
+  import { getState } from './js/reducers/state.js';
+  import { renderItems } from './js/renders/renderItems.js';
+  import { specialtyRenderer } from './js/renders/itemRender.js';
   import { openModal, closeModal } from './js/components/custom/modal.js';
-  import { executeScripts } from './js/components/utils/index.js';
 
-  const modal = document.getElementById('specialtiesModal');
-  const openModalBtn = document.getElementById('openModal');
-  const closeModalBtn = document.getElementById('closeButton');
-  const docsContent = document.getElementById('docsContent');
-  const modalContent = document.querySelector('#specialtiesModal .modal-body'); // Asegurar que sea el modal-body
-  const modalTitle = document.querySelector('#specialtiesModal .modal-title'); // Obtener el título correctamente
+  const headers = ['Nombre', 'Descripción', 'Estado'];
+  let currentPage = 1;
+  const specialtyPerPage = 9;
+  const currentViewModal = 'card';
 
-  // 📌 Verificamos en consola que los elementos existen
-  console.log('🛠 modal:', modal);
-  console.log('🛠 modalTitle:', modalTitle);
-  console.log('🛠 modalContent:', modalContent);
+  const loadSpecialtiesData = async () => {
+    try {
+      // Cargar las especialidades
+      await fetchSpecialty();
+      const specialties = getState().specialties;
 
-  // ✅ Evento para abrir el modal
-  openModalBtn.addEventListener('click', function () {
-    if (!modalTitle) {
-      console.error('❌ No se encontró .modal-title dentro del modal.');
-      return;
+      // Renderizar las especialidades
+      renderItems(
+        currentViewModal,
+        specialties,
+        headers,
+        currentPage,
+        specialtyPerPage,
+        'modalBody', // Aquí se pasaría al body del modal
+        specialtyRenderer,
+        'true'
+      );
+    } catch (error) {
+      console.error('Error al cargar las especialidades:', error);
     }
+  };
 
-    // 🔹 Establecer el título ANTES de abrir el modal
-    modalTitle.textContent = 'Especialidades Médicas';
+  // Botón para abrir el modal
+  const openModalBtn = document.getElementById('openModalBtn');
+  const closeModalBtn = document.getElementById('closeButton');
+  const modal = document.getElementById('specialtiesModal');
 
-    // 🔹 Clonar el contenido sin `innerHTML`
-    modalContent.innerHTML = ''; // Limpiar antes de insertar
-    const clonedContent = docsContent.cloneNode(true);
-    clonedContent.id = ''; // Eliminar el ID duplicado para evitar conflictos
-    modalContent.appendChild(clonedContent);
+  openModalBtn.addEventListener('click', async () => {
+    // Cargar las especialidades cuando se haga clic en el botón
+    await loadSpecialtiesData();
 
-    // 🔹 Ejecutar scripts del contenido clonado
-    executeScripts(clonedContent);
-
-    // ✅ Abrir el modal
+    // Abrir el modal con el título y el color de fondo deseado
     openModal(
       'specialtiesModal',
       'fullscreen',
@@ -131,29 +103,15 @@
     );
   });
 
-  // ✅ Evento para cerrar el modal
-  closeModalBtn.addEventListener('click', function () {
+  // Cerrar el modal cuando se haga clic en el botón de cierre
+  closeModalBtn.addEventListener('click', () => {
     closeModal('specialtiesModal');
   });
 
-  window.addEventListener('click', function (event) {
+  // Cerrar el modal si se hace clic fuera del contenido del modal
+  window.addEventListener('click', (event) => {
     if (event.target === modal) {
       closeModal('specialtiesModal');
     }
   });
-
-  // Declaramos el valor de `currentView` en JavaScript
-  const currentView = '';
-
-  // Cifrar el valor de `currentView` antes de almacenarlo
-  const encryptedcurrentView = CryptoJS.AES.encrypt(
-    currentView,
-    'secret-key'
-  ).toString();
-
-  // Almacenamos `encryptedcurrentView` en localStorage
-  localStorage.setItem('currentView', encryptedcurrentView);
-
-  // Verificamos que se ha almacenado correctamente el valor cifrado
-  console.log(localStorage.getItem('currentView')); // Mostrará
 </script>

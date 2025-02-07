@@ -25,7 +25,8 @@ export const renderItems = (
       itemsPerPage,
       containerId,
       onAction,
-      currentView
+      currentView,
+      isPublic
     );
   } else {
     renderCards(
@@ -54,7 +55,8 @@ export const renderItems = (
           headers,
           itemsPerPage,
           containerId,
-          itemRenderer
+          itemRenderer,
+          isPublic
         ) // Pasar currentView y otros argumentos
     );
 
@@ -74,7 +76,8 @@ export const renderItems = (
       headers,
       itemsPerPage,
       containerId,
-      itemRenderer
+      itemRenderer,
+      isPublic
     );
   }
 };
@@ -87,7 +90,8 @@ function handlePageChange(
   headers,
   itemsPerPage,
   containerId,
-  itemRenderer
+  itemRenderer,
+  isPublic
 ) {
   renderItems(
     currentView,
@@ -96,7 +100,8 @@ function handlePageChange(
     newPage,
     itemsPerPage,
     containerId,
-    itemRenderer
+    itemRenderer,
+    isPublic
   );
 }
 
@@ -107,7 +112,8 @@ function initializePaginationButtons(
   headers,
   itemsPerPage,
   containerId,
-  itemRenderer
+  itemRenderer,
+  isPublic
 ) {
   const pageButtons = document.querySelectorAll('.page-button');
   pageButtons.forEach((button) => {
@@ -121,7 +127,8 @@ function initializePaginationButtons(
         headers,
         itemsPerPage,
         containerId,
-        itemRenderer
+        itemRenderer,
+        isPublic
       );
     });
   });

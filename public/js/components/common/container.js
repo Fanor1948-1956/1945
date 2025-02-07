@@ -5,12 +5,6 @@ export function createContainer(
   height = 'auto',
   contentBgColor = 'white'
 ) {
-  let content = document.getElementById('content');
-  if (!content) {
-    console.error('No se encontró el contenedor principal #content');
-    return;
-  }
-
   let container = document.createElement('div');
   container.className = 'container-general';
 
@@ -31,5 +25,4 @@ export function createContainer(
   contentMain.appendChild(spinner);
 
   container.appendChild(contentMain);
-  content.appendChild(container);
 }

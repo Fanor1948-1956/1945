@@ -1,6 +1,6 @@
-import { actions } from '../utils/index.js';
 import { createAvatar } from './avatar.js';
-import { showPopover } from './popover.js';
+
+import { initializeListeners } from './table.js';
 
 export function renderCards(
   headers,
@@ -87,36 +87,9 @@ export function renderCards(
   }
 
   cardContainer.innerHTML = cardHtml;
-
-  initializeListeners(paginatedData, onAction, isPublic);
-
+  initializeListeners(paginatedData, onAction);
   if (displayType === 'carousel') {
     initializeCarousel();
-  }
-}
-
-function initializeListeners(paginatedData, onAction, isPublic) {
-  if (isPublic) {
-    document.querySelectorAll('.public-button').forEach((button) => {
-      button.addEventListener('click', (event) => {
-        const itemId = event.target
-          .closest('.public-button')
-          .getAttribute('data-id');
-        console.log('Ver más sobre el item:', itemId);
-        // Aquí puedes redirigir o mostrar más información
-      });
-    });
-  } else {
-    document.querySelectorAll('.more-button').forEach((button) => {
-      button.addEventListener('click', (event) => {
-        const itemId = event.target
-          .closest('.more-button')
-          .getAttribute('data-id');
-        const item = paginatedData.find((dataItem) => dataItem._id === itemId);
-        showPopover(item, actions, event.target, onAction);
-        event.stopPropagation();
-      });
-    });
   }
 }
 

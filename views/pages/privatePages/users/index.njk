@@ -247,30 +247,12 @@
   <button
     id="cardViewBtn"
     isEditable="true"
-    {%
-    if
-    not
-    isAuthenticated
-    %}
-    style="display: none"
-    {%
-    endif
-    %}
   >
     Vista Card
   </button>
   <button
     id="tableViewBtn"
     isEditable="true"
-    {%
-    if
-    not
-    isAuthenticated
-    %}
-    style="display: none"
-    {%
-    endif
-    %}
   >
     Vista Tabla
   </button>
@@ -303,7 +285,7 @@
   let currentView = localStorage.getItem('currentView') || 'card'; // Recupera la vista guardada
   let usersPerPage = currentView === 'card' ? 9 : 10;
   let filteredUsers = [];
-
+  const isPublic = '{{ isPublic|dump}}'; // Obtén el rol desde la plantilla
   // Recuperamos el valor cifrado de `localStorage`
   const encryptedRoleAlias = localStorage.getItem('roleAlias');
 
@@ -358,7 +340,8 @@
       currentPage,
       usersPerPage,
       'contentContainer',
-      renderer
+      renderer,
+      isPublic
     );
   };
 
@@ -375,7 +358,8 @@
       currentPage,
       usersPerPage,
       'contentContainer',
-      getRendererForRole(roleAlias)
+      getRendererForRole(roleAlias),
+      isPublic
     );
   };
 

@@ -25,7 +25,7 @@
     border: 3px solid #091526; /* Color de borde original */
   }
   50% {
-    border: 3px solid #ff6347; /* Color del borde durante el parpadeo (por ejemplo, rojo) */
+    border: 4px solid #ffffff; /* Color del borde durante el parpadeo (por ejemplo, rojo) */
   }
   100% {
     border: 3px solid #091526; /* Vuelve al color original */

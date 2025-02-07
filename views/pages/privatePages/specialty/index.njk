@@ -1,8 +1,22 @@
 {% extends "layouts/privateLayout.njk" %}
 <!-- Bloque de título -->
 
-{% block content %} {% set currentView= 'card' %}
+{% block content %}
 
 <section>{% include "pages/privatePages/specialty/verb/getAll.njk" %}</section>
 
+<script src="https://cdn.jsdelivr.net/npm/crypto-js@3.1.9-1/crypto-js.js"></script>
+
+<script type="module">
+  const currentView = 'card';
+
+  // Cifrar el valor de `currentView` antes de almacenarlo
+  const encryptedCurrentView = CryptoJS.AES.encrypt(
+    currentView,
+    'secret-key'
+  ).toString();
+
+  // Almacenamos `encryptedCurrentView` en localStorage
+  localStorage.setItem('currentView', encryptedCurrentView);
+</script>
 {% endblock %}

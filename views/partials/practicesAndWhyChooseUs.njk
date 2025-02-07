@@ -1,4 +1,4 @@
-{% set currentView = 'carousel' %}
+{% set isPublic=true %}
 
 <div class="home-heading18">
   <h2 class="home-text24">Nuestras Especialidades</h2>
@@ -8,12 +8,10 @@
   </p>
 </div>
 
-<!-- Usamos un contenedor general para almacenar currentView -->
-
-<!-- El contenido de la página va aquí -->
+<!-- Contenedor de especialidades (ya incluye el contenido) -->
 <div
-  class="home-docs"
   id="docsContent"
+  class="home-docs"
 >
   {% include "pages/privatePages/specialty/verb/getAll.njk" %}
 </div>
@@ -30,85 +28,132 @@
 <div
   id="specialtiesModal"
   class="modal"
+  style="display: none; opacity: 0"
+  isEditable="true"
 >
-  <div class="modal-content">
-    <span
-      class="close-btn"
-      id="closeModal"
-      >&times;</span
+  <div
+    class="modal-content"
+    id="modalContent"
+    isEditable="true"
+  >
+    <div
+      class="modal-head"
+      isEditable="true"
     >
-    <h3 class="modal-title"></h3>
+      <h3
+        class="modal-title"
+        isEditable="true"
+      ></h3>
+      <span
+        class="close-button"
+        id="closeButton"
+        isEditable="true"
+        >×</span
+      >
+    </div>
+    <!-- Aquí va el spinner que será mostrado cuando el modal esté en fullscreen -->
+    <div
+      class="modal-spinner"
+      style="display: none"
+    >
+      <div class="spinner"></div>
+    </div>
     <div
       class="modal-body"
+      isEditable="true"
       id="modalContent"
     ></div>
-  </div>
-</div>
-
-<div class="home-heading19">
-  <h2 class="home-header19">¿Por qué elegirnos?</h2>
-  <p class="home-header20">
-    Estamos comprometidos a brindarte la mejor atención médica posible.
-  </p>
-</div>
-<div class="home-content13">
-  <div class="home-video1">
-    <video
-      src=""
-      poster="/News/video-1500w.png"
-      class="home-video2"
-    ></video>
-    <div class="home-play">
-      <img
-        alt="image"
-        src="/Icons/play.svg"
-        class="home-image23"
-      />
+    <div
+      class="modal-actions"
+      style="display: none"
+      isEditable="true"
+    >
+      <button
+        id="saveButton"
+        isEditable="true"
+      >
+        Guardar
+      </button>
+      <button
+        id="cancelButton"
+        isEditable="true"
+      >
+        Cancelar
+      </button>
     </div>
   </div>
-  <div class="home-caption8">
-    <h3 class="home-header21">
-      Comprometidos a la excelencia en atención médica
-    </h3>
-    <p class="home-header22">
-      Nuestro objetivo es proporcionar un servicio excepcional a cada paciente.
-    </p>
-  </div>
 </div>
 
+<!-- Script para manejar el modal -->
+<!-- Enviar currentView con JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/crypto-js@3.1.9-1/crypto-js.js"></script>
 <script type="module">
   import { openModal, closeModal } from './js/components/custom/modal.js';
+  import { executeScripts } from './js/components/utils/index.js';
 
-  document.addEventListener('DOMContentLoaded', function () {
-    // Abre el modal cuando se haga clic en el botón
-    document.getElementById('openModal').addEventListener('click', function () {
-      const docsContent = document.getElementById('docsContent').innerHTML;
-      const modalContent = document.getElementById('modalContent');
+  const modal = document.getElementById('specialtiesModal');
+  const openModalBtn = document.getElementById('openModal');
+  const closeModalBtn = document.getElementById('closeButton');
+  const docsContent = document.getElementById('docsContent');
+  const modalContent = document.querySelector('#specialtiesModal .modal-body'); // Asegurar que sea el modal-body
+  const modalTitle = document.querySelector('#specialtiesModal .modal-title'); // Obtener el título correctamente
 
-      // Cargar el contenido dinámico en el modal
-      modalContent.innerHTML = docsContent;
+  // 📌 Verificamos en consola que los elementos existen
+  console.log('🛠 modal:', modal);
+  console.log('🛠 modalTitle:', modalTitle);
+  console.log('🛠 modalContent:', modalContent);
 
-      // Usar la función openModal que definimos en modalFunctions.js
-      openModal(
-        'specialtiesModal',
-        'fullscreen',
-        'Especialidades Médicas',
-        '#f8f8f8'
-      );
-    });
+  // ✅ Evento para abrir el modal
+  openModalBtn.addEventListener('click', function () {
+    if (!modalTitle) {
+      console.error('❌ No se encontró .modal-title dentro del modal.');
+      return;
+    }
 
-    // Cerrar el modal cuando se haga clic en el botón de cerrar
-    document
-      .getElementById('closeModal')
-      .addEventListener('click', function () {
-        closeModal('specialtiesModal');
-      });
+    // 🔹 Establecer el título ANTES de abrir el modal
+    modalTitle.textContent = 'Especialidades Médicas';
 
-    // Cerrar el modal si el usuario hace clic fuera del modal
-    window.addEventListener('click', function (event) {
-      if (event.target === document.getElementById('specialtiesModal')) {
-        closeModal('specialtiesModal');
-      }
-    });
+    // 🔹 Clonar el contenido sin `innerHTML`
+    modalContent.innerHTML = ''; // Limpiar antes de insertar
+    const clonedContent = docsContent.cloneNode(true);
+    clonedContent.id = ''; // Eliminar el ID duplicado para evitar conflictos
+    modalContent.appendChild(clonedContent);
+
+    // 🔹 Ejecutar scripts del contenido clonado
+    executeScripts(clonedContent);
+
+    // ✅ Abrir el modal
+    openModal(
+      'specialtiesModal',
+      'fullscreen',
+      'Especialidades Médicas',
+      '#f8f8f8'
+    );
   });
+
+  // ✅ Evento para cerrar el modal
+  closeModalBtn.addEventListener('click', function () {
+    closeModal('specialtiesModal');
+  });
+
+  window.addEventListener('click', function (event) {
+    if (event.target === modal) {
+      closeModal('specialtiesModal');
+    }
+  });
+
+  // Declaramos el valor de `currentView` en JavaScript
+  const currentView = '';
+
+  // Cifrar el valor de `currentView` antes de almacenarlo
+  const encryptedcurrentView = CryptoJS.AES.encrypt(
+    currentView,
+    'secret-key'
+  ).toString();
+
+  // Almacenamos `encryptedcurrentView` en localStorage
+  localStorage.setItem('currentView', encryptedcurrentView);
+
+  // Verificamos que se ha almacenado correctamente el valor cifrado
+  console.log(localStorage.getItem('currentView')); // Mostrará
 </script>

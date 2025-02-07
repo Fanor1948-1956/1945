@@ -13,7 +13,17 @@ button:hover {
   background-color: #cbd4dd;
   color: #050505;
 }
-
+.public-button {
+  background-color: #021830;
+  color: white;
+  font-weight: bold;
+  width: 100%;
+  border: 1px solid white;
+  padding: 10px 15px;
+  margin-left: 0.3rem;
+  cursor: pointer;
+  border-radius: 5px;
+}
 button.send {
   background-color: #021830;
 

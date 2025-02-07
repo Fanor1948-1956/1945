@@ -15,11 +15,9 @@
 </button>
 
 <div
-  id="snackbar"
-  class="snackbar"
+  id="specialityContainer"
+  class="contentContainer"
 ></div>
-
-<div id="specialityContainer"></div>
 
 <!-- Modal para agregar especialidades -->
 <div
@@ -97,9 +95,15 @@
   let currentPage = 1;
   const selectedSpecialties = [];
   let filteredSpecialties = [];
-  const specialtyPerPage = 10;
-  let currentView = '{{ currentView|lower }}';
+  const specialtyPerPage = 9;
+  const isPublic = '{{ isPublic|dump}}';
   let user;
+  // Recuperamos el valor cifrado de `localStorage`
+  const encryptedcurrentView = localStorage.getItem('currentView');
+
+  // Desencriptamos el valor con la misma clave de cifrado
+  const bytes = CryptoJS.AES.decrypt(encryptedcurrentView, 'secret-key');
+  const currentView = bytes.toString(CryptoJS.enc.Utf8);
 
   const loadProfile = async () => {
     user = await loadUserProfile();
@@ -127,7 +131,8 @@
           currentPage,
           specialtyPerPage,
           'specialityContainer',
-          specialtyRenderer
+          specialtyRenderer,
+          isPublic
         );
       } else {
         if (!user || !user.roles) {
@@ -154,7 +159,8 @@
           currentPage,
           specialtyPerPage,
           'specialityContainer',
-          specialtyRenderer
+          specialtyRenderer,
+          isPublic
         );
       }
     } catch (error) {

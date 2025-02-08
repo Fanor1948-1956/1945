@@ -19,7 +19,7 @@
   background-color: #f4f4f4; /* Color de fondo de la página */
   border-radius: 1rem;
 }
-.cardMedia {
+.card-media {
   width: 350px; /* Ancho fijo */
   height: 450px; /* Alto fijo */
   border: 3px solid rgba(255, 255, 255, 0.3);
@@ -32,13 +32,13 @@
   transition: transform 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
 }
 
-.cardMedia:hover {
+.card-media:hover {
   transform: translateY(-8px);
   box-shadow: 0 0 25px rgba(0, 183, 255, 0.8);
   animation: neonGlow 1.5s infinite alternate;
 }
 
-.cardMediaHeader {
+.card-media-header {
   font-size: 18px;
   background: rgba(15, 15, 40, 0.9); /* Glassmorphism */
   font-weight: bold;
@@ -52,7 +52,7 @@
   -webkit-text-fill-color: transparent;
 }
 
-.cardMediaBody {
+.card-media-body {
   font-size: 16px;
   margin-bottom: 20px;
   color: #d1d1e0;

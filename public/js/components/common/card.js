@@ -145,7 +145,8 @@ export function renderCards(
   containerId = 'cardContainer',
   onAction,
   displayType = 'pagination',
-  isPublic = false // Nueva prop
+  isPublic = false, // Nueva prop
+  dynamicCardClasses = [] // Ahora es un array de clases dinámicas
 ) {
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
@@ -171,16 +172,38 @@ export function renderCards(
     const avatarElement = createAvatar(item);
     const avatarHtml = avatarElement.outerHTML;
 
+    // Determinamos la clase de la tarjeta con un switch o con la prop dynamicCardClasses
+    let dynamicCardClass = ['card']; // Valor por defecto es un array con 'card' como clase base
+
+    // Determinamos la clase de la tarjeta según el containerId o prop dynamicCardClasses
+    switch (containerId) {
+      case 'contentUsers':
+        dynamicCardClass = ['card-media', ...dynamicCardClasses]; // Agrega las clases de dynamicCardClasses
+        break;
+      case 'contentProducts':
+        dynamicCardClass = ['card-product', ...dynamicCardClasses];
+        break;
+      case 'contentPosts':
+        dynamicCardClass = ['card-post', ...dynamicCardClasses];
+        break;
+      default:
+        dynamicCardClass = ['card', ...dynamicCardClasses]; // Usa las clases personalizadas pasadas por prop
+    }
+
+    // Convertimos el array de clases en una cadena separada por espacios
+    const cardClassString = dynamicCardClass.join(' ');
+
+    // Construcción del HTML de cada tarjeta con las clases dinámicas
     cardHtml += `
-      <div class="card" data-id="${item._id}">
-        <div class="card-main">
-          <div class="card-avatar">${avatarHtml}</div>
-          <div class="card-body">
+      <div class="${cardClassString}" data-id="${item._id}">
+        <div class="${cardClassString}-main">  <!-- Aplicamos las clases aquí -->
+          <div class="${cardClassString}-avatar">${avatarHtml}</div>  <!-- Avatar -->
+          <div class="${cardClassString}-body">  <!-- Cuerpo -->
             ${headers
               .filter((header) => header !== '_id') // Excluir _id de los campos visibles
               .map(
                 (header, idx) => `  
-              <div class="card-field">
+              <div class="${cardClassString}-field">
                 <span class="field-value">${
                   Object.values(item).filter((_, i) => i !== 0)[idx]
                 }</span>
@@ -190,21 +213,19 @@ export function renderCards(
           </div>
         </div>
         
-        <div class="cardFooter">
-        
+        <div class="${cardClassString}-footer">  <!-- Pie de la tarjeta -->
           ${
             isPublic
               ? `<button class="public-button" data-id="${item._id}">
                   <i class="icon-public">🌐</i> Ver Más
                 </button>`
-              : `
-                <span class="card-number">${cardNumber}</span>
-              <button class="more-button" data-id="${item._id}">
+              : ` 
+                <span class="${cardClassString}-number">${cardNumber}</span>
+              <button class="${cardClassString}-more-button" data-id="${item._id}">
                   <i class="icon-three-dots">⋮</i>
                 </button>`
           }
         </div>
-
       </div>
     `;
   });

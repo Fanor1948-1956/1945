@@ -1,7 +1,6 @@
 import { createAvatar } from './avatar.js';
 
 import { initializeListeners, initializeModalPublic } from './table.js';
-
 export function renderCards(
   headers,
   data,
@@ -24,8 +23,8 @@ export function renderCards(
   if (displayType === 'carousel') {
     cardHtml = `
       <div class="carousel-container">
-        <button class="carousel-prev">‹</button>
-        <div class="carousel-wrapper">
+        <button class="carousel-prev" id="carousel-prev-${containerId}">‹</button>
+        <div class="carousel-wrapper" id="carousel-wrapper-${containerId}">
           <div class="carousel-cards">
     `;
   } else {
@@ -45,7 +44,7 @@ export function renderCards(
             ${headers
               .filter((header) => header !== '_id') // Excluir _id de los campos visibles
               .map(
-                (header, idx) => `
+                (header, idx) => `  
               <div class="card-field">
                 <span class="field-value">${
                   Object.values(item).filter((_, i) => i !== 0)[idx]
@@ -79,7 +78,7 @@ export function renderCards(
     cardHtml += `
           </div>
         </div>
-        <button class="carousel-next">›</button>
+        <button class="carousel-next" id="carousel-next-${containerId}">›</button>
       </div>
     `;
   } else {
@@ -90,33 +89,41 @@ export function renderCards(
   initializeListeners(paginatedData, onAction);
   initializeModalPublic(paginatedData, onAction, isPublic);
   if (displayType === 'carousel') {
-    initializeCarousel();
+    initializeCarousel(containerId); // Pasar containerId aquí
   }
 }
-function initializeCarousel() {
+
+function initializeCarousel(containerId) {
   let currentIndex = 0;
-  const cards = document.querySelectorAll('.carousel-cards .card');
-  const carouselWrapper = document.querySelector('.carousel-wrapper');
+  const cards = document.querySelectorAll(
+    `#carousel-wrapper-${containerId} .carousel-cards .card`
+  );
+  const carouselWrapper = document.querySelector(
+    `#carousel-wrapper-${containerId}`
+  );
   const cardsPerView = 3;
   const totalCards = cards.length;
 
-  const nextButton = document.querySelector('.carousel-next');
-  const prevButton = document.querySelector('.carousel-prev');
+  const nextButton = document.querySelector(`#carousel-next-${containerId}`);
+  const prevButton = document.querySelector(`#carousel-prev-${containerId}`);
 
-  function moveNext() {
-    currentIndex = (currentIndex + cardsPerView) % totalCards;
-    console.log(`Next clicked, new index: ${currentIndex}`);
-    updateCarouselPosition();
-  }
+  updateButtonState();
 
-  function movePrev() {
-    currentIndex = (currentIndex - cardsPerView + totalCards) % totalCards;
-    console.log(`Prev clicked, new index: ${currentIndex}`);
-    updateCarouselPosition();
-  }
+  nextButton.addEventListener('click', () => {
+    if (currentIndex + cardsPerView < totalCards) {
+      currentIndex += cardsPerView;
+      updateCarouselPosition();
+      updateButtonState();
+    }
+  });
 
-  nextButton.addEventListener('click', moveNext);
-  prevButton.addEventListener('click', movePrev);
+  prevButton.addEventListener('click', () => {
+    if (currentIndex - cardsPerView >= 0) {
+      currentIndex -= cardsPerView;
+      updateCarouselPosition();
+      updateButtonState();
+    }
+  });
 
   function updateCarouselPosition() {
     carouselWrapper.style.transform = `translateX(-${
@@ -124,6 +131,8 @@ function initializeCarousel() {
     }px)`;
   }
 
-  // Movimiento automático cada 3 segundos en bucle
-  setInterval(moveNext, 3000);
+  function updateButtonState() {
+    prevButton.disabled = currentIndex === 0;
+    nextButton.disabled = currentIndex + cardsPerView >= totalCards;
+  }
 }

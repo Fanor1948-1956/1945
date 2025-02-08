@@ -28,9 +28,7 @@ export const renderItems = (
     isPublic,
   ];
   const views = Array.isArray(currentView) ? currentView : [currentView];
-  console.log(views);
 
-  // 🔥 Renderizar según el tipo de vista con switch-case
   views.forEach((view) => {
     switch (view) {
       case 'table':
@@ -48,103 +46,102 @@ export const renderItems = (
         console.warn(`Vista desconocida: ${view}`);
     }
   });
+
+  //   // Solo renderiza la paginación si no es un 'carousel'
+  if (currentView !== 'carousel' && currentView !== 'carouselMedia') {
+    const paginationHtml = renderPagination(
+      currentPage,
+      items.length,
+      itemsPerPage,
+      (newPage) =>
+        handlePageChange(
+          newPage,
+          currentView,
+          items,
+          headers,
+          itemsPerPage,
+          containerId,
+          itemRenderer,
+          isPublic
+        ) // Pasar currentView y otros argumentos
+    );
+
+    // Convertir containerId en un nodo real del DOM si es solo una cadena
+    const containerElement = document.getElementById(containerId);
+
+    if (containerElement) {
+      containerElement.insertAdjacentHTML('beforeend', paginationHtml);
+    } else {
+      console.error('No se encontró el contenedor con id: ', containerId);
+    }
+
+    // Inicializar listeners para botones de paginación
+    initializePaginationButtons(
+      currentView,
+      items,
+      headers,
+      itemsPerPage,
+      containerId,
+      itemRenderer,
+      isPublic
+    );
+  }
 };
 
-//   //   // Solo renderiza la paginación si no es un 'carousel'
-//   if (currentView !== 'carousel' && currentView !== 'carouselMedia') {
-//     const paginationHtml = renderPagination(
-//       currentPage,
-//       items.length,
-//       itemsPerPage,
-//       (newPage) =>
-//         handlePageChange(
-//           newPage,
-//           currentView,
-//           items,
-//           headers,
-//           itemsPerPage,
-//           containerId,
-//           itemRenderer,
-//           isPublic
-//         ) // Pasar currentView y otros argumentos
-//     );
+// // Función para manejar el cambio de página
+function handlePageChange(
+  newPage,
+  currentView,
+  items,
+  headers,
+  itemsPerPage,
+  containerId,
+  itemRenderer,
+  isPublic
+) {
+  renderItems(
+    currentView,
+    items,
+    headers,
+    newPage,
+    itemsPerPage,
+    containerId,
+    itemRenderer,
+    isPublic
+  );
+}
 
-//     // Convertir containerId en un nodo real del DOM si es solo una cadena
-//     const containerElement = document.getElementById(containerId);
+// // Función para inicializar los listeners de los botones de paginación
+function initializePaginationButtons(
+  currentView,
+  items,
+  headers,
+  itemsPerPage,
+  containerId,
+  itemRenderer,
+  isPublic
+) {
+  const pageButtons = document.querySelectorAll('.page-button');
+  pageButtons.forEach((button) => {
+    button.removeEventListener('click', handlePageClick); // Limpiar cualquier listener previo
+    button.addEventListener('click', (event) => {
+      const newPage = parseInt(event.currentTarget.getAttribute('data-page'));
+      handlePageChange(
+        newPage,
+        currentView,
+        items,
+        headers,
+        itemsPerPage,
+        containerId,
+        itemRenderer,
+        isPublic
+      );
+    });
+  });
+}
 
-//     if (containerElement) {
-//       containerElement.insertAdjacentHTML('beforeend', paginationHtml);
-//     } else {
-//       console.error('No se encontró el contenedor con id: ', containerId);
-//     }
-
-//     // Inicializar listeners para botones de paginación
-//     initializePaginationButtons(
-//       currentView,
-//       items,
-//       headers,
-//       itemsPerPage,
-//       containerId,
-//       itemRenderer,
-//       isPublic
-//     );
-//   }
-// };
-
-// // // Función para manejar el cambio de página
-// function handlePageChange(
-//   newPage,
-//   currentView,
-//   items,
-//   headers,
-//   itemsPerPage,
-//   containerId,
-//   itemRenderer,
-//   isPublic
-// ) {
-//   renderItems(
-//     currentView,
-//     items,
-//     headers,
-//     newPage,
-//     itemsPerPage,
-//     containerId,
-//     itemRenderer,
-//     isPublic
-//   );
-// }
-
-// // // Función para inicializar los listeners de los botones de paginación
-// function initializePaginationButtons(
-//   currentView,
-//   items,
-//   headers,
-//   itemsPerPage,
-//   containerId,
-//   itemRenderer,
-//   isPublic
-// ) {
-//   const pageButtons = document.querySelectorAll('.page-button');
-//   pageButtons.forEach((button) => {
-//     button.removeEventListener('click', handlePageClick); // Limpiar cualquier listener previo
-//     button.addEventListener('click', (event) => {
-//       const newPage = parseInt(event.currentTarget.getAttribute('data-page'));
-//       handlePageChange(
-//         newPage,
-//         currentView,
-//         items,
-//         headers,
-//         itemsPerPage,
-//         containerId,
-//         itemRenderer,
-//         isPublic
-//       );
-//     });
-//   });
-// }
-
-// // // Manejo del clic en los botones de paginación
-// function handlePageClick(event) {
-//   const newPage = parseInt(event.currentTarget.getAttribute('data-page'));
-//   handlePageChange(newPage);
-// }
+// // Manejo del clic en los botones de paginación
+function handlePageClick(event) {
+  const newPage = parseInt(event.currentTarget.getAttribute('data-page'));
+  handlePageChange(newPage);
+}

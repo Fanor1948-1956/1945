@@ -7,7 +7,7 @@ export function renderMedia(
   data,
   currentPage,
   itemsPerPage,
-  containerId = 'cardContainer',
+  containerId = 'cardMediaContainer',
   onAction,
   displayType = 'pagination',
   isPublic = false // Nueva prop
@@ -23,13 +23,13 @@ export function renderMedia(
 
   if (displayType === 'carouselMedia') {
     cardHtml = `
-      <div class="carousel-container">
-        <button class="carousel-prev">‹</button>
-        <div class="carousel-wrapper">
-          <div class="carousel-cards">
+      <div class="carouselMedia-container">
+        <button class="carouselMedia-prev">‹</button>
+        <div class="carouselMedia-wrapper">
+          <div class="carouselMedia-cards">
     `;
   } else {
-    cardHtml = '<div class="card-container">';
+    cardHtml = '<div class="cardMedia-container">';
   }
 
   paginatedData.forEach((item, index) => {
@@ -38,15 +38,15 @@ export function renderMedia(
     const avatarHtml = avatarElement.outerHTML;
 
     cardHtml += `
-      <div class="card" data-id="${item._id}">
-        <div class="card-main">
-          <div class="card-avatar">${avatarHtml}</div>
-          <div class="card-body">
+      <div class="cardMedia" data-id="${item._id}">
+        <div class="cardMedia-main">
+          <div class="cardMedia-avatar">${avatarHtml}</div>
+          <div class="cardMedia-body">
             ${headers
               .filter((header) => header !== '_id') // Excluir _id de los campos visibles
               .map(
                 (header, idx) => `
-              <div class="card-field">
+              <div class="cardMedia-field">
                 <span class="field-value">${
                   Object.values(item).filter((_, i) => i !== 0)[idx]
                 }</span>
@@ -56,7 +56,7 @@ export function renderMedia(
           </div>
         </div>
         
-        <div class="cardFooter">
+        <div class="cardMediaFooter">
         
           ${
             isPublic
@@ -64,7 +64,7 @@ export function renderMedia(
                   <i class="icon-public">🌐</i> Ver Más
                 </button>`
               : `
-                <span class="card-number">${cardNumber}</span>
+                <span class="cardMedia-number">${cardNumber}</span>
               <button class="more-button" data-id="${item._id}">
                   <i class="icon-three-dots">⋮</i>
                 </button>`
@@ -79,7 +79,7 @@ export function renderMedia(
     cardHtml += `
           </div>
         </div>
-        <button class="carousel-next">›</button>
+        <button class="carouselMedia-next">›</button>
       </div>
     `;
   } else {
@@ -96,13 +96,13 @@ export function renderMedia(
 
 function initializeCarousel() {
   let currentIndex = 0;
-  const cards = document.querySelectorAll('.carousel-cards .card');
-  const carouselWrapper = document.querySelector('.carousel-wrapper');
+  const cards = document.querySelectorAll('.carouselMedia-cards .cardMedia');
+  const carouselWrapper = document.querySelector('.carouselMedia-wrapper');
   const cardsPerView = 3;
   const totalCards = cards.length;
 
-  const nextButton = document.querySelector('.carousel-next');
-  const prevButton = document.querySelector('.carousel-prev');
+  const nextButton = document.querySelector('.carouselMedia-next');
+  const prevButton = document.querySelector('.carouselMedia-prev');
 
   updateButtonState();
 

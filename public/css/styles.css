@@ -16,6 +16,8 @@
 @import './partials/cardMedia.css';
 @import './partials/container.css';
 @import './partials/carousel.css';
+@import './partials/mediaCard.css';
+@import './partials/carruselMedia.css';
 /*popper*/
 @import './partials/popper.css';
 

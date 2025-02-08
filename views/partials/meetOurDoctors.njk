@@ -1,5 +1,5 @@
 {% set isPublic=true %} {%set roleAlias="doctor"%} {%set
-currentView='carouselMedia'%}
+currentView='carousel'%}
 
 <div id="container1">
   <div class="home-heading28">
@@ -11,12 +11,9 @@ currentView='carouselMedia'%}
   </div>
 </div>
 <!-- Contenedor de especialidades (ya incluye el contenido) -->
-<div
-  id="docsContent"
-  class="home-docs"
->
+
 {% include "pages/privatePages/users/index.njk" %}
-</div>
+
 <div class="home-search2">
   <input
     type="text"

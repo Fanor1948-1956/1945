@@ -1,0 +1,87 @@
+/* Estilos para el contenedor de la tarjeta */
+#cardMediaContainer {
+  display: flex;
+  padding: 1rem;
+  justify-content: center; /* Centra la tarjeta horizontalmente */
+  align-items: center; /* Centra la tarjeta verticalmente */
+  min-height: 100vh; /* Altura mínima para centrar en la página */
+  background-color: #f4f4f4; /* Color de fondo de la página */
+  border-radius: 1rem;
+}
+/* Estilos para el contenedor de la tarjeta */
+.cardMedia-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 4 columnas */
+  gap: 1.25rem; /* Espacio entre las tarjetas */
+  padding: 0.5rem;
+
+  justify-items: center; /* Centra las tarjetas dentro de cada celda */
+  background-color: #f4f4f4; /* Color de fondo de la página */
+  border-radius: 1rem;
+}
+
+@keyframes blink-border {
+  0% {
+    border: 3px solid #091526; /* Color de borde original */
+  }
+  50% {
+    border: 4px solid #ffffff; /* Color del borde durante el parpadeo (por ejemplo, rojo) */
+  }
+  100% {
+    border: 3px solid #091526; /* Vuelve al color original */
+  }
+}
+
+.cardMedia {
+  display: flex;
+  flex-direction: column;
+  background-color: #091526;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(254, 254, 254, 0.1);
+  transition: box-shadow 0.3s ease;
+  justify-content: space-between;
+  width: 20rem;
+  overflow: hidden;
+  margin: 1rem;
+  animation: blink-border 1.5s ease-in-out infinite; /* Animación de parpadeo */
+}
+
+/* Estilos del encabezado de la tarjeta */
+.cardMedia-header {
+  background-color: #091526; /* Color de fondo de la tarjeta */
+  color: #ffffff; /* Color del texto */
+
+  padding: 0.9375rem; /* Espaciado interno (5px 15px) */
+  text-align: center; /* Centrar el texto */
+}
+
+.cardMedia-header h5 {
+  font-size: 1.25rem; /* Tamaño de la fuente (20px) */
+  margin: 0; /* Elimina el margen */
+}
+
+/* Estilos del cuerpo de la tarjeta */
+.cardMedia-body {
+  padding: 0.3125rem 0.9375rem; /* Espaciado interno (5px 15px) */
+  text-align: center; /* Centrar el texto */
+  font-size: 1.125rem; /* Tamaño de la fuente (18px) */
+  color: #ffffff; /* Color del texto */
+  overflow-y: auto; /* Ajustar la altura del cuerpo para mostrar scrollbar */
+}
+
+.cardMediaFooter {
+  background-color: #091526; /* Color de fondo de la tarjeta */
+  color: #ffffff; /* Color del texto */
+  justify-content: space-between;
+  display: flex;
+  padding: 0.9375rem; /* Espaciado interno (5px 15px) */
+  align-items: center;
+}
+
+.cardMedia-field {
+  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+  overflow: hidden; /* Oculta el desbordamiento */
+  text-overflow: ellipsis; /* Muestra "..." cuando el texto es demasiado largo */
+  width: 100%; /* Asegura que el contenedor tome todo el ancho disponible */
+  display: block;
+}

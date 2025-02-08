@@ -1,4 +1,5 @@
 import { createAvatar } from './avatar.js';
+
 import { initializeListeners, initializeModalPublic } from './table.js';
 
 export function renderCards(
@@ -18,83 +19,80 @@ export function renderCards(
   const cardContainer = document.getElementById(containerId);
   cardContainer.innerHTML = ''; // Limpia el contenido anterior
 
-  const displayTypes = Array.isArray(displayType) ? displayType : [displayType];
+  let cardHtml = '';
 
-  displayTypes.forEach((type) => {
-    let cardHtml = '';
+  if (displayType === 'carousel') {
+    cardHtml = `
+      <div class="carousel-container">
+        <button class="carousel-prev">‹</button>
+        <div class="carousel-wrapper">
+          <div class="carousel-cards">
+    `;
+  } else {
+    cardHtml = '<div class="card-container">';
+  }
 
-    if (type === 'carousel') {
-      cardHtml += `
-        <div class="carousel-container">
-          <button class="carousel-prev">‹</button>
-          <div class="carousel-wrapper">
-            <div class="carousel-cards">
-      `;
-    } else {
-      cardHtml += '<div class="card-container">';
-    }
+  paginatedData.forEach((item, index) => {
+    const cardNumber = start + index + 1;
+    const avatarElement = createAvatar(item);
+    const avatarHtml = avatarElement.outerHTML;
 
-    paginatedData.forEach((item, index) => {
-      const cardNumber = start + index + 1;
-      const avatarElement = createAvatar(item);
-      const avatarHtml = avatarElement.outerHTML;
-
-      cardHtml += `
-        <div class="card" data-id="${item._id}">
-          <div class="card-main">
-            <div class="card-avatar">${avatarHtml}</div>
-            <div class="card-body">
-              ${headers
-                .filter((header) => header !== '_id')
-                .map(
-                  (header, idx) => `
-                <div class="card-field">
-                  <span class="field-value">${
-                    Object.values(item).filter((_, i) => i !== 0)[idx]
-                  }</span>
-                </div>`
-                )
-                .join('')}
-            </div>
-          </div>
-          <div class="cardFooter">
-            ${
-              isPublic
-                ? `<button class="public-button" data-id="${item._id}">
-                    <i class="icon-public">🌐</i> Ver Más
-                  </button>`
-                : `<span class="card-number">${cardNumber}</span>
-                  <button class="more-button" data-id="${item._id}">
-                    <i class="icon-three-dots">⋮</i>
-                  </button>`
-            }
+    cardHtml += `
+      <div class="card" data-id="${item._id}">
+        <div class="card-main">
+          <div class="card-avatar">${avatarHtml}</div>
+          <div class="card-body">
+            ${headers
+              .filter((header) => header !== '_id') // Excluir _id de los campos visibles
+              .map(
+                (header, idx) => `
+              <div class="card-field">
+                <span class="field-value">${
+                  Object.values(item).filter((_, i) => i !== 0)[idx]
+                }</span>
+              </div>`
+              )
+              .join('')}
           </div>
         </div>
-      `;
-    });
-
-    if (type === 'carousel') {
-      cardHtml += `
-            </div>
-          </div>
-          <button class="carousel-next">›</button>
+        
+        <div class="cardFooter">
+        
+          ${
+            isPublic
+              ? `<button class="public-button" data-id="${item._id}">
+                  <i class="icon-public">🌐</i> Ver Más
+                </button>`
+              : `
+                <span class="card-number">${cardNumber}</span>
+              <button class="more-button" data-id="${item._id}">
+                  <i class="icon-three-dots">⋮</i>
+                </button>`
+          }
         </div>
-      `;
-    } else {
-      cardHtml += '</div>';
-    }
 
-    cardContainer.insertAdjacentHTML('beforeend', cardHtml);
+      </div>
+    `;
   });
 
+  if (displayType === 'carousel') {
+    cardHtml += `
+          </div>
+        </div>
+        <button class="carousel-next">›</button>
+      </div>
+    `;
+  } else {
+    cardHtml += '</div>';
+  }
+
+  cardContainer.innerHTML = cardHtml;
   initializeListeners(paginatedData, onAction);
   initializeModalPublic(paginatedData, onAction, isPublic);
-
-  if (displayTypes.includes('carousel')) {
+  if (displayType === 'carousel') {
     initializeCarousel();
   }
 }
-
 function initializeCarousel() {
   let currentIndex = 0;
   const cards = document.querySelectorAll('.carousel-cards .card');
@@ -105,23 +103,20 @@ function initializeCarousel() {
   const nextButton = document.querySelector('.carousel-next');
   const prevButton = document.querySelector('.carousel-prev');
 
-  updateButtonState();
+  function moveNext() {
+    currentIndex = (currentIndex + cardsPerView) % totalCards;
+    console.log(`Next clicked, new index: ${currentIndex}`);
+    updateCarouselPosition();
+  }
 
-  nextButton.addEventListener('click', () => {
-    if (currentIndex + cardsPerView < totalCards) {
-      currentIndex += cardsPerView;
-      updateCarouselPosition();
-      updateButtonState();
-    }
-  });
+  function movePrev() {
+    currentIndex = (currentIndex - cardsPerView + totalCards) % totalCards;
+    console.log(`Prev clicked, new index: ${currentIndex}`);
+    updateCarouselPosition();
+  }
 
-  prevButton.addEventListener('click', () => {
-    if (currentIndex - cardsPerView >= 0) {
-      currentIndex -= cardsPerView;
-      updateCarouselPosition();
-      updateButtonState();
-    }
-  });
+  nextButton.addEventListener('click', moveNext);
+  prevButton.addEventListener('click', movePrev);
 
   function updateCarouselPosition() {
     carouselWrapper.style.transform = `translateX(-${
@@ -129,8 +124,6 @@ function initializeCarousel() {
     }px)`;
   }
 
-  function updateButtonState() {
-    prevButton.disabled = currentIndex === 0;
-    nextButton.disabled = currentIndex + cardsPerView >= totalCards;
-  }
+  // Movimiento automático cada 3 segundos en bucle
+  setInterval(moveNext, 3000);
 }

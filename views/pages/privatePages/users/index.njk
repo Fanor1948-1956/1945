@@ -256,6 +256,12 @@
   >
     Vista Tabla
   </button>
+  <button
+    id="mediaViewBtn"
+    isEditable="true"
+  >
+    Vista Media
+  </button>
 </div>
 
 <script type="module">
@@ -282,8 +288,8 @@
   import { setupViewToggle } from '../js/utils/setupViewToggle.js';
 
   let currentPage = 1;
-  let currentView = localStorage.getItem('currentView') || 'card'; // Recupera la vista guardada
-  let usersPerPage = currentView === 'card' ? 9 : 10;
+  let currentView = '{{currentView|lower}}' || 'card';
+  let usersPerPage = 9;
   let filteredUsers = [];
   const isPublic = '{{ isPublic|dump}}'; // Obtén el rol desde la plantilla
 
@@ -366,6 +372,9 @@
 
   document.getElementById('tableViewBtn').addEventListener('click', () => {
     setView('table');
+  });
+  document.getElementById('mediaViewBtn').addEventListener('click', () => {
+    setView('media');
   });
 
   // Asigna los handlers

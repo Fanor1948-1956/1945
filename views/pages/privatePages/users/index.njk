@@ -294,7 +294,7 @@
   const isPublic = '{{ isPublic|dump}}'; // Obtén el rol desde la plantilla
 
   const roleAlias = '{{roleAlias|lower}}';
-
+const cardClass='{{cardClass|lower}}';
   // Imprimimos el valor desencriptado
   console.log(roleAlias); // Debería mostrar "doctor"
 
@@ -343,7 +343,8 @@
       usersPerPage,
       'contentUsers',
       renderer,
-      isPublic
+      isPublic,
+      cardClass
     );
   };
 
@@ -361,7 +362,8 @@
       usersPerPage,
       'contentUsers',
       getRendererForRole(roleAlias),
-      isPublic
+      isPublic,
+      cardClass
     );
   };
 

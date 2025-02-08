@@ -19,6 +19,7 @@
   background-color: #f4f4f4; /* Color de fondo de la página */
   border-radius: 1rem;
 }
+
 .card-media {
   width: 350px; /* Ancho fijo */
   height: 450px; /* Alto fijo */

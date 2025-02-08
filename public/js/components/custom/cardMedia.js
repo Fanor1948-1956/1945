@@ -1,20 +1,20 @@
 export const cardMedia = (containerId, data) => {
   const cardContainer = document.getElementById(containerId);
-  cardContainer.className = 'card-container grid-view'; // Clase por defecto
+  cardContainer.className = 'card-media-container grid-view'; // Clase por defecto
 
   // Mapear la data para crear tarjetas dinámicamente
   data.forEach((item) => {
     const card = document.createElement('div');
-    card.className = 'cardMedia';
+    card.className = 'card-media';
 
     const cardHeader = document.createElement('div');
-    cardHeader.className = 'cardMediaHeader';
+    cardHeader.className = 'card-media-header';
     const cardTitle = document.createElement('h5');
     cardTitle.textContent = item.title;
     cardHeader.appendChild(cardTitle);
 
     const cardBody = document.createElement('div');
-    cardBody.className = 'cardMediaBody';
+    cardBody.className = 'card-media-body';
     cardBody.innerHTML = item.content;
 
     if (item.media) {

@@ -13,7 +13,8 @@ export const renderItems = (
   itemsPerPage,
   containerId, // Esto es un string, no un nodo.
   itemRenderer,
-  isPublic
+  isPublic,
+  cardClass
 ) => {
   console.log('currentView', currentView);
   const data = items.map(itemRenderer); // Usa itemRenderer para convertir items en el formato adecuado
@@ -26,6 +27,7 @@ export const renderItems = (
     onAction,
     currentView,
     isPublic,
+    cardClass,
   ];
   const views = Array.isArray(currentView) ? currentView : [currentView];
 

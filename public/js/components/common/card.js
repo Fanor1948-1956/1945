@@ -146,7 +146,7 @@ export function renderCards(
   onAction,
   displayType = 'pagination',
   isPublic = false, // Nueva prop
-  dynamicCardClasses = [] // Ahora es un array de clases dinámicas
+  cardClass = 'card'
 ) {
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
@@ -172,38 +172,17 @@ export function renderCards(
     const avatarElement = createAvatar(item);
     const avatarHtml = avatarElement.outerHTML;
 
-    // Determinamos la clase de la tarjeta con un switch o con la prop dynamicCardClasses
-    let dynamicCardClass = ['card']; // Valor por defecto es un array con 'card' como clase base
-
-    // Determinamos la clase de la tarjeta según el containerId o prop dynamicCardClasses
-    switch (containerId) {
-      case 'contentUsers':
-        dynamicCardClass = ['card-media', ...dynamicCardClasses]; // Agrega las clases de dynamicCardClasses
-        break;
-      case 'contentProducts':
-        dynamicCardClass = ['card-product', ...dynamicCardClasses];
-        break;
-      case 'contentPosts':
-        dynamicCardClass = ['card-post', ...dynamicCardClasses];
-        break;
-      default:
-        dynamicCardClass = ['card', ...dynamicCardClasses]; // Usa las clases personalizadas pasadas por prop
-    }
-
-    // Convertimos el array de clases en una cadena separada por espacios
-    const cardClassString = dynamicCardClass.join(' ');
-
     // Construcción del HTML de cada tarjeta con las clases dinámicas
     cardHtml += `
-      <div class="${cardClassString}" data-id="${item._id}">
-        <div class="${cardClassString}-main">  <!-- Aplicamos las clases aquí -->
-          <div class="${cardClassString}-avatar">${avatarHtml}</div>  <!-- Avatar -->
-          <div class="${cardClassString}-body">  <!-- Cuerpo -->
+      <div class="${cardClass}" data-id="${item._id}">
+        <div class="${cardClass}-main">  <!-- Aplicamos las clases aquí -->
+          <div class="${cardClass}-avatar">${avatarHtml}</div>  <!-- Avatar -->
+          <div class="${cardClass}-body">  <!-- Cuerpo -->
             ${headers
               .filter((header) => header !== '_id') // Excluir _id de los campos visibles
               .map(
                 (header, idx) => `  
-              <div class="${cardClassString}-field">
+              <div class="${cardClass}-field">
                 <span class="field-value">${
                   Object.values(item).filter((_, i) => i !== 0)[idx]
                 }</span>
@@ -213,15 +192,15 @@ export function renderCards(
           </div>
         </div>
         
-        <div class="${cardClassString}-footer">  <!-- Pie de la tarjeta -->
+        <div class="${cardClass}-footer">  <!-- Pie de la tarjeta -->
           ${
             isPublic
               ? `<button class="public-button" data-id="${item._id}">
                   <i class="icon-public">🌐</i> Ver Más
                 </button>`
               : ` 
-                <span class="${cardClassString}-number">${cardNumber}</span>
-              <button class="${cardClassString}-more-button" data-id="${item._id}">
+                <span class="${cardClass}-number">${cardNumber}</span>
+              <button class="${cardClass}-more-button" data-id="${item._id}">
                   <i class="icon-three-dots">⋮</i>
                 </button>`
           }
@@ -244,11 +223,11 @@ export function renderCards(
   initializeListeners(paginatedData, onAction);
   initializeModalPublic(paginatedData, onAction, isPublic);
   if (displayType === 'carousel') {
-    initializeAutoCarousel(containerId); // Iniciar el carrusel automático
+    initializeAutoCarousel(containerId, cardClass); // Iniciar el carrusel automático
   }
 }
 
-function initializeAutoCarousel(containerId) {
+function initializeAutoCarousel(containerId, cardClass) {
   const carouselWrapper = document.querySelector(
     `#carousel-wrapper-${containerId}`
   );
@@ -256,7 +235,7 @@ function initializeAutoCarousel(containerId) {
     `#carousel-cards-${containerId}`
   );
   const cards = document.querySelectorAll(
-    `#carousel-cards-${containerId} .card`
+    `#carousel-cards-${containerId} .${cardClass}`
   );
   const totalCards = cards.length;
   const cardWidth = cards[0].offsetWidth + 16; // Ancho de las tarjetas con márgenes

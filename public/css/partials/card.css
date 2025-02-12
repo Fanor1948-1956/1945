@@ -1,37 +1,29 @@
 /* Estilos para el contenedor de la tarjeta */
 #cardContainer {
   display: flex;
-  padding: 1rem;
+  padding: 0.5rem;
   justify-content: center; /* Centra la tarjeta horizontalmente */
   align-items: center; /* Centra la tarjeta verticalmente */
   min-height: 100vh; /* Altura mínima para centrar en la página */
-  background-color: #f4f4f4; /* Color de fondo de la página */
+
   border-radius: 1rem;
 }
 /* Estilos para el contenedor de la tarjeta */
-.card-container {
+.card-content {
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 4 columnas */
   gap: 1.25rem; /* Espacio entre las tarjetas */
   padding: 0.5rem;
 
   justify-items: center; /* Centra las tarjetas dentro de cada celda */
-  background-color: #f4f4f4; /* Color de fondo de la página */
+  background-color: #640e0e; /* Color de fondo de la página */
   border-radius: 1rem;
 }
-
-@keyframes blink-border {
-  0% {
-    border: 3px solid #091526; /* Color de borde original */
-  }
-  50% {
-    border: 4px solid #ffffff; /* Color del borde durante el parpadeo (por ejemplo, rojo) */
-  }
-  100% {
-    border: 3px solid #091526; /* Vuelve al color original */
-  }
+.card-avatar img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
 }
-
 .card {
   display: flex;
   flex-direction: column;
@@ -69,7 +61,7 @@
   overflow-y: auto; /* Ajustar la altura del cuerpo para mostrar scrollbar */
 }
 
-.cardFooter {
+.card-footer {
   background-color: #091526; /* Color de fondo de la tarjeta */
   color: #ffffff; /* Color del texto */
   justify-content: space-between;
@@ -84,4 +76,16 @@
   text-overflow: ellipsis; /* Muestra "..." cuando el texto es demasiado largo */
   width: 100%; /* Asegura que el contenedor tome todo el ancho disponible */
   display: block;
+}
+
+@keyframes blink-border {
+  0% {
+    border: 3px solid #091526; /* Color de borde original */
+  }
+  50% {
+    border: 4px solid #ffffff; /* Color del borde durante el parpadeo (por ejemplo, rojo) */
+  }
+  100% {
+    border: 3px solid #091526; /* Vuelve al color original */
+  }
 }

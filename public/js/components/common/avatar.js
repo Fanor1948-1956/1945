@@ -1,30 +1,64 @@
-// avatar.js
+import { generateRandomClinicIcon } from '../../utils/icons.js'; // Importamos la función de generación de íconos
 
-// Función para obtener la URL del avatar
-export function getAvatarUrl(item, size = 40) {
-  // tamaño por defecto de 50 si no se especifica
-  if (item.uploads && item.uploads.length > 0) {
-    return item.uploads[0].path;
+export function renderAvatars(
+  headers,
+  data,
+  currentPage,
+  itemsPerPage,
+  containerId = 'avatarContainer',
+  onAction,
+  displayType = 'pagination',
+
+  isPublic = false,
+  onClick = null
+) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  const start = (currentPage - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  const paginatedData = data.slice(start, end);
+  let avatarHtml =
+    displayType === 'carousel'
+      ? `<div class="avatar-carousel-container">
+           <div class="avatar-carousel-wrapper">
+             <div class="avatar-carousel">`
+      : '<div class="avatar-grid">';
+
+  paginatedData.forEach((item, index) => {
+    const cardNumber = start + index + 1;
+    // Si tiene avatarUrl, usarlo; de lo contrario, asignar un ícono aleatorio de especialidad
+    const avatarContent = item.avatarUrl
+      ? `<div class="avatar-image" style="background-image: url('${item.avatarUrl}')"></div>`
+      : `<div class="avatar-icon">${generateRandomClinicIcon('Especialidad')}
+        <span class="card-number">${cardNumber}</span>
+        </div>`;
+
+    avatarHtml += `
+      <div class="avatar-item" data-id="${item._id}">
+        ${avatarContent}
+        <div class="avatar-name">${item.name}</div>
+        <span class="card-number">${cardNumber}</span>
+      </div>
+    `;
+  });
+
+  avatarHtml += displayType === 'carousel' ? '</div></div></div>' : '</div>';
+  container.innerHTML = avatarHtml;
+
+  if (displayType === 'carousel') {
+    initializeAvatarCarousel(containerId);
   }
-  // SVG con fondo blanco y tamaño de viewBox adaptable
-  return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24"><rect width="24" height="24" fill="white"/><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-3.31 0-10 1.67-10 5v3h20v-3c0-3.33-6.69-5-10-5z"/></svg>`;
+
+  if (onClick) {
+    document.querySelectorAll(`#${containerId} .avatar-item`).forEach((el) => {
+      el.addEventListener('click', () => onClick(el.dataset.id));
+    });
+  }
 }
 
-// Función para mostrar el avatar en el DOM
-export function renderAvatar(avatarUrl, size = 50) {
-  const img = document.createElement('img');
-  img.src = avatarUrl;
-  img.alt = 'Avatar';
-  img.className = 'avatar';
-  img.style.width = `${size}px`; // Ajusta el tamaño
-  img.style.height = `${size}px`;
-  img.style.borderRadius = '50%';
-  img.style.objectFit = 'cover';
-  return img;
-}
-
-// Función principal para crear un avatar, recibiendo el objeto del cual obtener el avatar
-export function createAvatar(item, size) {
-  const avatarUrl = getAvatarUrl(item);
-  return renderAvatar(avatarUrl, size); // Pasar el tamaño
+function initializeAvatarCarousel(containerId) {
+  const carousel = document.querySelector(`#${containerId} .avatar-carousel`);
+  carousel.innerHTML += carousel.innerHTML;
+  carousel.style.animation = 'scroll-left 20s linear infinite';
 }

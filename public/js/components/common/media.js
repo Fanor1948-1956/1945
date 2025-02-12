@@ -1,4 +1,4 @@
-import { createAvatar } from './avatar.js';
+import { createAvatar } from '../custom/avatar.js';
 
 import { initializeListeners, initializeModalPublic } from './table.js';
 

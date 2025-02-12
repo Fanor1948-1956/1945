@@ -1,0 +1,55 @@
+{% extends "layouts/publicLayout.njk" %} {% block content %}
+<!-- Contenedor de las tarjetas -->
+<div id="cards-container"></div>
+<!-- Contenedor de la paginación -->
+<div id="pagination-container"></div>
+
+<!-- Asegúrate de vincular tu archivo JS -->
+<script type="module">
+  import { customPagination } from './js/components/custom/pagination.js'; // Asegúrate de que la ruta sea correcta
+  import { generateCards } from './js/generate/generateCards.js'; // Ruta de la función de generación de tarjetas
+  document.addEventListener('DOMContentLoaded', function () {
+    const totalItems = 100; // Número total de elementos
+    const itemsPerPage = 12; // Número de elementos por página (en este caso, 12)
+    const itemsPerRow = 4; // Número de columnas que quieres (por ejemplo, 4 columnas por fila)
+    let currentPage = 1; // Página actual inicial
+
+    // Crear una lista simulada de 50 elementos
+    const generateMockItems = () => {
+      const mockItems = [];
+      for (let i = 0; i < totalItems; i++) {
+        mockItems.push({
+          avatarUrl: 'https://www.w3schools.com/html/img_girl.jpg',
+          name: `Item ${i + 1}`,
+          description: `Descripción para el item ${i + 1}`,
+          date: `2025-02-05`,
+        });
+      }
+      return mockItems;
+    };
+
+    // Generar todos los elementos una vez
+    const items = generateMockItems();
+
+    // Función para cargar y mostrar las tarjetas de la página actual
+    function loadPage(page) {
+      currentPage = page;
+      const itemsToShow = items.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+      );
+      generateCards(itemsToShow, 'cards-container', itemsPerRow); // Pasamos el número de columnas a la función
+      customPagination(
+        totalItems,
+        currentPage,
+        itemsPerPage,
+        'pagination-container',
+        items
+      ); // Actualizamos la paginación
+    }
+
+    // Cargar la primera página al iniciar
+    loadPage(currentPage);
+  });
+</script>
+{% endblock %}

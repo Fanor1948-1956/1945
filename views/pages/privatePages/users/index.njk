@@ -247,18 +247,45 @@
   <button
     id="cardViewBtn"
     isEditable="true"
+    {%
+    if
+    not
+    isAuthenticated
+    %}
+    style="display: none"
+    {%
+    endif
+    %}
   >
     Vista Card
   </button>
   <button
     id="tableViewBtn"
     isEditable="true"
+    {%
+    if
+    not
+    isAuthenticated
+    %}
+    style="display: none"
+    {%
+    endif
+    %}
   >
     Vista Tabla
   </button>
   <button
     id="mediaViewBtn"
     isEditable="true"
+    {%
+    if
+    not
+    isAuthenticated
+    %}
+    style="display: none"
+    {%
+    endif
+    %}
   >
     Vista Media
   </button>
@@ -294,7 +321,7 @@
   const isPublic = '{{ isPublic|dump}}'; // Obtén el rol desde la plantilla
 
   const roleAlias = '{{roleAlias|lower}}';
-const cardClass='{{cardClass|lower}}';
+  const cardClass = '{{cardClass|lower}}' || 'card';
   // Imprimimos el valor desencriptado
   console.log(roleAlias); // Debería mostrar "doctor"
 
@@ -347,13 +374,35 @@ const cardClass='{{cardClass|lower}}';
       cardClass
     );
   };
-
-  // Cambiar la vista entre 'card' y 'table'
   const setView = (viewType) => {
-    localStorage.setItem('currentView', viewType); // Guardamos la vista seleccionada
+    let cardClass = '';
+
+    if (viewType === 'card') {
+      cardClass = 'card';
+    } else if (viewType === 'carousel') {
+      cardClass = 'card-media';
+    } else if (viewType === 'table') {
+      cardClass = 'table-card';
+    }
+
+    // Actualizar en localStorage
+    localStorage.setItem('currentView', viewType);
+    localStorage.setItem('cardClass', cardClass);
+
     currentView = viewType;
 
-    // Renderizar los elementos según la vista seleccionada
+    // Actualizar clases activas en los botones
+    document
+      .getElementById('cardViewBtn')
+      .classList.toggle('active', viewType === 'card');
+    document
+      .getElementById('tableViewBtn')
+      .classList.toggle('active', viewType === 'table');
+    document
+      .getElementById('mediaViewBtn')
+      .classList.toggle('active', viewType === 'carousel');
+
+    // Volver a renderizar
     renderItems(
       currentView,
       filteredUsers,
@@ -366,17 +415,16 @@ const cardClass='{{cardClass|lower}}';
       cardClass
     );
   };
-
   // Asignar los event listeners a los botones de vista
   document.getElementById('cardViewBtn').addEventListener('click', () => {
-    setView('card');
+    setView('card', cardClass);
   });
 
   document.getElementById('tableViewBtn').addEventListener('click', () => {
-    setView('table');
+    setView('table', cardClass);
   });
   document.getElementById('mediaViewBtn').addEventListener('click', () => {
-    setView('media');
+    setView('carousel', cardClass);
   });
 
   // Asigna los handlers

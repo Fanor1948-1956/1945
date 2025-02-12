@@ -16,7 +16,9 @@
 @import './partials/cardMedia.css';
 @import './partials/container.css';
 @import './partials/carousel.css';
-@import './partials/mediaCard.css';
+@import './partials/avatar.css';
+@import './partials/header.css';
+@import './partials/body.css';
 
 /*popper*/
 @import './partials/popper.css';
@@ -28,6 +30,8 @@
 /*custom*/
 
 @import './components/custom/customTable.css';
+@import './partials/custom/customPagination.css';
+@import './partials/custom/customModal.css';
 @import './pages/publicPages/home.css';
 @import './pages/publicPages/sign-in.css';
 @import './pages/publicPages/sign-up.css';

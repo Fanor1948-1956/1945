@@ -99,14 +99,23 @@
   const isPublic = '{{ isPublic|dump}}';
   let user;
 
-  const currentView = '{{currentView|lower}}';
-
+  const currentView = '{{currentView|lower}}' || 'card';
+  const cardClass = '{{cardClass|lower}}' || 'card';
   const loadProfile = async () => {
     user = await loadUserProfile();
     console.log('Perfil del usuario:', user);
     updateButtonTextAndAction();
   };
-
+  const container = document.getElementById('specialityContainer');
+  if (container) {
+    // Primero asignamos la clase por defecto
+    container.classList.remove('content-body', 'contentContainer'); // Eliminar clases previas si las hay
+    if (currentView === 'carousel') {
+      container.classList.add('contentContainer');
+    } else {
+      container.classList.add('content-body');
+    }
+  }
   export const token = localStorage.getItem('token');
 
   const loadSpecialtiesData = async () => {
@@ -128,7 +137,8 @@
           specialtyPerPage,
           'specialityContainer',
           specialtyRenderer,
-          isPublic
+          isPublic,
+          cardClass
         );
       } else {
         if (!user || !user.roles) {
@@ -156,7 +166,8 @@
           specialtyPerPage,
           'specialityContainer',
           specialtyRenderer,
-          isPublic
+          isPublic,
+          cardClass
         );
       }
     } catch (error) {

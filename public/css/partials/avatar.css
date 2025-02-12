@@ -1,0 +1,82 @@
+/* Contenedor de cuadrícula de avatares */
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 12px;
+  justify-content: center;
+  padding: 10px;
+}
+
+/* Estilos generales para los avatares */
+.avatar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.avatar-item:hover {
+  transform: scale(1.1);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Imagen del avatar */
+.avatar-image {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Icono de especialidad (si no hay avatar) */
+.avatar-icon {
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  background-color: #f5f5f5;
+  border-radius: 50%;
+  border: 3px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Nombre debajo del avatar */
+.avatar-name {
+  margin-top: 5px;
+  font-size: 14px;
+  text-align: center;
+  font-weight: bold;
+  color: #444;
+}
+
+/* Estilos del carrusel */
+.avatar-carousel-container {
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
+}
+
+.avatar-carousel {
+  display: flex;
+  gap: 15px;
+  animation: scroll-left 15s linear infinite;
+}
+
+/* Animación para desplazar el carrusel */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}

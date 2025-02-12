@@ -14,15 +14,14 @@
 }
 .container {
   transition: margin-left 0.3s;
-  background-color: #d5d5d5;
-  height: auto;
+  background-color: #cc0404;
+
   display: flex;
 }
 .contentMain {
-  background: #40df0b;
+  background: transparent;
   color: rgb(239, 233, 250);
-  padding: 5rem 1rem 1rem 1rem;
-  min-height: 100vh;
+
   border: 1px solid #ddd;
   width: 100%;
   flex-direction: column;
@@ -86,9 +85,7 @@
 
 .toolbar {
   display: flex;
-  height: 7vh;
-  align-items: center;
-  justify-content: space-between;
+  min-height: 10vh;
 }
 
 main {

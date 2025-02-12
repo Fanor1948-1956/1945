@@ -53,6 +53,15 @@ const publicRoutes = [
     items: async () => [],
   },
   {
+    path: '/modal',
+    icon: validateIcon('contact'),
+    id: generateIdFromPath('/contact'),
+    title: 'Modal',
+    view: 'pages/publicPages/test/specialties.njk',
+    isPublic: true,
+    items: async () => [],
+  },
+  {
     path: '/register',
     icon: validateIcon('register'),
     id: generateIdFromPath('/register'),

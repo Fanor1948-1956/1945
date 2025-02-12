@@ -5,7 +5,7 @@ export const cardMedia = (containerId, data) => {
   // Mapear la data para crear tarjetas dinámicamente
   data.forEach((item) => {
     const card = document.createElement('div');
-    card.className = 'card-media';
+    card.className = 'card-media-content';
 
     const cardHeader = document.createElement('div');
     cardHeader.className = 'card-media-header';
@@ -39,7 +39,7 @@ export const cardMedia = (containerId, data) => {
 
     // 📌 Footer con botones SIEMPRE VISIBLES
     const footer = document.createElement('div');
-    footer.className = 'card-footer';
+    footer.className = 'card-media-footer';
 
     const gridViewBtn = document.createElement('button');
     gridViewBtn.innerHTML = '<i class="fas fa-th"></i>'; // Ícono de cuadrícula

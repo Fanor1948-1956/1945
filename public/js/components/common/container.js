@@ -6,7 +6,7 @@ export function createContainer(
   contentBgColor = 'white'
 ) {
   let container = document.createElement('div');
-  container.className = 'container-general';
+  container.className = 'container';
 
   if (backgroundColor) {
     container.style.backgroundColor = backgroundColor;
@@ -14,10 +14,10 @@ export function createContainer(
 
   let contentMain = document.createElement('div');
   contentMain.id = contentId;
-  contentMain.className = 'content-main';
-  contentMain.style.width = width; // Ahora el ancho se aplica al content-main
-  contentMain.style.height = height; // Ahora la altura se aplica al content-main
-  contentMain.style.backgroundColor = contentBgColor; // Ahora el fondo se aplica al content-main
+  contentMain.className = 'content';
+  contentMain.style.width = width; // Ancho aplicado al content-main
+  contentMain.style.height = height; // Altura aplicada al content-main
+  contentMain.style.backgroundColor = contentBgColor; // Fondo aplicado al content-main
 
   const spinner = document.createElement('div');
   spinner.className = 'spinner';
@@ -25,4 +25,6 @@ export function createContainer(
   contentMain.appendChild(spinner);
 
   container.appendChild(contentMain);
+
+  return container; // Devolver el contenedor
 }

@@ -47,6 +47,7 @@
         Ver
       </button>
     </div>
+    <div class="toolbar"></div>
     <div
       id="layoutContainer"
       class="container hidden"
@@ -61,10 +62,23 @@
         {% endblock %}
       </div>
     </div>
-    <script>
-      // console.log('Token desde Nunjucks:', token);
-      // console.log('Autenticado desde Nunjucks:', isAutenticated);
-      // console.log('Ruta actual:', currentPath);
+    {#
+    <script type="module">
+      import { renderPagination } from './js/components/common/pagination.js';
+      import { renderHeader } from './js/components/common/header.js';
+
+      const containerElement = document.getElementById('contentMain'); // Se corrige el ID correcto
+
+      if (containerElement) {
+        const headerHtml = renderHeader('Mi Página', true);
+        const paginationHtml = renderPagination(5, 1); // Asegurar que se define la paginación
+
+        containerElement.insertAdjacentHTML('afterbegin', headerHtml);
+        containerElement.insertAdjacentHTML('beforeend', paginationHtml);
+      } else {
+        console.error('No se encontró el contenedor con id: contentMain');
+      }
     </script>
+    #}
   </body>
 </html>

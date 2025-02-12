@@ -1,4 +1,4 @@
-{% extends "layouts/privateLayout.njk" %}  {% block content %}
+{# {% extends "layouts/privateLayout.njk" %} {% block content %}
 <h1>Servicios Disponibles</h1>
 
 <!-- Contenedor de las tarjetas -->
@@ -288,4 +288,37 @@
   fetchComponents();
 </script>
 
-{% endblock %} 
+{% endblock %} #} {% extends "layouts/privateLayout.njk" %} {% block content %}
+<div id="bodyContainer">
+  <div class="body-content">
+    <!-- El contenido dinámico de las tarjetas se insertará aquí desde JS -->
+  </div>
+  <div class="body-footer">
+    <!-- Footer dinámico -->
+  </div>
+</div>
+
+<script type="module">
+  import { createBody } from './js/components/common/body.js';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Llamada al createBody
+    createBody(
+      'bodyContainer', // ID del contenedor
+      'Encabezado del Body', // Título del header
+      'Contenido del header', // Contenido del header
+      `<div class="card">Tarjeta 1</div>
+         <div class="card">Tarjeta 2</div>
+         <div class="card">Tarjeta 3</div>
+         <div class="card">Tarjeta 4</div>
+         <div class="card">Tarjeta 5</div>
+         <div class="card">Tarjeta 6</div>
+         <div class="card">Tarjeta 7</div>
+         <div class="card">Tarjeta 8</div>
+         <div class="card">Tarjeta 9</div>
+         <div class="card">Tarjeta 10</div>`, // Contenido del body (tarjetas)
+      '<button onclick="alert(\'Acción Footer\')">Botón Footer</button>' // Contenido del footer
+    );
+  });
+</script>
+{% endblock %}

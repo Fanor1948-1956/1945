@@ -25,13 +25,15 @@
 
   <body isEditable="true">
     {{ route.icon }}
-    {# <!-- HTML para mostrar el precio de Bitcoin -->
+    {#
+    <!-- HTML para mostrar el precio de Bitcoin -->
     <div
       id="bitcoin-price"
       class="floating-price"
     >
       Cargando...
-    </div> #}
+    </div>
+    #}
 
     <div
       id="spinner"
@@ -59,16 +61,12 @@
       isEditable="true"
     >
       <div id="coordinatesDisplay"></div>
+
       <div
         id="contentMain"
         class="contentMain"
         isEditable="true"
       >
-        <div
-          id="contenToolbar"
-          class="toolbar"
-          isEditable="true"
-        ></div>
         {% block content %}
         <h2>Página inicial</h2>
         <p>Este es el contenido por defecto.</p>
@@ -77,9 +75,21 @@
         {% endblock %}
       </div>
     </div>
+    {#
+    <script type="module">
+      import { renderPagination } from './js/components/common/pagination.js';
+      import { renderHeader } from './js/components/common/header.js';
 
-    <script type="module"></script>
+      const containerElement = document.getElementById('contentMain'); // Se corrige el ID correcto
 
-    <style></style>
+      if (containerElement) {
+        const headerHtml = renderHeader('Mi Página', true);
+
+        containerElement.insertAdjacentHTML('afterbegin', headerHtml);
+      } else {
+        console.error('No se encontró el contenedor con id: contentMain');
+      }
+    </script>
+    #}
   </body>
 </html>

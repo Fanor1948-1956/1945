@@ -1,5 +1,5 @@
 import { actions } from '../utils/index.js';
-import { createAvatar } from './avatar.js';
+import { createAvatar } from '../custom/avatar.js';
 import { showPopover } from './popover.js';
 
 // renderTable con número de fila, avatar y primer elemento de datos en la primera columna

@@ -1,0 +1,88 @@
+/* 🔹 Estilos para el encabezado */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 5px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-title {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.header-actions button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s ease-in-out;
+}
+
+.header-actions button:hover {
+  background-color: #0056b3;
+}
+
+/* 🔹 Estilos para la paginación */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.page-button {
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease-in-out;
+}
+
+.page-button.active {
+  background-color: #007bff;
+  color: white;
+  border: 1px solid #0056b3;
+}
+
+.page-button:hover {
+  background-color: #e0e0e0;
+}
+
+.dots {
+  color: #888;
+  font-size: 14px;
+}
+
+/* 🔹 Estilos para el botón de configuración */
+.custom-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+}
+
+.custom-button svg {
+  width: 20px;
+  height: 20px;
+  fill: #555;
+}
+
+.custom-button:hover svg {
+  fill: #007bff;
+}

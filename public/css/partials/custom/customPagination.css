@@ -1,0 +1,101 @@
+/* Estilos generales para la paginación */
+.customPagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+/* Botones de paginación (números de página) */
+.customPagination button {
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: bold;
+
+  border: 2px solid #6200ea; /* Añadimos un borde */
+  border-radius: 50%; /* Hacemos los botones redondeados */
+  background-color: white; /* Fondo blanco para los botones */
+  color: #6200ea; /* Color de texto */
+  transition: background-color 0.3s, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.customPagination button:disabled {
+  background-color: transparent;
+  cursor: not-allowed;
+}
+
+.customPagination .dots {
+  font-size: 18px;
+  color: #6200ea;
+}
+
+/* Botones de "Anterior" y "Siguiente" */
+.customPagination .prev-page,
+.customPagination .next-page {
+  background-color: transparent; /* Fondo transparente */
+  border: none; /* Sin borde */
+
+  padding: 5px 5px; /* Tamaño adecuado */
+  color: #6200ea; /* Color del texto */
+  cursor: pointer;
+  font-size: 18px; /* Tamaño de texto adecuado */
+  transition: transform 0.2s ease;
+}
+
+/* Cambiar el color de las flechas cuando el botón es desactivado */
+.customPagination .prev-page:disabled,
+.customPagination .next-page:disabled {
+  color: #b3aee0; /* Flechas desactivadas con color gris */
+  cursor: not-allowed;
+}
+
+/* Hover en los botones de página */
+.customPagination button:hover:not(:disabled) {
+  background-color: #6200ea; /* Fondo morado al pasar el mouse */
+  color: white; /* Texto blanco cuando se pasa el mouse */
+}
+
+/* Hover en los botones de "Anterior" y "Siguiente" */
+.customPagination .prev-page:hover,
+.customPagination .next-page:hover {
+  background-color: rgba(
+    98,
+    0,
+    234,
+    0.1
+  ); /* Ligera sombra cuando se pasa el mouse */
+  transform: scale(1.1); /* Escala para hacer el botón más grande */
+}
+
+/* Efecto en el botón "active" */
+.customPagination .active {
+  background-color: #6200ea; /* Fondo morado */
+  color: white; /* Texto blanco */
+  transform: scale(1.1); /* Escala cuando está activo */
+}
+
+/* Estilos para las flechas (ahora simbolizadas por >> y <<) */
+.customPagination .prev-page::before {
+  content: '<'; /* Símbolo para "Anterior" */
+  font-size: 18px;
+}
+
+.customPagination .next-page::before {
+  content: '>'; /* Símbolo para "Siguiente" */
+  font-size: 18px;
+}
+
+/* Agregar algo de animación para los botones */
+.customPagination button {
+  transition: transform 0.2s ease;
+}
+
+.customPagination button:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(98, 0, 234, 0.5); /* Sombra cuando está enfocado */
+}

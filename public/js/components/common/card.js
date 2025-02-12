@@ -1,4 +1,4 @@
-import { createAvatar } from './avatar.js';
+import { createAvatar } from '../custom/avatar.js';
 
 import { initializeListeners, initializeModalPublic } from './table.js';
 // export function renderCards(
@@ -145,44 +145,50 @@ export function renderCards(
   containerId = 'cardContainer',
   onAction,
   displayType = 'pagination',
-  isPublic = false, // Nueva prop
-  cardClass = 'card'
+  isPublic = false
 ) {
+  // 🔹 Recuperar la lista de cardClasses desde localStorage
+  let cardClasses = JSON.parse(localStorage.getItem('cardClasses')) || [];
+
+  // 🔹 Buscar el cardClass correspondiente al containerId
+  let cardClassEntry = cardClasses.find(
+    (entry) => entry.containerId === containerId
+  );
+  let cardClass = cardClassEntry ? cardClassEntry.cardClass : 'card'; // 🔹 Valor por defecto si no se encuentra
+
+  console.log(
+    `Usando cardClass: "${cardClass}" para containerId: "${containerId}"`
+  );
+
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
   const paginatedData = data.slice(start, end);
 
   const cardContainer = document.getElementById(containerId);
-  cardContainer.innerHTML = ''; // Limpia el contenido anterior
+  cardContainer.innerHTML = '';
 
-  let cardHtml = '';
-
-  if (displayType === 'carousel') {
-    cardHtml = `
-      <div class="carousel-container" id="carousel-container-${containerId}">
-        <div class="carousel-wrapper" id="carousel-wrapper-${containerId}">
-          <div class="carousel-cards" id="carousel-cards-${containerId}">
-    `;
-  } else {
-    cardHtml = '<div class="card-container">';
-  }
+  let cardHtml =
+    displayType === 'carousel'
+      ? `<div class="carousel-container" id="carousel-container-${containerId}">
+         <div class="carousel-wrapper" id="carousel-wrapper-${containerId}">
+           <div class="carousel-cards" id="carousel-cards-${containerId}">`
+      : '<div class="card-content">';
 
   paginatedData.forEach((item, index) => {
     const cardNumber = start + index + 1;
     const avatarElement = createAvatar(item);
     const avatarHtml = avatarElement.outerHTML;
 
-    // Construcción del HTML de cada tarjeta con las clases dinámicas
     cardHtml += `
       <div class="${cardClass}" data-id="${item._id}">
-        <div class="${cardClass}-main">  <!-- Aplicamos las clases aquí -->
-          <div class="${cardClass}-avatar">${avatarHtml}</div>  <!-- Avatar -->
-          <div class="${cardClass}-body">  <!-- Cuerpo -->
+        <div class="card-main">
+          <div class="card-avatar">${avatarHtml}</div>
+          <div class="card-body">
             ${headers
-              .filter((header) => header !== '_id') // Excluir _id de los campos visibles
+              .filter((header) => header !== '_id')
               .map(
                 (header, idx) => `  
-              <div class="${cardClass}-field">
+              <div class="card-field">
                 <span class="field-value">${
                   Object.values(item).filter((_, i) => i !== 0)[idx]
                 }</span>
@@ -192,38 +198,30 @@ export function renderCards(
           </div>
         </div>
         
-        <div class="${cardClass}-footer">  <!-- Pie de la tarjeta -->
+        <div class="card-footer">
           ${
             isPublic
               ? `<button class="public-button" data-id="${item._id}">
-                  <i class="icon-public">🌐</i> Ver Más
-                </button>`
-              : ` 
-                <span class="${cardClass}-number">${cardNumber}</span>
-              <button class="${cardClass}-more-button" data-id="${item._id}">
-                  <i class="icon-three-dots">⋮</i>
-                </button>`
+                 <i class="icon-public">🌐</i> Ver Más
+               </button>`
+              : `<span class="card-number">${cardNumber}</span>
+               <button class="more-button" data-id="${item._id}">
+                 <i class="icon-three-dots">⋮</i>
+               </button>`
           }
         </div>
       </div>
     `;
   });
 
-  if (displayType === 'carousel') {
-    cardHtml += `
-          </div>
-        </div>
-      </div>
-    `;
-  } else {
-    cardHtml += '</div>';
-  }
-
+  cardHtml += displayType === 'carousel' ? '</div></div></div>' : '</div>';
   cardContainer.innerHTML = cardHtml;
+
   initializeListeners(paginatedData, onAction);
   initializeModalPublic(paginatedData, onAction, isPublic);
+
   if (displayType === 'carousel') {
-    initializeAutoCarousel(containerId, cardClass); // Iniciar el carrusel automático
+    initializeAutoCarousel(containerId, cardClass);
   }
 }
 
@@ -244,7 +242,7 @@ function initializeAutoCarousel(containerId, cardClass) {
   carouselCards.innerHTML += carouselCards.innerHTML;
 
   // Animación infinita para desplazar las tarjetas
-  const speed = 50; // Nueva velocidad de desplazamiento (en segundos)
+  const speed = 30; // Velocidad de desplazamiento (en segundos)
   carouselCards.style.animation = `scroll-left ${speed}s linear infinite`;
 
   // CSS para la animación

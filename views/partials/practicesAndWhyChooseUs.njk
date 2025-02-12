@@ -55,31 +55,33 @@
 <div
   id="specialtiesModal"
   class="modal"
-  style="display: none; opacity: 0"
+  style="display: none"
 >
-  <div
-    class="modal-content"
-    id="modalContent"
-  >
-    <div class="modal-head">
-      <h3 class="modal-title"></h3>
+  <div class="modal-content">
+    <!-- Botón de cierre que se fija en la parte superior -->
+    <div
+      class="modal-head"
+      isEditable="true"
+    >
+      <h3
+        class="modal-title"
+        isEditable="true"
+      ></h3>
       <span
         class="close-button"
         id="closeButton"
+        isEditable="true"
         >×</span
       >
     </div>
+    <!-- Cuerpo del modal -->
     <div
-      class="modal-body"
+      class="content-body"
       id="modalBody"
     ></div>
   </div>
 </div>
 
-<div
-  id="specialityContaine"
-  class="contentContainer"
-></div>
 <script type="module">
   import { fetchSpecialty } from './js/services/loadFetchs.js';
   import { getState } from './js/reducers/state.js';
@@ -124,12 +126,7 @@
     await loadSpecialtiesData();
 
     // Abrir el modal con el título y el color de fondo deseado
-    openModal(
-      'specialtiesModal',
-      'fullscreen',
-      'Especialidades Médicas',
-      '#f8f8f8'
-    );
+    openModal('specialtiesModal', 'fullscreen', 'Especialidades');
   });
 
   // Cerrar el modal cuando se haga clic en el botón de cierre

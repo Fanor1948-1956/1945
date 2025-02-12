@@ -19,26 +19,6 @@
   background-color: #f4f4f4; /* Color de fondo de la página */
   border-radius: 1rem;
 }
-
-.card-media {
-  width: 350px; /* Ancho fijo */
-  height: 450px; /* Alto fijo */
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  border-radius: 16px;
-  margin: auto;
-  padding: 20px;
-  background: rgba(15, 15, 40, 0.9); /* Glassmorphism */
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-  transition: transform 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
-}
-
-.card-media:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 0 25px rgba(0, 183, 255, 0.8);
-  animation: neonGlow 1.5s infinite alternate;
-}
-
 .card-media-header {
   font-size: 18px;
   background: rgba(15, 15, 40, 0.9); /* Glassmorphism */
@@ -52,6 +32,26 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+.card-media-content {
+  width: 350px; /* Ancho fijo */
+  height: 450px; /* Alto fijo */
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  margin: auto;
+  padding: 20px;
+  background: rgba(15, 15, 40, 0.9); /* Glassmorphism */
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+  transition: transform 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+}
+
+.card-media-content:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 0 25px rgba(0, 183, 255, 0.8);
+  animation: neonGlow 1.5s infinite alternate;
+}
+
+
 
 .card-media-body {
   font-size: 16px;
@@ -75,7 +75,7 @@
   transition: transform 0.3s ease-in-out;
 }
 /* 🔥 Estilos del footer y botones */
-.card-footer {
+.card-media-footer {
   display: flex;
   justify-content: center;
   gap: 10px;
@@ -85,7 +85,7 @@
   border-radius: 0 0 16px 16px;
 }
 
-.card-footer button {
+.card-media-footer button {
   width: 40px;
   height: 40px;
   background-color: rgba(255, 255, 255, 0.1);
@@ -97,12 +97,12 @@
   transition: background-color 0.3s, transform 0.3s;
 }
 
-.card-footer button:hover {
+.card-media-footer button:hover {
   background-color: rgba(0, 183, 255, 0.8);
   transform: scale(1.1);
 }
 
-.card-footer button i {
+.card-media-footer button i {
   pointer-events: none;
 }
 

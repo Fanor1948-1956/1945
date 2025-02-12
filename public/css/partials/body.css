@@ -1,0 +1,80 @@
+/* Contenedor principal del body */
+#bodyContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden; /* Evita scroll en toda la página */
+}
+
+/* Estilo para el body header */
+.body-header {
+  background-color: #1f0000;
+  color: white;
+  padding: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Estilo para el body content */
+.body-content {
+  padding: 20px;
+  background-color: #f9f9f9;
+  flex-grow: 1;
+  overflow-y: hidden; /* Ocultar scroll por defecto */
+  max-height: calc(100vh - 120px); /* Ajuste dinámico de tamaño */
+  transition: overflow 0.3s ease-in-out;
+}
+
+/* Mostrar scroll solo al pasar el cursor */
+.body-content:hover {
+  overflow-y: auto;
+}
+
+/* Personalizar la barra de desplazamiento (oculta por defecto) */
+.body-content::-webkit-scrollbar {
+  width: 8px;
+  background: transparent; /* Scroll invisible */
+  transition: background 0.3s, opacity 0.3s;
+  opacity: 0;
+}
+
+/* Cuando el usuario pasa el cursor, el scroll aparece */
+.body-content:hover::-webkit-scrollbar {
+  background: rgba(0, 0, 0, 0.1); /* Fondo semitransparente */
+  opacity: 1;
+}
+
+/* Estilo del track (fondo de la barra de scroll) */
+.body-content::-webkit-scrollbar-track {
+  background: transparent; /* Totalmente invisible */
+  border-radius: 5px;
+}
+
+/* Estilo del thumb (barra de desplazamiento) */
+.body-content::-webkit-scrollbar-thumb {
+  background: transparent; /* Oculto por defecto */
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+/* Cuando el usuario pasa el cursor, la barra de desplazamiento se hace visible */
+.body-content:hover::-webkit-scrollbar-thumb {
+  background: #888; /* Color visible al acercarse */
+}
+
+/* Cuando el usuario pasa el cursor sobre la barra, cambia a un tono más oscuro */
+.body-content:hover::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Estilo para el body footer */
+.body-footer {
+  background-color: #1f0000;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}

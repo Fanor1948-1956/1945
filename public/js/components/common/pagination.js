@@ -55,7 +55,7 @@ export function renderPagination(currentPage, totalItems, itemsPerPage) {
   }
 
   paginationHtml += `</div></div>`; // Cierra el contenedor de los botones de paginación
-
+  console.log('HTML del encabezado:', paginationHtml); // Verifica el HTML generado
   // Agregar event listeners
 
   return paginationHtml;

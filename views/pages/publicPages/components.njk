@@ -1,6 +1,6 @@
 {% extends "layouts/publicLayout.njk" %} {% block content %}
-
-<button id="openModalBtn">Abrir Modal</button>
+<button id="openModalBtn">Abrir Modal con Paginación</button>
+<button id="openModalBtnActions">Abrir Modal con Acciones</button>
 
 <div
   id="myModal"
@@ -12,34 +12,56 @@
       <span
         class="close-button"
         onclick="Modal.close('#myModal')"
-        >&times;</span
+        isEditable="true"
+        >×</span
       >
     </div>
-    <div class="customModal-body">
-      ${Array(12).fill('
-      <div class="card">Tarjeta</div>
-      ').join('')}
-    </div>
-    <div class="customModal-footer">
-      <button onclick="closeModal('myModal')">Cerrar Modal</button>
-    </div>
+    <div
+      class="customModal-body"
+      id="modalBody"
+    ></div>
+    <!-- Este es el contenedor donde insertarás el contenido -->
+    <div class="customModal-footer"></div>
   </div>
 </div>
+
 <script type="module">
   import { customModal } from './js/components/common/modal.js';
+  import { generateMockItems } from './js/mocks/index.js'; // ✅ Importamos la función
+  import { renderCards } from './js/renders/renderCards.js';
 
   document.getElementById('openModalBtn').addEventListener('click', () => {
+    const mockItems = generateMockItems(100); // Generar los items de ejemplo
+    const cardsContainer = renderCards(mockItems); // Llamamos a la función refactorizada
+
+    // Abrir el modal pasando el contenido generado
     customModal(
       'myModal',
       'fullscreen',
-      'Ejemplo Modal',
+      'Modal con Tarjetas',
       '#ffffff',
-      `
-   
-      ${Array(12).fill('<div class="card">Tarjeta</div>').join('')}
-    `,
-      '<button onclick="closeModal(\'myModal\')">Cerrar Modal</button>'
+      mockItems,
+      cardsContainer, // Se pasa el contenedor generado
+      '',
+      'pagination'
     );
   });
+
+  document
+    .getElementById('openModalBtnActions')
+    .addEventListener('click', () => {
+      const mockItems = generateMockItems(100);
+      const cardsContainer = renderCards(mockItems); // Reutilizamos la función renderCards
+
+      customModal(
+        'myModal',
+        'fullscreen',
+        'Modal con Tarjetas',
+        '#ffffff',
+        cardsContainer,
+        '',
+        'actions'
+      );
+    });
 </script>
 {% endblock %}

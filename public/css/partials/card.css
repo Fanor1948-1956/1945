@@ -9,7 +9,7 @@
   border-radius: 1rem;
 }
 /* Estilos para el contenedor de la tarjeta */
-.card-content {
+.cards-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 4 columnas */
   gap: 1.25rem; /* Espacio entre las tarjetas */

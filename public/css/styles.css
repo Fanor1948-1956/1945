@@ -39,6 +39,10 @@
 @import './pages/privatePages/auth/profile.css';
 
 @import './icons/style.css';
+/*custom -ui/
+                        */
+
+@import './components/custom-ui/pagination.css';
 
 /* Botones */
 .btn-success {

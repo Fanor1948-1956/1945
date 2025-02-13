@@ -172,7 +172,7 @@ export function renderCards(
       ? `<div class="carousel-container" id="carousel-container-${containerId}">
          <div class="carousel-wrapper" id="carousel-wrapper-${containerId}">
            <div class="carousel-cards" id="carousel-cards-${containerId}">`
-      : '<div class="card-content">';
+      : '<div class="cards-container">';
 
   paginatedData.forEach((item, index) => {
     const cardNumber = start + index + 1;

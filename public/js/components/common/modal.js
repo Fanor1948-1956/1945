@@ -1,10 +1,16 @@
+import { renderCards } from '../../renders/renderCards.js';
+import { customPaginationUi } from '../custom-ui/pagination.js';
+
 export function customModal(
-  modalId,
-  size,
-  title,
-  backgroundColor,
-  content,
-  footer
+  modalId, // El ID del modal principal
+  size, // Tamaño del modal
+  title, // Título del modal
+  backgroundColor, // Color de fondo del modal
+  items,
+  content, // Contenido dinámico (no un ID, sino el propio contenido)
+
+  footer = '', // Contenido para el footer
+  isStateType = '' // Para determinar si es paginación o acciones
 ) {
   const modal = document.getElementById(modalId);
 
@@ -34,26 +40,40 @@ export function customModal(
     modalContent.classList.add(size);
   }
 
-  // Establecer título e icono de cierre
-  modalTitle.innerHTML = `${title}`;
+  // Establecer título
+  modalTitle.innerHTML = title;
 
-  // Aplicar color de fondo
+  // Aplicar color de fondo si se proporciona
   if (backgroundColor) {
     modalContent.style.backgroundColor = backgroundColor;
   }
 
-  // Agregar contenido dinámico
-  modalBody.innerHTML = content;
+  // Limpiar el contenido previo del modalBody
+  modalBody.innerHTML = '';
 
-  // Agregar footer dinámico
-  modalFooter.innerHTML = footer;
-
-  // Verificar cantidad de cards
-  const cards = modalBody.querySelectorAll('.card');
-  if (cards.length > 9) {
-    modalBody.classList.add('enable-scroll');
+  // Insertar el contenido dinámico (las tarjetas) en el modalBody
+  if (content) {
+    modalBody.appendChild(content); // Aquí se agrega el contenedor de tarjetas
   } else {
-    modalBody.classList.remove('enable-scroll');
+    console.error(`El contenido no es válido.`);
+  }
+
+  // Limpiar el footer antes de añadir nuevo contenido
+  modalFooter.innerHTML = '';
+
+  // Agregar footer dinámico según el tipo de estado (paginación o acciones)
+  if (isStateType === 'pagination') {
+    const paginationContainer = document.createElement('div');
+    paginationContainer.id = 'pagination-container';
+    modalFooter.appendChild(paginationContainer);
+    customPaginationUi(paginationContainer, items, renderCards); // Llamar a la función de paginación
+  } else if (isStateType === 'actions') {
+    const actionsContainer = document.createElement('div');
+    actionsContainer.id = 'actions-container';
+    modalFooter.appendChild(actionsContainer);
+    actions(actionsContainer); // Llamar a la función de acciones
+  } else {
+    modalFooter.innerHTML = footer;
   }
 
   // Mostrar modal con animación
@@ -67,20 +87,20 @@ export function customModal(
   }, 10);
 }
 
-export function closeModal(modalId) {
-  const modal = document.getElementById(modalId);
-  if (!modal) {
-    console.error(`Modal con ID '${modalId}' no encontrado.`);
-    return;
-  }
 
-  const modalContent = modal.querySelector('.customModal-content');
+// export function closeModal(modalId) {
+//   const modal = document.getElementById(modalId);
+//   if (!modal) {
+//     console.error(`Modal con ID '${modalId}' no encontrado.`);
+//     return;
+//   }
 
-  // Animación de cierre
-  modalContent.style.transform = 'translateY(-50px)';
-  modal.style.opacity = 0;
+//   const modalContent = modal.querySelector('.customModal-content');
 
-  setTimeout(() => {
-    modal.style.display = 'none';
-  }, 300);
-}
+//   modalContent.style.transform = 'translateY(-50px)';
+//   modal.style.opacity = 0;
+
+//   setTimeout(() => {
+//     modal.style.display = 'none';
+//   }, 300);
+// }

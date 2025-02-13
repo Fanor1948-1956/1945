@@ -44,100 +44,64 @@
     </p>
   </div>
 </div>
-<button
-  id="openModalBtn"
-  class="add-button"
->
-  Ver Especialidades
-</button>
+<button id="openModalBtn">Especialidades</button>
 
-<!-- Modal -->
 <div
-  id="specialtiesModal"
-  class="modal"
-  style="display: none"
+  id="myModal"
+  class="customModal"
 >
-  <div class="modal-content">
-    <!-- Botón de cierre que se fija en la parte superior -->
-    <div
-      class="modal-head"
-      isEditable="true"
-    >
-      <h3
-        class="modal-title"
-        isEditable="true"
-      ></h3>
+  <div class="customModal-content">
+    <div class="customModal-header">
+      <h2 class="customModal-title"></h2>
       <span
         class="close-button"
-        id="closeButton"
+        onclick="Modal.close('#myModal')"
         isEditable="true"
         >×</span
       >
     </div>
-    <!-- Cuerpo del modal -->
     <div
-      class="content-body"
+      class="customModal-body"
       id="modalBody"
     ></div>
+    <!-- Este es el contenedor donde insertarás el contenido -->
+    <div class="customModal-footer"></div>
   </div>
 </div>
 
 <script type="module">
+  import { customModal } from './js/components/common/modal.js';
+
+  import { renderCards } from './js/renders/renderCards.js';
   import { fetchSpecialty } from './js/services/loadFetchs.js';
   import { getState } from './js/reducers/state.js';
-  import { renderItems } from './js/renders/renderItems.js';
-  import { specialtyRenderer } from './js/renders/itemRender.js';
-  import { openModal, closeModal } from './js/components/custom/modal.js';
 
-  const headers = ['Nombre', 'Descripción', 'Estado'];
-  let currentPage = 1;
-  const specialtyPerPage = 6;
-  const currentViewModal = 'card';
+  document
+    .getElementById('openModalBtn')
+    .addEventListener('click', async () => {
+      try {
+        // 🔹 Obtener las especialidades desde la API
+        await fetchSpecialty();
 
-  const loadSpecialtiesData = async () => {
-    try {
-      // Cargar las especialidades
-      await fetchSpecialty();
-      const specialties = getState().specialties;
+        // 🔹 Recuperar el estado actualizado con specialties reales
+        const specialties = getState().specialties;
 
-      // Renderizar las especialidades
-      renderItems(
-        currentViewModal,
-        specialties,
-        headers,
-        currentPage,
-        specialtyPerPage,
-        'modalBody', // Aquí se pasaría al body del modal
-        specialtyRenderer,
-        'true'
-      );
-    } catch (error) {
-      console.error('Error al cargar las especialidades:', error);
-    }
-  };
+        // 🔹 Renderizar con specialties reales
+        const cardsContainer = renderCards(specialties);
 
-  // Botón para abrir el modal
-  const openModalBtn = document.getElementById('openModalBtn');
-  const closeModalBtn = document.getElementById('closeButton');
-  const modal = document.getElementById('specialtiesModal');
-
-  openModalBtn.addEventListener('click', async () => {
-    // Cargar las especialidades cuando se haga clic en el botón
-    await loadSpecialtiesData();
-
-    // Abrir el modal con el título y el color de fondo deseado
-    openModal('specialtiesModal', 'fullscreen', 'Especialidades');
-  });
-
-  // Cerrar el modal cuando se haga clic en el botón de cierre
-  closeModalBtn.addEventListener('click', () => {
-    closeModal('specialtiesModal');
-  });
-
-  // Cerrar el modal si se hace clic fuera del contenido del modal
-  window.addEventListener('click', (event) => {
-    if (event.target === modal) {
-      closeModal('specialtiesModal');
-    }
-  });
+        // 🔹 Abrir el modal con datos reales
+        customModal(
+          'myModal',
+          'fullscreen',
+          'Especialidades',
+          '#ffffff',
+          specialties,
+          cardsContainer,
+          '',
+          'pagination'
+        );
+      } catch (error) {
+        console.error('Error al obtener especialidades:', error);
+      }
+    });
 </script>

@@ -1,16 +1,84 @@
-<section>{% include "pages/privatePages/specialty/verb/getAll.njk" %}</section>
+<button id="openModalBtn">Abrir Modal con Paginación</button>
 
-<script src="https://cdn.jsdelivr.net/npm/crypto-js@3.1.9-1/crypto-js.js"></script>
+<div
+  id="myModal"
+  class="customModal"
+>
+  <div class="customModal-content">
+    <div class="customModal-header">
+      <h2 class="customModal-title"></h2>
+      <span
+        class="close-button"
+        onclick="Modal.close('#myModal')"
+        isEditable="true"
+        >×</span
+      >
+    </div>
+    <div
+      class="customModal-body"
+      id="modalBody"
+    ></div>
+    <!-- Este es el contenedor donde insertarás el contenido -->
+    <div class="customModal-footer"></div>
+  </div>
+</div>
 
 <script type="module">
-  const currentView = 'card';
+  import { customModal } from '../js/components/common/modal.js';
+  import { renderCards } from '../js/renders/renderCards.js';
+  import { fetchSpecialty } from '../js/services/loadFetchs.js';
+  import { getState } from '../js/reducers/state.js';
+  import { loadUserProfile } from '../js/services/profileService.js';
 
-  // Cifrar el valor de `currentView` antes de almacenarlo
-  const encryptedCurrentView = CryptoJS.AES.encrypt(
-    currentView,
-    'secret-key'
-  ).toString();
+  export const token = localStorage.getItem('token');
+  let user = null; // Inicializamos user en null
 
-  // Almacenamos `encryptedCurrentView` en localStorage
-  localStorage.setItem('currentView', encryptedCurrentView);
+  // ✅ Nueva función modular para obtener y filtrar especialidades
+  const loadSpecialties = async () => {
+    try {
+      await fetchSpecialty(); // 🔹 Cargar especialidades desde la API
+      const specialties = getState().specialties;
+
+      // 🔹 Si hay token, obtener perfil del usuario
+      if (token) {
+        user = await loadUserProfile();
+        console.log('Perfil del usuario:', user);
+
+        // 🔹 Verificamos si el usuario es un doctor
+        const isDoctor = user.roles.some((role) => role.name === 'Doctor');
+
+        // 🔹 Si el usuario es doctor, tomamos solo sus especialidades
+        const userSpecialties = isDoctor ? user.specialties : specialties;
+
+        console.log('Especialidades a mostrar:', userSpecialties);
+        return userSpecialties;
+      }
+
+      // 🔹 Si no hay token, devolver todas las especialidades
+      console.log('Usuario no autenticado, mostrando todas las especialidades');
+      return specialties;
+    } catch (error) {
+      console.error('Error al cargar especialidades:', error);
+      return [];
+    }
+  };
+
+  // ✅ Evento para abrir el modal
+  document
+    .getElementById('openModalBtn')
+    .addEventListener('click', async () => {
+      const specialties = await loadSpecialties(); // 🔹 Llamar la función modular
+      const cardsContainer = renderCards(specialties);
+
+      customModal(
+        'myModal',
+        'fullscreen',
+        'Especialidades',
+        '#ffffff',
+        specialties,
+        cardsContainer,
+        '',
+        'pagination'
+      );
+    });
 </script>

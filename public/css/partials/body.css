@@ -2,7 +2,7 @@
 #bodyContainer {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+
   overflow: hidden; /* Evita scroll en toda la página */
 }
 
@@ -12,18 +12,16 @@
   color: white;
   padding: 10px;
   position: sticky;
-  top: 0;
   z-index: 10;
 }
 
 /* Estilo para el body content */
 .body-content {
-  padding: 20px;
-  background-color: #f9f9f9;
+  padding: 10px;
+
   flex-grow: 1;
   overflow-y: hidden; /* Ocultar scroll por defecto */
-  max-height: calc(100vh - 120px); /* Ajuste dinámico de tamaño */
-  transition: overflow 0.3s ease-in-out;
+  max-height: calc(100vh - 60px); /* Ajuste dinámico de tamaño */
 }
 
 /* Mostrar scroll solo al pasar el cursor */

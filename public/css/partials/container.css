@@ -13,7 +13,8 @@
 }
 .content-body {
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
+
   border: 1px solid rgb(13, 1, 1);
   justify-content: space-between;
   display: flex;

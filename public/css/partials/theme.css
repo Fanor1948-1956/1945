@@ -7,43 +7,34 @@ body {
   padding: 0;
 }
 body.light {
-    background-color: #001f3f;
+  background-color: #001f3f;
 
-    color:white
- 
-    
+  color: white;
 }
 
-body.light h2, body.light p {
-    color: white
+body.light h2,
+body.light p {
+  color: white;
 }
 
 body.dark {
-     background-color: #001f3f;
+  background-color: #001f3f;
   color: white;
-  
 }
 
-body.dark h2, body.dark p {
-    color: white; /* Asegúrate de que los textos sean visibles */
+body.dark h2,
+body.dark p {
+  color: white; /* Asegúrate de que los textos sean visibles */
 }
-body.dark .navbar, body.dark .sidebar ul,
-
-
-
-
+body.dark .navbar,
+body.dark .sidebar ul,
 body.dark .container,
 body.dark .contentMain,
 body.dark .table-container,
-body.dark .table
-{
+body.dark .table {
+  background-color: #370dce; /* Ejemplo de color para un navbar oscuro */
 
-
-    background-color: #370dce; /* Ejemplo de color para un navbar oscuro */
- 
-    color: white; /* Asegúrate de que el texto sea visible */
+  color: white; /* Asegúrate de que el texto sea visible */
 }
 
 /* Agrega más estilos para otros componentes aquí */
-
-

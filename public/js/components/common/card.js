@@ -1,6 +1,6 @@
-import { createAvatar } from '../custom/avatar.js';
+import { createAvatar } from '../custom/avatar.js'
 
-import { initializeListeners, initializeModalPublic } from './table.js';
+import { initializeListeners, initializeModalPublic } from './table.js'
 // export function renderCards(
 //   headers,
 //   data,
@@ -137,7 +137,7 @@ import { initializeListeners, initializeModalPublic } from './table.js';
 //   }
 // }
 
-export function renderCards(
+export function renderCards (
   headers,
   data,
   currentPage,
@@ -148,105 +148,105 @@ export function renderCards(
   isPublic = false
 ) {
   // 🔹 Recuperar la lista de cardClasses desde localStorage
-  let cardClasses = JSON.parse(localStorage.getItem('cardClasses')) || [];
+  let cardClasses = JSON.parse(localStorage.getItem('cardClasses')) || []
 
   // 🔹 Buscar el cardClass correspondiente al containerId
   let cardClassEntry = cardClasses.find(
-    (entry) => entry.containerId === containerId
-  );
-  let cardClass = cardClassEntry ? cardClassEntry.cardClass : 'card'; // 🔹 Valor por defecto si no se encuentra
+    entry => entry.containerId === containerId
+  )
+  let cardClass = cardClassEntry ? cardClassEntry.cardClass : 'card' // 🔹 Valor por defecto si no se encuentra
 
   console.log(
     `Usando cardClass: "${cardClass}" para containerId: "${containerId}"`
-  );
+  )
 
-  const start = (currentPage - 1) * itemsPerPage;
-  const end = start + itemsPerPage;
-  const paginatedData = data.slice(start, end);
+  const start = (currentPage - 1) * itemsPerPage
+  const end = start + itemsPerPage
+  const paginatedData = data.slice(start, end)
 
-  const cardContainer = document.getElementById(containerId);
-  cardContainer.innerHTML = '';
+  const cardContainer = document.getElementById(containerId)
+  cardContainer.innerHTML = ''
 
   let cardHtml =
     displayType === 'carousel'
       ? `<div class="carousel-container" id="carousel-container-${containerId}">
          <div class="carousel-wrapper" id="carousel-wrapper-${containerId}">
            <div class="carousel-cards" id="carousel-cards-${containerId}">`
-      : '<div class="cards-container">';
+      : `<div class="body-content">
+         <div class="cards-container">` // 🔹 Nuevo contenedor para las cards
 
   paginatedData.forEach((item, index) => {
-    const cardNumber = start + index + 1;
-    const avatarElement = createAvatar(item);
-    const avatarHtml = avatarElement.outerHTML;
+    const cardNumber = start + index + 1
+    const avatarElement = createAvatar(item)
+    const avatarHtml = avatarElement.outerHTML
 
     cardHtml += `
-      <div class="${cardClass}" data-id="${item._id}">
-        <div class="card-main">
-          <div class="card-avatar">${avatarHtml}</div>
-          <div class="card-body">
-            ${headers
-              .filter((header) => header !== '_id')
-              .map(
-                (header, idx) => `  
-              <div class="card-field">
-                <span class="field-value">${
-                  Object.values(item).filter((_, i) => i !== 0)[idx]
-                }</span>
-              </div>`
-              )
-              .join('')}
-          </div>
-        </div>
-        
-        <div class="card-footer">
-          ${
-            isPublic
-              ? `<button class="public-button" data-id="${item._id}">
-                 <i class="icon-public">🌐</i> Ver Más
-               </button>`
-              : `<span class="card-number">${cardNumber}</span>
-               <button class="more-button" data-id="${item._id}">
-                 <i class="icon-three-dots">⋮</i>
-               </button>`
-          }
+    <div class="${cardClass}" data-id="${item._id}">
+      <div class="card-main">
+        <div class="card-avatar">${avatarHtml}</div>
+        <div class="card-body">
+          ${headers
+            .filter(header => header !== '_id')
+            .map(
+              (header, idx) => `  
+            <div class="card-field">
+              <span class="field-value">${
+                Object.values(item).filter((_, i) => i !== 0)[idx]
+              }</span>
+            </div>`
+            )
+            .join('')}
         </div>
       </div>
-    `;
-  });
+      
+      <div class="card-footer">
+        ${
+          isPublic
+            ? `<button class="public-button" data-id="${item._id}">
+               <i class="icon-public">🌐</i> Ver Más
+             </button>`
+            : `<span class="card-number">${cardNumber}</span>
+             <button class="more-button" data-id="${item._id}">
+               <i class="icon-three-dots">⋮</i>
+             </button>`
+        }
+      </div>
+    </div>
+  `
+  })
 
-  cardHtml += displayType === 'carousel' ? '</div></div></div>' : '</div>';
-  cardContainer.innerHTML = cardHtml;
+  cardHtml += displayType === 'carousel' ? '</div></div></div>' : '</div></div>' // 🔹 Cerrar el nuevo div "cards-container"
 
-  initializeListeners(paginatedData, onAction);
-  initializeModalPublic(paginatedData, onAction, isPublic);
+  cardContainer.innerHTML = cardHtml
+
+  initializeListeners(paginatedData, onAction)
+  initializeModalPublic(paginatedData, onAction, isPublic)
 
   if (displayType === 'carousel') {
-    initializeAutoCarousel(containerId, cardClass);
+    initializeAutoCarousel(containerId, cardClass)
   }
 }
 
-function initializeAutoCarousel(containerId, cardClass) {
+function initializeAutoCarousel (containerId, cardClass) {
   const carouselWrapper = document.querySelector(
     `#carousel-wrapper-${containerId}`
-  );
-  const carouselCards = document.querySelector(
-    `#carousel-cards-${containerId}`
-  );
+  )
+  const carouselCards = document.querySelector(`#carousel-cards-${containerId}`)
   const cards = document.querySelectorAll(
     `#carousel-cards-${containerId} .${cardClass}`
-  );
-  const totalCards = cards.length;
-  const cardWidth = cards[0].offsetWidth + 16; // Ancho de las tarjetas con márgenes
+  )
+  const totalCards = cards.length
+  const cardWidth = cards[0].offsetWidth + 16 // Ancho de las tarjetas con márgenes
 
   // Duplicar las tarjetas para crear el efecto de carrusel infinito
-  carouselCards.innerHTML += carouselCards.innerHTML;
+  carouselCards.innerHTML += carouselCards.innerHTML
 
   // Animación infinita para desplazar las tarjetas
-  const speed = 30; // Velocidad de desplazamiento (en segundos)
-  carouselCards.style.animation = `scroll-left ${speed}s linear infinite`;
+  const speed = 30 // Velocidad de desplazamiento (en segundos)
+  carouselCards.style.animation = `scroll-left ${speed}s linear infinite`
 
   // CSS para la animación
-  const styleSheet = document.styleSheets[0];
+  const styleSheet = document.styleSheets[0]
   styleSheet.insertRule(
     `
     @keyframes scroll-left {
@@ -259,9 +259,9 @@ function initializeAutoCarousel(containerId, cardClass) {
     }
   `,
     styleSheet.cssRules.length
-  );
+  )
 
   // Ajustar el ancho total de las tarjetas
-  carouselWrapper.style.width = `${cardWidth * totalCards}px`;
-  carouselCards.style.width = `${cardWidth * totalCards * 2}px`; // Duplicar el ancho para el desplazamiento continuo
+  carouselWrapper.style.width = `${cardWidth * totalCards}px`
+  carouselCards.style.width = `${cardWidth * totalCards * 2}px` // Duplicar el ancho para el desplazamiento continuo
 }

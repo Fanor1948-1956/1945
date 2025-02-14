@@ -14,7 +14,7 @@
 }
 .container {
   transition: margin-left 0.3s;
-  background-color: #cc0404;
+  background-color: #001830;
 
   display: flex;
 }
@@ -22,7 +22,7 @@
   background: transparent;
   color: rgb(239, 233, 250);
 
-  border: 1px solid #ddd;
+  border: 5px solid #ffffff;
   width: 100%;
   flex-direction: column;
   justify-content: space-between;

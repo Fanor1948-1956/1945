@@ -16,7 +16,7 @@
   padding: 0.5rem;
 
   justify-items: center; /* Centra las tarjetas dentro de cada celda */
-
+  background-color: #640e0e; /* Color de fondo de la página */
   border-radius: 1rem;
 }
 .card-avatar img {

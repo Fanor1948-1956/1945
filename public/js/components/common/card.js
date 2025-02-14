@@ -172,8 +172,7 @@ export function renderCards (
       ? `<div class="carousel-container" id="carousel-container-${containerId}">
          <div class="carousel-wrapper" id="carousel-wrapper-${containerId}">
            <div class="carousel-cards" id="carousel-cards-${containerId}">`
-      : `<div class="body-content">
-         <div class="cards-container">` // 🔹 Nuevo contenedor para las cards
+      : '<div class="cards-container">'
 
   paginatedData.forEach((item, index) => {
     const cardNumber = start + index + 1
@@ -181,42 +180,41 @@ export function renderCards (
     const avatarHtml = avatarElement.outerHTML
 
     cardHtml += `
-    <div class="${cardClass}" data-id="${item._id}">
-      <div class="card-main">
-        <div class="card-avatar">${avatarHtml}</div>
-        <div class="card-body">
-          ${headers
-            .filter(header => header !== '_id')
-            .map(
-              (header, idx) => `  
-            <div class="card-field">
-              <span class="field-value">${
-                Object.values(item).filter((_, i) => i !== 0)[idx]
-              }</span>
-            </div>`
-            )
-            .join('')}
+      <div class="${cardClass}" data-id="${item._id}">
+        <div class="card-main">
+          <div class="card-avatar">${avatarHtml}</div>
+          <div class="card-body">
+            ${headers
+              .filter(header => header !== '_id')
+              .map(
+                (header, idx) => `  
+              <div class="card-field">
+                <span class="field-value">${
+                  Object.values(item).filter((_, i) => i !== 0)[idx]
+                }</span>
+              </div>`
+              )
+              .join('')}
+          </div>
+        </div>
+        
+        <div class="card-footer">
+          ${
+            isPublic
+              ? `<button class="public-button" data-id="${item._id}">
+                 <i class="icon-public">🌐</i> Ver Más
+               </button>`
+              : `<span class="card-number">${cardNumber}</span>
+               <button class="more-button" data-id="${item._id}">
+                 <i class="icon-three-dots">⋮</i>
+               </button>`
+          }
         </div>
       </div>
-      
-      <div class="card-footer">
-        ${
-          isPublic
-            ? `<button class="public-button" data-id="${item._id}">
-               <i class="icon-public">🌐</i> Ver Más
-             </button>`
-            : `<span class="card-number">${cardNumber}</span>
-             <button class="more-button" data-id="${item._id}">
-               <i class="icon-three-dots">⋮</i>
-             </button>`
-        }
-      </div>
-    </div>
-  `
+    `
   })
 
-  cardHtml += displayType === 'carousel' ? '</div></div></div>' : '</div></div>' // 🔹 Cerrar el nuevo div "cards-container"
-
+  cardHtml += displayType === 'carousel' ? '</div></div></div>' : '</div>'
   cardContainer.innerHTML = cardHtml
 
   initializeListeners(paginatedData, onAction)

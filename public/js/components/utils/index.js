@@ -52,6 +52,7 @@ export const loadContent = async (url, addToHistory = false) => {
 
     if (contentType.includes('application/json')) {
       const data = await response.json()
+      console.log('data contentLoad', data)
       document.getElementById('contentMain').innerHTML = data.content
       document.title = data.title || url
     } else {

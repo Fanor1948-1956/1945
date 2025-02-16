@@ -69,13 +69,34 @@
   padding: 0.9375rem; /* Espaciado interno (5px 15px) */
   align-items: center;
 }
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
 
-.card-field {
-  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
-  overflow: hidden; /* Oculta el desbordamiento */
-  text-overflow: ellipsis; /* Muestra "..." cuando el texto es demasiado largo */
-  width: 100%; /* Asegura que el contenedor tome todo el ancho disponible */
-  display: block;
+.icon-container {
+  display: flex;
+  gap: 10px;
+}
+
+.icon {
+  cursor: pointer;
+  font-size: 18px;
+  transition: color 0.2s;
+}
+
+.icon:hover {
+  color: #007bff;
+}
+
+.card-number {
+  font-size: 14px;
+  font-weight: bold;
+  color: #666;
 }
 
 @keyframes blink-border {

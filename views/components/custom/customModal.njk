@@ -1,95 +1,21 @@
-<div
-  id="customModal"
-  class="modal"
-  style="display: none; opacity: 0"
-  isEditable="true"
->
-  <div
-    class="modal-content"
-    id="modalContent"
-    isEditable="true"
-  >
-    <div
-      class="modal-head"
-      isEditable="true"
-    >
-      <h3
-        class="modal-title"
-        isEditable="true"
-      ></h3>
+
+<div id="{{modalId}}" class="customModal">
+
+  <div class="customModal-content">
+    <div class="customModal-header">
+      <h2 class="customModal-title"></h2>
       <span
         class="close-button"
-        id="closeButton"
+        onclick="Modal.close('#myModal')"
         isEditable="true"
         >×</span
       >
     </div>
-    <!-- Aquí va el spinner que será mostrado cuando el modal esté en fullscreen -->
     <div
-      class="modal-spinner"
-      style="display: none"
-    >
-      <div class="spinner"></div>
-    </div>
-    <div
-      class="modal-body"
-      isEditable="true"
-    >
-      {{ standardModal | safe }}
-    </div>
-    <div
-      class="modal-actions"
-      style="display: none"
-      isEditable="true"
-    >
-      <button
-        id="saveButton"
-        isEditable="true"
-      >
-        Guardar
-      </button>
-      <button
-        id="cancelButton"
-        isEditable="true"
-      >
-        Cancelar
-      </button>
-    </div>
+      class="customModal-body"
+      id="modalBody"
+    ></div>
+    <!-- Este es el contenedor donde insertarás el contenido -->
+    <div class="customModal-footer"></div>
   </div>
 </div>
-
-<!-- Incluir el archivo de JavaScript como un módulo -->
-<script
-  type="module"
-  isEditable="true"
->
-  import { openModal, closeModal } from '../../js/components/custom/modal.js';
-
-  // Manejo del cierre del modal al hacer clic fuera del contenido
-  window.addEventListener('click', (event) => {
-    const modal = document.getElementById('customModal');
-    if (event.target === modal) {
-      closeModal('customModal');
-    }
-  });
-
-  // Manejo de apertura del modal
-  document.querySelectorAll('.open-modal').forEach((button) => {
-    button.addEventListener('click', () => {
-      const size = button.getAttribute('data-size');
-      const title = button.getAttribute('data-title');
-      const showActions = button.getAttribute('data-show-actions') === 'true';
-      openModal('customModal', size, title, showActions);
-    });
-  });
-
-  // Cerrar modal con el botón de cerrar
-  document.getElementById('closeButton').addEventListener('click', () => {
-    closeModal('customModal');
-  });
-
-  // Cerrar modal con el botón de cancelar
-  document.getElementById('cancelButton').addEventListener('click', () => {
-    closeModal('customModal');
-  });
-</script>

@@ -46,62 +46,36 @@
 </div>
 <button id="openModalBtn">Especialidades</button>
 
-<div
-  id="myModal"
-  class="customModal"
->
-  <div class="customModal-content">
-    <div class="customModal-header">
-      <h2 class="customModal-title"></h2>
-      <span
-        class="close-button"
-        onclick="Modal.close('#myModal')"
-        isEditable="true"
-        >×</span
-      >
-    </div>
-    <div
-      class="customModal-body"
-      id="modalBody"
-    ></div>
-    <!-- Este es el contenedor donde insertarás el contenido -->
-    <div class="customModal-footer"></div>
-  </div>
-</div>
 
 <script type="module">
   import { customModal } from './js/components/common/modal.js';
-
   import { renderCards } from './js/renders/renderCards.js';
   import { fetchSpecialty } from './js/services/loadFetchs.js';
   import { getState } from './js/reducers/state.js';
 
-  document
-    .getElementById('openModalBtn')
-    .addEventListener('click', async () => {
-      try {
-        // 🔹 Obtener las especialidades desde la API
-        await fetchSpecialty();
+  // Función para cargar especialidades
+  const loadSpecialties = async () => {
+    try {
+      await fetchSpecialty(); // Cargar especialidades desde la API
+      const specialties = getState().specialties;
+      return specialties; // Retornar las especialidades cargadas
+    } catch (error) {
+      console.error('Error al cargar especialidades:', error);
+      return [];
+    }
+  };
 
-        // 🔹 Recuperar el estado actualizado con specialties reales
-        const specialties = getState().specialties;
+  // Evento para abrir el modal
+  document.getElementById('openModalBtn').addEventListener('click', async () => {
+    const specialties = await loadSpecialties(); // Cargar especialidades
 
-        // 🔹 Renderizar con specialties reales
-        const cardsContainer = renderCards(specialties);
+    // Crear un ID único para este modal usando la hora actual
+    const modalId = 'myModal_' + new Date().getTime(); // ID único
+console.log(modalId)
+    // Renderizar las tarjetas con las especialidades
+    const cardsContainer = renderCards(specialties);
 
-        // 🔹 Abrir el modal con datos reales
-        customModal(
-          'myModal',
-          'fullscreen',
-          'Especialidades',
-          '#ffffff',
-          specialties,
-          cardsContainer,
-          '',
-          'pagination'
-        );
-      } catch (error) {
-        console.error('Error al obtener especialidades:', error);
-      }
-    });
+    // Abrir el modal con las especialidades y un ID único
+    customModal(modalId, 'fullscreen', 'Especialidades', '#ffffff', specialties, cardsContainer, '', 'pagination');
+  });
 </script>

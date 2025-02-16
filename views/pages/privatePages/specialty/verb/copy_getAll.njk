@@ -1,84 +1,92 @@
 <button id="openModalBtn">Abrir Modal con Paginación</button>
+<button id="openInfoModalBtn">Abrir Modal con Paginación</button>
+<button id="openEmptyModalBtn">Abrir Modal con Paginación</button>
 
-<div
-  id="myModal"
-  class="customModal"
->
-  <div class="customModal-content">
-    <div class="customModal-header">
-      <h2 class="customModal-title"></h2>
-      <span
-        class="close-button"
-        onclick="Modal.close('#myModal')"
-        isEditable="true"
-        >×</span
-      >
-    </div>
-    <div
-      class="customModal-body"
-      id="modalBody"
-    ></div>
-    <!-- Este es el contenedor donde insertarás el contenido -->
-    <div class="customModal-footer"></div>
-  </div>
-</div>
+
 
 <script type="module">
   import { customModal } from '../js/components/common/modal.js';
-  import { renderCards } from '../js/renders/renderCards.js';
-  import { fetchSpecialty } from '../js/services/loadFetchs.js';
-  import { getState } from '../js/reducers/state.js';
-  import { loadUserProfile } from '../js/services/profileService.js';
+import { renderCards } from '../js/renders/renderCards.js';
+import { fetchSpecialty } from '../js/services/loadFetchs.js';
+import { getState } from '../js/reducers/state.js';
+import { loadUserProfile } from '../js/services/profileService.js';
 
-  export const token = localStorage.getItem('token');
-  let user = null; // Inicializamos user en null
+export const token = localStorage.getItem('token');
+let user = null; // Inicializamos user en null
 
-  // ✅ Nueva función modular para obtener y filtrar especialidades
-  const loadSpecialties = async () => {
-    try {
-      await fetchSpecialty(); // 🔹 Cargar especialidades desde la API
-      const specialties = getState().specialties;
+// Función modular para cargar y filtrar especialidades
+const loadSpecialties = async () => {
+  try {
+    await fetchSpecialty(); // Cargar especialidades desde la API
+    const specialties = getState().specialties;
 
-      // 🔹 Si hay token, obtener perfil del usuario
-      if (token) {
-        user = await loadUserProfile();
-        console.log('Perfil del usuario:', user);
+    // Si hay token, obtener perfil del usuario
+    if (token) {
+      user = await loadUserProfile();
+      console.log('Perfil del usuario:', user);
 
-        // 🔹 Verificamos si el usuario es un doctor
-        const isDoctor = user.roles.some((role) => role.name === 'Doctor');
+      // Verificamos si el usuario es un doctor
+      const isDoctor = user.roles.some((role) => role.name === 'Doctor');
 
-        // 🔹 Si el usuario es doctor, tomamos solo sus especialidades
-        const userSpecialties = isDoctor ? user.specialties : specialties;
-
-        console.log('Especialidades a mostrar:', userSpecialties);
-        return userSpecialties;
-      }
-
-      // 🔹 Si no hay token, devolver todas las especialidades
-      console.log('Usuario no autenticado, mostrando todas las especialidades');
-      return specialties;
-    } catch (error) {
-      console.error('Error al cargar especialidades:', error);
-      return [];
+      // Si el usuario es doctor, mostramos solo sus especialidades
+      const userSpecialties = isDoctor ? user.specialties : specialties;
+      console.log('Especialidades a mostrar:', userSpecialties);
+      return userSpecialties;
     }
-  };
 
-  // ✅ Evento para abrir el modal
-  document
-    .getElementById('openModalBtn')
-    .addEventListener('click', async () => {
-      const specialties = await loadSpecialties(); // 🔹 Llamar la función modular
-      const cardsContainer = renderCards(specialties);
+    // Si no hay token, devolver todas las especialidades
+    console.log('Usuario no autenticado, mostrando todas las especialidades');
+    return specialties;
+  } catch (error) {
+    console.error('Error al cargar especialidades:', error);
+    return [];
+  }
+};
 
-      customModal(
-        'myModal',
-        'fullscreen',
-        'Especialidades',
-        '#ffffff',
-        specialties,
-        cardsContainer,
-        '',
-        'pagination'
-      );
-    });
+// Evento para abrir el primer modal
+document.getElementById('openModalBtn').addEventListener('click', async () => {
+  const specialties = await loadSpecialties(); // Llamar la función modular
+  const cardsContainer = renderCards(specialties);
+
+  // Crear un ID único para este modal
+  const firstModalId = 'myModal_' + new Date().getTime(); // Usamos la marca de tiempo como ID único
+console.log(firstModalId)
+  // Abrir el primer modal
+  customModal(firstModalId, 'fullscreen', 'Especialidades', '#ffffff', specialties, cardsContainer, '', 'pagination');
+});
+
+// Evento para abrir el modal con información adicional
+document.getElementById('openInfoModalBtn').addEventListener('click', () => {
+  const content = document.createElement('div');
+  content.innerHTML = '<p>Información adicional sobre el sistema.</p>';
+
+  // Crear un ID único para este modal
+  const firstModalId = 'myModal_' + new Date().getTime();
+
+  // Abrir el primer modal
+  customModal(firstModalId, 'fullscreen', 'Información', '#f0f0f0', [], content);
+
+  // Crear un botón dentro del contenido del primer modal para abrir el segundo modal
+  const openSecondModalBtn = document.createElement('button');
+  openSecondModalBtn.textContent = 'Abrir Segundo Modal';
+  content.appendChild(openSecondModalBtn);
+
+  // Evento para abrir el segundo modal dentro del primero
+  openSecondModalBtn.addEventListener('click', () => {
+    // Crear un ID único para el segundo modal
+    const secondModalId = 'myModal_' + new Date().getTime();
+    const secondModalContent = document.createElement('div');
+    secondModalContent.innerHTML = '<p>Este es el segundo modal.</p>';
+
+    // Abrir el segundo modal con el ID único
+    customModal(secondModalId, 'small', 'Segundo Modal', '#e0e0e0', [], secondModalContent);
+  });
+});
+
+// Evento para abrir un modal vacío
+document.getElementById('openEmptyModalBtn').addEventListener('click', () => {
+  const emptyModalId = 'myModal_' + new Date().getTime(); // Generar un ID único
+  customModal(emptyModalId, 'medium', 'Modal vacío', '#ddd');
+});
+
 </script>

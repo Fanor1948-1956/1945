@@ -77,7 +77,7 @@
   import { renderSubItemsCheckboxesForSelection } from '../js/utils/subItemUtils.js';
   import { updateUserProfile } from '../js/services/profileService.js';
   import { getState, setState } from '../js/reducers/state.js';
-  import { fetchSpecialty } from '../js/services/loadFetchs.js';
+
   import {
     specialtyEndpoints,
     userEndpoints,
@@ -87,7 +87,7 @@
   import { renderItems } from '../js/renders/renderItems.js';
   import { specialtyRenderer } from '../js/renders/itemRender.js';
   import { openModal, closeModal } from '../js/components/custom/modal.js';
-  import useEffect from '../js/hooks/useEffect.js';
+
   import { loadUserProfile } from '../js/services/profileService.js';
 
   const headers = ['Nombre', 'Descripción', 'Estado'];
@@ -126,7 +126,7 @@
         );
 
         // Cargamos solo las especialidades globales si el token es null
-        await fetchSpecialty();
+        await fetchServices(specialtyEndpoints, loadSpecialties);
         const specialties = getState().specialties;
 
         renderItems(
@@ -147,7 +147,7 @@
         }
 
         // Cargamos las especialidades globales
-        await fetchSpecialty();
+        await fetchServices(specialtyEndpoints, loadSpecialties);
         const specialties = getState().specialties;
 
         // Verificamos si el usuario es un doctor
@@ -354,13 +354,13 @@
     }
   };
 
-  useEffect(() => {
+
     const initializeData = async () => {
       if (token) {
         // Si el token está presente, cargamos el perfil
         await loadProfile();
         // Independientemente de si el token es válido o no, cargamos las especialidades
-        loadSpecialtiesData();
+       
         setupEventListeners();
       } else {
         console.warn('Token es null, no se cargará el perfil.');
@@ -369,7 +369,7 @@
     };
 
     initializeData();
-  }, []);
+
 
   window.onAction = onAction;
 </script>

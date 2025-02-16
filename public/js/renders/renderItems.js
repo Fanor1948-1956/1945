@@ -5,6 +5,7 @@ import { renderCards } from '../components/common/card.js'
 import { renderAvatars } from '../components/common/avatar.js'
 import { renderPagination } from '../components/common/pagination.js'
 import { renderHeader } from '../components/common/header.js'
+
 export const renderItems = (
   currentView,
   items,
@@ -69,13 +70,14 @@ export const renderItems = (
         break
       case 'avatar':
         renderAvatars(...commonArgs)
+        break
       default:
         console.warn(`Vista desconocida: ${view}`)
     }
   })
 
   if (currentView !== 'carousel') {
-    const paginationHtml = renderPagination(
+    const paginationElement = renderPagination(
       currentPage,
       items.length,
       itemsPerPage,
@@ -94,7 +96,7 @@ export const renderItems = (
 
     const containerElement = document.getElementById(containerId)
     if (containerElement) {
-      containerElement.insertAdjacentHTML('beforeend', paginationHtml)
+      containerElement.appendChild(paginationElement)
     } else {
       console.error('No se encontró el contenedor con id: ', containerId)
     }
@@ -168,3 +170,5 @@ function handlePageClick (event) {
   const newPage = parseInt(event.currentTarget.getAttribute('data-page'))
   handlePageChange(newPage)
 }
+
+// -- Nueva implementación de renderPagination utilizando createElement -- //

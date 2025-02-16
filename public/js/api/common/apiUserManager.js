@@ -1,5 +1,13 @@
 import { apiFetch } from '../apiFetch.js';
-
+export async function fetchAndRenderData(url, data) {
+  try {
+    const response = await apiFetch(url, data);
+    console.log('Data received:', response);
+    return response;
+  } catch (error) {
+    console.error('Error al obtener los datos:', error);
+  }
+}
 export async function registerData(url, data) {
   try {
     const response = await apiFetch(url, 'POST', data);
@@ -55,15 +63,7 @@ export async function activateData(url) {
   }
 }
 
-export async function fetchAndRenderData(url, data) {
-  try {
-    const response = await apiFetch(url, data);
-    console.log('Data received:', response);
-    return response;
-  } catch (error) {
-    console.error('Error al obtener los datos:', error);
-  }
-}
+
 export async function getById(url) {
   try {
     const response = await apiFetch(url, 'GET');

@@ -1,8 +1,269 @@
-{% extends "layouts/privateLayout.njk" %}
-<!-- Bloque de título -->
+<button
+  id="addSpecialtyBtn"
+  class="add-button"
+  style="display: none"
+>
+  Agregar Especialidad
+</button>
 
-{% block content %}
+<button
+  id="selectedSpecialtyBtn"
+  class="add-button"
+  style="display: none"
+>
+  Añadir Especialidad
+</button>
 
-{% include "pages/privatePages/specialty/verb/getAll.njk" %}
+<div
+  id="specialityContainer"
+  class="contentContainer"
+></div>
 
-{% endblock %}
+<!-- Modal para agregar especialidades -->
+<div
+  class="modal"
+  id="addSpecialtyModal"
+  style="display: none"
+>
+  <div class="modal-content">
+    <span
+      class="close-button"
+      onclick="Modal.close('#addSpecialtyModal')"
+      >×</span
+    >
+    <h2 class="modal-title"></h2>
+    <div id="inputContainer"></div>
+    <!-- Contenedor dinámico para los inputs -->
+    <button id="saveSpecialtyBtn">Guardar</button>
+  </div>
+</div>
+
+<!-- Modal para seleccionar especialidades -->
+<div
+  class="modal"
+  id="selectSpecialtyModal"
+  style="display: none"
+>
+  <div class="modal-content">
+    <span
+      class="close-button"
+      onclick="Modal.close('#selectSpecialtyModal')"
+      >×</span
+    >
+    <h2 class="modal-title">Seleccionar Especialidades</h2>
+    <div id="specialtiesCheckboxesContainer"></div>
+    <!-- Contenedor para checkboxes dinámicos -->
+    <button id="saveSelectedSpecialtiesBtn">Guardar</button>
+  </div>
+</div>
+
+{% include "components/custom/customPopover.njk" %} {% include
+"components/custom/common/deleteItem.njk" %}
+
+<script type="module">
+  import { saveItem } from '../js/logic/itemLogic/index.js';
+  import {
+    loadSpecialties,
+    addSpecialty,
+    updateSpecialty,
+    deleteSpecialty,
+  } from '../js/reducers/index.js';
+  import {
+    fetchServices,
+    createService,
+    updateService,
+    deleteService,
+  } from '../js/services/index.js';
+  import { renderSubItemsCheckboxesForSelection } from '../js/utils/subItemUtils.js';
+  import {
+    updateUserProfile,
+    loadUserProfile,
+  } from '../js/services/profileService.js';
+  import { getState, setState } from '../js/reducers/state.js';
+  import {
+    specialtyEndpoints,
+    userEndpoints,
+  } from '../js/config/apiEndpoints.js';
+  import { createCustomInputs } from '../js/components/custom/input.js';
+  import { specialtyInputConfigs } from '../js/dinamic/input/private/pages/inputSpecialty.js';
+  import { renderItems } from '../js/renders/renderItems.js';
+  import { specialtyRenderer } from '../js/renders/itemRender.js';
+  import { openModal, closeModal } from '../js/components/custom/modal.js';
+
+  const headers = ['Nombre', 'Descripción', 'Estado'];
+  const specialtyPerPage = 12;
+  const isPublic = '{{ isPublic|dump}}';
+  const currentView = '{{currentView|lower}}' || 'card';
+  const cardClass = '{{cardClass|lower}}' || 'card';
+  export const token = localStorage.getItem('token');
+
+  let user = null;
+  let currentEditingSpecialtyId = null;
+  let currentPage = 1;
+
+  const loadSpecialtiesData = async () => {
+    try {
+      let specialties = [];
+
+      if (token) {
+        user = await loadUserProfile();
+        console.log('Perfil del usuario:', user);
+
+        if (!user?.roles) {
+          console.error('Usuario no cargado correctamente o sin roles.');
+          return;
+        }
+
+        const isDoctor = user.roles.some((role) => role.name === 'Doctor');
+        await fetchServices(specialtyEndpoints, loadSpecialties);
+        const allSpecialties = getState().specialties;
+        specialties = isDoctor ? user.specialties : allSpecialties;
+      } else {
+        console.warn(
+          'Token es null, solo se cargarán especialidades globales.'
+        );
+        await fetchServices(specialtyEndpoints, loadSpecialties);
+        specialties = getState().specialties;
+      }
+
+      console.log('Especialidades a mostrar:', specialties);
+
+      renderItems(
+        currentView,
+        specialties,
+        headers,
+        currentPage,
+        specialtyPerPage,
+        'specialityContainer',
+        specialtyRenderer,
+        isPublic,
+        cardClass
+      );
+
+      updateButtonTextAndAction();
+    } catch (error) {
+      console.error('Error al cargar las especialidades:', error);
+    }
+  };
+
+  const updateButtonTextAndAction = () => {
+    const isDoctor = user?.roles?.some((role) => role.name === 'Doctor');
+    document.getElementById('addSpecialtyBtn').style.display = isDoctor
+      ? 'none'
+      : 'inline-block';
+    document.getElementById('selectedSpecialtyBtn').style.display = isDoctor
+      ? 'inline-block'
+      : 'none';
+  };
+
+  const openAddSpecialtyForm = () => {
+    currentEditingSpecialtyId = null;
+    document.getElementById('inputContainer').innerHTML = '';
+    document
+      .getElementById('inputContainer')
+      .appendChild(createCustomInputs(specialtyInputConfigs));
+    openModal('addSpecialtyModal', 'small', 'Registrar Especialidad');
+  };
+
+  const openSelectSpecialtyModal = () => {
+    renderSubItemsCheckboxesForSelection(
+      getState().specialties,
+      user?.specialties || [],
+      'specialtiesCheckboxesContainer'
+    );
+    openModal('selectSpecialtyModal', 'medium', 'Seleccionar Especialidades');
+  };
+
+  const saveSpecialty = async () => {
+    const name = document.getElementById('specialtyName').value.trim();
+    const description = document
+      .getElementById('specialtyDescription')
+      .value.trim();
+
+    if (!name || !description)
+      return showSnackbar('Por favor, complete todos los campos.', false);
+
+    try {
+      const data = {
+        name,
+        description,
+        ...(currentEditingSpecialtyId && { _id: currentEditingSpecialtyId }),
+      };
+      const message = currentEditingSpecialtyId
+        ? await updateService(data, specialtyEndpoints, updateSpecialty)
+        : await createService(data, specialtyEndpoints, addSpecialty);
+
+      closeModal('addSpecialtyModal');
+      await loadSpecialtiesData();
+      showSnackbar(message, true);
+    } catch (error) {
+      showSnackbar('Error al guardar la especialidad.', false);
+    }
+  };
+
+  const saveSelectedSpecialties = async () => {
+    const selectedSpecialties = Array.from(
+      document.querySelectorAll(
+        '#specialtiesCheckboxesContainer input[type="checkbox"]:checked'
+      )
+    ).map((cb) => cb.value);
+
+    if (user?.roles?.some((role) => role.name === 'Doctor')) {
+      try {
+        await updateUserProfile({ ...user, specialties: selectedSpecialties });
+        closeModal('selectSpecialtyModal');
+        await loadSpecialtiesData();
+        showSnackbar('Especialidades actualizadas correctamente.', true);
+      } catch (error) {
+        showSnackbar('Error al guardar las especialidades.', false);
+      }
+    } else {
+      showSnackbar('No se pudo actualizar el perfil del doctor.', false);
+    }
+  };
+
+  const handleDeleteItem = async (id) => {
+    try {
+      await deleteService(id, specialtyEndpoints, deleteSpecialty);
+      await loadSpecialtiesData();
+      showSnackbar('Especialidad eliminada correctamente.', true);
+    } catch (error) {
+      showSnackbar('Error al eliminar la especialidad.', false);
+    }
+  };
+
+  const onAction = (action, id) => {
+    const selectedSpecialty = getState().specialties.find(
+      (specialty) => specialty._id === id
+    );
+    if (!selectedSpecialty)
+      return showSnackbar('Especialidad no encontrada.', false);
+
+    if (action === 'edit') {
+      currentEditingSpecialtyId = id;
+      document.getElementById('specialtyName').value = selectedSpecialty.name;
+      document.getElementById('specialtyDescription').value =
+        selectedSpecialty.description;
+      openModal('addSpecialtyModal', 'small', 'Editar Especialidad');
+    } else if (action === 'delete') {
+      openModal('deleteItemModal', 'small', 'Confirmar Eliminación');
+      document.getElementById('confirmDeleteButton').onclick = async () => {
+        await handleDeleteItem(id);
+        closeModal('deleteItemModal');
+      };
+    }
+  };
+
+  const initializeData = async () => {
+    if (token) await loadSpecialtiesData();
+    document
+      .getElementById('saveSpecialtyBtn')
+      .addEventListener('click', saveSpecialty);
+    document
+      .getElementById('saveSelectedSpecialtiesBtn')
+      .addEventListener('click', saveSelectedSpecialties);
+  };
+
+  initializeData();
+  window.onAction = onAction;
+</script>

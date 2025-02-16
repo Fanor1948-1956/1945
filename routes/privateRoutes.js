@@ -125,7 +125,7 @@ const privateRoutes = [
   {
     path: '/specialty',
     title: 'Especialidad',
-    view: 'pages/privatePages/specialty/index.njk',
+    view: 'pages/privatePages/specialty/verb/getAll.njk',
     isPublic: true,
     icon: getIcon('speciality'),
     items: async () => [],

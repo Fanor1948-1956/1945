@@ -1,3 +1,4 @@
+import { apiFetch } from "../api/apiFetch.js";
 import {
   registerData,
   updateData,
@@ -9,13 +10,14 @@ import {
 
 export const fetchServices = async (itemEndpoints, loadItems) => {
   try {
-    const response = await fetchAndRenderData(itemEndpoints.list);
-    console.log("response", response);
+    // Realizamos la solicitud directamente aquí
+    const response = await apiFetch(itemEndpoints.list);
+    console.log('Data received:', response);
 
-    
-    loadItems(response); 
+    // Pasamos la respuesta a la función loadItems
+    loadItems(response);
   } catch (error) {
-    console.error("Error al obtener items:", error);
+    console.error('Error al obtener items:', error);
   }
 };
 

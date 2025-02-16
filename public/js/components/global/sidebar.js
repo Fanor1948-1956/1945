@@ -71,7 +71,7 @@ export function initializeSidebar(idContainer, showButtonImmediately = false) {
           scrollToHash(parentHref); // Si es un hash, hacer scroll
         } else {
           showContentAndButton(false);
-          loadContent(parentHref, true); // Cargar contenido de la ruta
+
           closeSidebar(); // Cerrar la barra lateral después de cargar contenido
         }
       }
